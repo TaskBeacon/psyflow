@@ -1,0 +1,57 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Python virtual environments
+env/
+venv/
+ENV/
+env.bak/
+.venv/
+
+# VSCode / PyCharm
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# PsychoPy specific
+.psychopy3/
+# Uncomment below if you're storing data logs locally
+# data/
+# logs/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Your personal debug output, optional
+*.log
+*.bak
+*.tmp
+
+# Misc
+*.swp
