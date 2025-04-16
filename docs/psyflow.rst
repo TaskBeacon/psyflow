@@ -1,0 +1,69 @@
+psyflow package
+===============
+
+Submodules
+----------
+
+psyflow.BlockUnit module
+------------------------
+
+.. automodule:: psyflow.BlockUnit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+psyflow.StimBank module
+-----------------------
+
+.. automodule:: psyflow.StimBank
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+psyflow.SubInfo module
+----------------------
+
+.. automodule:: psyflow.SubInfo
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+psyflow.TaskSettings module
+---------------------------
+
+.. automodule:: psyflow.TaskSettings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+psyflow.TrialUnit module
+------------------------
+
+.. automodule:: psyflow.TrialUnit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+psyflow.TriggerSender module
+----------------------------
+
+.. automodule:: psyflow.TriggerSender
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+psyflow.utils module
+--------------------
+
+.. automodule:: psyflow.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: psyflow
+   :members:
+   :undoc-members:
+   :show-inheritance:
