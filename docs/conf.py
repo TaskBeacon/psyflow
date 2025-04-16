@@ -45,3 +45,5 @@ source_suffix = {
     '.rst': 'restructuredtext',
     '.md': 'markdown',
 }
+
+html_theme = "furo"
