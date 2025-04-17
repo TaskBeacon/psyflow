@@ -37,11 +37,11 @@ class SubInfo:
 
     lang:
       zh:
-        subject_id: "受试编号"
-        subject_name: "姓名"
-        gender: "性别"
-        Male: "男"
-        Female: "女"
+        subject_id: "Subject ID"
+        subject_name: "Subject Name"
+        gender: "Gender"
+        Male: "Male"
+        Female: "Female"
 
     Example usage:
     --------------
@@ -100,10 +100,11 @@ class SubInfo:
                 break
 
         if status == "cancelled":
+            self.subject_data= None
             infoDlg=gui.Dlg()
             infoDlg.addText(self._local("registration_failed"))
             infoDlg.show()
-            return None
+            return self.subject_data
 
         if status == "success":
             self.subject_data = self._format_output(responses)

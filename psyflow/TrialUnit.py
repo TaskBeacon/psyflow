@@ -32,10 +32,10 @@ class TrialUnit:
         Duration of a single frame in seconds (default: 1/60 for 60Hz).
     """
 
-    def __init__(self, win: visual.Window, unit_label: str, trigger: Optional[Any] = None):
+    def __init__(self, win: visual.Window, unit_label: str, triggersender: Optional[Any] = None):
         self.win = win
         self.label = unit_label
-        self.trigger = trigger or TriggerSender()
+        self.triggersender = triggersender
         self.stimuli: List[visual.BaseVisualStim] = []
         self.state: Dict[str, Any] = {}
         self.clock = core.Clock()
@@ -156,7 +156,8 @@ class TrialUnit:
         -------
         TrialUnit
         """
-        self.trigger.send(trigger_code)
+        if self.triggersender is not None:
+            self.triggersender.send(trigger_code)
         return self
 
     def log_unit(self) -> None:
