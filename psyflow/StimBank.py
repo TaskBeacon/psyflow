@@ -61,15 +61,41 @@ class StimBank:
         """
         self.build_all()
 
-    def get(self, name: str):
+    def get(self, name: str, **format_kwargs):
         """
         Return an instantiated stimulus (lazy-loaded if needed).
+        If the stimulus is a TextStim and formatting arguments are provided, format its text.
+
+        Parameters
+        ----------
+        name : str
+            Name of the registered stimulus.
+        format_kwargs : dict
+            Optional keyword arguments to format text placeholders (for TextStim).
+
+        Returns
+        -------
+        visual.BaseVisualStim
+            A new or cached PsychoPy stimulus.
         """
+        from copy import deepcopy
+
         if name not in self._instantiated:
             if name not in self._registry:
                 raise KeyError(f"Stimulus '{name}' not defined.")
             self._instantiated[name] = self._registry[name](self.win)
-        return self._instantiated[name]
+
+        stim = deepcopy(self._instantiated[name])  # clone so we can modify safely
+
+        if isinstance(stim, TextStim) and format_kwargs:
+            try:
+                stim.text = stim.text.format(**format_kwargs)
+            except Exception as e:
+                from psychopy import logging
+                logging.warning(f"[StimBank] Text formatting failed for '{name}': {e}")
+
+        return stim
+
 
     def rebuild(self, name: str, update_cache: bool = True, **overrides):
         """
