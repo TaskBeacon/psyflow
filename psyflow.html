@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="psyflow" href="modules.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
         <title>psyflow package - psyflow 0.1.0 documentation</title>
@@ -192,6 +192,10 @@
   <div class="sidebar-logo-container">
     <img class="sidebar-logo" src="_static/logo.png" alt="Logo"/>
   </div>
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="_static/logo.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="_static/logo.png" alt="Dark Logo"/>
+  </div>
   
   <span class="sidebar-brand-text">psyflow 0.1.0 documentation</span>
   
@@ -201,7 +205,29 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/getting_started.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/get_subinfo.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/task_settings.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_blocks.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">content to be added</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="examples/example_mid.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/example_resting_state.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/example_sst.html">content to be added</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="modules.html">psyflow</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of psyflow</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">psyflow package</a></li>
+</ul>
+</li>
+</ul>
+
 </div>
 </div>
 
@@ -245,8 +271,144 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
-<section id="psyflow-blockunit-module">
-<h2>psyflow.BlockUnit module<a class="headerlink" href="#psyflow-blockunit-module" title="Link to this heading">¶</a></h2>
+<section id="module-psyflow.BlockUnit">
+<span id="psyflow-blockunit-module"></span><h2>psyflow.BlockUnit module<a class="headerlink" href="#module-psyflow.BlockUnit" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.BlockUnit.</span></span><span class="sig-name descname"><span class="pre">BlockUnit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stim_map</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyboard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A flexible and modular block container for trial execution and management.
+Supports chaining condition and stimulus generation, trial execution,
+lifecycle hooks, and block-level metadata collection.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.add_trials">
+<span class="sig-name descname"><span class="pre">add_trials</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trial_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.add_trials" title="Link to this definition">¶</a></dt>
+<dd><p>Manually assign a list of (condition, stimulus) trial tuples.</p>
+<p>Parameters:
+- trial_list: A list of (condition, stimulus) tuples.</p>
+<p>Returns:
+- self</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.assign_stimuli">
+<span class="sig-name descname"><span class="pre">assign_stimuli</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.assign_stimuli" title="Link to this definition">¶</a></dt>
+<dd><p>Assign stimuli to conditions using a user-defined function.</p>
+<p>Parameters:
+- func: A function that takes the condition array and stim_map and returns an array of stimuli.</p>
+<p>Returns:
+- self</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.generate_conditions">
+<span class="sig-name descname"><span class="pre">generate_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.generate_conditions" title="Link to this definition">¶</a></dt>
+<dd><p>Generate trial conditions using a user-defined function.</p>
+<p>Parameters:
+- func: A function that returns a numpy array of condition labels.
+- n_trials: Number of trials to generate (default: settings.trials_per_block).
+- condition_labels: Labels for conditions (default: settings.conditions).</p>
+<p>Returns:
+- self</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.generate_stim_sequence">
+<span class="sig-name descname"><span class="pre">generate_stim_sequence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">generate_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">assign_func</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.generate_stim_sequence" title="Link to this definition">¶</a></dt>
+<dd><p>Convenience method to generate both conditions and stimuli in a single chain.</p>
+<p>Parameters:
+- generate_func: Function to generate conditions.
+- assign_func: Function to assign stimuli.
+- n_trials: Optional number of trials to generate.
+- condition_labels: Optional list of condition labels.</p>
+<p>Returns:
+- self</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.logging_block_info">
+<span class="sig-name descname"><span class="pre">logging_block_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.logging_block_info" title="Link to this definition">¶</a></dt>
+<dd><p>Print a basic summary of the block’s condition distribution.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.on_end">
+<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.on_end" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.on_start">
+<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.on_start" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.run_trial">
+<span class="sig-name descname"><span class="pre">run_trial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_trial_func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">extra_args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.run_trial" title="Link to this definition">¶</a></dt>
+<dd><p>Execute all trials using the provided trial function.</p>
+<p>Parameters:
+- run_trial_func: A function with signature</p>
+<blockquote>
+<div><p><cite>(win, kb, settings, condition, stimulus, **kwargs) -&gt; dict</cite>.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>extra_args: Additional arguments to pass to each trial function.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.summarize">
+<span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.summarize" title="Link to this definition">¶</a></dt>
+<dd><p>Summarize results after block completion.</p>
+<p>Parameters:
+- summary_func: Optional custom summary function. Must accept BlockUnit and return a dict.</p>
+<p>Returns:
+- A dictionary of summary statistics (also stored in self.meta[“summary”]).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.to_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Return trial results or append to existing list.</p>
+<p>Parameters:
+- target: An optional list to append results to.</p>
+<p>Returns:
+- The list of trial result dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.assign_stimuli">
+<span class="sig-prename descclassname"><span class="pre">psyflow.BlockUnit.</span></span><span class="sig-name descname"><span class="pre">assign_stimuli</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conditions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stim_map</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">('cue',</span> <span class="pre">'target',</span> <span class="pre">'feedback')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.assign_stimuli" title="Link to this definition">¶</a></dt>
+<dd><p>Assigns multiple stimuli per condition using a list of stimulus components.</p>
+<p>Parameters:
+- conditions: array of condition labels (e.g., [‘win’, ‘lose’, ‘neut’])
+- stim_map: dict of available stimuli, typically from stim_bank.get_group(”…”)
+- components: list of stimulus types (prefixes), e.g., [‘cue’, ‘target’]</p>
+<p>Returns:
+- np.ndarray of dicts like {‘cue’: …, ‘target’: …}</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.generate_balanced_conditions">
+<span class="sig-prename descclassname"><span class="pre">psyflow.BlockUnit.</span></span><span class="sig-name descname"><span class="pre">generate_balanced_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_trials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.generate_balanced_conditions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="module-psyflow.StimBank">
 <span id="psyflow-stimbank-module"></span><h2>psyflow.StimBank module<a class="headerlink" href="#module-psyflow.StimBank" title="Link to this heading">¶</a></h2>
@@ -1081,11 +1243,18 @@ Handles pre/post callbacks and optional delay.</p>
 </dd></dl>
 
 </section>
-<section id="psyflow-utils-module">
-<h2>psyflow.utils module<a class="headerlink" href="#psyflow-utils-module" title="Link to this heading">¶</a></h2>
+<section id="module-psyflow.utils">
+<span id="psyflow-utils-module"></span><h2>psyflow.utils module<a class="headerlink" href="#module-psyflow.utils" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="psyflow.utils.show_ports">
+<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">show_ports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.utils.show_ports" title="Link to this definition">¶</a></dt>
+<dd><p>List all available serial ports with descriptions.</p>
+</dd></dl>
+
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading">¶</a></h2>
+<section id="module-psyflow">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-psyflow" title="Link to this heading">¶</a></h2>
+<p>psyflow: A utility package for modular PsychoPy experiment development</p>
 </section>
 </section>
 
@@ -1095,7 +1264,17 @@ Handles pre/post callbacks and optional delay.</p>
         
         <div class="related-pages">
           
-          
+          <a class="prev-page" href="modules.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">psyflow</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -1128,7 +1307,24 @@ Handles pre/post callbacks and optional delay.</p>
             <ul>
 <li><a class="reference internal" href="#">psyflow package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#psyflow-blockunit-module">psyflow.BlockUnit module</a></li>
+<li><a class="reference internal" href="#module-psyflow.BlockUnit">psyflow.BlockUnit module</a><ul>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit"><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code></a><ul>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.add_trials"><code class="docutils literal notranslate"><span class="pre">BlockUnit.add_trials()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.assign_stimuli"><code class="docutils literal notranslate"><span class="pre">BlockUnit.assign_stimuli()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.generate_conditions"><code class="docutils literal notranslate"><span class="pre">BlockUnit.generate_conditions()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.generate_stim_sequence"><code class="docutils literal notranslate"><span class="pre">BlockUnit.generate_stim_sequence()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.logging_block_info"><code class="docutils literal notranslate"><span class="pre">BlockUnit.logging_block_info()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.on_end"><code class="docutils literal notranslate"><span class="pre">BlockUnit.on_end()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.on_start"><code class="docutils literal notranslate"><span class="pre">BlockUnit.on_start()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.run_trial"><code class="docutils literal notranslate"><span class="pre">BlockUnit.run_trial()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.summarize"><code class="docutils literal notranslate"><span class="pre">BlockUnit.summarize()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.to_dict"><code class="docutils literal notranslate"><span class="pre">BlockUnit.to_dict()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.assign_stimuli"><code class="docutils literal notranslate"><span class="pre">assign_stimuli()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.generate_balanced_conditions"><code class="docutils literal notranslate"><span class="pre">generate_balanced_conditions()</span></code></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-psyflow.StimBank">psyflow.StimBank module</a><ul>
 <li><a class="reference internal" href="#psyflow.StimBank.StimBank"><code class="docutils literal notranslate"><span class="pre">StimBank</span></code></a><ul>
 <li><a class="reference internal" href="#psyflow.StimBank.StimBank.add_from_dict"><code class="docutils literal notranslate"><span class="pre">StimBank.add_from_dict()</span></code></a></li>
@@ -1219,8 +1415,11 @@ Handles pre/post callbacks and optional delay.</p>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#psyflow-utils-module">psyflow.utils module</a></li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+<li><a class="reference internal" href="#module-psyflow.utils">psyflow.utils module</a><ul>
+<li><a class="reference internal" href="#psyflow.utils.show_ports"><code class="docutils literal notranslate"><span class="pre">show_ports()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-psyflow">Module contents</a></li>
 </ul>
 </li>
 </ul>
