@@ -31,7 +31,6 @@ Start with one of the tutorials below or explore the API reference.
    :maxdepth: 1
    :caption: Examples
 
-   examples/build_a_simple_task
    examples/example_mid
    examples/example_resting_state
    examples/example_sst
