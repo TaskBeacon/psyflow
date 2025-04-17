@@ -164,7 +164,7 @@ class TrialUnit:
         """
         Log the current state using PsychoPy's logging mechanism.
         """
-        logging.data(f"📋TrialUnit Data: {self.state}")
+        logging.data(f"[TrialUnit] Data: {self.state}")
 
 
     def on_start(self, func: Optional[Callable[['TrialUnit'], None]] = None):
@@ -593,7 +593,7 @@ class TrialUnit:
         msg = log_message or (
             "Experiment ended by key press." if terminate else f"Continuing after key '{key}'"
         )
-        logging.data(msg)
+        logging.data(f"[TrialUnit] wait_and_continue: {msg}")
         self.log_unit()
 
         if terminate:

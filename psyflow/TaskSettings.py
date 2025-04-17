@@ -4,6 +4,7 @@ from math import ceil
 import random
 import hashlib
 from datetime import datetime
+import os
 
 
 @dataclass
@@ -128,6 +129,10 @@ class TaskSettings:
     log_file: Optional[str] = None
     res_file: Optional[str] = None
 
+    # --- save path ---
+    save_path: Optional[str] = './data'
+    session_name: Optional[str] = None
+
     def __post_init__(self):
         self.trials_per_block = ceil(self.total_trials / self.total_blocks)
         if self.block_seed is None:
@@ -157,10 +162,22 @@ class TaskSettings:
             self.overall_seed = int(hashlib.sha256(str(subject_id).encode()).hexdigest(), 16) % (10**8)
             self.set_block_seed(self.overall_seed)
 
-        # Generate timestamped filenames
+        # Ensure save path exists
+        if self.save_path:
+            if not os.path.exists(self.save_path):
+                os.makedirs(self.save_path)
+                print(f"[INFO] Created output directory: {self.save_path}")
+            else:
+                print(f"[INFO] Output directory already exists: {self.save_path}")
+
+        # Create filenames
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        self.log_file = f"sub-{subject_id}_{timestamp}.log"
-        self.res_file = f"sub-{subject_id}_{timestamp}.csv"
+        if self.session_name:
+            basename = f"sub-{subject_id}_session_{self.session_name}_{timestamp}"
+        else:
+            basename = f"sub-{subject_id}_{timestamp}"
+        self.log_file = os.path.join(self.save_path, f"{basename}.log")
+        self.res_file = os.path.join(self.save_path, f"{basename}.csv")
 
     def __repr__(self):
         base = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}

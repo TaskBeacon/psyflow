@@ -165,7 +165,7 @@ class BlockUnit:
         - extra_args: Additional arguments to pass to each trial function.
         """
         self.meta['block_start_time'] = core.getAbsTime()
-        logging.exp(f"Starting BlockUnit: {self.block_id}")
+        self.logging_block_info()
 
         for hook in self._on_start:
             hook(self)
@@ -187,7 +187,7 @@ class BlockUnit:
 
         self.meta['block_end_time'] = core.getAbsTime()
         self.meta['duration'] = self.meta['block_end_time'] - self.meta['block_start_time']
-        logging.exp(f"Finished BlockUnit '{self.block_id}' in {self.meta['duration']:.2f}s")
+        logging.data(f"[BlockUnit] Finished '{self.block_id}' in {self.meta['duration']:.2f}s")
 
     def summarize(self, summary_func: Optional[Callable[['BlockUnit'], Dict[str, Any]]] = None) -> Dict[str, Any]:
         """
@@ -245,8 +245,11 @@ class BlockUnit:
         """
         Print a basic summary of the block’s condition distribution.
         """
-        cue_summary = {c: list(self.conditions).count(c) for c in set(self.conditions)} if self.conditions is not None else {}
-        print(f"🧱 BlockUnit '{self.block_id}' — {len(self.trials)} trials")
-        print(f"  Cue Distribution: {cue_summary}")
-        logging.exp(f"BlockUnit '{self.block_id}' — {len(self.trials)} trials - Discription: {cue_summary}")
+        condition_summary = {c: list(self.conditions).count(c) for c in set(self.conditions)} if self.conditions is not None else {}
+        logging.data(f"[BlockUnit] Blockid: {self.block_id}")
+        logging.data(f"[BlockUnit] Blockidx: {self.block_idx}")
+        logging.data(f"[BlockUnit] Blockseed: {self.seed}")
+        logging.data(f"[BlockUnit] Blocktrials: {len(self.trials)}")
+        logging.data(f"[BlockUnit] Blockdist: {condition_summary}")
+        logging.data(f"[BlockUnit] Blockconditions: {self.conditions}")
 

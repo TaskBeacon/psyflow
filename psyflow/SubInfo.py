@@ -68,6 +68,17 @@ class SubInfo:
             })
             if 'subject_id' not in self.field_map:
                 self.field_map['subject_id'] = 'Subject ID (3 digits)'
+        
+        
+
+        if not any(f['name'] == 'session_name' for f in self.fields):
+            print("[ParticipantInfoCollector] WARNING: 'session_name' field missing in config. Adding default.")
+            self.fields.insert(0, {
+                'name': 'session_name',
+                'type': 'str'  
+            })
+            if 'session_name' not in self.field_map:
+                self.field_map['session_name'] = 'Session Name'
        
 
     def _local(self, key: str):
