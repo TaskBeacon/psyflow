@@ -14,6 +14,7 @@ Welcome to psyflow’s documentation!
 - 🎯 Perfect for cognitive experiments in research
 
 Start with one of the tutorials below or explore the API reference.
+
 .. toctree::
    :maxdepth: 1
    :caption: Tutorials
@@ -30,15 +31,15 @@ Start with one of the tutorials below or explore the API reference.
    :maxdepth: 1
    :caption: Examples
 
-   examples/build_a_simple_task
    examples/example_mid
    examples/example_resting_state
+   examples/example_sst
 
 .. toctree::
    :maxdepth: 2
    :caption: API Reference
 
-   api/modules
+   modules
 
 
 Indices and tables
