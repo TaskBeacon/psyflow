@@ -436,10 +436,11 @@ class TrialUnit:
         self,
         keys: list[str],
         duration: float | list,
-        onset_trigger: int = 0,
-        response_trigger: int | dict[str, int] = 1,
-        timeout_trigger: int = 99,
-        frame_based: bool = True
+        onset_trigger: int = None,
+        response_trigger: int | dict[str, int] = None,
+        timeout_trigger: int = None,
+        frame_based: bool = True,
+        terminate_on_response: bool = True
     ) -> "TrialUnit":
         """
         Wait for a keypress or timeout. Supports both time-based and frame-based duration.
@@ -501,7 +502,8 @@ class TrialUnit:
                     self.send_trigger(response_trigger)
                     self.set_state(response_trigger=response_trigger)
                     responded = True
-                    break
+                    if terminate_on_response:
+                        break
         else:
 
             while not responded and self.clock.getTime() < t_val:
@@ -525,7 +527,8 @@ class TrialUnit:
                     self.send_trigger(response_trigger)
                     self.set_state(response_trigger=response_trigger)
                     responded = True
-                    break
+                    if terminate_on_response:
+                        break
 
 
         if not responded:
