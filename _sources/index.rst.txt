@@ -1,8 +1,8 @@
 
-.. image:: _static/logo.png
-   :alt: psyflow logo
-   :height: 100px
-   :align: center
+.. .. image:: _static/logo.png
+..    :alt: psyflow logo
+..    :height: 100px
+..    :align: center
 
 Welcome to psyflow’s documentation!
 ===================================
