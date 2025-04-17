@@ -1,0 +1,6 @@
+/* Resize sidebar logo */
+.sidebar-logo-container img {
+    max-height: 70px;  /* adjust as needed */
+    width: auto;
+    margin-bottom: 1em;
+}

@@ -48,10 +48,13 @@ source_suffix = {
 
 html_theme = "furo"
 html_static_path = ["_static"]
-html_logo = "_static/logo.png"
+# html_logo = "_static/logo.png"
 
 html_theme_options = {
     "sidebar_hide_name": False,
     "light_logo": "logo.png",  # used on white background
     "dark_logo": "logo.png",   # used on dark background
 }
+
+def setup(app):
+    app.add_css_file("siderbar_logo.css")
