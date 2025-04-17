@@ -44,6 +44,14 @@ psyflow.TrialUnit module
    :undoc-members:
    :show-inheritance:
 
+psyflow.TriggerBank module
+--------------------------
+
+.. automodule:: psyflow.TriggerBank
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 psyflow.TriggerSender module
 ----------------------------
 

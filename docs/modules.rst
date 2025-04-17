@@ -1,7 +1,16 @@
-psyflow
-=======
+API Reference
+=============
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
+   :caption: API Reference
 
-   psyflow
+   psyflow/BlockUnit
+   psyflow/TrialUnit
+   psyflow/StimBank
+   psyflow/SubInfo
+   psyflow/TriggerBank
+   psyflow/TriggerSender
+   psyflow/TaskSettings
+   psyflow/utils
+

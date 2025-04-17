@@ -52,9 +52,9 @@ html_static_path = ["_static"]
 
 html_theme_options = {
     "sidebar_hide_name": False,
-    "light_logo": "logo.png",  # used on white background
-    "dark_logo": "logo.png",   # used on dark background
+    "light_logo": "logo_white-removebg.png",  # used on white background
+    "dark_logo": "logo_black-removebg.png",   # used on dark background
 }
 
 def setup(app):
-    app.add_css_file("siderbar_logo.css")
+    app.add_css_file("logo_settings.css")
