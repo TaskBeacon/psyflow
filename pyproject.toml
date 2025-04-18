@@ -14,8 +14,7 @@ dependencies = [
     "numpy",
     "pandas",
 ]
+dynamic = ["entry-points"]
 
-[tool.poetry.include]
-"cookiecutter-psyflow/**" = {format = "glob"}
-[tool.poetry.scripts]
-psyflow-init = "psyflow.cli:main"
+[project.scripts]
+psyflow-init = "psyflow.cli:climain"

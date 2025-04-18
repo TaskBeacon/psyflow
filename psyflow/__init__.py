@@ -10,3 +10,4 @@ from .TrialUnit import TrialUnit
 from .TriggerBank import TriggerBank
 from .TriggerSender import TriggerSender
 from .utils import *
+from .cli import climain

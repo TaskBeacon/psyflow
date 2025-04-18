@@ -4,7 +4,7 @@ import importlib.resources as pkg_res
 
 @click.command()
 @click.argument("project_name")
-def main(project_name):
+def climain(project_name):
     # pkg_res.files("psyflow.templates") points at the 'templates/' package folder
     tmpl_dir = pkg_res.files("psyflow.templates") / "cookiecutter-psyflow"
     cookiecutter(
@@ -14,4 +14,4 @@ def main(project_name):
     )
 
 if __name__ == "__main__":
-    main()
+    climain()

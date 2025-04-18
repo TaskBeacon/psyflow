@@ -16,8 +16,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "psyflow-init = psyflow.cli:main",
-        ]
+            "psyflow-init = psyflow.cli:climain"],
     },
     include_package_data=True,
     package_data={
