@@ -272,7 +272,9 @@ class TrialUnit:
         return self.on_response(list(keys), close_fn)
 
 
-    def run(self, frame_based: bool = False) -> "TrialUnit":
+    def run(self, 
+            frame_based: bool = False,
+            terminate_on_response: bool = True) -> "TrialUnit":
         """
         Full logic loop for displaying stimulus, collecting response, handling timeout,
         and logging with precision timing.
@@ -281,6 +283,8 @@ class TrialUnit:
         -----------
         frame_based : bool
             Whether to use frame-counted duration instead of time-based duration.
+        terminate_on_response : bool
+            Whether to terminate the trial upon receiving a response.
         """
         self.set_state(global_time=core.getAbsTime())
 
@@ -290,15 +294,10 @@ class TrialUnit:
         # Initial flip with onset timestamp
         for stim in self.stimuli:
             stim.draw()
-        flip_time = self.win.flip()
-
-        self.set_state(
-            onset_time=self.clock.getTime(),
-            flip_time=flip_time,
-            onset_time_global=core.getAbsTime()
-        )
-
-        self.clock.reset()
+        
+        self.win.callOnFlip(self.set_state, onset_time=self.clock.getTime(),onset_time_global=core.getAbsTime())
+        self.win.callOnFlip(self.clock.reset)
+        self.win.flip()
         self.keyboard.clearEvents()
         responded = False
 
@@ -309,9 +308,10 @@ class TrialUnit:
             max_timeout = max((t for t, _ in self._hooks["timeout"]), default=5.0)
             n_frames = int(round(max_timeout / self.frame_time))
 
-            for _ in range(n_frames):
-                for stim in self.stimuli:
-                    stim.draw()
+            for _ in range(n_frames-1):
+                if not (responded and terminate_on_response):
+                    for stim in self.stimuli:
+                        stim.draw()
                 self.win.flip()
 
                 keys = self.keyboard.getKeys(keyList=all_keys, waitRelease=False)
@@ -321,9 +321,7 @@ class TrialUnit:
                         if key_name in valid_keys:
                             hook(self, key_name, key_rt)
                             responded = True
-                            break
-                    if responded:
-                        break
+
 
                 elapsed = self.clock.getTime()
                 for timeout_duration, timeout_hook in self._hooks["timeout"]:
@@ -336,14 +334,12 @@ class TrialUnit:
                         )
                         timeout_hook(self)
                         responded = True
-                        break
-                if responded:
-                    break
         else:
             # Time-based loop
-            while not responded:
-                for stim in self.stimuli:
-                    stim.draw()
+            while True:
+                if not (responded and self.terminate_on_response):
+                    for stim in self.stimuli:
+                        stim.draw()
                 self.win.flip()
 
                 keys = self.keyboard.getKeys(keyList=all_keys, waitRelease=False)
@@ -353,9 +349,7 @@ class TrialUnit:
                         if key_name in valid_keys:
                             hook(self, key_name, key_rt)
                             responded = True
-                            break
-                    if responded:
-                        break
+
 
                 elapsed = self.clock.getTime()
                 for timeout_duration, timeout_hook in self._hooks["timeout"]:
@@ -368,7 +362,6 @@ class TrialUnit:
                         )
                         timeout_hook(self)
                         responded = True
-                        break
 
         self.set_state(
             close_time=core.getTime(),
@@ -399,14 +392,14 @@ class TrialUnit:
         for stim in self.stimuli:
             stim.draw()
         self.win.callOnFlip(self.send_trigger, onset_trigger)
-        flip_time = self.win.flip(clearBuffer=True)  # clear to avoid flickering
+        self.win.callOnFlip(self.set_state, 
+                            onset_time=self.clock.getTime(), 
+                            onset_time_global=core.getAbsTime(),
+                            onset_trigger=onset_trigger)
+        flip_time = self.win.flip()  # clear to avoid flickering
 
         self.set_state(
-            onset_time=self.clock.getTime(),
-            flip_time=flip_time,
-            onset_time_global=core.getAbsTime(),
-            onset_trigger=onset_trigger,
-            duration = t_val
+            flip_time=flip_time
         )
 
         # --- Frame-based or precise timing ---
@@ -415,7 +408,7 @@ class TrialUnit:
 
         if frame_based:
             n_frames = int(round(t_val / self.frame_time))
-            for _ in range(n_frames):
+            for _ in range(n_frames-1):
                 for stim in self.stimuli:
                     stim.draw()
                 self.win.flip()
@@ -463,33 +456,34 @@ class TrialUnit:
         """
         local_rng = random.Random()
         t_val = local_rng.uniform(*duration) if isinstance(duration, list) else duration
-        self.set_state(duration=t_val,
-            onset_time=self.clock.getTime(),
-            onset_time_global=core.getAbsTime(),
-            onset_trigger=onset_trigger
-        )
+        self.set_state(duration=t_val)
 
         for stim in self.stimuli:
             stim.draw()
         self.win.callOnFlip(self.send_trigger, onset_trigger)
+        self.win.callOnFlip(self.set_state,
+                        onset_time=self.clock.getTime(), 
+                        onset_time_global=core.getAbsTime(),
+                        onset_trigger=onset_trigger)
         self.win.callOnFlip(self.clock.reset)
         self.keyboard.clearEvents()
         flip_time = self.win.flip()
-
         self.set_state(flip_time=flip_time)
       
         responded = False
 
         if frame_based:
             n_frames = int(round(t_val / self.frame_time))
-            for _ in range(n_frames):
-                for stim in self.stimuli:
-                    stim.draw()
+            for _ in range(n_frames-1):
+                # draw or blank?
+                if not (responded and terminate_on_response):
+                    for stim in self.stimuli:
+                        stim.draw()
                 self.win.flip()
 
                 keypress = self.keyboard.getKeys(keyList=keys, waitRelease=False)
                 if keypress:
-                    k= keypress[0].name
+                    k = keypress[0].name
                     rt = self.clock.getTime()
                     self.set_state(
                         hit=True, 
@@ -502,13 +496,13 @@ class TrialUnit:
                     self.send_trigger(response_trigger)
                     self.set_state(response_trigger=response_trigger)
                     responded = True
-                    if terminate_on_response:
-                        break
+
         else:
 
-            while not responded and self.clock.getTime() < t_val:
-                for stim in self.stimuli:
-                    stim.draw()
+            while self.clock.getTime() < t_val:
+                if not (responded and terminate_on_response):
+                    for stim in self.stimuli:
+                        stim.draw()
                 self.win.flip()
 
                 keypress = self.keyboard.getKeys(keyList=keys, waitRelease=False)
@@ -527,11 +521,9 @@ class TrialUnit:
                     self.send_trigger(response_trigger)
                     self.set_state(response_trigger=response_trigger)
                     responded = True
-                    if terminate_on_response:
-                        break
 
 
-        if not responded:
+        if not responded: 
             self.set_state(
                 hit=False, 
                 response=None, 
@@ -566,14 +558,15 @@ class TrialUnit:
         -------
         TrialUnit
         """
-        self.set_state(wait_keys=keys,
-                       onset_time=self.clock.getTime(),
-                        onset_time_global=core.getAbsTime())
+        self.set_state(wait_keys=keys)
 
         for stim in self.stimuli:
             stim.draw()
-        flip_time = self.win.flip()
+        self.win.callOnFlip(self.set_state, 
+                        onset_time=self.clock.getTime(), 
+                        onset_time_global=core.getAbsTime())
         self.win.callOnFlip(self.clock.reset)
+        flip_time = self.win.flip()
         self.keyboard.clearEvents()
         self.set_state(flip_time=flip_time)
         while True:
