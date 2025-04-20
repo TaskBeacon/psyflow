@@ -97,7 +97,8 @@ class StimBank:
 
         return TextStim(win=self.win, **copied_kwargs)
 
-    def rebuild(self, name: str, update_cache: bool = True, **overrides):
+    
+    def rebuild(self, name: str, update_cache: bool = False, **overrides):
         """
         Rebuild a stimulus with new parameters.
 

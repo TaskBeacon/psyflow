@@ -59,6 +59,7 @@ class TriggerSender:
         except Exception as e:
             logging.error(f"[Trigger] Failed to send trigger {code}: {e}")
         else:
+            print(f"[Trigger] Trigger sent: {code}")
             logging.data(f"[Trigger] Trigger sent: {code}")
 
         if self.post_delay:

@@ -435,6 +435,8 @@ class TrialUnit:
         frame_based: bool = True,
         terminate_on_response: bool = True,
         correct_keys: list[str] | None = None, 
+        highlight_stim: visual.BaseVisualStim | dict[str, visual.BaseVisualStim] = None,  
+        dynamic_highlight: bool = False,                                                  
     ) -> "TrialUnit":
         """
         Wait for a keypress or timeout. Supports both time-based and frame-based duration.
@@ -456,6 +458,11 @@ class TrialUnit:
             Whether to use frame counting instead of time-based control.
         correct_keys : list[str] | None
             If provided, only keys in this list count as hits.
+        highlight_stim : VisualStim or dict
+            If a single stim: draw it around whatever is chosen.
+            If a dict: maps key names -> highlight stimuli.
+        dynamic_highlight : bool
+            If True, allow multiple key presses and update the highlight each time.
         """
         # decide total duration
         local_rng = random.Random()
@@ -478,7 +485,10 @@ class TrialUnit:
          # if no correct_keys provided, any key in `keys` is valid
         if correct_keys is None:
             correct_keys = keys
+        elif isinstance(correct_keys, str):
+            correct_keys = [correct_keys]
         responded = False
+        chosen_key = None  # track which key to highlight
 
         if frame_based:
             n_frames = int(round(t_val / self.frame_time))
@@ -487,11 +497,19 @@ class TrialUnit:
                 if not (responded and terminate_on_response):
                     for stim in self.stimuli:
                         stim.draw()
+                # draw highlight if requested
+                if highlight_stim and (responded or dynamic_highlight):
+                    h = (highlight_stim.get(chosen_key)
+                        if isinstance(highlight_stim, dict)
+                        else highlight_stim)
+                    if h:
+                        h.draw()    
                 self.win.flip()
 
                 keypress = self.keyboard.getKeys(keyList=keys, waitRelease=False)
                 if keypress:
                     k = keypress[0].name
+                    chosen_key = k 
                     rt = self.clock.getTime()
                     self.set_state(
                         hit=k in correct_keys, 
@@ -515,11 +533,19 @@ class TrialUnit:
                 if not (responded and terminate_on_response):
                     for stim in self.stimuli:
                         stim.draw()
+                # draw highlight if requested
+                if highlight_stim and (responded or dynamic_highlight):
+                    h = (highlight_stim.get(chosen_key)
+                        if isinstance(highlight_stim, dict)
+                        else highlight_stim)
+                    if h:
+                        h.draw()
                 self.win.flip()
 
                 keypress = self.keyboard.getKeys(keyList=keys, waitRelease=False)
                 if keypress:
                     k = keypress[0].name
+                    chosen_key = k 
                     rt = self.clock.getTime()
                     self.set_state(
                         hit=k in correct_keys, 
