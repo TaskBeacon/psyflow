@@ -433,7 +433,8 @@ class TrialUnit:
         response_trigger: int | dict[str, int] = None,
         timeout_trigger: int = None,
         frame_based: bool = True,
-        terminate_on_response: bool = True
+        terminate_on_response: bool = True,
+        correct_keys: list[str] | None = None, 
     ) -> "TrialUnit":
         """
         Wait for a keypress or timeout. Supports both time-based and frame-based duration.
@@ -453,11 +454,15 @@ class TrialUnit:
             Trigger code for timeout.
         frame_based : bool
             Whether to use frame counting instead of time-based control.
+        correct_keys : list[str] | None
+            If provided, only keys in this list count as hits.
         """
+        # decide total duration
         local_rng = random.Random()
         t_val = local_rng.uniform(*duration) if isinstance(duration, list) else duration
         self.set_state(duration=t_val)
-
+        
+        # initial draw + trigger scheduling
         for stim in self.stimuli:
             stim.draw()
         self.win.callOnFlip(self.send_trigger, onset_trigger)
@@ -469,7 +474,10 @@ class TrialUnit:
         self.keyboard.clearEvents()
         flip_time = self.win.flip()
         self.set_state(flip_time=flip_time)
-      
+
+         # if no correct_keys provided, any key in `keys` is valid
+        if correct_keys is None:
+            correct_keys = keys
         responded = False
 
         if frame_based:
@@ -486,15 +494,19 @@ class TrialUnit:
                     k = keypress[0].name
                     rt = self.clock.getTime()
                     self.set_state(
-                        hit=True, 
+                        hit=k in correct_keys, 
+                        correct_keys=correct_keys,
                         response=k, 
+                        key_press=True,
                         rt=rt,
                         close_time=self.clock.getTime(),
                         close_time_global=core.getAbsTime()
                     )
-                    response_trigger = response_trigger.get(k, 1) if isinstance(response_trigger, dict) else response_trigger
-                    self.send_trigger(response_trigger)
-                    self.set_state(response_trigger=response_trigger)
+                    code = (response_trigger.get(k, 1)
+                        if isinstance(response_trigger, dict)
+                        else response_trigger)
+                    self.send_trigger(code)
+                    self.set_state(response_trigger=code)
                     responded = True
 
         else:
@@ -510,24 +522,30 @@ class TrialUnit:
                     k = keypress[0].name
                     rt = self.clock.getTime()
                     self.set_state(
-                        hit=True, 
+                        hit=k in correct_keys, 
+                        correct_keys=correct_keys,
                         response=k, 
+                        key_press=True,
                         rt=rt,
                         close_time=self.clock.getTime(),
                         close_time_global=core.getAbsTime()
                     )
 
-                    response_trigger = response_trigger.get(k, 1) if isinstance(response_trigger, dict) else response_trigger
-                    self.send_trigger(response_trigger)
-                    self.set_state(response_trigger=response_trigger)
+                    code = (response_trigger.get(k, 1)
+                        if isinstance(response_trigger, dict)
+                        else response_trigger)
+                    self.send_trigger(code)
+                    self.set_state(response_trigger=code)
                     responded = True
 
 
         if not responded: 
             self.set_state(
                 hit=False, 
+                correct_keys=correct_keys,
                 response=None, 
-                rt=0.0,
+                key_press=False,
+                rt=None,
                 close_time=self.clock.getTime(),
                 close_time_global=core.getAbsTime(),
                 timeout_trigger=timeout_trigger
