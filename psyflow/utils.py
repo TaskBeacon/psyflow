@@ -25,34 +25,63 @@ def generate_balanced_conditions(n_trials, condition_labels, seed=None):
     np.random.shuffle(conditions)
     return np.array(conditions)
 
+import numpy as np
+from typing import Any, Dict, List, Optional
+
 def assign_stimuli(
     conditions: np.ndarray,
     stim_map: Dict[str, Any],
-    components: List[str] = ("cue", "target", "feedback")
+    components: Optional[List[str]] = None
 ) -> np.ndarray:
     """
-    Assigns multiple stimuli per condition using a list of stimulus components.
+    Assign stimuli to each condition, in one of two modes:
 
-    Parameters:
-    - conditions: array of condition labels (e.g., ['win', 'lose', 'neut'])
-    - stim_map: dict of available stimuli, typically from stim_bank.get_group("...")
-    - components: list of stimulus types (prefixes), e.g., ['cue', 'target']
+    1) **Multi‑component mode** (when `components` is a list of prefixes):
+       Returns an array of dicts, each mapping component→stimulus, e.g.
+         [{'cue': cue_win, 'target': target_win}, {'cue': cue_lose, ...}, ...]
 
-    Returns:
-    - np.ndarray of dicts like {'cue': ..., 'target': ...}
+    2) **Single‑component mode** (when `components` is None or empty):
+       Returns a flat array of stimuli, each stim_map[condition].
+
+    Parameters
+    ----------
+    conditions : np.ndarray[str]
+        Array of condition labels, e.g. ['win','lose','neut',...]
+    stim_map : dict
+        If multi‑component mode: keys like 'cue_win','target_lose', etc.
+        If single‑component mode: keys equal to each condition.
+    components : list[str], optional
+        Prefixes for multi‑component mode, e.g. ['cue','target','feedback'].
+        If None or empty, single‑component mode is used.
+
+    Returns
+    -------
+    np.ndarray
+        - Multi‑component: dtype=object array of dicts
+        - Single‑component: dtype=object array of individual stimuli
     """
-    stim_seq = []
-    for cond in conditions:
-        stim_bundle = {}
-        for comp in components:
-            key = f"{comp}_{cond}"
-            if key in stim_map:
-                stim_bundle[comp] = stim_map[key]
-            else:
-                raise KeyError(f"Stimulus '{key}' not found in stim_map.")
-        stim_seq.append(stim_bundle)
+    if components:
+        # multi‑component mode
+        seq = []
+        for cond in conditions:
+            bundle = {}
+            for comp in components:
+                key = f"{comp}_{cond}"
+                if key not in stim_map:
+                    raise KeyError(f"Missing stimulus '{key}' in stim_map")
+                bundle[comp] = stim_map[key]
+            seq.append(bundle)
+        return np.array(seq, dtype=object)
 
-    return np.array(stim_seq, dtype=object)
+    else:
+        # single‑component mode
+        seq = []
+        for cond in conditions:
+            if cond not in stim_map:
+                raise KeyError(f"Condition '{cond}' not found in stim_map")
+            seq.append(stim_map[cond])
+        return np.array(seq, dtype=object)
+
 
 
 from cookiecutter.main import cookiecutter

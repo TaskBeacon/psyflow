@@ -50,8 +50,6 @@ class TaskSettings:
     total_trials : int
         Total number of trials across all blocks.
     
-    response_key : str
-        Default response key (e.g., 'space').
     key_list : list[str]
         Valid response keys for user input.
 
@@ -113,7 +111,6 @@ class TaskSettings:
     total_trials: int = 10
 
     # --- Response settings ---
-    response_key: str = 'space'
     key_list: List[str] = field(default_factory=lambda: ['space'])
 
     # --- Trial logic ---
