@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="content to be added" href="send_trigger.html" /><link rel="prev" title="📦 BlockUnit: Managing Experimental Blocks" href="build_blocks.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>content to be added - psyflow 0.1.0 documentation</title>
+        <title>🎨 StimBank: Flexible Stimulus Management for PsychoPy - psyflow 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -179,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -209,7 +209,7 @@
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">content to be added</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#setup-stimuli">3. setup stimuli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">content to be added</a></li>
 </ul>
@@ -258,14 +258,511 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="content-to-be-added">
-<h1>content to be added<a class="headerlink" href="#content-to-be-added" title="Link to this heading">¶</a></h1>
+          <section id="stimbank-flexible-stimulus-management-for-psychopy">
+<h1>🎨 StimBank: Flexible Stimulus Management for PsychoPy<a class="headerlink" href="#stimbank-flexible-stimulus-management-for-psychopy" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> is a hybrid registry system that allows you to manage PsychoPy stimuli using both decorators and YAML/dictionary specifications. It supports dynamic construction, formatting, lazy loading, previewing, and exporting of stimuli.</p>
+<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> offers a declarative and reusable way to manage visual components in your PsychoPy experiments. Whether you’re defining stimuli programmatically or loading them from config files, <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> gives you the tools to keep things modular, inspectable, and flexible.</p>
+<section id="summary-of-key-methods">
+<h2>🧵 Summary of Key Methods<a class="headerlink" href="#summary-of-key-methods" title="Link to this heading">¶</a></h2>
+<p>| Purpose                    | Method                        |
+||-|
+| Register (decorator)      | <code class="docutils literal notranslate"><span class="pre">&#64;stim_bank.define(name)</span></code>     |
+| Register (dict)           | <code class="docutils literal notranslate"><span class="pre">.add_from_dict()</span></code>            |
+| Get one stimulus          | <code class="docutils literal notranslate"><span class="pre">.get(name)</span></code>                  |
+| Get many (selected/group) | <code class="docutils literal notranslate"><span class="pre">.get_selected(keys)</span></code> / <code class="docutils literal notranslate"><span class="pre">.get_group(prefix)</span></code> |
+| Preview stimuli           | <code class="docutils literal notranslate"><span class="pre">.preview_all()</span></code> etc.         |
+| Format <code class="docutils literal notranslate"><span class="pre">TextStim</span></code>         | <code class="docutils literal notranslate"><span class="pre">.get_and_format(name,</span> <span class="pre">**kwargs)</span></code> |
+| Override stimulus         | <code class="docutils literal notranslate"><span class="pre">.rebuild(name,</span> <span class="pre">**kwargs)</span></code>    |
+| YAML export/import        | <code class="docutils literal notranslate"><span class="pre">.export_to_yaml()</span></code> / <code class="docutils literal notranslate"><span class="pre">add_from_dict()</span></code> |
+| Validate config           | <code class="docutils literal notranslate"><span class="pre">.validate_dict()</span></code>            |</p>
+</section>
+<section id="initialization">
+<h2>🛠 1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h2>
+<p>To begin, create a <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> instance with your PsychoPy window:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from your_package import StimBank
+
+stim_bank = StimBank(win)
+</pre></div>
+</div>
+</section>
+<section id="registering-stimuli-two-ways">
+<h2>🧾 2. Registering Stimuli (Two Ways)<a class="headerlink" href="#registering-stimuli-two-ways" title="Link to this heading">¶</a></h2>
+<section id="option-a-register-via-decorator">
+<h3>Option A: Register via Decorator<a class="headerlink" href="#option-a-register-via-decorator" title="Link to this heading">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">&#64;stim_bank.define(&quot;name&quot;)</span></code> to register a stimulus-generating function:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>@stim_bank.define(&quot;fixation&quot;)
+def make_fix(win):
+    return TextStim(win, text=&quot;+&quot;)
+
+@stim_bank.define(&quot;cue_circle&quot;)
+def make_cue(win):
+    return Circle(win, radius=1.0, fillColor=&#39;blue&#39;)
+</pre></div>
+</div>
+</section>
+<section id="option-b-register-via-dictionary">
+<h3>Option B: Register via Dictionary<a class="headerlink" href="#option-b-register-via-dictionary" title="Link to this heading">¶</a></h3>
+<p>You can also register multiple stimuli using <code class="docutils literal notranslate"><span class="pre">.add_from_dict()</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.add_from_dict({
+    &quot;my_text&quot;: {
+        &quot;type&quot;: &quot;text&quot;,
+        &quot;text&quot;: &quot;Hello!&quot;,
+        &quot;pos&quot;: [0, 0],
+        &quot;color&quot;: &quot;white&quot;
+    },
+    &quot;left_target&quot;: {
+        &quot;type&quot;: &quot;circle&quot;,
+        &quot;radius&quot;: 2,
+        &quot;pos&quot;: [-4, 0],
+        &quot;fillColor&quot;: &quot;red&quot;
+    }
+})
+</pre></div>
+</div>
+</section>
+</section>
+<section id="retrieving-stimuli">
+<h2>🧠 3. Retrieving Stimuli<a class="headerlink" href="#retrieving-stimuli" title="Link to this heading">¶</a></h2>
+<p>Get a single stimulus (instantiated lazily):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim = stim_bank.get(&quot;my_text&quot;)
+stim.draw()
+</pre></div>
+</div>
+<p>Get a group of stimuli by name or prefix:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.get_selected([&quot;my_text&quot;, &quot;left_target&quot;])
+stim_bank.get_group(&quot;cue_&quot;)  # e.g., all keys like &quot;cue_circle&quot;, &quot;cue_square&quot;
+</pre></div>
+</div>
+<p>List all available keys:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.keys()
+</pre></div>
+</div>
+<p>Check if a stimulus exists:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.has(&quot;fixation&quot;)  # returns True or False
+</pre></div>
+</div>
+</section>
+<section id="dynamic-text-formatting">
+<h2>🪄 4. Dynamic Text Formatting<a class="headerlink" href="#dynamic-text-formatting" title="Link to this heading">¶</a></h2>
+<p>If you registered a <code class="docutils literal notranslate"><span class="pre">TextStim</span></code>, you can format its contents dynamically,
+for example you used {username} as placeholder when defining the text:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim = stim_bank.get_and_format(&quot;my_text&quot;, username=&quot;Zhang&quot;)
+stim.draw()  # will show &quot;Hello, Zhang!&quot; if the text was &quot;Hello, {username}!&quot;
+</pre></div>
+</div>
+</section>
+<section id="rebuilding-or-overriding-stimuli">
+<h2>♻️ 5. Rebuilding or Overriding Stimuli<a class="headerlink" href="#rebuilding-or-overriding-stimuli" title="Link to this heading">¶</a></h2>
+<p>For other stimulus, you can rebuild them with new parameters, a good way to get rid of the <code class="docutils literal notranslate"><span class="pre">clone</span></code> or <code class="docutils literal notranslate"><span class="pre">deepcopy</span></code> that does not work for visual stimuli.</p>
+<p>Important note:</p>
+<ol class="arabic simple">
+<li><p>The rebuilding process will not update the original stimulus in the bank. It creates a new instance with the same properties, but you can specify new ones.</p></li>
+<li><p>It works for the class but not for the visual stimuli per se. stim_bank.get(‘some_stim”).rebuild() will give an error that <code class="docutils literal notranslate"><span class="pre">rebuild</span></code> is not a method of the visual stimuli.</p></li>
+</ol>
+<p>To get a fresh instance of a stimulus with new properties:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>new_stim = stim_bank.rebuild(&quot;left_target&quot;, radius=4, fillColor=&quot;green&quot;)
+</pre></div>
+</div>
+<p>Optionally, update the internal cache: (This will update the one saved in stim_bank)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.rebuild(&quot;left_target&quot;, update_cache=True, fillColor=&quot;green&quot;)
+</pre></div>
+</div>
+</section>
+<section id="previewing-stimuli">
+<h2>🧪 6. Previewing Stimuli<a class="headerlink" href="#previewing-stimuli" title="Link to this heading">¶</a></h2>
+<p>You can preview stimuli one by one:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.preview_all()
+</pre></div>
+</div>
+<p>Preview a specific group by name prefix:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.preview_group(&quot;cue_&quot;)
+</pre></div>
+</div>
+<p>Preview a selected list of keys:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.preview_selected([&quot;my_text&quot;, &quot;left_target&quot;])
+</pre></div>
+</div>
+</section>
+<section id="describing-parameters">
+<h2>📑 7. Describing Parameters<a class="headerlink" href="#describing-parameters" title="Link to this heading">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">describe(name)</span></code> to print all valid parameters for the stimulus type:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.describe(&quot;left_target&quot;)
+</pre></div>
+</div>
+<p>Output example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>🧾 Description of &#39;left_target&#39; (Circle)
+  - radius: required
+  - pos: default=(0, 0)
+  - fillColor: default=&#39;white&#39;
+</pre></div>
+</div>
+</section>
+<section id="yaml-export-and-import">
+<h2>🧯 8. YAML Export and Import<a class="headerlink" href="#yaml-export-and-import" title="Link to this heading">¶</a></h2>
+<p>Export all dictionary-based stimuli to YAML:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.export_to_yaml(&quot;my_stimuli.yaml&quot;)
+</pre></div>
+</div>
+<p>This includes only stimuli added via <code class="docutils literal notranslate"><span class="pre">add_from_dict()</span></code> or YAML — not decorators.</p>
+<p>You can later reload these using:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import yaml
+
+with open(&quot;my_stimuli.yaml&quot;, &quot;r&quot;) as f:
+    stim_dict = yaml.safe_load(f)
+
+stim_bank.add_from_dict(stim_dict)
+</pre></div>
+</div>
+</section>
+<section id="validating-definitions">
+<h2>✅ 9. Validating Definitions<a class="headerlink" href="#validating-definitions" title="Link to this heading">¶</a></h2>
+<p>Use <code class="docutils literal notranslate"><span class="pre">.validate_dict()</span></code> to check your dictionary for mistakes:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.validate_dict(stim_dict, strict=False)
+</pre></div>
+</div>
+<p>This prints warnings for unknown or missing arguments. Set <code class="docutils literal notranslate"><span class="pre">strict=True</span></code> to raise exceptions instead. When using add_from_dict() or YAML, it will validate the dictionary before adding it to the bank.</p>
+</section>
+<section id="realistic-examples">
+<h2>📚 10. Realistic Examples<a class="headerlink" href="#realistic-examples" title="Link to this heading">¶</a></h2>
+<section id="monetary-incentive-delay-task-mid-example">
+<h3>Monetary Incentive Delay Task (MID) example.<a class="headerlink" href="#monetary-incentive-delay-task-mid-example" title="Link to this heading">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># === Stimuli (for MID task) ===</span>
+<span class="nt">stimuli</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">fixation</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;+&quot;</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+
+<span class="w">  </span><span class="nt">win_cue</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">circle</span>
+<span class="w">    </span><span class="nt">radius</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">fillColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">magenta</span>
+<span class="w">    </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
+
+<span class="w">  </span><span class="nt">lose_cue</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rect</span>
+<span class="w">    </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span>
+<span class="w">    </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span>
+<span class="w">    </span><span class="nt">fillColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yellow</span>
+<span class="w">    </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
+
+<span class="w">  </span><span class="nt">neut_cue</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">polygon</span>
+<span class="w">    </span><span class="nt">edges</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span>
+<span class="w">    </span><span class="nt">fillColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cyan</span>
+<span class="w">    </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
+
+<span class="w">  </span><span class="nt">win_target</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">circle</span>
+<span class="w">    </span><span class="nt">radius</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">fillColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
+<span class="w">    </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
+
+<span class="w">  </span><span class="nt">lose_target</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rect</span>
+<span class="w">    </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span>
+<span class="w">    </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span>
+<span class="w">    </span><span class="nt">fillColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
+<span class="w">    </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
+
+<span class="w">  </span><span class="nt">neut_target</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">polygon</span>
+<span class="w">    </span><span class="nt">edges</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span>
+<span class="w">    </span><span class="nt">fillColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
+<span class="w">    </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
+
+<span class="w">  </span><span class="nt">win_hit_feedback</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;You</span><span class="nv"> </span><span class="s">earned</span><span class="nv"> </span><span class="s">10</span><span class="nv"> </span><span class="s">points!&quot;</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+
+<span class="w">  </span><span class="nt">win_miss_feedback</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;You</span><span class="nv"> </span><span class="s">earned</span><span class="nv"> </span><span class="s">0</span><span class="nv"> </span><span class="s">points.&quot;</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+
+<span class="w">  </span><span class="nt">lose_hit_feedback</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;You</span><span class="nv"> </span><span class="s">earned</span><span class="nv"> </span><span class="s">0</span><span class="nv"> </span><span class="s">points.&quot;</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+
+<span class="w">  </span><span class="nt">lose_miss_feedback</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;You</span><span class="nv"> </span><span class="s">earned</span><span class="nv"> </span><span class="s">-10</span><span class="nv"> </span><span class="s">points.&quot;</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+
+<span class="w">  </span><span class="nt">neut_hit_feedback</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;You</span><span class="nv"> </span><span class="s">earned</span><span class="nv"> </span><span class="s">0</span><span class="nv"> </span><span class="s">points.&quot;</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+
+<span class="w">  </span><span class="nt">neut_miss_feedback</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;You</span><span class="nv"> </span><span class="s">earned</span><span class="nv"> </span><span class="s">0</span><span class="nv"> </span><span class="s">points.&quot;</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+
+<span class="w">  </span>
+<span class="w">  </span><span class="nt">block_break</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">Take a break! </span>
+<span class="w">      </span><span class="no">When you are ready, press space to continue.</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+
+<span class="w">  </span><span class="nt">block_feedback</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">Block {block_num} of {total_blocks} completed. </span>
+<span class="w">      </span><span class="no">Accuaracy: {accuracy:.2f}</span>
+<span class="w">      </span><span class="no">Reward: {reward:.2f}</span>
+<span class="w">      </span><span class="no">Press space to continue.</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+
+<span class="w">  </span><span class="nt">instruction_text</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">In this task, you will see a series of cues and targets. </span>
+<span class="w">      </span><span class="no">Your task is to respond to the cues as quickly as possible. </span>
+<span class="w">      </span><span class="no">If you respond to a cue, you will earn 10 points. </span>
+<span class="w">      </span><span class="no">If you do not respond to a cue, you will earn 0 points. </span>
+<span class="w">      </span><span class="no">Press space to continue.</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+
+<span class="w">  </span><span class="nt">instruction_image1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./assets/instruction_iamge1.bmp</span>
+
+<span class="w">  </span><span class="nt">instruction_image2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">./assets/instruction_image2.bmp</span>
+
+<span class="w">  </span><span class="nt">good_bye</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">Thank you for participating!</span>
+<span class="w">      </span><span class="no">Your final reward is {reward:.2f}.</span>
+<span class="w">      </span><span class="no">Press space to exit.</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+</pre></div>
+</div>
+<p>As everything is almost static, we just need to load them to stim_bank.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 5. Setup stimulus bank</span>
+<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
+<span class="c1"># Preload all for safety</span>
+
+<span class="n">stim_config</span><span class="o">=</span><span class="p">{</span>
+    <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stimuli&#39;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="p">}</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">(</span><span class="n">stim_config</span><span class="p">)</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="probalistic-reversal-learning-task-example">
+<h3>Probalistic reversal learning task example.<a class="headerlink" href="#probalistic-reversal-learning-task-example" title="Link to this heading">¶</a></h3>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">stimuli</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">fixation</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;+&quot;</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+<span class="w">  </span>
+<span class="w">  </span><span class="nt">win_feedback</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;You</span><span class="nv"> </span><span class="s">won!&quot;</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">green</span>
+
+<span class="w">  </span><span class="nt">lose_feedback</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;You</span><span class="nv"> </span><span class="s">lost!&quot;</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">red</span>
+<span class="w">  </span>
+<span class="w">  </span><span class="nt">no_response_feedback</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;No</span><span class="nv"> </span><span class="s">response!&quot;</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yellow</span>
+
+<span class="w">  </span><span class="nt">stima</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">]</span>
+<span class="w">  </span>
+<span class="w">  </span><span class="nt">stimb</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">]</span>
+
+<span class="w">  </span><span class="nt">highlight_left</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rect</span>
+<span class="w">    </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;white&#39;</span>
+<span class="w">    </span><span class="nt">lineWidth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">pos</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-4</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-0.3</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+
+<span class="w">  </span><span class="nt">highlight_right</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rect</span>
+<span class="w">    </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;white&#39;</span>
+<span class="w">    </span><span class="nt">lineWidth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">pos</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">4</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-0.3</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">    </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+</pre></div>
+</div>
+<p>Each block we use a pair of images, so we need to load them in the loop.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;assets/*.png&quot;</span><span class="p">))</span>
+<span class="n">pairs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">files</span><span class="p">[::</span><span class="mi">2</span><span class="p">],</span> <span class="n">files</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]))</span>
+
+<span class="n">stim_config</span><span class="o">=</span><span class="p">{</span>
+    <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stimuli&#39;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="p">}</span>
+<span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">block_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">):</span>
+    <span class="n">stim_bank</span><span class="o">=</span><span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
+    <span class="n">stima_img</span><span class="p">,</span> <span class="n">stimb_img</span> <span class="o">=</span> <span class="n">pairs</span><span class="p">[</span><span class="n">block_i</span><span class="p">]</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">stim_config</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;stima&#39;</span><span class="p">][</span><span class="s1">&#39;image&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stima_img</span>
+    <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;stimb&#39;</span><span class="p">][</span><span class="s1">&#39;image&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">stimb_img</span>
+    <span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+    <span class="n">stim_bank</span><span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Then we will rebuild them based on the condition (this is in the <code class="docutils literal notranslate"><span class="pre">run_trial</span></code> function)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;AB&quot;</span><span class="p">:</span>
+        <span class="n">stima</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s1">&#39;stima&#39;</span><span class="p">,</span><span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">stimb</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s1">&#39;stimb&#39;</span><span class="p">,</span><span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;BA&quot;</span><span class="p">:</span>
+        <span class="n">stimb</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s1">&#39;stimb&#39;</span><span class="p">,</span><span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">stima</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s1">&#39;stima&#39;</span><span class="p">,</span><span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;cue&quot;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stima</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stimb</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="dealing-with-complicated-conditions-and-stimulus">
+<h3>😱Dealing with complicated conditions and stimulus<a class="headerlink" href="#dealing-with-complicated-conditions-and-stimulus" title="Link to this heading">¶</a></h3>
+<p>In the emotional dot probe tasks, we need to take the emotion, gender, location and probe location into account when setup the conditions. In the task, we have defined 20 conditons, and assigned relevant stimuli to them.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">assign_stim_from_condition</span><span class="p">(</span><span class="n">condition</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">asset_pool</span><span class="p">:</span> <span class="n">AssetPool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Assigns left/right faces to a given condition label using the AssetPool.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    -----------</span>
+<span class="sd">    condition : str</span>
+<span class="sd">        A condition label, e.g., &#39;PN_F_L&#39;, &#39;SN_M_R&#39;, etc.</span>
+<span class="sd">    asset_pool : AssetPool</span>
+<span class="sd">        An instance of the AssetPool class with loaded stimuli.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    --------</span>
+<span class="sd">    dict with keys: condition, left_stim, right_stim, target_position</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">emotion</span><span class="p">,</span> <span class="n">gender</span><span class="p">,</span> <span class="n">target</span> <span class="o">=</span> <span class="n">condition</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Map emotion code to left/right stimulus categories</span>
+    <span class="k">if</span> <span class="n">emotion</span> <span class="o">==</span> <span class="s1">&#39;PN&#39;</span><span class="p">:</span>
+        <span class="n">left_key</span><span class="p">,</span> <span class="n">right_key</span> <span class="o">=</span> <span class="s1">&#39;P_&#39;</span> <span class="o">+</span> <span class="n">gender</span><span class="p">,</span> <span class="s1">&#39;N_&#39;</span> <span class="o">+</span> <span class="n">gender</span>
+    <span class="k">elif</span> <span class="n">emotion</span> <span class="o">==</span> <span class="s1">&#39;NP&#39;</span><span class="p">:</span>
+        <span class="n">left_key</span><span class="p">,</span> <span class="n">right_key</span> <span class="o">=</span> <span class="s1">&#39;N_&#39;</span> <span class="o">+</span> <span class="n">gender</span><span class="p">,</span> <span class="s1">&#39;P_&#39;</span> <span class="o">+</span> <span class="n">gender</span>
+    <span class="k">elif</span> <span class="n">emotion</span> <span class="o">==</span> <span class="s1">&#39;SN&#39;</span><span class="p">:</span>
+        <span class="n">left_key</span><span class="p">,</span> <span class="n">right_key</span> <span class="o">=</span> <span class="s1">&#39;S_&#39;</span> <span class="o">+</span> <span class="n">gender</span><span class="p">,</span> <span class="s1">&#39;N_&#39;</span> <span class="o">+</span> <span class="n">gender</span>
+    <span class="k">elif</span> <span class="n">emotion</span> <span class="o">==</span> <span class="s1">&#39;NS&#39;</span><span class="p">:</span>
+        <span class="n">left_key</span><span class="p">,</span> <span class="n">right_key</span> <span class="o">=</span> <span class="s1">&#39;N_&#39;</span> <span class="o">+</span> <span class="n">gender</span><span class="p">,</span> <span class="s1">&#39;S_&#39;</span> <span class="o">+</span> <span class="n">gender</span>
+    <span class="k">elif</span> <span class="n">emotion</span> <span class="o">==</span> <span class="s1">&#39;NN&#39;</span><span class="p">:</span>
+        <span class="n">left_key</span> <span class="o">=</span> <span class="n">right_key</span> <span class="o">=</span> <span class="s1">&#39;N_&#39;</span> <span class="o">+</span> <span class="n">gender</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown emotion code: </span><span class="si">{</span><span class="n">emotion</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Draw from pool</span>
+    <span class="n">left_stim</span> <span class="o">=</span> <span class="n">asset_pool</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">left_key</span><span class="p">)</span>
+    <span class="n">right_stim</span> <span class="o">=</span> <span class="n">asset_pool</span><span class="o">.</span><span class="n">draw</span><span class="p">(</span><span class="n">right_key</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;condition&#39;</span><span class="p">:</span> <span class="n">condition</span><span class="p">,</span>
+        <span class="s1">&#39;left_stim&#39;</span><span class="p">:</span> <span class="n">left_stim</span><span class="p">,</span>
+        <span class="s1">&#39;right_stim&#39;</span><span class="p">:</span> <span class="n">right_stim</span><span class="p">,</span>
+        <span class="s1">&#39;target_position&#39;</span><span class="p">:</span> <span class="s1">&#39;left&#39;</span> <span class="k">if</span> <span class="n">target</span> <span class="o">==</span> <span class="s1">&#39;L&#39;</span> <span class="k">else</span> <span class="s1">&#39;right&#39;</span>
+    <span class="p">}</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AssetPool</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stim_list</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rng</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original</span> <span class="o">=</span> <span class="n">stim_list</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pool</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="p">[]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">stim_list</span><span class="p">}</span>  <span class="c1"># working pools start empty</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">draw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Draw one stimulus from the specified key pool.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">[</span><span class="n">key</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original</span><span class="p">[</span><span class="n">key</span><span class="p">][:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">defaultdict</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_stim_list_from_assets</span><span class="p">(</span><span class="n">asset_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;./assets&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="n">stim_list</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">asset_dir</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">file</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.bmp&#39;</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;HF&#39;</span><span class="p">):</span>
+                <span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;P_F&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;HM&#39;</span><span class="p">):</span>
+                <span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;P_M&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;NEF&#39;</span><span class="p">):</span>
+                <span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;N_F&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;NEM&#39;</span><span class="p">):</span>
+                <span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;N_M&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;SAF&#39;</span><span class="p">):</span>
+                <span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;S_F&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;SAM&#39;</span><span class="p">):</span>
+                <span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;S_M&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="n">stim_list</span><span class="p">)</span>
+<span class="c1"># Example usage:</span>
+
+<span class="n">stim_list</span> <span class="o">=</span> <span class="n">get_stim_list_from_assets</span><span class="p">(</span><span class="s1">&#39;./assets&#39;</span><span class="p">)</span>
+<span class="n">stim_pool</span> <span class="o">=</span> <span class="n">StimPool</span><span class="p">(</span><span class="n">stim_list</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="n">trial</span> <span class="o">=</span> <span class="n">assign_stim_from_condition</span><span class="p">(</span><span class="s1">&#39;PN_F_L&#39;</span><span class="p">,</span> <span class="n">stim_pool</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">trial</span><span class="p">)</span>
+<span class="c1"># {</span>
+<span class="c1">#   &#39;condition&#39;: &#39;PN_F_L&#39;,</span>
+<span class="c1">#   &#39;left_face&#39;: &#39;HF1.BMP&#39;,</span>
+<span class="c1">#   &#39;right_face&#39;: &#39;NEF3.BMP&#39;,</span>
+<span class="c1">#   &#39;probe_position&#39;: &#39;left&#39;</span>
+<span class="c1"># }</span>
+</pre></div>
+</div>
+<p>For use the of stim_bank, we can define include a placeholder stim in the stim_bank.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">stimuli</span><span class="p">:</span><span class="w">  </span>
+<span class="w">  </span><span class="nt">left_stim</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image</span>
+<span class="w">    </span><span class="nt">pos</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">-4.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">4.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">]</span>
+<span class="w">  </span>
+<span class="w">  </span><span class="nt">right_stim</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image</span>
+<span class="w">    </span><span class="nt">pos</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">4.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">4.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">5</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Then find out the left and right stimuli based on the condition and rebuild them.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trial_info</span> <span class="o">=</span> <span class="n">assign_stim_from_condition</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">asset_pool</span><span class="p">)</span>
+    <span class="n">left_stim</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s1">&#39;left_stim&#39;</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;assets&#39;</span><span class="p">,</span> <span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;left_stim&#39;</span><span class="p">]))</span>
+    <span class="n">right_stim</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s1">&#39;right_stim&#39;</span><span class="p">,</span> <span class="n">image</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;assets&#39;</span><span class="p">,</span> <span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;right_stim&#39;</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>So in this case, the stim_bank is more of the container for the placeholder stimuli.
+The way to assign stimuli and generate conditions is a core part of the experiment design.</p>
+</section>
+</section>
 </section>
 <section id="setup-stimuli">
 <h1>3. setup stimuli<a class="headerlink" href="#setup-stimuli" title="Link to this heading">¶</a></h1>
@@ -275,7 +772,7 @@
 
 <span class="c1"># Assuming </span>
 <span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
-<span class="c1"># --- Cue Stimuli ---</span>
+<span class="c1">#  Cue Stimuli </span>
 <span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;cue_win&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_cue_circle</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;magenta&quot;</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -288,7 +785,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">_cue_triangle</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
-<span class="c1"># --- Target Stimuli (Black) ---</span>
+<span class="c1">#  Target Stimuli (Black) </span>
 <span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;target_win&quot;</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_target_circle</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -367,8 +864,47 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a><ul>
+<li><a class="reference internal" href="#summary-of-key-methods">🧵 Summary of Key Methods</a></li>
+<li><a class="reference internal" href="#initialization">🛠 1. Initialization</a></li>
+<li><a class="reference internal" href="#registering-stimuli-two-ways">🧾 2. Registering Stimuli (Two Ways)</a><ul>
+<li><a class="reference internal" href="#option-a-register-via-decorator">Option A: Register via Decorator</a></li>
+<li><a class="reference internal" href="#option-b-register-via-dictionary">Option B: Register via Dictionary</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#retrieving-stimuli">🧠 3. Retrieving Stimuli</a></li>
+<li><a class="reference internal" href="#dynamic-text-formatting">🪄 4. Dynamic Text Formatting</a></li>
+<li><a class="reference internal" href="#rebuilding-or-overriding-stimuli">♻️ 5. Rebuilding or Overriding Stimuli</a></li>
+<li><a class="reference internal" href="#previewing-stimuli">🧪 6. Previewing Stimuli</a></li>
+<li><a class="reference internal" href="#describing-parameters">📑 7. Describing Parameters</a></li>
+<li><a class="reference internal" href="#yaml-export-and-import">🧯 8. YAML Export and Import</a></li>
+<li><a class="reference internal" href="#validating-definitions">✅ 9. Validating Definitions</a></li>
+<li><a class="reference internal" href="#realistic-examples">📚 10. Realistic Examples</a><ul>
+<li><a class="reference internal" href="#monetary-incentive-delay-task-mid-example">Monetary Incentive Delay Task (MID) example.</a></li>
+<li><a class="reference internal" href="#probalistic-reversal-learning-task-example">Probalistic reversal learning task example.</a></li>
+<li><a class="reference internal" href="#dealing-with-complicated-conditions-and-stimulus">😱Dealing with complicated conditions and stimulus</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#setup-stimuli">3. setup stimuli</a></li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

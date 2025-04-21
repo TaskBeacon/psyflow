@@ -209,7 +209,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/get_subinfo.html">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/task_settings.html">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html#setup-stimuli">3. setup stimuli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">content to be added</a></li>
 </ul>
@@ -401,21 +401,20 @@ executing lifecycle hooks, and collecting trial-level results.</p>
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.StimBank.</span></span><span class="sig-name descname"><span class="pre">StimBank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A hybrid stimulus registry system for PsychoPy.</p>
-<p>Allows users to:
-- Register stimuli manually via decorators (&#64;registry.define(“name”))
-- Load stimulus definitions from YAML configuration
-- Preload (instantiate) all stimuli at once
-- Retrieve, preview, or rebuild individual or grouped stimuli</p>
+<p>A hybrid stimulus management system for PsychoPy experiments.</p>
+<p><cite>StimBank</cite> supports:
+- Manual registration of stimuli via decorators (&#64;registry.define(“name”))
+- Loading stimuli from YAML or Python dictionaries
+- Centralized retrieval, lazy instantiation, and batch preview</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.add_from_dict">
 <span class="sig-name descname"><span class="pre">add_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">named_specs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.add_from_dict" title="Link to this definition">¶</a></dt>
-<dd><p>Add stimulus definitions from a dictionary.</p>
+<dd><p>Add stimuli from a dictionary or keyword-based specifications.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>named_specs</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary of stimulus definitions.</p></li>
-<li><p><strong>kwargs</strong> – Alternatively, pass stimulus definitions as keyword arguments.</p></li>
+<li><p><strong>named_specs</strong> (<em>dict</em><em>, </em><em>optional</em>) – Dictionary where keys are stimulus names and values are stimulus specs.</p></li>
+<li><p><strong>kwargs</strong> (<em>dict</em>) – Additional stimuli as keyword-based name=spec entries.</p></li>
 </ul>
 </dd>
 </dl>
@@ -424,46 +423,87 @@ executing lifecycle hooks, and collecting trial-level results.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.build_all">
 <span class="sig-name descname"><span class="pre">build_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.build_all" title="Link to this definition">¶</a></dt>
-<dd><p>Instantiate all registered stimuli.</p>
+<dd><p>Instantiate all registered stimuli and cache them internally.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.define">
 <span class="sig-name descname"><span class="pre">define</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.define" title="Link to this definition">¶</a></dt>
-<dd><p>Register a stimulus using a decorator.</p>
-<p>Example:
-&gt;&gt;&gt; &#64;registry.define(“fix”)
-&gt;&gt;&gt; def make_fix(win):
-&gt;&gt;&gt;     return TextStim(win, text=”+”)</p>
+<dd><p>Register a stimulus generator function using a decorator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name to register the stimulus under.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A decorator to wrap the stimulus function.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.describe">
 <span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.describe" title="Link to this definition">¶</a></dt>
-<dd><p>Print the accepted and required arguments for the given stimulus type.</p>
+<dd><p>Print accepted arguments for a registered stimulus.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Name of the stimulus to describe.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.export_to_yaml">
 <span class="sig-name descname"><span class="pre">export_to_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.export_to_yaml" title="Link to this definition">¶</a></dt>
-<dd><p>Save all YAML-defined stimuli to a file (if originally loaded from YAML).
-Does NOT include &#64;define-registered stimuli.</p>
+<dd><p>Export YAML-defined stimuli (but not decorator-defined) to file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<em>str</em>) – Path to save the YAML file.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.get" title="Link to this definition">¶</a></dt>
-<dd><p>Return an instantiated stimulus (lazy-loaded if needed).</p>
+<dd><p>Get a stimulus by name, instantiating it if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – Registered stimulus name.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Instantiated PsychoPy stimulus object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>KeyError</strong> – If the stimulus is not registered.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.get_and_format">
 <span class="sig-name descname"><span class="pre">get_and_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">format_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.get_and_format" title="Link to this definition">¶</a></dt>
-<dd><p>Return a fresh TextStim with formatted text.
-All other attributes are copied from the original.</p>
+<dd><p>Return a fresh TextStim with formatted text, keeping other properties unchanged.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the registered TextStim.</p></li>
+<li><p><strong>**format_kwargs</strong> – Formatting variables to apply to the <cite>text</cite> field.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new TextStim object with formatted content.</p>
+</dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">TextStim</span></code></span></p>
+<dd class="field-odd"><p>TextStim</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the stimulus is not a TextStim.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -471,10 +511,16 @@ All other attributes are copied from the original.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.get_group">
 <span class="sig-name descname"><span class="pre">get_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.get_group" title="Link to this definition">¶</a></dt>
-<dd><p>Get all stimuli starting with a prefix as a dictionary.</p>
+<dd><p>Retrieve a dictionary of stimuli whose names start with a given prefix.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>prefix</strong> (<em>str</em>) – Common prefix to match.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of {name: stimulus} pairs.</p>
+</dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -482,10 +528,16 @@ All other attributes are copied from the original.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.get_selected">
 <span class="sig-name descname"><span class="pre">get_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.get_selected" title="Link to this definition">¶</a></dt>
-<dd><p>Get a selected list of stimuli by name as a dictionary.</p>
+<dd><p>Retrieve a subset of named stimuli.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>keys</strong> (<em>list</em><em> of </em><em>str</em>) – List of stimulus names to retrieve.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A dictionary of {name: stimulus} pairs.</p>
+</dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
+<dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -493,10 +545,13 @@ All other attributes are copied from the original.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.has">
 <span class="sig-name descname"><span class="pre">has</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.has" title="Link to this definition">¶</a></dt>
-<dd><p>Check whether a stimulus is registered (defined).</p>
+<dd><p>Check whether a stimulus is registered.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -504,64 +559,113 @@ All other attributes are copied from the original.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.keys">
 <span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.keys" title="Link to this definition">¶</a></dt>
-<dd><p>Return a list of all registered stimulus keys.</p>
+<dd><p>List all registered stimulus names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.make_factory">
 <span class="sig-name descname"><span class="pre">make_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.make_factory" title="Link to this definition">¶</a></dt>
-<dd><p>Create a stimulus factory with support for dynamic overrides at call time.</p>
-<p>Parameters:
-- cls: the PsychoPy stimulus class (e.g., TextStim, Circle)
-- base_kwargs: default arguments to use
-- name: for error messages</p>
-<p>Returns:
-- a callable factory(win, <a href="#id3"><span class="problematic" id="id4">**</span></a>overrides)</p>
+<dd><p>Create a factory function for a given stimulus class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cls</strong> (<em>type</em>) – PsychoPy stimulus class (e.g., TextStim).</p></li>
+<li><p><strong>base_kwargs</strong> (<em>dict</em>) – Default keyword arguments.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Stimulus name (used for error messages).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A factory function that accepts (win, <a href="#id3"><span class="problematic" id="id4">**</span></a>overrides)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.preload_all">
 <span class="sig-name descname"><span class="pre">preload_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.preload_all" title="Link to this definition">¶</a></dt>
-<dd><p>Alias for build_all(). Intention is clearer for experiment setup.</p>
+<dd><p>Alias for <cite>build_all()</cite>, used to clarify preload intent in experiment setup.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.preview_all">
 <span class="sig-name descname"><span class="pre">preview_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.preview_all" title="Link to this definition">¶</a></dt>
-<dd><p>Preview all registered stimuli.</p>
+<dd><p>Preview all registered stimuli one by one.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>wait_keys</strong> (<em>bool</em>) – Wait for key press after last stimulus.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.preview_group">
 <span class="sig-name descname"><span class="pre">preview_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.preview_group" title="Link to this definition">¶</a></dt>
-<dd><p>Preview stimuli whose names start with a prefix.</p>
+<dd><p>Preview all stimuli that match a name prefix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prefix</strong> (<em>str</em>) – Prefix string to filter stimuli.</p></li>
+<li><p><strong>wait_keys</strong> (<em>bool</em>) – Wait for key press after final stimulus.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.preview_selected">
 <span class="sig-name descname"><span class="pre">preview_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.preview_selected" title="Link to this definition">¶</a></dt>
-<dd><p>Preview a selected list of stimuli by name.</p>
+<dd><p>Preview selected stimuli by name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>keys</strong> (<em>list</em><em> of </em><em>str</em>) – Stimulus names to preview.</p></li>
+<li><p><strong>wait_keys</strong> (<em>bool</em>) – Wait for key press after final stimulus.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.rebuild">
 <span class="sig-name descname"><span class="pre">rebuild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">overrides</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.rebuild" title="Link to this definition">¶</a></dt>
-<dd><p>Rebuild a stimulus with new parameters.</p>
-<p>Parameters:
-- name: stimulus name
-- update_cache: if True, replace the cached instance with the rebuilt one
-- <a href="#id5"><span class="problematic" id="id6">**</span></a>overrides: keyword arguments to override default parameters</p>
-<p>Returns:
-- The new stimulus instance</p>
+<dd><p>Rebuild a stimulus with optional updated parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Registered stimulus name.</p></li>
+<li><p><strong>update_cache</strong> (<em>bool</em>) – Whether to overwrite the existing cached version.</p></li>
+<li><p><strong>**overrides</strong> (<em>dict</em>) – New keyword arguments to override the original parameters.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A fresh stimulus object.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.validate_dict">
 <span class="sig-name descname"><span class="pre">validate_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.validate_dict" title="Link to this definition">¶</a></dt>
-<dd><p>Validate a dictionary of stimulus definitions for compatibility.</p>
-<p>Parameters:
-- config: dictionary containing stimulus definitions
-- strict: if True, raises ValueError on issues (default: False = just print warnings)</p>
+<dd><p>Validate a dictionary of stimulus definitions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>dict</em>) – Dictionary of stimulus specs.</p></li>
+<li><p><strong>strict</strong> (<em>bool</em>) – If True, raise errors; otherwise print warnings only.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -924,8 +1028,8 @@ applying known fields and promoting extras to instance attributes.</p>
 <p>A modular trial unit for PsychoPy-based experiments. Designed to encapsulate
 stimulus presentation, response handling, event triggers, and lifecycle hooks
 with flexible timing control.</p>
-<section id="id7">
-<h3>Features<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<section id="id5">
+<h3>Features<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Add multiple visual stimuli and manage them as a group.</p></li>
 <li><p>Register event hooks for start, response, timeout, and end stages.</p></li>
@@ -1128,8 +1232,8 @@ and logging with precision timing.</p>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit" title="psyflow.TrialUnit.TrialUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrialUnit</span></code></a></span></p>
 </dd>
 </dl>
-<section id="id8">
-<h4>Parameters:<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h4>
+<section id="id6">
+<h4>Parameters:<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>frame_based<span class="classifier">bool</span></dt><dd><p>Whether to use frame-counted duration instead of time-based duration.</p>
 </dd>
