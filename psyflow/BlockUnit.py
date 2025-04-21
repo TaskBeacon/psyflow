@@ -2,26 +2,13 @@ import numpy as np
 from typing import Callable, Any, List, Dict, Optional
 from psychopy import core, logging
 
+
 class BlockUnit:
     """
-    A block container for trial‐condition execution and management.
-    
-    Only generates a sequence of conditions and runs a trial function on each.
-    
-    :param block_id: Unique identifier for the block.
-    :type block_id: str
-    :param block_idx: Index of this block within the experiment.
-    :type block_idx: int
-    :param settings: Experiment‐level settings (must have `.trials_per_block` and `.block_seed`).
-    :type settings: dict
-    :param window: PsychoPy Window instance.
-    :type window: Any
-    :param keyboard: PsychoPy Keyboard instance.
-    :type keyboard: Any
-    :param seed: Random seed for reproducibility (overrides `settings.block_seed`).
-    :type seed: Optional[int]
-    :param n_trials: Number of trials in this block (overrides `settings.trials_per_block`).
-    :type n_trials: Optional[int]
+    A container that manages a block of experimental trials.
+
+    BlockUnit is responsible for generating trial conditions, running trials, 
+    executing lifecycle hooks, and collecting trial-level results.
     """
 
     def __init__(
@@ -34,6 +21,26 @@ class BlockUnit:
         seed: Optional[int] = None,
         n_trials: Optional[int] = None
     ):
+        """
+        Initialize a BlockUnit.
+
+        Parameters
+        ----------
+        block_id : str
+            Unique identifier for the block.
+        block_idx : int
+            Index of this block in the experiment.
+        settings : dict
+            Experiment-level settings; must include `trials_per_block` and `block_seed`.
+        window : Any, optional
+            PsychoPy window object.
+        keyboard : Any, optional
+            PsychoPy keyboard object.
+        seed : int, optional
+            Random seed (overrides `settings.block_seed`).
+        n_trials : int, optional
+            Number of trials (overrides `settings.trials_per_block`).
+        """
         self.block_id = block_id
         self.block_idx = block_idx
         self.n_trials = getattr(settings, "trials_per_block", 50) if n_trials is None else n_trials
@@ -51,10 +58,6 @@ class BlockUnit:
         self._on_start: List[Callable[['BlockUnit'], None]] = []
         self._on_end: List[Callable[['BlockUnit'], None]] = []
 
-    # ----------------------------
-    # Chainable Setup
-    # ----------------------------
-
     def generate_conditions(
         self,
         func: Callable[[int, List[str], Optional[int]], np.ndarray],
@@ -62,18 +65,21 @@ class BlockUnit:
         condition_labels: Optional[List[str]] = None
     ) -> "BlockUnit":
         """
-        Generate trial conditions using a user‐defined function.
-        
-        :param func: Callable that returns an array of labels for each trial.
-                     Signature: func(n_trials, labels, seed) -> np.ndarray
-        :type func: Callable[[int, List[str], Optional[int]], np.ndarray]
-        :param n_trials: Number of trials to generate (default: self.n_trials).
-        :type n_trials: Optional[int]
-        :param condition_labels: List of possible condition labels
-                                 (default: settings.conditions or ["A","B","C"]).
-        :type condition_labels: Optional[List[str]]
-        :returns: Self, to allow chaining.
-        :rtype: BlockUnit
+        Generate trial conditions using a user-defined function.
+
+        Parameters
+        ----------
+        func : Callable
+            Function to generate conditions. Signature: (n_trials, labels, seed) -> np.ndarray.
+        n_trials : int, optional
+            Number of trials. Defaults to `self.n_trials`.
+        condition_labels : list of str, optional
+            List of possible condition labels. Defaults to `settings.conditions`.
+
+        Returns
+        -------
+        BlockUnit
+            The same instance for method chaining.
         """
         n = n_trials or self.n_trials
         labels = condition_labels or getattr(self.settings, "conditions", ["A", "B", "C"])
@@ -83,66 +89,65 @@ class BlockUnit:
 
     def add_trials(self, trial_list: List[Any]) -> "BlockUnit":
         """
-        Manually assign a list of condition labels as trials.
-        
-        :param trial_list: A list of condition labels.
-        :type trial_list: List[Any]
-        :returns: Self, to allow chaining.
-        :rtype: BlockUnit
+        Manually set the trial list.
+
+        Parameters
+        ----------
+        trial_list : list
+            A list of trial condition labels.
+
+        Returns
+        -------
+        BlockUnit
+            The same instance for method chaining.
         """
         self.trials = trial_list
         return self
 
-    # ----------------------------
-    # Hooks
-    # ----------------------------
-
     def on_start(self, func: Optional[Callable[['BlockUnit'], None]] = None):
         """
-        Register a function to be called once at block start.
-        
-        :param func: A callable that takes this BlockUnit.
-        :type func: Callable[[BlockUnit], None]
+        Register a function to run at the start of the block.
+
+        Parameters
+        ----------
+        func : Callable, optional
+            A function that takes the BlockUnit as input.
         """
         if func is None:
             def decorator(f):
                 self._on_start.append(f)
                 return self
             return decorator
-        else:
-            self._on_start.append(func)
-            return self
+        self._on_start.append(func)
+        return self
 
     def on_end(self, func: Optional[Callable[['BlockUnit'], None]] = None):
         """
-        Register a function to be called once at block end.
-        
-        :param func: A callable that takes this BlockUnit.
-        :type func: Callable[[BlockUnit], None]
+        Register a function to run at the end of the block.
+
+        Parameters
+        ----------
+        func : Callable, optional
+            A function that takes the BlockUnit as input.
         """
         if func is None:
             def decorator(f):
                 self._on_end.append(f)
                 return self
             return decorator
-        else:
-            self._on_end.append(func)
-            return self
-
-    # ----------------------------
-    # Core Execution
-    # ----------------------------
+        self._on_end.append(func)
+        return self
 
     def run_trial(self, run_trial_func: Callable, **extra_args):
         """
-        Execute all trials using the provided trial function.
-        
-        The trial function must accept:
-          (win, kb, settings, condition, **extra_args) -> dict
-        
-        :param run_trial_func: Function to run each trial.
-        :type run_trial_func: Callable[..., dict]
-        :param extra_args: Additional keyword arguments passed to the trial function.
+        Run all trials using a specified trial function.
+
+        Parameters
+        ----------
+        run_trial_func : Callable
+            Function to run each trial. Must accept (win, kb, settings, condition, **extra_args).
+        extra_args : dict
+            Additional arguments passed to the trial function.
         """
         self.meta['block_start_time'] = core.getAbsTime()
         self.logging_block_info()
@@ -151,13 +156,7 @@ class BlockUnit:
             hook(self)
 
         for i, cond in enumerate(self.trials):
-            result = run_trial_func(
-                self.win,
-                self.kb,
-                self.settings,
-                cond,
-                **extra_args
-            )
+            result = run_trial_func(self.win, self.kb, self.settings, cond, **extra_args)
             result.update({
                 "trial_index": i,
                 "block_id": self.block_id,
@@ -174,40 +173,47 @@ class BlockUnit:
 
     def summarize(self, summary_func: Optional[Callable[['BlockUnit'], Dict[str, Any]]] = None) -> Dict[str, Any]:
         """
-        Summarize results after block completion.
-        
-        Default summary: computes hit rate and average RT per condition.
-        
-        :param summary_func: Custom summary function taking BlockUnit and returning a dict.
-        :type summary_func: Optional[Callable[[BlockUnit], Dict[str, Any]]]
-        :returns: Summary dictionary stored in self.meta["summary"].
-        :rtype: Dict[str, Any]
+        Summarize trial results.
+
+        Parameters
+        ----------
+        summary_func : Callable, optional
+            Custom summary function. If None, hit rate and RT by condition are computed.
+
+        Returns
+        -------
+        dict
+            Summary results.
         """
         if summary_func:
             summary = summary_func(self)
         else:
             results = self.to_dict()
             conds = set(r["condition"] for r in results)
-            summary = {}
-            for cond in conds:
-                subset = [r for r in results if r["condition"] == cond]
-                hit_vals = [r.get("target_hit", 0) for r in subset]
-                rt_vals = [r.get("target_rt") for r in subset if r.get("target_rt") is not None]
-                summary[cond] = {
-                    "hit_rate": np.mean(hit_vals),
-                    "avg_rt": np.mean(rt_vals) if rt_vals else None
+            summary = {
+                cond: {
+                    "hit_rate": np.mean([r.get("target_hit", 0) for r in subset]),
+                    "avg_rt": np.mean([r.get("target_rt") for r in subset if r.get("target_rt") is not None])
                 }
+                for cond in conds
+                if (subset := [r for r in results if r["condition"] == cond])
+            }
         self.meta["summary"] = summary
         return summary
 
     def to_dict(self, target: Optional[List[Dict[str, Any]]] = None) -> List[Dict[str, Any]]:
         """
-        Return or append trial result dictionaries.
-        
-        :param target: Optional list to extend with results.
-        :type target: Optional[List[Dict[str, Any]]]
-        :returns: List of result dicts.
-        :rtype: List[Dict[str, Any]]
+        Return or append trial results.
+
+        Parameters
+        ----------
+        target : list of dict, optional
+            A list to append trial results to.
+
+        Returns
+        -------
+        list of dict
+            Trial result dictionaries.
         """
         if target is not None:
             target.extend(self.results)
@@ -216,16 +222,19 @@ class BlockUnit:
 
     def __len__(self) -> int:
         """
-        :returns: Number of trials in the block.
-        :rtype: int
+        Return the number of trials in the block.
+
+        Returns
+        -------
+        int
         """
         return len(self.trials)
 
     def logging_block_info(self):
         """
-        Log basic block information: ID, idx, seed, trial count, condition distribution.
+        Log block metadata including ID, index, seed, trial count, and condition distribution.
         """
-        dist = {c: list(self.trials).count(c) for c in set(self.trials)} if self.trials else {}
+        dist = {c: self.trials.count(c) for c in set(self.trials)} if self.trials else {}
         logging.data(f"[BlockUnit] Blockid: {self.block_id}")
         logging.data(f"[BlockUnit] Blockidx: {self.block_idx}")
         logging.data(f"[BlockUnit] Blockseed: {self.seed}")
