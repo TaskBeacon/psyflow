@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="📦 BlockUnit: Managing Experimental Blocks" href="build_blocks.html" /><link rel="prev" title="content to be added" href="get_subinfo.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="📦 BlockUnit: Managing Experimental Blocks" href="build_blocks.html" /><link rel="prev" title="🧾 SubInfo: Participant Information Collector" href="get_subinfo.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>content to be added - psyflow 0.1.0 documentation</title>
+        <title>⚙️ TaskSettings: Managing Experimental Configuration - psyflow 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -179,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -205,19 +205,13 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="getting_started.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">content to be added</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">🏁 Getting Started with psyflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html#setup-stimuli">3. setup stimuli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">content to be added</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_mid.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_resting_state.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_sst.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_trialunit.html">🎯 TrialUnit: Modular Trial Controller for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -258,14 +252,144 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="content-to-be-added">
-<h1>content to be added<a class="headerlink" href="#content-to-be-added" title="Link to this heading">¶</a></h1>
+          <section id="tasksettings-managing-experimental-configuration">
+<h1>⚙️ TaskSettings: Managing Experimental Configuration<a class="headerlink" href="#tasksettings-managing-experimental-configuration" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> is a configuration class that manages the structure, appearance, and subject-specific settings for your PsychoPy experiment.</p>
+<section id="summary-of-key-methods">
+<h2>🧵 Summary of Key Methods<a class="headerlink" href="#summary-of-key-methods" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Purpose</p></th>
+<th class="head"><p>Method</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Load from dictionary</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TaskSettings.from_dict()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Add subject info and file paths</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.add_subinfo(subinfo)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Generate per-block seeds</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.set_block_seed(seed_base)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Get number of trials per block</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.trials_per_block</span></code> (property)</p></td>
+</tr>
+<tr class="row-even"><td><p>Access paths or filenames</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.log_file</span></code>, <code class="docutils literal notranslate"><span class="pre">.res_file</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Extend settings dynamically</p></td>
+<td><p>attach extra keys after <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>It is ideal for:</p>
+<ul class="simple">
+<li><p>Managing task design parameters</p></li>
+<li><p>Setting seeds and condition lists</p></li>
+<li><p>Generating per-subject output filenames</p></li>
+<li><p>Loading configuration from YAML or flat dictionaries</p></li>
+</ul>
+</section>
+<section id="creating-settings-from-config">
+<h2>1. Creating Settings from Config<a class="headerlink" href="#creating-settings-from-config" title="Link to this heading">¶</a></h2>
+<p>You can create a <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> object from a dictionary or YAML config.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>config = {
+    &quot;total_blocks&quot;: 2,
+    &quot;total_trials&quot;: 30,
+    &quot;seed_mode&quot;: &quot;same_within_sub&quot;,
+    &quot;key_list&quot;: [&quot;left&quot;, &quot;right&quot;],
+    &quot;conditions&quot;: [&quot;win&quot;, &quot;neutral&quot;, &quot;lose&quot;],
+    &quot;bg_color&quot;: &quot;black&quot;
+}
+
+settings = TaskSettings.from_dict(config)
+</pre></div>
+</div>
+</section>
+<section id="adding-subject-info">
+<h2>2. Adding Subject Info<a class="headerlink" href="#adding-subject-info" title="Link to this heading">¶</a></h2>
+<p>To generate subject-specific seeds and output file names:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>subinfo = {&quot;subject_id&quot;: &quot;P001&quot;, &quot;session_name&quot;: &quot;S1&quot;}
+settings.add_subinfo(subinfo)
+</pre></div>
+</div>
+<p>Now you have:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>settings.block_seed   # Deterministic based on subject_id
+settings.log_file     # e.g., ./data/sub-P001_session_S1_20250415_100455.log
+settings.res_file     # e.g., ./data/sub-P001_session_S1_20250415_100455.csv
+</pre></div>
+</div>
+</section>
+<section id="seed-modes">
+<h2>3. Seed Modes<a class="headerlink" href="#seed-modes" title="Link to this heading">¶</a></h2>
+<p>Set <code class="docutils literal notranslate"><span class="pre">seed_mode</span></code> in your config to control how randomization behaves:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Mode</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>same_across_sub</p></td>
+<td><p>All participants share the same global seed</p></td>
+</tr>
+<tr class="row-odd"><td><p>same_within_sub</p></td>
+<td><p>Seed derived from subject_id (stable per sub)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Seed examples:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>config = {&quot;seed_mode&quot;: &quot;same_within_sub&quot;, &quot;overall_seed&quot;: 2025}
+settings = TaskSettings.from_dict(config)
+settings.add_subinfo({&quot;subject_id&quot;: &quot;P999&quot;})
+</pre></div>
+</div>
+</section>
+<section id="derived-values">
+<h2>4. Derived Values<a class="headerlink" href="#derived-values" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">trials_per_block</span></code> is automatically computed:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>settings.total_trials = 60
+settings.total_blocks = 4
+print(settings.trials_per_block)  # 15
+</pre></div>
+</div>
+</section>
+<section id="output-file-handling">
+<h2>5. Output File Handling<a class="headerlink" href="#output-file-handling" title="Link to this heading">¶</a></h2>
+<p>All files are saved to <code class="docutils literal notranslate"><span class="pre">save_path</span></code> (default is <code class="docutils literal notranslate"><span class="pre">./data</span></code>). You can customize:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>config = {&quot;save_path&quot;: &quot;./results&quot;}
+settings = TaskSettings.from_dict(config)
+</pre></div>
+</div>
+<p>Directory will be created automatically if it doesn’t exist.</p>
+<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> brings together all parts of an experiment’s configuration and lets you control them from one structured, extensible place.</p>
+</section>
+<section id="realistic-example">
+<h2>6. Realistic Example<a class="headerlink" href="#realistic-example" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config/config.yaml&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="n">task_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;task&#39;</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;timing&#39;</span><span class="p">,</span> <span class="p">{})</span>  <span class="c1"># ← don&#39;t forget this!</span>
+<span class="p">}</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">task_config</span><span class="p">)</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subject_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -289,7 +413,7 @@
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">content to be added</div>
+                <div class="title">🧾 SubInfo: Participant Information Collector</div>
                 
               </div>
             </a>
@@ -311,8 +435,33 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">⚙️ TaskSettings: Managing Experimental Configuration</a><ul>
+<li><a class="reference internal" href="#summary-of-key-methods">🧵 Summary of Key Methods</a></li>
+<li><a class="reference internal" href="#creating-settings-from-config">1. Creating Settings from Config</a></li>
+<li><a class="reference internal" href="#adding-subject-info">2. Adding Subject Info</a></li>
+<li><a class="reference internal" href="#seed-modes">3. Seed Modes</a></li>
+<li><a class="reference internal" href="#derived-values">4. Derived Values</a></li>
+<li><a class="reference internal" href="#output-file-handling">5. Output File Handling</a></li>
+<li><a class="reference internal" href="#realistic-example">6. Realistic Example</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

@@ -11,24 +11,28 @@ STIM_CLASSES: Dict[str, Type] = {
     "rect": Rect,
     "polygon": Polygon,
     "image": ImageStim,
-    'shape': ShapeStim,
+    "shape": ShapeStim,
 }
 
 
 class StimBank:
     """
-    A hybrid stimulus registry system for PsychoPy.
+    A hybrid stimulus management system for PsychoPy experiments.
 
-    Allows users to:
-    - Register stimuli manually via decorators (@registry.define("name"))
-    - Load stimulus definitions from YAML configuration
-    - Preload (instantiate) all stimuli at once
-    - Retrieve, preview, or rebuild individual or grouped stimuli
+    `StimBank` supports:
+    - Manual registration of stimuli via decorators (@registry.define("name"))
+    - Loading stimuli from YAML or Python dictionaries
+    - Centralized retrieval, lazy instantiation, and batch preview
     """
 
     def __init__(self, win):
         """
-        Initialize the registry with a PsychoPy Window.
+        Initialize the stimulus bank with a PsychoPy Window.
+
+        Parameters
+        ----------
+        win : psychopy.visual.Window
+            The window object used to instantiate visual stimuli.
         """
         self.win = win
         self._registry: Dict[str, Callable[[Any], Any]] = {}
@@ -36,12 +40,17 @@ class StimBank:
 
     def define(self, name: str):
         """
-        Register a stimulus using a decorator.
+        Register a stimulus generator function using a decorator.
 
-        Example:
-        >>> @registry.define("fix")
-        >>> def make_fix(win):
-        >>>     return TextStim(win, text="+")
+        Parameters
+        ----------
+        name : str
+            Name to register the stimulus under.
+
+        Returns
+        -------
+        Callable
+            A decorator to wrap the stimulus function.
         """
         def decorator(func: Callable[[Any], Any]):
             self._registry[name] = func
@@ -50,7 +59,7 @@ class StimBank:
 
     def build_all(self):
         """
-        Instantiate all registered stimuli.
+        Instantiate all registered stimuli and cache them internally.
         """
         for name, factory in self._registry.items():
             if name not in self._instantiated:
@@ -58,13 +67,28 @@ class StimBank:
 
     def preload_all(self):
         """
-        Alias for build_all(). Intention is clearer for experiment setup.
+        Alias for `build_all()`, used to clarify preload intent in experiment setup.
         """
         self.build_all()
 
     def get(self, name: str):
         """
-        Return an instantiated stimulus (lazy-loaded if needed).
+        Get a stimulus by name, instantiating it if needed.
+
+        Parameters
+        ----------
+        name : str
+            Registered stimulus name.
+
+        Returns
+        -------
+        Any
+            Instantiated PsychoPy stimulus object.
+
+        Raises
+        ------
+        KeyError
+            If the stimulus is not registered.
         """
         if name not in self._instantiated:
             if name not in self._registry:
@@ -72,18 +96,31 @@ class StimBank:
             self._instantiated[name] = self._registry[name](self.win)
         return self._instantiated[name]
 
-   
     def get_and_format(self, name: str, **format_kwargs) -> TextStim:
         """
-        Return a fresh TextStim with formatted text.
-        All other attributes are copied from the original.
+        Return a fresh TextStim with formatted text, keeping other properties unchanged.
+
+        Parameters
+        ----------
+        name : str
+            Name of the registered TextStim.
+        **format_kwargs
+            Formatting variables to apply to the `text` field.
+
+        Returns
+        -------
+        TextStim
+            A new TextStim object with formatted content.
+
+        Raises
+        ------
+        TypeError
+            If the stimulus is not a TextStim.
         """
         original = self.get(name)
-
         if not isinstance(original, TextStim):
             raise TypeError(f"Stimulus '{name}' is not a TextStim.")
 
-        # Get __init__ argument names (excluding 'self' and 'win')
         sig = inspect.signature(TextStim.__init__)
         valid_args = {k for k in sig.parameters if k not in ('self', 'win')}
 
@@ -94,21 +131,25 @@ class StimBank:
         }
 
         copied_kwargs["text"] = original.text.format(**format_kwargs)
-
         return TextStim(win=self.win, **copied_kwargs)
 
-    
     def rebuild(self, name: str, update_cache: bool = False, **overrides):
         """
-        Rebuild a stimulus with new parameters.
+        Rebuild a stimulus with optional updated parameters.
 
-        Parameters:
-        - name: stimulus name
-        - update_cache: if True, replace the cached instance with the rebuilt one
-        - **overrides: keyword arguments to override default parameters
+        Parameters
+        ----------
+        name : str
+            Registered stimulus name.
+        update_cache : bool
+            Whether to overwrite the existing cached version.
+        **overrides : dict
+            New keyword arguments to override the original parameters.
 
-        Returns:
-        - The new stimulus instance
+        Returns
+        -------
+        Any
+            A fresh stimulus object.
         """
         if name not in self._registry:
             raise KeyError(f"Stimulus '{name}' not defined.")
@@ -122,19 +163,44 @@ class StimBank:
 
     def get_group(self, prefix: str) -> Dict[str, Any]:
         """
-        Get all stimuli starting with a prefix as a dictionary.
+        Retrieve a dictionary of stimuli whose names start with a given prefix.
+
+        Parameters
+        ----------
+        prefix : str
+            Common prefix to match.
+
+        Returns
+        -------
+        dict
+            A dictionary of {name: stimulus} pairs.
         """
         return {k: self.get(k) for k in self._registry if k.startswith(prefix)}
 
     def get_selected(self, keys: list[str]) -> Dict[str, Any]:
         """
-        Get a selected list of stimuli by name as a dictionary.
+        Retrieve a subset of named stimuli.
+
+        Parameters
+        ----------
+        keys : list of str
+            List of stimulus names to retrieve.
+
+        Returns
+        -------
+        dict
+            A dictionary of {name: stimulus} pairs.
         """
         return {k: self.get(k) for k in keys}
 
     def preview_all(self, wait_keys: bool = True):
         """
-        Preview all registered stimuli.
+        Preview all registered stimuli one by one.
+
+        Parameters
+        ----------
+        wait_keys : bool
+            Wait for key press after last stimulus.
         """
         keys = list(self._registry.keys())
         for i, name in enumerate(keys):
@@ -142,24 +208,45 @@ class StimBank:
 
     def preview_group(self, prefix: str, wait_keys: bool = True):
         """
-        Preview stimuli whose names start with a prefix.
+        Preview all stimuli that match a name prefix.
+
+        Parameters
+        ----------
+        prefix : str
+            Prefix string to filter stimuli.
+        wait_keys : bool
+            Wait for key press after final stimulus.
         """
         matches = [k for k in self._registry if k.startswith(prefix)]
         if not matches:
             print(f"No stimuli found starting with '{prefix}'")
         for i, name in enumerate(matches):
-                self._preview(name, wait_keys=(i == len(matches) - 1))
+            self._preview(name, wait_keys=(i == len(matches) - 1))
 
     def preview_selected(self, keys: list[str], wait_keys: bool = True):
         """
-        Preview a selected list of stimuli by name.
+        Preview selected stimuli by name.
+
+        Parameters
+        ----------
+        keys : list of str
+            Stimulus names to preview.
+        wait_keys : bool
+            Wait for key press after final stimulus.
         """
         for i, name in enumerate(keys):
             self._preview(name, wait_keys=(i == len(keys) - 1))
 
     def _preview(self, name: str, wait_keys: bool = True):
         """
-        Internal helper to preview a stimulus by name.
+        Internal utility to preview a single stimulus.
+
+        Parameters
+        ----------
+        name : str
+            Stimulus name.
+        wait_keys : bool
+            Wait for key press after preview.
         """
         try:
             stim = self.get(name)
@@ -167,37 +254,52 @@ class StimBank:
             stim.draw()
             self.win.flip()
             print(f"Preview: '{name}'")
-            if not wait_keys:
+            if wait_keys:
                 event.waitKeys()
         except Exception as e:
             print(f"[Preview Error] Could not preview '{name}': {e}")
 
-    def keys(self):
+    def keys(self) -> list[str]:
         """
-        Return a list of all registered stimulus keys.
+        List all registered stimulus names.
+
+        Returns
+        -------
+        list of str
         """
         return list(self._registry.keys())
-    
 
     def has(self, name: str) -> bool:
-        """Check whether a stimulus is registered (defined)."""
-        return name in self._registry
+        """
+        Check whether a stimulus is registered.
 
+        Parameters
+        ----------
+        name : str
+
+        Returns
+        -------
+        bool
+        """
+        return name in self._registry
 
     def describe(self, name: str):
         """
-        Print the accepted and required arguments for the given stimulus type.
+        Print accepted arguments for a registered stimulus.
+
+        Parameters
+        ----------
+        name : str
+            Name of the stimulus to describe.
         """
         if name not in self._registry:
             print(f"❌ No such stimulus: {name}")
             return
 
-        # Try to resolve the constructor
         try:
             stim = self.get(name)
             cls = type(stim)
         except Exception:
-            # fallback to stim class if YAML-based
             for prefix in STIM_CLASSES:
                 if prefix in name:
                     cls = STIM_CLASSES[prefix]
@@ -214,16 +316,19 @@ class StimBank:
             default = "required" if v.default is inspect.Parameter.empty else f"default={v.default!r}"
             print(f"  - {k}: {default}")
 
-
     def export_to_yaml(self, path: str):
         """
-        Save all YAML-defined stimuli to a file (if originally loaded from YAML).
-        Does NOT include @define-registered stimuli.
+        Export YAML-defined stimuli (but not decorator-defined) to file.
+
+        Parameters
+        ----------
+        path : str
+            Path to save the YAML file.
         """
         yaml_defs = {}
         for name, factory in self._registry.items():
             try:
-                source = factory.__closure__[0].cell_contents  # dict from make_factory()
+                source = factory.__closure__[0].cell_contents
                 if not isinstance(source, dict):
                     continue
                 yaml_defs[name] = source
@@ -236,15 +341,21 @@ class StimBank:
 
     def make_factory(self, cls, base_kwargs: dict, name: str):
         """
-        Create a stimulus factory with support for dynamic overrides at call time.
+        Create a factory function for a given stimulus class.
 
-        Parameters:
-        - cls: the PsychoPy stimulus class (e.g., TextStim, Circle)
-        - base_kwargs: default arguments to use
-        - name: for error messages
+        Parameters
+        ----------
+        cls : type
+            PsychoPy stimulus class (e.g., TextStim).
+        base_kwargs : dict
+            Default keyword arguments.
+        name : str
+            Stimulus name (used for error messages).
 
-        Returns:
-        - a callable factory(win, **overrides)
+        Returns
+        -------
+        Callable
+            A factory function that accepts (win, **overrides)
         """
         def _factory(win, **override_kwargs):
             try:
@@ -255,17 +366,16 @@ class StimBank:
                 raise ValueError(f"[StimBank] Failed to build '{name}': {e}")
         return _factory
 
-
     def add_from_dict(self, named_specs: Optional[dict] = None, **kwargs):
         """
-        Add stimulus definitions from a dictionary.
+        Add stimuli from a dictionary or keyword-based specifications.
 
         Parameters
         ----------
         named_specs : dict, optional
-            A dictionary of stimulus definitions.
-        kwargs :
-            Alternatively, pass stimulus definitions as keyword arguments.
+            Dictionary where keys are stimulus names and values are stimulus specs.
+        kwargs : dict
+            Additional stimuli as keyword-based name=spec entries.
         """
         all_specs = {}
         if named_specs:
@@ -281,14 +391,16 @@ class StimBank:
             kwargs = {k: v for k, v in spec.items() if k != "type"}
             self._registry[name] = self.make_factory(stim_class, kwargs, name)
 
-
     def validate_dict(self, config: dict, strict: bool = False):
         """
-        Validate a dictionary of stimulus definitions for compatibility.
+        Validate a dictionary of stimulus definitions.
 
-        Parameters:
-        - config: dictionary containing stimulus definitions
-        - strict: if True, raises ValueError on issues (default: False = just print warnings)
+        Parameters
+        ----------
+        config : dict
+            Dictionary of stimulus specs.
+        strict : bool
+            If True, raise errors; otherwise print warnings only.
         """
         print(f"\n🔍 Validating stimulus dictionary\n{'-' * 40}")
 
@@ -327,4 +439,3 @@ class StimBank:
                 print(msg)
             if not unknown_args and not missing_args:
                 print(f"✅ [{name}] OK")
-

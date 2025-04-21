@@ -23,17 +23,10 @@ Start with one of the tutorials below or explore the API reference.
    tutorials/get_subinfo
    tutorials/task_settings
    tutorials/build_blocks
+   tutorials/build_trialunit
    tutorials/build_stimulus
    tutorials/send_trigger
    
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Examples
-
-   examples/example_mid
-   examples/example_resting_state
-   examples/example_sst
 
 .. toctree::
    :maxdepth: 2

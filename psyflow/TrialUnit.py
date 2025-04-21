@@ -6,7 +6,7 @@ from psyflow import TriggerSender
 
 class TrialUnit:
     """
-    TrialUnit(win, unit_label, trigger=None, frame_time=1/60)
+    TrialUnit(win, unit_label, trigger=None)
 
     A modular trial unit for PsychoPy-based experiments. Designed to encapsulate
     stimulus presentation, response handling, event triggers, and lifecycle hooks
@@ -43,22 +43,37 @@ class TrialUnit:
         self._hooks: Dict[str, List] = {"start": [], "response": [], "timeout": [], "end": []}
         self.frame_time = self.win.monitorFramePeriod
 
-    def add_stim(self, stim: visual.BaseVisualStim) -> "TrialUnit":
+    def add_stim(self, *stims: Union[visual.BaseVisualStim, List[visual.BaseVisualStim]]) -> "TrialUnit":
         """
-        Add a visual stimulus to the trial.
+        Add one or more visual stimuli to the trial.
+
+        Supports calling patterns:
+        .add_stim(stimA)
+        .add_stim(stimA, stimB, stimC)
+        .add_stim([stimA, stimB, stimC])
 
         Parameters
         ----------
-        stim : visual.BaseVisualStim
-            A PsychoPy visual stimulus (e.g., TextStim, ImageStim).
+        *stims : visual.BaseVisualStim or list of visual.BaseVisualStim
+            One or more PsychoPy visual stimuli, either passed as individual args
+            or as a single list/tuple.
 
         Returns
         -------
         TrialUnit
             Returns self for chaining.
         """
-        self.stimuli.append(stim)
+        # if the user passed a single list/tuple, unpack it
+        if len(stims) == 1 and isinstance(stims[0], (list, tuple)):
+            stims = stims[0]
+
+        for stim in stims:
+            if not isinstance(stim, visual.BaseVisualStim):
+                raise TypeError(f"add_stim expects PsychoPy visual stimuli, got {type(stim)}")
+            self.stimuli.append(stim)
+
         return self
+
 
     def clear_stimuli(self) -> "TrialUnit":
         """

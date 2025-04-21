@@ -1,14 +1,20 @@
 from typing import Callable, Optional
 from psychopy import logging, core
 
-
 class TriggerSender:
     """
-    Generalized trigger sender. User provides the actual send function.
+    A wrapper for sending EEG/MEG trigger codes with optional hooks and delays.
 
-    Usage:
-    >>> Trigger(lambda code: ser.write(bytes([code])))
-    >>> Trigger(mock=True)  # For development/logging only
+    Can be initialized with a real sending function or used in mock mode
+    for development/testing without hardware.
+
+    Examples
+    --------
+    >>> sender = TriggerSender(lambda c: port.write(bytes([c])))
+    >>> sender.send(32)
+
+    >>> sender = TriggerSender(mock=True)
+    >>> sender.send(99)
     """
 
     def __init__(
@@ -21,12 +27,20 @@ class TriggerSender:
         on_trigger_end: Optional[Callable[[], None]] = None,
     ):
         """
-        Parameters:
-        - trigger_func: The actual function to send the trigger (int -> None).
-        - mock: If True, overrides with a mock print trigger.
-        - post_delay: Time in seconds to wait after sending trigger (default 1ms).
-        - on_trigger_start: Optional callable to be called before each trigger (e.g., port open).
-        - on_trigger_end: Optional callable to be called after each trigger (e.g., port close).
+        Initialize the trigger sender.
+
+        Parameters
+        ----------
+        trigger_func : Callable, optional
+            A function that accepts an int trigger code.
+        mock : bool, default=False
+            If True, use a mock print function instead of sending triggers.
+        post_delay : float, default=0.001
+            Time to wait (in seconds) after sending each trigger.
+        on_trigger_start : Callable, optional
+            Hook called before sending the trigger.
+        on_trigger_end : Callable, optional
+            Hook called after sending the trigger.
         """
         if mock or trigger_func is None:
             self.trigger_func = lambda code: print(f"[MockTrigger] Sent code: {code}")
@@ -39,13 +53,12 @@ class TriggerSender:
 
     def send(self, code: Optional[int]):
         """
-        Send a trigger code via the registered trigger function.
-        Handles pre/post callbacks and optional delay.
-        
+        Send a trigger code using the configured function and callbacks.
+
         Parameters
         ----------
         code : int or None
-            Trigger code to send. If None, it is skipped with a warning.
+            The code to send. Skips if None and logs a warning.
         """
         if code is None:
             logging.warning("[Trigger] Skipping trigger send: code is None")
@@ -67,8 +80,3 @@ class TriggerSender:
 
         if self.on_trigger_end:
             self.on_trigger_end()
-
-
-
-
-

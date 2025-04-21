@@ -2,89 +2,82 @@ from psychopy import gui
 
 class SubInfo:
     """
-    Collects participant information via GUI based on a YAML config file.
-    Supports multilingual labels and flexible field types.
+    GUI-based participant information collector using a YAML-style config.
+
+    This class generates an input dialog based on a configurable field structure
+    and provides basic localization and validation for different field types.
 
     Supported field types:
-        - string: Free text input
-        - int: Integer input with optional min/max/digit constraints
-        - choice: Dropdown menu with predefined options
-
-    Language localization is supported via the `lang` block in YAML.
-    Internal output is always standardized to English values.
+    - `string` : Free text input
+    - `int` : Integer input with optional constraints
+    - `choice` : Dropdown with options
 
     Attributes
     ----------
     subject_data : dict or None
-        Stores the result of .collect()
-
-    Example YAML structure:
-    ------------------------
-    fields:
-      - name: subject_id
-        type: int
-        constraints:
-          min: 101
-          max: 199
-          digits: 3
-
-      - name: subject_name
-        type: string
-
-      - name: gender
-        type: choice
-        choices: [Male, Female]
-
-    lang:
-      zh:
-        subject_id: "Subject ID"
-        subject_name: "Subject Name"
-        gender: "Gender"
-        Male: "Male"
-        Female: "Female"
-
-    Example usage:
-    --------------
-    >>> with open("subject_fields.yaml") as f:
-    ...     config = yaml.safe_load(f)
-    >>> collector = ParticipantInfoCollector(config, language='zh')
-    >>> subinfo = collector.collect()
-    >>> print(subinfo)  # e.g., {'subject_id': '103', 'gender': 'Female'}
-    >>> seed = collector.get_seed()  # e.g., 103
+        The result of `.collect()`, formatted with English field keys.
     """
 
     def __init__(self, config: dict):
+        """
+        Initialize with a config dictionary containing fields and optional mapping.
+
+        Parameters
+        ----------
+        config : dict
+            Configuration with required keys:
+              - 'subinfo_fields': list of field definitions
+              - 'subinfo_mapping': optional localization mapping
+        """
         self.fields = config['subinfo_fields']
         self.field_map = config.get('subinfo_mapping', {})
         self.subject_data = None
 
-        # --- Enforce subject_id field ---
+        # Ensure default subject_id field
         if not any(f['name'] == 'subject_id' for f in self.fields):
-            print("[ParticipantInfoCollector] WARNING: 'subject_id' field missing in config. Adding default.")
+            print("[SubInfo] WARNING: 'subject_id' field missing. Adding default.")
             self.fields.insert(0, {
                 'name': 'subject_id',
                 'type': 'int',
                 'constraints': {'min': 101, 'max': 999, 'digits': 3}
             })
-            if 'subject_id' not in self.field_map:
-                self.field_map['subject_id'] = 'Subject ID (3 digits)'
-        
-        
+            self.field_map.setdefault('subject_id', 'Subject ID (3 digits)')
 
+        # Ensure session_name field
         if not any(f['name'] == 'session_name' for f in self.fields):
-            print("[ParticipantInfoCollector] WARNING: 'session_name' field missing in config. Adding default.")
+            print("[SubInfo] WARNING: 'session_name' field missing. Adding default.")
             self.fields.insert(0, {
                 'name': 'session_name',
-                'type': 'str'  
+                'type': 'str'
             })
-            if 'session_name' not in self.field_map:
-                self.field_map['session_name'] = 'Session Name'
-       
+            self.field_map.setdefault('session_name', 'Session Name')
 
-    def _local(self, key: str):
+    def _local(self, key: str) -> str:
+        """
+        Translate a field key to the localized label if available.
+
+        Parameters
+        ----------
+        key : str
+            English identifier of a field or value.
+
+        Returns
+        -------
+        str
+            Localized label.
+        """
         return self.field_map.get(key, key)
 
     def collect(self) -> dict:
+        """
+        Show a dialog to collect participant input. Loops until valid or cancelled.
+
+        Returns
+        -------
+        dict
+            Cleaned response dictionary with English field keys.
+            Returns None if cancelled.
+        """
         success = False
         responses = None
 
@@ -111,22 +104,29 @@ class SubInfo:
                 break
 
         if status == "cancelled":
-            self.subject_data= None
-            infoDlg=gui.Dlg()
-            infoDlg.addText(self._local("registration_failed"))
-            infoDlg.show()
-            return self.subject_data
+            self.subject_data = None
+            gui.Dlg().addText(self._local("registration_failed")).show()
+            return None
 
         if status == "success":
             self.subject_data = self._format_output(responses)
-            infoDlg=gui.Dlg()
-            infoDlg.addText(self._local("registration_successful"))
-            infoDlg.show()
+            gui.Dlg().addText(self._local("registration_successful")).show()
             return self.subject_data
 
-
-
     def validate(self, responses) -> bool:
+        """
+        Validate responses based on type and constraints.
+
+        Parameters
+        ----------
+        responses : list
+            Raw responses from the dialog.
+
+        Returns
+        -------
+        bool
+            True if all inputs are valid, False otherwise.
+        """
         for i, field in enumerate(self.fields):
             val = responses[i]
             if field['type'] == 'int':
@@ -143,13 +143,26 @@ class SubInfo:
                     if digits is not None and len(str(val)) != digits:
                         raise ValueError
                 except:
-                    erroDlg = gui.Dlg()
-                    erroDlg.addText(self._local("invalid_input").format(field=self._local(field['name'])))
-                    erroDlg.show()
+                    gui.Dlg().addText(
+                        self._local("invalid_input").format(field=self._local(field['name']))
+                    ).show()
                     return False
         return True
 
     def _format_output(self, responses) -> dict:
+        """
+        Convert localized user responses back to standard format.
+
+        Parameters
+        ----------
+        responses : list
+            Raw responses from the GUI.
+
+        Returns
+        -------
+        dict
+            Dictionary of English field keys and string values.
+        """
         result = {}
         for i, field in enumerate(self.fields):
             raw = responses[i]

@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="content to be added" href="build_stimulus.html" /><link rel="prev" title="content to be added" href="task_settings.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="🎯 TrialUnit: Modular Trial Controller for PsychoPy" href="build_trialunit.html" /><link rel="prev" title="⚙️ TaskSettings: Managing Experimental Configuration" href="task_settings.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
         <title>📦 BlockUnit: Managing Experimental Blocks - psyflow 0.1.0 documentation</title>
@@ -205,19 +205,13 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="getting_started.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="task_settings.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">🏁 Getting Started with psyflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html#setup-stimuli">3. setup stimuli</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">content to be added</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_mid.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_resting_state.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_sst.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_trialunit.html">🎯 TrialUnit: Modular Trial Controller for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -267,8 +261,55 @@
           <section id="blockunit-managing-experimental-blocks">
 <h1>📦 BlockUnit: Managing Experimental Blocks<a class="headerlink" href="#blockunit-managing-experimental-blocks" title="Link to this heading">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> class provides a flexible and structured way to manage a sequence of trials in an experiment. It supports condition generation, result tracking, hooks for block lifecycle, and summarization — all useful for building robust experimental pipelines in PsychoPy.</p>
+<section id="summary-of-key-methods">
+<h2>🧵 Summary of Key Methods<a class="headerlink" href="#summary-of-key-methods" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Purpose</p></th>
+<th class="head"><p>Method</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Initialize block</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">BlockUnit(block_id,</span> <span class="pre">block_idx,</span> <span class="pre">...)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Generate trial conditions</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.generate_conditions(func,</span> <span class="pre">labels)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Manually assign trials</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.add_trials(trial_list)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Register hook before block starts</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.on_start(func)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Register hook after block ends</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.on_end(func)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Run all trials</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.run_trial(run_func,</span> <span class="pre">**kwargs)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Get trial-level results</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Append results to external list</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.to_dict(target_list)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Summarize block results</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.summarize()</span></code> or <code class="docutils literal notranslate"><span class="pre">.summarize(func)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Get number of trials</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">len(block)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Log block info to console/log</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.logging_block_info()</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="initialization">
-<h2>🔧 1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h2>
+<h2>1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h2>
 <p>To use <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>, you need to create an instance by passing basic information about the block, the experiment settings, and optionally, PsychoPy window and keyboard handlers.</p>
 <p>Example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">your_package</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockUnit</span>
@@ -290,7 +331,7 @@
 </ul>
 </section>
 <section id="generating-trial-conditions">
-<h2>🎲 2. Generating Trial Conditions<a class="headerlink" href="#generating-trial-conditions" title="Link to this heading">¶</a></h2>
+<h2>2. Generating Trial Conditions<a class="headerlink" href="#generating-trial-conditions" title="Link to this heading">¶</a></h2>
 <p>You can generate trial conditions using a custom function. This enables dynamic and reproducible condition assignment.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_balanced_conditions</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -312,7 +353,7 @@
 </div>
 </section>
 <section id="registering-block-hooks">
-<h2>⚙️ 3. Registering Block Hooks<a class="headerlink" href="#registering-block-hooks" title="Link to this heading">¶</a></h2>
+<h2>3. Registering Block Hooks<a class="headerlink" href="#registering-block-hooks" title="Link to this heading">¶</a></h2>
 <p>You can register functions to be called automatically <strong>before</strong> and <strong>after</strong> the block runs, useful for setup and cleanup steps like logging, showing instructions, or saving snapshots.</p>
 <p>Using decorator style:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@block</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
@@ -331,7 +372,7 @@
 </div>
 </section>
 <section id="running-the-trials">
-<h2>🎮 4. Running the Trials<a class="headerlink" href="#running-the-trials" title="Link to this heading">¶</a></h2>
+<h2>4. Running the Trials<a class="headerlink" href="#running-the-trials" title="Link to this heading">¶</a></h2>
 <p>To run the trials, you must provide a <strong>trial function</strong> that defines what happens on each trial. This function is called for each condition in <code class="docutils literal notranslate"><span class="pre">block.trials</span></code>. The <strong>trial function</strong> should be defined in a way that it accepts the block’s window, keyboard, settings, and condition as parameters. It defines the flow of the trial, including stimulus presentation and response collection.</p>
 <p>Trial function example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -350,7 +391,7 @@
 <p>Each trial result is stored in <code class="docutils literal notranslate"><span class="pre">block.results</span></code>, enriched with trial index, block ID, and condition.</p>
 </section>
 <section id="summarizing-results">
-<h2>📊 5. Summarizing Results<a class="headerlink" href="#summarizing-results" title="Link to this heading">¶</a></h2>
+<h2>5. Summarizing Results<a class="headerlink" href="#summarizing-results" title="Link to this heading">¶</a></h2>
 <p>After a block has finished running, you can summarize results:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">summarize</span><span class="p">()</span>
 </pre></div>
@@ -377,7 +418,7 @@
 </div>
 </section>
 <section id="saving-and-exporting-results">
-<h2>📂 6. Saving and Exporting Results<a class="headerlink" href="#saving-and-exporting-results" title="Link to this heading">¶</a></h2>
+<h2>6. Saving and Exporting Results<a class="headerlink" href="#saving-and-exporting-results" title="Link to this heading">¶</a></h2>
 <p>To convert the results into a list of dictionaries (e.g., for CSV export):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 </pre></div>
@@ -389,7 +430,7 @@
 </div>
 </section>
 <section id="putting-it-all-together">
-<h2>🔁 7. Putting It All Together<a class="headerlink" href="#putting-it-all-together" title="Link to this heading">¶</a></h2>
+<h2>7. Putting It All Together<a class="headerlink" href="#putting-it-all-together" title="Link to this heading">¶</a></h2>
 <p>Full example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span><span class="s2">&quot;block1&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span><span class="p">)</span>
 
@@ -408,10 +449,11 @@
 <span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
 <section id="realistic-examples">
-<h3>📚 8. Realistic examples<a class="headerlink" href="#realistic-examples" title="Link to this heading">¶</a></h3>
+<h2>8. Realistic examples<a class="headerlink" href="#realistic-examples" title="Link to this heading">¶</a></h2>
 <section id="monetary-incentive-delay-task-mid-example">
-<h4>Monetary Incentive Delay Task (MID) example.<a class="headerlink" href="#monetary-incentive-delay-task-mid-example" title="Link to this heading">¶</a></h4>
+<h3>8.1. Monetary Incentive Delay Task (MID) example.<a class="headerlink" href="#monetary-incentive-delay-task-mid-example" title="Link to this heading">¶</a></h3>
 <p>Note that we defined stim_bank and controller before the block loop, so they are available in the trial function across blocks. That means the dynamic controller is shared across blocks. If we want to have a different controller for each block, we should set it within the block loop.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">block_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">):</span>
@@ -455,8 +497,8 @@
 </pre></div>
 </div>
 </section>
-<section id="probalistic-revesal-learning-task-example">
-<h4>Probalistic revesal learning task example.<a class="headerlink" href="#probalistic-revesal-learning-task-example" title="Link to this heading">¶</a></h4>
+<section id="probalistic-revesal-learning-prl-task-example">
+<h3>8.2. Probalistic revesal learning (PRL) task example.<a class="headerlink" href="#probalistic-revesal-learning-prl-task-example" title="Link to this heading">¶</a></h3>
 <p>Note that we defined stim_bank within the block loop, so it is different for each block.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">block_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">):</span>
@@ -509,28 +551,18 @@
 </section>
 </section>
 </section>
-<section id="benefits">
-<h2>✅ Benefits<a class="headerlink" href="#benefits" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Clean, modular control over trial blocks.</p></li>
-<li><p>Chainable API (<code class="docutils literal notranslate"><span class="pre">.generate_conditions().run_trial()...</span></code>)</p></li>
-<li><p>Automatically tracks duration, timing, and metadata.</p></li>
-<li><p>Easy to integrate with PsychoPy for behavioral experiments.</p></li>
-</ul>
-</section>
-</section>
 
         </article>
       </div>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="build_stimulus.html">
+          <a class="next-page" href="build_trialunit.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">content to be added</div>
+                <div class="title">🎯 TrialUnit: Modular Trial Controller for PsychoPy</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -541,7 +573,7 @@
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">content to be added</div>
+                <div class="title">⚙️ TaskSettings: Managing Experimental Configuration</div>
                 
               </div>
             </a>
@@ -576,21 +608,19 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">📦 BlockUnit: Managing Experimental Blocks</a><ul>
-<li><a class="reference internal" href="#initialization">🔧 1. Initialization</a></li>
-<li><a class="reference internal" href="#generating-trial-conditions">🎲 2. Generating Trial Conditions</a></li>
-<li><a class="reference internal" href="#registering-block-hooks">⚙️ 3. Registering Block Hooks</a></li>
-<li><a class="reference internal" href="#running-the-trials">🎮 4. Running the Trials</a></li>
-<li><a class="reference internal" href="#summarizing-results">📊 5. Summarizing Results</a></li>
-<li><a class="reference internal" href="#saving-and-exporting-results">📂 6. Saving and Exporting Results</a></li>
-<li><a class="reference internal" href="#putting-it-all-together">🔁 7. Putting It All Together</a><ul>
-<li><a class="reference internal" href="#realistic-examples">📚 8. Realistic examples</a><ul>
-<li><a class="reference internal" href="#monetary-incentive-delay-task-mid-example">Monetary Incentive Delay Task (MID) example.</a></li>
-<li><a class="reference internal" href="#probalistic-revesal-learning-task-example">Probalistic revesal learning task example.</a></li>
+<li><a class="reference internal" href="#summary-of-key-methods">🧵 Summary of Key Methods</a></li>
+<li><a class="reference internal" href="#initialization">1. Initialization</a></li>
+<li><a class="reference internal" href="#generating-trial-conditions">2. Generating Trial Conditions</a></li>
+<li><a class="reference internal" href="#registering-block-hooks">3. Registering Block Hooks</a></li>
+<li><a class="reference internal" href="#running-the-trials">4. Running the Trials</a></li>
+<li><a class="reference internal" href="#summarizing-results">5. Summarizing Results</a></li>
+<li><a class="reference internal" href="#saving-and-exporting-results">6. Saving and Exporting Results</a></li>
+<li><a class="reference internal" href="#putting-it-all-together">7. Putting It All Together</a></li>
+<li><a class="reference internal" href="#realistic-examples">8. Realistic examples</a><ul>
+<li><a class="reference internal" href="#monetary-incentive-delay-task-mid-example">8.1. Monetary Incentive Delay Task (MID) example.</a></li>
+<li><a class="reference internal" href="#probalistic-revesal-learning-prl-task-example">8.2. Probalistic revesal learning (PRL) task example.</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a class="reference internal" href="#benefits">✅ Benefits</a></li>
 </ul>
 </li>
 </ul>

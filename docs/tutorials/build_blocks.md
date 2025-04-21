@@ -1,8 +1,23 @@
-# 📦 BlockUnit: Managing Experimental Blocks
+## 📦 BlockUnit: Managing Experimental Blocks
 
 The `BlockUnit` class provides a flexible and structured way to manage a sequence of trials in an experiment. It supports condition generation, result tracking, hooks for block lifecycle, and summarization — all useful for building robust experimental pipelines in PsychoPy.
 
-## 🔧 1. Initialization
+### 🧵 Summary of Key Methods
+| Purpose                             | Method                               |
+|-------------------------------------|--------------------------------------|
+| Initialize block                    | `BlockUnit(block_id, block_idx, ...)` |
+| Generate trial conditions           | `.generate_conditions(func, labels)` |
+| Manually assign trials              | `.add_trials(trial_list)`            |
+| Register hook before block starts   | `.on_start(func)`                    |
+| Register hook after block ends      | `.on_end(func)`                      |
+| Run all trials                      | `.run_trial(run_func, **kwargs)`     |
+| Get trial-level results             | `.to_dict()`                         |
+| Append results to external list     | `.to_dict(target_list)`              |
+| Summarize block results             | `.summarize()` or `.summarize(func)` |
+| Get number of trials                | `len(block)`                         |
+| Log block info to console/log       | `.logging_block_info()`              |
+
+### 1. Initialization
 
 To use `BlockUnit`, you need to create an instance by passing basic information about the block, the experiment settings, and optionally, PsychoPy window and keyboard handlers.
 
@@ -24,7 +39,7 @@ block = BlockUnit(
 - `win`, `kb`: PsychoPy window and keyboard objects (optional but needed for actual trial running).
 
 
-## 🎲 2. Generating Trial Conditions
+### 2. Generating Trial Conditions
 
 You can generate trial conditions using a custom function. This enables dynamic and reproducible condition assignment.
 ```python
@@ -49,7 +64,7 @@ block.add_trials(["win", "win", "neutral", "lose", "lose"])
 ```
 
 
-## ⚙️ 3. Registering Block Hooks
+### 3. Registering Block Hooks
 
 You can register functions to be called automatically **before** and **after** the block runs, useful for setup and cleanup steps like logging, showing instructions, or saving snapshots.
 
@@ -70,7 +85,7 @@ block.on_end(lambda b: print("Done."))
 ```
 
 
-## 🎮 4. Running the Trials
+### 4. Running the Trials
 
 To run the trials, you must provide a **trial function** that defines what happens on each trial. This function is called for each condition in `block.trials`. The **trial function** should be defined in a way that it accepts the block's window, keyboard, settings, and condition as parameters. It defines the flow of the trial, including stimulus presentation and response collection.
 
@@ -94,7 +109,7 @@ block.run_trial(run_trial)
 Each trial result is stored in `block.results`, enriched with trial index, block ID, and condition.
 
 
-## 📊 5. Summarizing Results
+### 5. Summarizing Results
 
 After a block has finished running, you can summarize results:
 
@@ -127,7 +142,7 @@ block.summarize(my_summary_func)
 ```
 
 
-## 📂 6. Saving and Exporting Results
+### 6. Saving and Exporting Results
 
 To convert the results into a list of dictionaries (e.g., for CSV export):
 
@@ -142,7 +157,7 @@ all_results = []
 block.to_dict(all_results)
 ```
 
-## 🔁 7. Putting It All Together
+### 7. Putting It All Together
 
 Full example:
 
@@ -164,8 +179,8 @@ summary = block.summarize()
 print(summary)
 ```
 
-### 📚 8. Realistic examples
-#### Monetary Incentive Delay Task (MID) example.
+### 8. Realistic examples
+#### 8.1. Monetary Incentive Delay Task (MID) example.
 
 Note that we defined stim_bank and controller before the block loop, so they are available in the trial function across blocks. That means the dynamic controller is shared across blocks. If we want to have a different controller for each block, we should set it within the block loop.
 
@@ -211,7 +226,7 @@ df = pd.DataFrame(all_data)
 df.to_csv(settings.res_file, index=False)
 ```
 
-#### Probalistic revesal learning task example.
+#### 8.2. Probalistic revesal learning (PRL) task example.
 
 Note that we defined stim_bank within the block loop, so it is different for each block.
 
@@ -263,11 +278,3 @@ for block_i in range(settings.total_blocks):
 df = pd.DataFrame(all_data)
 df.to_csv(settings.res_file, index=False)
 ```
-
-
-## ✅ Benefits
-
-- Clean, modular control over trial blocks.
-- Chainable API (`.generate_conditions().run_trial()...`)
-- Automatically tracks duration, timing, and metadata.
-- Easy to integrate with PsychoPy for behavioral experiments.

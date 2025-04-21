@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="⚙️ TaskSettings: Managing Experimental Configuration" href="task_settings.html" /><link rel="prev" title="🏁 Getting Started with psyflow" href="getting_started.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="🎨 StimBank: Flexible Stimulus Management for PsychoPy" href="build_stimulus.html" /><link rel="prev" title="📦 BlockUnit: Managing Experimental Blocks" href="build_blocks.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>🧾 SubInfo: Participant Information Collector - psyflow 0.1.0 documentation</title>
+        <title>🎯 TrialUnit: Modular Trial Controller for PsychoPy - psyflow 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -206,10 +206,10 @@
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">🏁 Getting Started with psyflow</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🧾 SubInfo: Participant Information Collector</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_trialunit.html">🎯 TrialUnit: Modular Trial Controller for PsychoPy</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🎯 TrialUnit: Modular Trial Controller for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
 </ul>
@@ -238,7 +238,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/tutorials/get_subinfo.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/tutorials/build_trialunit.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -258,9 +258,9 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="subinfo-participant-information-collector">
-<h1>🧾 SubInfo: Participant Information Collector<a class="headerlink" href="#subinfo-participant-information-collector" title="Link to this heading">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> is a flexible and localizable class for collecting subject information using GUI dialogs. It supports field definitions from YAML or Python dictionaries, and is useful for creating standardized subject registration forms.</p>
+          <section id="trialunit-modular-trial-controller-for-psychopy">
+<h1>🎯 TrialUnit: Modular Trial Controller for PsychoPy<a class="headerlink" href="#trialunit-modular-trial-controller-for-psychopy" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">TrialUnit</span></code> wraps all the pieces of a single trial—stimulus presentation, response collection, triggers, timeouts, logging—into one reusable, chainable object. Below is a complete step‑by‑step guide on how to set it up and use it.</p>
 <section id="summary-of-key-methods">
 <h2>🧵 Summary of Key Methods<a class="headerlink" href="#summary-of-key-methods" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -271,122 +271,238 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Collect participant info</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.collect()</span></code></p></td>
+<tr class="row-even"><td><p>Add stimuli</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.add_stim(...)</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Access result</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.subject_data</span></code></p></td>
+<tr class="row-odd"><td><p>Clear stimuli</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.clear_stimuli()</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Validate responses</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.validate()</span></code></p></td>
+<tr class="row-even"><td><p>Update internal state</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.set_state(prefix,</span> <span class="pre">**kwargs)</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Format output</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">._format_output()</span></code></p></td>
+<tr class="row-odd"><td><p>Register start hook</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.on_start(fn)</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Localization helper</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">._local(key)</span></code></p></td>
+<tr class="row-even"><td><p>Register response hook</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.on_response(keys,</span> <span class="pre">fn)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Register timeout hook</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.on_timeout(sec,</span> <span class="pre">fn)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Register end hook</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.on_end(fn)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Auto-close after duration</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.duration(t)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Auto-close on key</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.close_on('key')</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Simple display</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.show(duration,</span> <span class="pre">onset_trigger,</span> <span class="pre">frame_based)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Stimulus + response window</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.capture_response(...)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Full trial control</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.run(frame_based,</span> <span class="pre">terminate_on_response)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Pause &amp; continue</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.wait_and_continue(keys,</span> <span class="pre">terminate)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Inspect state</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial.state</span></code> or <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Log state</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.log_unit()</span></code></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
-<section id="configuration-format-yaml">
-<h2>1. Configuration Format (YAML)<a class="headerlink" href="#configuration-format-yaml" title="Link to this heading">¶</a></h2>
-<p>Here’s an example YAML you might use:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>subinfo_fields:
-  - name: subject_id
-    type: int
-    constraints:
-      min: 101
-      max: 199
-      digits: 3
+<section id="initialization">
+<h2>1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h2>
+<p>Create a new <code class="docutils literal notranslate"><span class="pre">TrialUnit</span></code> by passing your window, a label, and (optionally) a <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import TrialUnit, TriggerSender
 
-  - name: subject_name
-    type: string
+# Real trigger on a serial port:
+sender = TriggerSender(lambda code: port.write(bytes([code])))
 
-  - name: gender
-    type: choice
-    choices: [Male, Female]
+# Or mock mode for local testing:
+sender = TriggerSender(mock=True)
 
-subinfo_mapping:
-  subject_id: &quot;编号&quot;
-  subject_name: &quot;姓名&quot;
-  gender: &quot;性别&quot;
-  Male: &quot;男&quot;
-  Female: &quot;女&quot;
-  registration_successful: &quot;注册成功！&quot;
-  registration_failed: &quot;注册取消。&quot;
-  invalid_input: &quot;无效的输入：{field}&quot;
+trial = TrialUnit(
+    win=win,
+    unit_label=&quot;trial_01&quot;,
+    triggersender=sender
+)
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>win</strong>: a <code class="docutils literal notranslate"><span class="pre">visual.Window</span></code> instance</p></li>
+<li><p><strong>unit_label</strong>: short string to prefix state keys</p></li>
+<li><p><strong>triggersender</strong>: optional, defaults to a no‑op print</p></li>
+</ul>
+</section>
+<section id="adding-stimuli">
+<h2>2. Adding Stimuli<a class="headerlink" href="#adding-stimuli" title="Link to this heading">¶</a></h2>
+<p>Attach your visual components. You can pass one stim, several, or a list:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>trial.add_stim(text_stim)
+trial.add_stim(circle_stim, image_stim)
+trial.add_stim([stimA, stimB, stimC])
+trial.add_stim(stimA).add_stim(stimB).add_stim(stimC)
+</pre></div>
+</div>
+<p>All added stimuli will be drawn together in every presentation call.</p>
+</section>
+<section id="lifecycle-hooks">
+<h2>3. Lifecycle Hooks<a class="headerlink" href="#lifecycle-hooks" title="Link to this heading">¶</a></h2>
+<p>Define callbacks at key stages:</p>
+<ul class="simple">
+<li><p><strong>on_start</strong>: before first flip</p></li>
+<li><p><strong>on_response</strong>: when a valid key is pressed</p></li>
+<li><p><strong>on_timeout</strong>: when time runs out</p></li>
+<li><p><strong>on_end</strong>: after the trial completes</p></li>
+</ul>
+<p>Example:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>@trial.on_start()
+def prep(unit):
+    print(&quot;Starting&quot;, unit.label)
+
+@trial.on_response([&#39;left&#39;,&#39;right&#39;])
+def record(unit, key, rt):
+    unit.set_state(response=key, rt=rt)
+
+@trial.on_timeout(2.0)
+def timeout(unit):
+    unit.set_state(hit=False)
+
+@trial.on_end()
+def wrap(unit):
+    print(&quot;Finished:&quot;, unit.state)
 </pre></div>
 </div>
 </section>
-<section id="collecting-subject-info">
-<h2>2. Collecting Subject Info<a class="headerlink" href="#collecting-subject-info" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import yaml
-from your_package import SubInfo
-
-with open(&quot;subinfo.yaml&quot;, &quot;r&quot;) as f:
-    config = yaml.safe_load(f)
-
-collector = SubInfo(config)
-info = collector.collect()
-
-if info is not None:
-    print(&quot;Collected Info:&quot;, info)
-else:
-    print(&quot;Registration was cancelled.&quot;)
-</pre></div>
-</div>
-<p>Example output:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Collected Info: {&#39;subject_id&#39;: &#39;103&#39;, &#39;subject_name&#39;: &#39;Li Hua&#39;, &#39;gender&#39;: &#39;Female&#39;}
+<section id="autoclosing">
+<h2>4. Auto‑Closing<a class="headerlink" href="#autoclosing" title="Link to this heading">¶</a></h2>
+<section id="fixed-or-jittered-duration">
+<h3>Fixed or Jittered Duration<a class="headerlink" href="#fixed-or-jittered-duration" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>trial.duration(1.5)         # close after 1.5 s
+trial.duration((1.0,2.0))   # random between 1.0–2.0 s
 </pre></div>
 </div>
 </section>
-<section id="how-it-works">
-<h2>3. How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h2>
+<section id="close-on-key-press">
+<h3>Close on Key Press<a class="headerlink" href="#close-on-key-press" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>trial.close_on(&#39;space&#39;, &#39;escape&#39;)
+</pre></div>
+</div>
+<p>Automatically records the key, RT, and close times into state.</p>
+</section>
+</section>
+<section id="simple-display-with-show">
+<h2>5. Simple Display with <code class="docutils literal notranslate"><span class="pre">show()</span></code><a class="headerlink" href="#simple-display-with-show" title="Link to this heading">¶</a></h2>
+<p>Present stimuli for a duration, send an onset trigger, and log:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>trial \
+  .add_stim(my_stim) \
+  .show(
+      duration=1.0,
+      onset_trigger=32,
+      frame_based=True
+  )
+</pre></div>
+</div>
 <ul class="simple">
-<li><p>Uses <code class="docutils literal notranslate"><span class="pre">psychopy.gui.Dlg</span></code> to build the form.</p></li>
-<li><p>Supports text, integer (with min/max/digits), and dropdown fields.</p></li>
-<li><p>Automatically adds <code class="docutils literal notranslate"><span class="pre">subject_id</span></code> and <code class="docutils literal notranslate"><span class="pre">session_name</span></code> if missing.</p></li>
-<li><p>Displays localized labels and messages using <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code>.</p></li>
+<li><p><strong>duration</strong>: seconds or <code class="docutils literal notranslate"><span class="pre">[min,max]</span></code> jitter</p></li>
+<li><p><strong>onset_trigger</strong>: code sent at the flip</p></li>
+<li><p><strong>frame_based</strong>: <code class="docutils literal notranslate"><span class="pre">True</span></code> for frame‑loop timing</p></li>
 </ul>
 </section>
-<section id="validation-behavior">
-<h2>4. Validation Behavior<a class="headerlink" href="#validation-behavior" title="Link to this heading">¶</a></h2>
+<section id="stimulus-response-window-with-capture-response">
+<h2>6. Stimulus + Response Window with <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code><a class="headerlink" href="#stimulus-response-window-with-capture-response" title="Link to this heading">¶</a></h2>
+<p>One‑stop call for show + response + triggers + highlight:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>trial \
+  .add_stim(cue) \
+  .capture_response(
+      keys=[&#39;left&#39;,&#39;right&#39;],
+      duration=1.5,
+      onset_trigger=32,
+      response_trigger={&#39;left&#39;:33,&#39;right&#39;:34},
+      timeout_trigger=35,
+      correct_keys=[&#39;left&#39;],
+      highlight_stim=highlight_map,
+      dynamic_highlight=False
+  )
+</pre></div>
+</div>
 <ul class="simple">
-<li><p>Integer fields are validated for range and digit length.</p></li>
-<li><p>Any failure will prompt an error dialog and restart the input form.</p></li>
-<li><p>Successful entries return a clean dictionary with English keys.</p></li>
+<li><p><strong>keys</strong>: valid keys</p></li>
+<li><p><strong>response_trigger</strong>: int or <code class="docutils literal notranslate"><span class="pre">{key:code}</span></code></p></li>
+<li><p><strong>timeout_trigger</strong>: code on timeout</p></li>
+<li><p><strong>correct_keys</strong>: keys counted as hits</p></li>
+<li><p><strong>highlight_stim</strong>: stim or <code class="docutils literal notranslate"><span class="pre">{key:stim}</span></code></p></li>
+<li><p><strong>dynamic_highlight</strong>: redraw on repeated presses</p></li>
 </ul>
+<p>State fields like <code class="docutils literal notranslate"><span class="pre">hit</span></code>, <code class="docutils literal notranslate"><span class="pre">response</span></code>, <code class="docutils literal notranslate"><span class="pre">rt</span></code>, and trigger codes are all managed automatically.</p>
 </section>
-<section id="localization-optional">
-<h2>5. Localization (Optional)<a class="headerlink" href="#localization-optional" title="Link to this heading">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code> block maps internal field names and values to display labels in any language. You can also override default system messages like:</p>
+<section id="full-trial-loop-with-run">
+<h2>7. Full Trial Loop with <code class="docutils literal notranslate"><span class="pre">run()</span></code><a class="headerlink" href="#full-trial-loop-with-run" title="Link to this heading">¶</a></h2>
+<p>Assemble hooks, then call <code class="docutils literal notranslate"><span class="pre">.run()</span></code> for maximum flexibility:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>trial \
+  .add_stim(stimA, stimB) \
+  .on_start(start_fn) \
+  .on_response([&#39;a&#39;,&#39;l&#39;], resp_fn) \
+  .on_timeout(2.0, timeout_fn) \
+  .on_end(end_fn) \
+  .run(frame_based=False, terminate_on_response=True)
+</pre></div>
+</div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;registration_successful&quot;</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;registration_failed&quot;</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;invalid_input&quot;</span></code></p></li>
+<li><p><strong>frame_based</strong>: <code class="docutils literal notranslate"><span class="pre">True</span></code> counts frames; <code class="docutils literal notranslate"><span class="pre">False</span></code> uses clock time</p></li>
+<li><p><strong>terminate_on_response</strong>: stop drawing after first response</p></li>
 </ul>
-<p>This class helps unify your experimental metadata collection pipeline with minimal boilerplate. You can reuse the same config across experiments and localize it for different participant groups.</p>
+<p>After <code class="docutils literal notranslate"><span class="pre">.run()</span></code>, inspect <code class="docutils literal notranslate"><span class="pre">trial.state</span></code> for all recorded timings, triggers, and custom data.</p>
+</section>
+<section id="pause-continue-with-wait-and-continue">
+<h2>8. Pause &amp; Continue with <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code><a class="headerlink" href="#pause-continue-with-wait-and-continue" title="Link to this heading">¶</a></h2>
+<p>Show stimuli, then block until a keypress:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>trial \
+  .add_stim(instr_text) \
+  .wait_and_continue(
+      keys=[&#39;space&#39;],
+      log_message=&quot;Instructions done&quot;,
+      terminate=False
+  )
+</pre></div>
+</div>
+<p>Pass <code class="docutils literal notranslate"><span class="pre">terminate=True</span></code> to close the window when done.</p>
+</section>
+<section id="chainable-api-showcase">
+<h2>9. Chainable API Showcase<a class="headerlink" href="#chainable-api-showcase" title="Link to this heading">¶</a></h2>
+<p>You can define and execute an entire trial in one fluid chain:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>trial = TrialUnit(win, &quot;T1&quot;, TriggerSender(mock=True))
+
+trial \
+  .add_stim(stimA, stimB) \
+  .on_start(lambda u: print(&quot;Start&quot;, u.label)) \
+  .on_response(
+      [&#39;x&#39;,&#39;z&#39;],
+      lambda u, k, rt: u.set_state(response=k, rt=rt)
+  ) \
+  .on_end(lambda u: print(&quot;State:&quot;, u.state)) \
+  .run(frame_based=True)
+</pre></div>
+</div>
 </section>
 <section id="realistic-example">
-<h2>6. Realistic Example<a class="headerlink" href="#realistic-example" title="Link to this heading">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config/config.yaml&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-<span class="c1"># 2. collect subject info</span>
-<span class="n">subform_config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;subinfo_fields&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;subinfo_fields&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-    <span class="s1">&#39;subinfo_mapping&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;subinfo_mapping&#39;</span><span class="p">,</span> <span class="p">{})</span>
-<span class="p">}</span>
-
-<span class="n">subform</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">subform_config</span><span class="p">)</span>
-<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subform</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-<span class="k">if</span> <span class="n">subject_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Participant cancelled — aborting experiment.&quot;</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<h2>10. Realistic Example<a class="headerlink" href="#realistic-example" title="Link to this heading">¶</a></h2>
+<section id="monetary-incentive-delay-task-mid-example">
+<h3>10.1. Monetary Incentive Delay Task (MID) example.<a class="headerlink" href="#monetary-incentive-delay-task-mid-example" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">to</span> <span class="n">be</span> <span class="n">added</span>
 </pre></div>
 </div>
+<p>With <code class="docutils literal notranslate"><span class="pre">TrialUnit</span></code> you get a concise, expressive, and chainable API for building every aspect of your trial—visuals, inputs, timing, triggers, and data logging—without boilerplate. Happy experimenting!</p>
+</section>
 </section>
 </section>
 
@@ -395,23 +511,23 @@ else:
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="task_settings.html">
+          <a class="next-page" href="build_stimulus.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">⚙️ TaskSettings: Managing Experimental Configuration</div>
+                <div class="title">🎨 StimBank: Flexible Stimulus Management for PsychoPy</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="getting_started.html">
+          <a class="prev-page" href="build_blocks.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">🏁 Getting Started with psyflow</div>
+                <div class="title">📦 BlockUnit: Managing Experimental Blocks</div>
                 
               </div>
             </a>
@@ -445,14 +561,25 @@ else:
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">🧾 SubInfo: Participant Information Collector</a><ul>
+<li><a class="reference internal" href="#">🎯 TrialUnit: Modular Trial Controller for PsychoPy</a><ul>
 <li><a class="reference internal" href="#summary-of-key-methods">🧵 Summary of Key Methods</a></li>
-<li><a class="reference internal" href="#configuration-format-yaml">1. Configuration Format (YAML)</a></li>
-<li><a class="reference internal" href="#collecting-subject-info">2. Collecting Subject Info</a></li>
-<li><a class="reference internal" href="#how-it-works">3. How It Works</a></li>
-<li><a class="reference internal" href="#validation-behavior">4. Validation Behavior</a></li>
-<li><a class="reference internal" href="#localization-optional">5. Localization (Optional)</a></li>
-<li><a class="reference internal" href="#realistic-example">6. Realistic Example</a></li>
+<li><a class="reference internal" href="#initialization">1. Initialization</a></li>
+<li><a class="reference internal" href="#adding-stimuli">2. Adding Stimuli</a></li>
+<li><a class="reference internal" href="#lifecycle-hooks">3. Lifecycle Hooks</a></li>
+<li><a class="reference internal" href="#autoclosing">4. Auto‑Closing</a><ul>
+<li><a class="reference internal" href="#fixed-or-jittered-duration">Fixed or Jittered Duration</a></li>
+<li><a class="reference internal" href="#close-on-key-press">Close on Key Press</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simple-display-with-show">5. Simple Display with <code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
+<li><a class="reference internal" href="#stimulus-response-window-with-capture-response">6. Stimulus + Response Window with <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code></a></li>
+<li><a class="reference internal" href="#full-trial-loop-with-run">7. Full Trial Loop with <code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
+<li><a class="reference internal" href="#pause-continue-with-wait-and-continue">8. Pause &amp; Continue with <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code></a></li>
+<li><a class="reference internal" href="#chainable-api-showcase">9. Chainable API Showcase</a></li>
+<li><a class="reference internal" href="#realistic-example">10. Realistic Example</a><ul>
+<li><a class="reference internal" href="#monetary-incentive-delay-task-mid-example">10.1. Monetary Incentive Delay Task (MID) example.</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

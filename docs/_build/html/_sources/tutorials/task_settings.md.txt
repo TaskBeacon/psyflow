@@ -1,1 +1,107 @@
-# content to be added
+## ⚙️ TaskSettings: Managing Experimental Configuration
+
+`TaskSettings` is a configuration class that manages the structure, appearance, and subject-specific settings for your PsychoPy experiment.
+
+### 🧵 Summary of Key Methods
+
+| Purpose                         | Method                        |
+|-|-|
+| Load from dictionary             | `TaskSettings.from_dict()`    |
+| Add subject info and file paths | `.add_subinfo(subinfo)`       |
+| Generate per-block seeds        | `.set_block_seed(seed_base)`  |
+| Get number of trials per block  | `.trials_per_block` (property)|
+| Access paths or filenames       | `.log_file`, `.res_file`      |
+| Extend settings dynamically     | attach extra keys after `from_dict()` |
+
+
+
+It is ideal for:
+- Managing task design parameters
+- Setting seeds and condition lists
+- Generating per-subject output filenames
+- Loading configuration from YAML or flat dictionaries
+
+
+
+### 1. Creating Settings from Config
+
+You can create a `TaskSettings` object from a dictionary or YAML config.
+
+    config = {
+        "total_blocks": 2,
+        "total_trials": 30,
+        "seed_mode": "same_within_sub",
+        "key_list": ["left", "right"],
+        "conditions": ["win", "neutral", "lose"],
+        "bg_color": "black"
+    }
+
+    settings = TaskSettings.from_dict(config)
+
+
+
+### 2. Adding Subject Info
+
+To generate subject-specific seeds and output file names:
+
+    subinfo = {"subject_id": "P001", "session_name": "S1"}
+    settings.add_subinfo(subinfo)
+
+Now you have:
+
+    settings.block_seed   # Deterministic based on subject_id
+    settings.log_file     # e.g., ./data/sub-P001_session_S1_20250415_100455.log
+    settings.res_file     # e.g., ./data/sub-P001_session_S1_20250415_100455.csv
+
+
+
+### 3. Seed Modes
+
+Set `seed_mode` in your config to control how randomization behaves:
+
+| Mode               | Description                                   |
+|--|--|
+| same_across_sub    | All participants share the same global seed   |
+| same_within_sub    | Seed derived from subject_id (stable per sub) |
+
+Seed examples:
+
+    config = {"seed_mode": "same_within_sub", "overall_seed": 2025}
+    settings = TaskSettings.from_dict(config)
+    settings.add_subinfo({"subject_id": "P999"})
+
+
+
+### 4. Derived Values
+
+`trials_per_block` is automatically computed:
+
+    settings.total_trials = 60
+    settings.total_blocks = 4
+    print(settings.trials_per_block)  # 15
+
+
+
+### 5. Output File Handling
+
+All files are saved to `save_path` (default is `./data`). You can customize:
+
+    config = {"save_path": "./results"}
+    settings = TaskSettings.from_dict(config)
+
+Directory will be created automatically if it doesn't exist.
+
+`TaskSettings` brings together all parts of an experiment’s configuration and lets you control them from one structured, extensible place.
+
+### 6. Realistic Example
+```python
+with open('config/config.yaml', encoding='utf-8') as f:
+    config = yaml.safe_load(f)
+task_config = {
+    **config.get('window', {}),
+    **config.get('task', {}),
+    **config.get('timing', {})  # ← don't forget this!
+}
+settings = TaskSettings.from_dict(task_config)
+settings.add_subinfo(subject_data)
+```
