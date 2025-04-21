@@ -206,11 +206,10 @@
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">content to be added</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html#setup-stimuli">3. setup stimuli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">content to be added</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Examples</span></p>
@@ -315,7 +314,7 @@
 </div>
 </section>
 <section id="initialization">
-<h2>🔧 1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h2>
+<h2>1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h2>
 <p>To use <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>, you need to create an instance by passing basic information about the block, the experiment settings, and optionally, PsychoPy window and keyboard handlers.</p>
 <p>Example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">your_package</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockUnit</span>
@@ -337,7 +336,7 @@
 </ul>
 </section>
 <section id="generating-trial-conditions">
-<h2>🎲 2. Generating Trial Conditions<a class="headerlink" href="#generating-trial-conditions" title="Link to this heading">¶</a></h2>
+<h2>2. Generating Trial Conditions<a class="headerlink" href="#generating-trial-conditions" title="Link to this heading">¶</a></h2>
 <p>You can generate trial conditions using a custom function. This enables dynamic and reproducible condition assignment.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_balanced_conditions</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -359,7 +358,7 @@
 </div>
 </section>
 <section id="registering-block-hooks">
-<h2>⚙️ 3. Registering Block Hooks<a class="headerlink" href="#registering-block-hooks" title="Link to this heading">¶</a></h2>
+<h2>3. Registering Block Hooks<a class="headerlink" href="#registering-block-hooks" title="Link to this heading">¶</a></h2>
 <p>You can register functions to be called automatically <strong>before</strong> and <strong>after</strong> the block runs, useful for setup and cleanup steps like logging, showing instructions, or saving snapshots.</p>
 <p>Using decorator style:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@block</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
@@ -378,7 +377,7 @@
 </div>
 </section>
 <section id="running-the-trials">
-<h2>🎮 4. Running the Trials<a class="headerlink" href="#running-the-trials" title="Link to this heading">¶</a></h2>
+<h2>4. Running the Trials<a class="headerlink" href="#running-the-trials" title="Link to this heading">¶</a></h2>
 <p>To run the trials, you must provide a <strong>trial function</strong> that defines what happens on each trial. This function is called for each condition in <code class="docutils literal notranslate"><span class="pre">block.trials</span></code>. The <strong>trial function</strong> should be defined in a way that it accepts the block’s window, keyboard, settings, and condition as parameters. It defines the flow of the trial, including stimulus presentation and response collection.</p>
 <p>Trial function example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -397,7 +396,7 @@
 <p>Each trial result is stored in <code class="docutils literal notranslate"><span class="pre">block.results</span></code>, enriched with trial index, block ID, and condition.</p>
 </section>
 <section id="summarizing-results">
-<h2>📊 5. Summarizing Results<a class="headerlink" href="#summarizing-results" title="Link to this heading">¶</a></h2>
+<h2>5. Summarizing Results<a class="headerlink" href="#summarizing-results" title="Link to this heading">¶</a></h2>
 <p>After a block has finished running, you can summarize results:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">summarize</span><span class="p">()</span>
 </pre></div>
@@ -424,7 +423,7 @@
 </div>
 </section>
 <section id="saving-and-exporting-results">
-<h2>📂 6. Saving and Exporting Results<a class="headerlink" href="#saving-and-exporting-results" title="Link to this heading">¶</a></h2>
+<h2>6. Saving and Exporting Results<a class="headerlink" href="#saving-and-exporting-results" title="Link to this heading">¶</a></h2>
 <p>To convert the results into a list of dictionaries (e.g., for CSV export):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">results</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
 </pre></div>
@@ -436,7 +435,7 @@
 </div>
 </section>
 <section id="putting-it-all-together">
-<h2>🔁 7. Putting It All Together<a class="headerlink" href="#putting-it-all-together" title="Link to this heading">¶</a></h2>
+<h2>7. Putting It All Together<a class="headerlink" href="#putting-it-all-together" title="Link to this heading">¶</a></h2>
 <p>Full example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span><span class="s2">&quot;block1&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span><span class="p">)</span>
 
@@ -457,9 +456,9 @@
 </div>
 </section>
 <section id="realistic-examples">
-<h2>📚 8. Realistic examples<a class="headerlink" href="#realistic-examples" title="Link to this heading">¶</a></h2>
+<h2>8. Realistic examples<a class="headerlink" href="#realistic-examples" title="Link to this heading">¶</a></h2>
 <section id="monetary-incentive-delay-task-mid-example">
-<h3>Monetary Incentive Delay Task (MID) example.<a class="headerlink" href="#monetary-incentive-delay-task-mid-example" title="Link to this heading">¶</a></h3>
+<h3>8.1. Monetary Incentive Delay Task (MID) example.<a class="headerlink" href="#monetary-incentive-delay-task-mid-example" title="Link to this heading">¶</a></h3>
 <p>Note that we defined stim_bank and controller before the block loop, so they are available in the trial function across blocks. That means the dynamic controller is shared across blocks. If we want to have a different controller for each block, we should set it within the block loop.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">block_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">):</span>
@@ -503,8 +502,8 @@
 </pre></div>
 </div>
 </section>
-<section id="probalistic-revesal-learning-task-example">
-<h3>Probalistic revesal learning task example.<a class="headerlink" href="#probalistic-revesal-learning-task-example" title="Link to this heading">¶</a></h3>
+<section id="probalistic-revesal-learning-prl-task-example">
+<h3>8.2. Probalistic revesal learning (PRL) task example.<a class="headerlink" href="#probalistic-revesal-learning-prl-task-example" title="Link to this heading">¶</a></h3>
 <p>Note that we defined stim_bank within the block loop, so it is different for each block.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">block_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">):</span>
@@ -615,16 +614,16 @@
             <ul>
 <li><a class="reference internal" href="#">📦 BlockUnit: Managing Experimental Blocks</a><ul>
 <li><a class="reference internal" href="#summary-of-key-methods">🧵 Summary of Key Methods</a></li>
-<li><a class="reference internal" href="#initialization">🔧 1. Initialization</a></li>
-<li><a class="reference internal" href="#generating-trial-conditions">🎲 2. Generating Trial Conditions</a></li>
-<li><a class="reference internal" href="#registering-block-hooks">⚙️ 3. Registering Block Hooks</a></li>
-<li><a class="reference internal" href="#running-the-trials">🎮 4. Running the Trials</a></li>
-<li><a class="reference internal" href="#summarizing-results">📊 5. Summarizing Results</a></li>
-<li><a class="reference internal" href="#saving-and-exporting-results">📂 6. Saving and Exporting Results</a></li>
-<li><a class="reference internal" href="#putting-it-all-together">🔁 7. Putting It All Together</a></li>
-<li><a class="reference internal" href="#realistic-examples">📚 8. Realistic examples</a><ul>
-<li><a class="reference internal" href="#monetary-incentive-delay-task-mid-example">Monetary Incentive Delay Task (MID) example.</a></li>
-<li><a class="reference internal" href="#probalistic-revesal-learning-task-example">Probalistic revesal learning task example.</a></li>
+<li><a class="reference internal" href="#initialization">1. Initialization</a></li>
+<li><a class="reference internal" href="#generating-trial-conditions">2. Generating Trial Conditions</a></li>
+<li><a class="reference internal" href="#registering-block-hooks">3. Registering Block Hooks</a></li>
+<li><a class="reference internal" href="#running-the-trials">4. Running the Trials</a></li>
+<li><a class="reference internal" href="#summarizing-results">5. Summarizing Results</a></li>
+<li><a class="reference internal" href="#saving-and-exporting-results">6. Saving and Exporting Results</a></li>
+<li><a class="reference internal" href="#putting-it-all-together">7. Putting It All Together</a></li>
+<li><a class="reference internal" href="#realistic-examples">8. Realistic examples</a><ul>
+<li><a class="reference internal" href="#monetary-incentive-delay-task-mid-example">8.1. Monetary Incentive Delay Task (MID) example.</a></li>
+<li><a class="reference internal" href="#probalistic-revesal-learning-prl-task-example">8.2. Probalistic revesal learning (PRL) task example.</a></li>
 </ul>
 </li>
 </ul>

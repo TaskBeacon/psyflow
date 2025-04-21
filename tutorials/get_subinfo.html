@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="content to be added" href="task_settings.html" /><link rel="prev" title="content to be added" href="getting_started.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>content to be added - psyflow 0.1.0 documentation</title>
+        <title>🧾 SubInfo: Participant Information Collector - psyflow 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -179,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -206,11 +206,10 @@
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">content to be added</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">content to be added</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🧾 SubInfo: Participant Information Collector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html#setup-stimuli">3. setup stimuli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">content to be added</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Examples</span></p>
@@ -258,14 +257,123 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="content-to-be-added">
-<h1>content to be added<a class="headerlink" href="#content-to-be-added" title="Link to this heading">¶</a></h1>
+          <section id="subinfo-participant-information-collector">
+<h1>🧾 SubInfo: Participant Information Collector<a class="headerlink" href="#subinfo-participant-information-collector" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> is a flexible and localizable class for collecting subject information using GUI dialogs. It supports field definitions from YAML or Python dictionaries, and is useful for creating standardized subject registration forms.</p>
+<section id="summary-of-key-methods">
+<h2>🧵 Summary of Key Methods<a class="headerlink" href="#summary-of-key-methods" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Purpose</p></th>
+<th class="head"><p>Method</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Collect participant info</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.collect()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Access result</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.subject_data</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Validate responses</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.validate()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Format output</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">._format_output()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Localization helper</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">._local(key)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="configuration-format-yaml">
+<h2>1. Configuration Format (YAML)<a class="headerlink" href="#configuration-format-yaml" title="Link to this heading">¶</a></h2>
+<p>Here’s an example YAML you might use:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>subinfo_fields:
+  - name: subject_id
+    type: int
+    constraints:
+      min: 101
+      max: 199
+      digits: 3
+
+  - name: subject_name
+    type: string
+
+  - name: gender
+    type: choice
+    choices: [Male, Female]
+
+subinfo_mapping:
+  subject_id: &quot;编号&quot;
+  subject_name: &quot;姓名&quot;
+  gender: &quot;性别&quot;
+  Male: &quot;男&quot;
+  Female: &quot;女&quot;
+  registration_successful: &quot;注册成功！&quot;
+  registration_failed: &quot;注册取消。&quot;
+  invalid_input: &quot;无效的输入：{field}&quot;
+</pre></div>
+</div>
+</section>
+<section id="collecting-subject-info">
+<h2>2. Collecting Subject Info<a class="headerlink" href="#collecting-subject-info" title="Link to this heading">¶</a></h2>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import yaml
+from your_package import SubInfo
+
+with open(&quot;subinfo.yaml&quot;, &quot;r&quot;) as f:
+    config = yaml.safe_load(f)
+
+collector = SubInfo(config)
+info = collector.collect()
+
+if info is not None:
+    print(&quot;Collected Info:&quot;, info)
+else:
+    print(&quot;Registration was cancelled.&quot;)
+</pre></div>
+</div>
+<p>Example output:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Collected Info: {&#39;subject_id&#39;: &#39;103&#39;, &#39;subject_name&#39;: &#39;Li Hua&#39;, &#39;gender&#39;: &#39;Female&#39;}
+</pre></div>
+</div>
+</section>
+<section id="how-it-works">
+<h2>3. How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Uses <code class="docutils literal notranslate"><span class="pre">psychopy.gui.Dlg</span></code> to build the form.</p></li>
+<li><p>Supports text, integer (with min/max/digits), and dropdown fields.</p></li>
+<li><p>Automatically adds <code class="docutils literal notranslate"><span class="pre">subject_id</span></code> and <code class="docutils literal notranslate"><span class="pre">session_name</span></code> if missing.</p></li>
+<li><p>Displays localized labels and messages using <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code>.</p></li>
+</ul>
+</section>
+<section id="validation-behavior">
+<h2>4. Validation Behavior<a class="headerlink" href="#validation-behavior" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p>Integer fields are validated for range and digit length.</p></li>
+<li><p>Any failure will prompt an error dialog and restart the input form.</p></li>
+<li><p>Successful entries return a clean dictionary with English keys.</p></li>
+</ul>
+</section>
+<section id="localization-optional">
+<h2>5. Localization (Optional)<a class="headerlink" href="#localization-optional" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code> block maps internal field names and values to display labels in any language. You can also override default system messages like:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;registration_successful&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;registration_failed&quot;</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;invalid_input&quot;</span></code></p></li>
+</ul>
+<p>This class helps unify your experimental metadata collection pipeline with minimal boilerplate. You can reuse the same config across experiments and localize it for different participant groups.</p>
+</section>
 </section>
 
         </article>
@@ -311,8 +419,32 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">🧾 SubInfo: Participant Information Collector</a><ul>
+<li><a class="reference internal" href="#summary-of-key-methods">🧵 Summary of Key Methods</a></li>
+<li><a class="reference internal" href="#configuration-format-yaml">1. Configuration Format (YAML)</a></li>
+<li><a class="reference internal" href="#collecting-subject-info">2. Collecting Subject Info</a></li>
+<li><a class="reference internal" href="#how-it-works">3. How It Works</a></li>
+<li><a class="reference internal" href="#validation-behavior">4. Validation Behavior</a></li>
+<li><a class="reference internal" href="#localization-optional">5. Localization (Optional)</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

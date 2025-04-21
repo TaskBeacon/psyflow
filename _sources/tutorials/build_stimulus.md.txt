@@ -1,13 +1,13 @@
-# 🎨 StimBank: Flexible Stimulus Management for PsychoPy
+## 🎨 StimBank: Flexible Stimulus Management for PsychoPy
 
 `StimBank` is a hybrid registry system that allows you to manage PsychoPy stimuli using both decorators and YAML/dictionary specifications. It supports dynamic construction, formatting, lazy loading, previewing, and exporting of stimuli.
 
 `StimBank` offers a declarative and reusable way to manage visual components in your PsychoPy experiments. Whether you're defining stimuli programmatically or loading them from config files, `StimBank` gives you the tools to keep things modular, inspectable, and flexible.
 
-## 🧵 Summary of Key Methods
+### 🧵 Summary of Key Methods
 
 | Purpose                    | Method                        |
-||-|
+|-------------------------------------|--------------------------------------|
 | Register (decorator)      | `@stim_bank.define(name)`     |
 | Register (dict)           | `.add_from_dict()`            |
 | Get one stimulus          | `.get(name)`                  |
@@ -21,7 +21,7 @@
 
 
 
-## 🛠 1. Initialization
+### 1. Initialization
 
 To begin, create a `StimBank` instance with your PsychoPy window:
 
@@ -31,9 +31,9 @@ To begin, create a `StimBank` instance with your PsychoPy window:
 
 
 
-## 🧾 2. Registering Stimuli (Two Ways)
+### 2. Registering Stimuli (Two Ways)
 
-### Option A: Register via Decorator
+#### Option A: Register via Decorator
 
 Use `@stim_bank.define("name")` to register a stimulus-generating function:
 
@@ -45,7 +45,7 @@ Use `@stim_bank.define("name")` to register a stimulus-generating function:
     def make_cue(win):
         return Circle(win, radius=1.0, fillColor='blue')
 
-### Option B: Register via Dictionary
+#### Option B: Register via Dictionary
 
 You can also register multiple stimuli using `.add_from_dict()`:
 
@@ -66,7 +66,7 @@ You can also register multiple stimuli using `.add_from_dict()`:
 
 
 
-## 🧠 3. Retrieving Stimuli
+### 3. Retrieving Stimuli
 
 Get a single stimulus (instantiated lazily):
 
@@ -88,7 +88,7 @@ Check if a stimulus exists:
 
 
 
-## 🪄 4. Dynamic Text Formatting
+### 4. Dynamic Text Formatting
 
 If you registered a `TextStim`, you can format its contents dynamically,
 for example you used {username} as placeholder when defining the text:
@@ -97,7 +97,7 @@ for example you used {username} as placeholder when defining the text:
     stim.draw()  # will show "Hello, Zhang!" if the text was "Hello, {username}!"
 
 
-## ♻️ 5. Rebuilding or Overriding Stimuli
+### 5. Rebuilding or Overriding Stimuli
 
 For other stimulus, you can rebuild them with new parameters, a good way to get rid of the `clone` or `deepcopy` that does not work for visual stimuli.
 
@@ -115,7 +115,7 @@ Optionally, update the internal cache: (This will update the one saved in stim_b
 
 
 
-## 🧪 6. Previewing Stimuli
+### 6. Previewing Stimuli
 
 You can preview stimuli one by one:
 
@@ -132,7 +132,7 @@ Preview a selected list of keys:
 
 
 
-## 📑 7. Describing Parameters
+### 7. Describing Parameters
 
 Use `describe(name)` to print all valid parameters for the stimulus type:
 
@@ -147,7 +147,7 @@ Output example:
 
 
 
-## 🧯 8. YAML Export and Import
+### 8. YAML Export and Import
 
 Export all dictionary-based stimuli to YAML:
 
@@ -166,7 +166,7 @@ You can later reload these using:
 
 
 
-## ✅ 9. Validating Definitions
+### 9. Validating Definitions
 
 Use `.validate_dict()` to check your dictionary for mistakes:
 
@@ -174,8 +174,8 @@ Use `.validate_dict()` to check your dictionary for mistakes:
 
 This prints warnings for unknown or missing arguments. Set `strict=True` to raise exceptions instead. When using add_from_dict() or YAML, it will validate the dictionary before adding it to the bank.
 
-## 📚 10. Realistic Examples
-### Monetary Incentive Delay Task (MID) example.
+### 10. Realistic Examples
+#### 10.1. Monetary Incentive Delay Task (MID) example.
 
 ```yaml
 # === Stimuli (for MID task) ===
@@ -313,7 +313,7 @@ stim_bank.add_from_dict(stim_config)
 stim_bank.preload_all()
 ```
 
-### Probalistic reversal learning task example.
+#### 10.2. Probalistic reversal learning (PRL) task example.
 
 ```yaml
 stimuli:
@@ -397,7 +397,7 @@ Then we will rebuild them based on the condition (this is in the `run_trial` fun
         .add_stim(stimb)
 ```
 
-### 😱Dealing with complicated conditions and stimulus
+#### 10.3. Dealing with complicated conditions and stimulus 😱
 In the emotional dot probe tasks, we need to take the emotion, gender, location and probe location into account when setup the conditions. In the task, we have defined 20 conditons, and assigned relevant stimuli to them.
 
 ```python
@@ -513,72 +513,4 @@ trial_info = assign_stim_from_condition(condition, asset_pool)
     right_stim = stim_bank.rebuild('right_stim', image=os.path.join('assets', trial_info['right_stim']))
 ```
 So in this case, the stim_bank is more of the container for the placeholder stimuli.
-The way to assign stimuli and generate conditions is a core part of the experiment design. 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# 3. setup stimuli
-```
-# 3. setup stimuli
-from psychopy.visual import Circle, Rect, Polygon
-from psyflow.StimBank import StimBank
-
-# Assuming 
-stim_bank = StimBank(win)
-#  Cue Stimuli 
-@stim_bank.define("cue_win")
-def _cue_circle(win):
-    return Circle(win, radius=4, fillColor="magenta", lineColor=None)
-
-@stim_bank.define("cue_lose")
-def _cue_square(win):
-    return Rect(win, width=8, height=8, fillColor="yellow", lineColor=None)
-
-@stim_bank.define("cue_neut")
-def _cue_triangle(win):
-    return Polygon(win, edges=3, size=8, fillColor="cyan", lineColor=None)
-
-#  Target Stimuli (Black) 
-@stim_bank.define("target_win")
-def _target_circle(win):
-    return Circle(win, radius=4, fillColor="black", lineColor=None)
-
-@stim_bank.define("target_lose")
-def _target_square(win):
-    return Rect(win, width=8, height=8, fillColor="black", lineColor=None)
-
-@stim_bank.define("target_neut")
-def _target_triangle(win):
-    return Polygon(win, edges=3, size=8, fillColor="black", lineColor=None)
-
-# Preload all for safety
-
-stim_bank.add_from_dict(
-    fixation={"type": "text", "text": "+"},
-    cue_win={"type": "circle", "radius": 4, "fillColor": "magenta","lineColor": ""},
-    cue_lose={"type": "rect", "width": 8, "height": 8, "fillColor": "yellow","lineColor": ""},
-    cue_neut={"type": "polygon", "edges": 3, "size": 8, "fillColor": "cyan","lineColor": ""},
-    target_win={"type": "circle", "radius": 4, "fillColor": "black","lineColor": ""},
-    target_lose={"type": "rect", "width": 8, "height": 8, "fillColor": "black","lineColor": ""},
-    target_neut={"type": "polygon", "edges": 3, "size": 8, "fillColor": "black","lineColor": ""}
-)
-
-
-stim_bank.describe("cue_neut")
-stim_bank.preload_all()
-stim_bank.preview_all()
-stim_bank.preview_selected(['cue_neut'])
-stim_bank.rebuild('cue_neut', fillColor='red')
-stim_bank.preview_selected(['cue_neut']) # not change?
-```
+The way to assign stimuli and generate conditions is a core part of the experiment design.

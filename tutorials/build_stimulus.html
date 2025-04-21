@@ -206,11 +206,10 @@
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#setup-stimuli">3. setup stimuli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">content to be added</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Examples</span></p>
@@ -270,20 +269,47 @@
 <p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> offers a declarative and reusable way to manage visual components in your PsychoPy experiments. Whether you’re defining stimuli programmatically or loading them from config files, <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> gives you the tools to keep things modular, inspectable, and flexible.</p>
 <section id="summary-of-key-methods">
 <h2>🧵 Summary of Key Methods<a class="headerlink" href="#summary-of-key-methods" title="Link to this heading">¶</a></h2>
-<p>| Purpose                    | Method                        |
-||-|
-| Register (decorator)      | <code class="docutils literal notranslate"><span class="pre">&#64;stim_bank.define(name)</span></code>     |
-| Register (dict)           | <code class="docutils literal notranslate"><span class="pre">.add_from_dict()</span></code>            |
-| Get one stimulus          | <code class="docutils literal notranslate"><span class="pre">.get(name)</span></code>                  |
-| Get many (selected/group) | <code class="docutils literal notranslate"><span class="pre">.get_selected(keys)</span></code> / <code class="docutils literal notranslate"><span class="pre">.get_group(prefix)</span></code> |
-| Preview stimuli           | <code class="docutils literal notranslate"><span class="pre">.preview_all()</span></code> etc.         |
-| Format <code class="docutils literal notranslate"><span class="pre">TextStim</span></code>         | <code class="docutils literal notranslate"><span class="pre">.get_and_format(name,</span> <span class="pre">**kwargs)</span></code> |
-| Override stimulus         | <code class="docutils literal notranslate"><span class="pre">.rebuild(name,</span> <span class="pre">**kwargs)</span></code>    |
-| YAML export/import        | <code class="docutils literal notranslate"><span class="pre">.export_to_yaml()</span></code> / <code class="docutils literal notranslate"><span class="pre">add_from_dict()</span></code> |
-| Validate config           | <code class="docutils literal notranslate"><span class="pre">.validate_dict()</span></code>            |</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Purpose</p></th>
+<th class="head"><p>Method</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Register (decorator)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;stim_bank.define(name)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Register (dict)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.add_from_dict()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Get one stimulus</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.get(name)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Get many (selected/group)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.get_selected(keys)</span></code> / <code class="docutils literal notranslate"><span class="pre">.get_group(prefix)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Preview stimuli</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.preview_all()</span></code> etc.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Format <code class="docutils literal notranslate"><span class="pre">TextStim</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.get_and_format(name,</span> <span class="pre">**kwargs)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Override stimulus</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.rebuild(name,</span> <span class="pre">**kwargs)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>YAML export/import</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.export_to_yaml()</span></code> / <code class="docutils literal notranslate"><span class="pre">add_from_dict()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Validate config</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.validate_dict()</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="initialization">
-<h2>🛠 1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h2>
+<h2>1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h2>
 <p>To begin, create a <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> instance with your PsychoPy window:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from your_package import StimBank
 
@@ -292,7 +318,7 @@ stim_bank = StimBank(win)
 </div>
 </section>
 <section id="registering-stimuli-two-ways">
-<h2>🧾 2. Registering Stimuli (Two Ways)<a class="headerlink" href="#registering-stimuli-two-ways" title="Link to this heading">¶</a></h2>
+<h2>2. Registering Stimuli (Two Ways)<a class="headerlink" href="#registering-stimuli-two-ways" title="Link to this heading">¶</a></h2>
 <section id="option-a-register-via-decorator">
 <h3>Option A: Register via Decorator<a class="headerlink" href="#option-a-register-via-decorator" title="Link to this heading">¶</a></h3>
 <p>Use <code class="docutils literal notranslate"><span class="pre">&#64;stim_bank.define(&quot;name&quot;)</span></code> to register a stimulus-generating function:</p>
@@ -328,7 +354,7 @@ def make_cue(win):
 </section>
 </section>
 <section id="retrieving-stimuli">
-<h2>🧠 3. Retrieving Stimuli<a class="headerlink" href="#retrieving-stimuli" title="Link to this heading">¶</a></h2>
+<h2>3. Retrieving Stimuli<a class="headerlink" href="#retrieving-stimuli" title="Link to this heading">¶</a></h2>
 <p>Get a single stimulus (instantiated lazily):</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim = stim_bank.get(&quot;my_text&quot;)
 stim.draw()
@@ -349,7 +375,7 @@ stim_bank.get_group(&quot;cue_&quot;)  # e.g., all keys like &quot;cue_circle&qu
 </div>
 </section>
 <section id="dynamic-text-formatting">
-<h2>🪄 4. Dynamic Text Formatting<a class="headerlink" href="#dynamic-text-formatting" title="Link to this heading">¶</a></h2>
+<h2>4. Dynamic Text Formatting<a class="headerlink" href="#dynamic-text-formatting" title="Link to this heading">¶</a></h2>
 <p>If you registered a <code class="docutils literal notranslate"><span class="pre">TextStim</span></code>, you can format its contents dynamically,
 for example you used {username} as placeholder when defining the text:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim = stim_bank.get_and_format(&quot;my_text&quot;, username=&quot;Zhang&quot;)
@@ -358,7 +384,7 @@ stim.draw()  # will show &quot;Hello, Zhang!&quot; if the text was &quot;Hello, 
 </div>
 </section>
 <section id="rebuilding-or-overriding-stimuli">
-<h2>♻️ 5. Rebuilding or Overriding Stimuli<a class="headerlink" href="#rebuilding-or-overriding-stimuli" title="Link to this heading">¶</a></h2>
+<h2>5. Rebuilding or Overriding Stimuli<a class="headerlink" href="#rebuilding-or-overriding-stimuli" title="Link to this heading">¶</a></h2>
 <p>For other stimulus, you can rebuild them with new parameters, a good way to get rid of the <code class="docutils literal notranslate"><span class="pre">clone</span></code> or <code class="docutils literal notranslate"><span class="pre">deepcopy</span></code> that does not work for visual stimuli.</p>
 <p>Important note:</p>
 <ol class="arabic simple">
@@ -375,7 +401,7 @@ stim.draw()  # will show &quot;Hello, Zhang!&quot; if the text was &quot;Hello, 
 </div>
 </section>
 <section id="previewing-stimuli">
-<h2>🧪 6. Previewing Stimuli<a class="headerlink" href="#previewing-stimuli" title="Link to this heading">¶</a></h2>
+<h2>6. Previewing Stimuli<a class="headerlink" href="#previewing-stimuli" title="Link to this heading">¶</a></h2>
 <p>You can preview stimuli one by one:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.preview_all()
 </pre></div>
@@ -390,7 +416,7 @@ stim.draw()  # will show &quot;Hello, Zhang!&quot; if the text was &quot;Hello, 
 </div>
 </section>
 <section id="describing-parameters">
-<h2>📑 7. Describing Parameters<a class="headerlink" href="#describing-parameters" title="Link to this heading">¶</a></h2>
+<h2>7. Describing Parameters<a class="headerlink" href="#describing-parameters" title="Link to this heading">¶</a></h2>
 <p>Use <code class="docutils literal notranslate"><span class="pre">describe(name)</span></code> to print all valid parameters for the stimulus type:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.describe(&quot;left_target&quot;)
 </pre></div>
@@ -404,7 +430,7 @@ stim.draw()  # will show &quot;Hello, Zhang!&quot; if the text was &quot;Hello, 
 </div>
 </section>
 <section id="yaml-export-and-import">
-<h2>🧯 8. YAML Export and Import<a class="headerlink" href="#yaml-export-and-import" title="Link to this heading">¶</a></h2>
+<h2>8. YAML Export and Import<a class="headerlink" href="#yaml-export-and-import" title="Link to this heading">¶</a></h2>
 <p>Export all dictionary-based stimuli to YAML:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.export_to_yaml(&quot;my_stimuli.yaml&quot;)
 </pre></div>
@@ -421,7 +447,7 @@ stim_bank.add_from_dict(stim_dict)
 </div>
 </section>
 <section id="validating-definitions">
-<h2>✅ 9. Validating Definitions<a class="headerlink" href="#validating-definitions" title="Link to this heading">¶</a></h2>
+<h2>9. Validating Definitions<a class="headerlink" href="#validating-definitions" title="Link to this heading">¶</a></h2>
 <p>Use <code class="docutils literal notranslate"><span class="pre">.validate_dict()</span></code> to check your dictionary for mistakes:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>stim_bank.validate_dict(stim_dict, strict=False)
 </pre></div>
@@ -429,9 +455,9 @@ stim_bank.add_from_dict(stim_dict)
 <p>This prints warnings for unknown or missing arguments. Set <code class="docutils literal notranslate"><span class="pre">strict=True</span></code> to raise exceptions instead. When using add_from_dict() or YAML, it will validate the dictionary before adding it to the bank.</p>
 </section>
 <section id="realistic-examples">
-<h2>📚 10. Realistic Examples<a class="headerlink" href="#realistic-examples" title="Link to this heading">¶</a></h2>
+<h2>10. Realistic Examples<a class="headerlink" href="#realistic-examples" title="Link to this heading">¶</a></h2>
 <section id="monetary-incentive-delay-task-mid-example">
-<h3>Monetary Incentive Delay Task (MID) example.<a class="headerlink" href="#monetary-incentive-delay-task-mid-example" title="Link to this heading">¶</a></h3>
+<h3>10.1. Monetary Incentive Delay Task (MID) example.<a class="headerlink" href="#monetary-incentive-delay-task-mid-example" title="Link to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># === Stimuli (for MID task) ===</span>
 <span class="nt">stimuli</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">fixation</span><span class="p">:</span>
@@ -566,8 +592,8 @@ stim_bank.add_from_dict(stim_dict)
 </pre></div>
 </div>
 </section>
-<section id="probalistic-reversal-learning-task-example">
-<h3>Probalistic reversal learning task example.<a class="headerlink" href="#probalistic-reversal-learning-task-example" title="Link to this heading">¶</a></h3>
+<section id="probalistic-reversal-learning-prl-task-example">
+<h3>10.2. Probalistic reversal learning (PRL) task example.<a class="headerlink" href="#probalistic-reversal-learning-prl-task-example" title="Link to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">stimuli</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">fixation</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
@@ -648,7 +674,7 @@ stim_bank.add_from_dict(stim_dict)
 </div>
 </section>
 <section id="dealing-with-complicated-conditions-and-stimulus">
-<h3>😱Dealing with complicated conditions and stimulus<a class="headerlink" href="#dealing-with-complicated-conditions-and-stimulus" title="Link to this heading">¶</a></h3>
+<h3>10.3. Dealing with complicated conditions and stimulus 😱<a class="headerlink" href="#dealing-with-complicated-conditions-and-stimulus" title="Link to this heading">¶</a></h3>
 <p>In the emotional dot probe tasks, we need to take the emotion, gender, location and probe location into account when setup the conditions. In the task, we have defined 20 conditons, and assigned relevant stimuli to them.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">assign_stim_from_condition</span><span class="p">(</span><span class="n">condition</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">asset_pool</span><span class="p">:</span> <span class="n">AssetPool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -764,62 +790,6 @@ The way to assign stimuli and generate conditions is a core part of the experime
 </section>
 </section>
 </section>
-<section id="setup-stimuli">
-<h1>3. setup stimuli<a class="headerlink" href="#setup-stimuli" title="Link to this heading">¶</a></h1>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 3. setup stimuli</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.visual</span><span class="w"> </span><span class="kn">import</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Rect</span><span class="p">,</span> <span class="n">Polygon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.StimBank</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimBank</span>
-
-<span class="c1"># Assuming </span>
-<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
-<span class="c1">#  Cue Stimuli </span>
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;cue_win&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_cue_circle</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;magenta&quot;</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;cue_lose&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_cue_square</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Rect</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;cue_neut&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_cue_triangle</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;cyan&quot;</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-<span class="c1">#  Target Stimuli (Black) </span>
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;target_win&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_target_circle</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;target_lose&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_target_square</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Rect</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;target_neut&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_target_triangle</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">edges</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-
-<span class="c1"># Preload all for safety</span>
-
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">(</span>
-    <span class="n">fixation</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;+&quot;</span><span class="p">},</span>
-    <span class="n">cue_win</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;circle&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;magenta&quot;</span><span class="p">,</span><span class="s2">&quot;lineColor&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
-    <span class="n">cue_lose</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;rect&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;yellow&quot;</span><span class="p">,</span><span class="s2">&quot;lineColor&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
-    <span class="n">cue_neut</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;polygon&quot;</span><span class="p">,</span> <span class="s2">&quot;edges&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;cyan&quot;</span><span class="p">,</span><span class="s2">&quot;lineColor&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
-    <span class="n">target_win</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;circle&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span><span class="s2">&quot;lineColor&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
-    <span class="n">target_lose</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;rect&quot;</span><span class="p">,</span> <span class="s2">&quot;width&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span><span class="s2">&quot;lineColor&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">},</span>
-    <span class="n">target_neut</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;polygon&quot;</span><span class="p">,</span> <span class="s2">&quot;edges&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span><span class="s2">&quot;lineColor&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}</span>
-<span class="p">)</span>
-
-
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="s2">&quot;cue_neut&quot;</span><span class="p">)</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_all</span><span class="p">()</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_selected</span><span class="p">([</span><span class="s1">&#39;cue_neut&#39;</span><span class="p">])</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s1">&#39;cue_neut&#39;</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_selected</span><span class="p">([</span><span class="s1">&#39;cue_neut&#39;</span><span class="p">])</span> <span class="c1"># not change?</span>
-</pre></div>
-</div>
-</section>
 
         </article>
       </div>
@@ -878,28 +848,27 @@ The way to assign stimuli and generate conditions is a core part of the experime
             <ul>
 <li><a class="reference internal" href="#">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a><ul>
 <li><a class="reference internal" href="#summary-of-key-methods">🧵 Summary of Key Methods</a></li>
-<li><a class="reference internal" href="#initialization">🛠 1. Initialization</a></li>
-<li><a class="reference internal" href="#registering-stimuli-two-ways">🧾 2. Registering Stimuli (Two Ways)</a><ul>
+<li><a class="reference internal" href="#initialization">1. Initialization</a></li>
+<li><a class="reference internal" href="#registering-stimuli-two-ways">2. Registering Stimuli (Two Ways)</a><ul>
 <li><a class="reference internal" href="#option-a-register-via-decorator">Option A: Register via Decorator</a></li>
 <li><a class="reference internal" href="#option-b-register-via-dictionary">Option B: Register via Dictionary</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#retrieving-stimuli">🧠 3. Retrieving Stimuli</a></li>
-<li><a class="reference internal" href="#dynamic-text-formatting">🪄 4. Dynamic Text Formatting</a></li>
-<li><a class="reference internal" href="#rebuilding-or-overriding-stimuli">♻️ 5. Rebuilding or Overriding Stimuli</a></li>
-<li><a class="reference internal" href="#previewing-stimuli">🧪 6. Previewing Stimuli</a></li>
-<li><a class="reference internal" href="#describing-parameters">📑 7. Describing Parameters</a></li>
-<li><a class="reference internal" href="#yaml-export-and-import">🧯 8. YAML Export and Import</a></li>
-<li><a class="reference internal" href="#validating-definitions">✅ 9. Validating Definitions</a></li>
-<li><a class="reference internal" href="#realistic-examples">📚 10. Realistic Examples</a><ul>
-<li><a class="reference internal" href="#monetary-incentive-delay-task-mid-example">Monetary Incentive Delay Task (MID) example.</a></li>
-<li><a class="reference internal" href="#probalistic-reversal-learning-task-example">Probalistic reversal learning task example.</a></li>
-<li><a class="reference internal" href="#dealing-with-complicated-conditions-and-stimulus">😱Dealing with complicated conditions and stimulus</a></li>
+<li><a class="reference internal" href="#retrieving-stimuli">3. Retrieving Stimuli</a></li>
+<li><a class="reference internal" href="#dynamic-text-formatting">4. Dynamic Text Formatting</a></li>
+<li><a class="reference internal" href="#rebuilding-or-overriding-stimuli">5. Rebuilding or Overriding Stimuli</a></li>
+<li><a class="reference internal" href="#previewing-stimuli">6. Previewing Stimuli</a></li>
+<li><a class="reference internal" href="#describing-parameters">7. Describing Parameters</a></li>
+<li><a class="reference internal" href="#yaml-export-and-import">8. YAML Export and Import</a></li>
+<li><a class="reference internal" href="#validating-definitions">9. Validating Definitions</a></li>
+<li><a class="reference internal" href="#realistic-examples">10. Realistic Examples</a><ul>
+<li><a class="reference internal" href="#monetary-incentive-delay-task-mid-example">10.1. Monetary Incentive Delay Task (MID) example.</a></li>
+<li><a class="reference internal" href="#probalistic-reversal-learning-prl-task-example">10.2. Probalistic reversal learning (PRL) task example.</a></li>
+<li><a class="reference internal" href="#dealing-with-complicated-conditions-and-stimulus">10.3. Dealing with complicated conditions and stimulus 😱</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#setup-stimuli">3. setup stimuli</a></li>
 </ul>
 
           </div>

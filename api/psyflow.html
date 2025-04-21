@@ -206,11 +206,10 @@
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/getting_started.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/get_subinfo.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/task_settings.html">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html#setup-stimuli">3. setup stimuli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">content to be added</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Examples</span></p>
@@ -677,22 +676,17 @@ executing lifecycle hooks, and collecting trial-level results.</p>
 <dt class="sig sig-object py" id="psyflow.SubInfo.SubInfo">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.SubInfo.</span></span><span class="sig-name descname"><span class="pre">SubInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.SubInfo.SubInfo" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Collects participant information via GUI based on a YAML config file.
-Supports multilingual labels and flexible field types.</p>
-<dl class="simple">
-<dt>Supported field types:</dt><dd><ul class="simple">
-<li><p>string: Free text input</p></li>
-<li><p>int: Integer input with optional min/max/digit constraints</p></li>
-<li><p>choice: Dropdown menu with predefined options</p></li>
-</ul>
-</dd>
-</dl>
-<p>Language localization is supported via the <cite>lang</cite> block in YAML.
-Internal output is always standardized to English values.</p>
+<p>GUI-based participant information collector using a YAML-style config.</p>
+<p>This class generates an input dialog based on a configurable field structure
+and provides basic localization and validation for different field types.</p>
+<p>Supported field types:
+- <cite>string</cite> : Free text input
+- <cite>int</cite> : Integer input with optional constraints
+- <cite>choice</cite> : Dropdown with options</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="psyflow.SubInfo.SubInfo.subject_data">
 <span class="sig-name descname"><span class="pre">subject_data</span></span><a class="headerlink" href="#psyflow.SubInfo.SubInfo.subject_data" title="Link to this definition">¶</a></dt>
-<dd><p>Stores the result of .collect()</p>
+<dd><p>The result of <cite>.collect()</cite>, formatted with English field keys.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>dict or None</p>
@@ -700,101 +694,17 @@ Internal output is always standardized to English values.</p>
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">Example</span> <span class="pre">YAML</span> <span class="pre">structure</span></span></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">------------------------</span></span></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="psyflow.SubInfo.SubInfo.fields">
-<span class="sig-name descname"><span class="pre">fields</span></span><a class="headerlink" href="#psyflow.SubInfo.SubInfo.fields" title="Link to this definition">¶</a></dt>
-<dd><ul>
-<li><p>name: subject_id
-type: int
-constraints:</p>
-<blockquote>
-<div><p>min: 101
-max: 199
-digits: 3</p>
-</div></blockquote>
-</li>
-<li><p>name: subject_name
-type: string</p></li>
-<li><p>name: gender
-type: choice
-choices: [Male, Female]</p></li>
-</ul>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="psyflow.SubInfo.SubInfo.lang">
-<span class="sig-name descname"><span class="pre">lang</span></span><a class="headerlink" href="#psyflow.SubInfo.SubInfo.lang" title="Link to this definition">¶</a></dt>
-<dd><dl class="simple">
-<dt>zh:</dt><dd><p>subject_id: “Subject ID”
-subject_name: “Subject Name”
-gender: “Gender”
-Male: “Male”
-Female: “Female”</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">Example</span> <span class="pre">usage</span></span></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">--------------</span></span></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">with</span> <span class="pre">open(&quot;subject_fields.yaml&quot;)</span> <span class="pre">as</span> <span class="pre">f</span></span></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">...</span>&#160;&#160;&#160;&#160; <span class="pre">config</span> <span class="pre">=</span> <span class="pre">yaml.safe_load(f)</span></span></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">collector</span> <span class="pre">=</span> <span class="pre">ParticipantInfoCollector(config,</span> <span class="pre">language='zh')</span></span></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">subinfo</span> <span class="pre">=</span> <span class="pre">collector.collect()</span></span></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">print(subinfo)</span>&#160; <span class="pre">#</span> <span class="pre">e.g.,</span> <span class="pre">{'subject_id'</span></span></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>‘103’, ‘gender’: ‘Female’}</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">&gt;&gt;&gt;</span> <span class="pre">seed</span> <span class="pre">=</span> <span class="pre">collector.get_seed()</span>&#160; <span class="pre">#</span> <span class="pre">e.g.,</span> <span class="pre">103</span></span></dt>
-<dd></dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.SubInfo.SubInfo.collect">
 <span class="sig-name descname"><span class="pre">collect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.SubInfo.SubInfo.collect" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+<dd><p>Show a dialog to collect participant input. Loops until valid or cancelled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Cleaned response dictionary with English field keys.
+Returns None if cancelled.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -802,9 +712,16 @@ Female: “Female”</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.SubInfo.SubInfo.validate">
 <span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">responses</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.SubInfo.SubInfo.validate" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Validate responses based on type and constraints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>responses</strong> (<em>list</em>) – Raw responses from the dialog.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if all inputs are valid, False otherwise.</p>
+</dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+<dd class="field-odd"><p>bool</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1515,8 +1432,6 @@ with any remainder drawn at random and the entire sequence shuffled.</p>
 <li><a class="reference internal" href="#module-psyflow.SubInfo">psyflow.SubInfo module</a><ul>
 <li><a class="reference internal" href="#psyflow.SubInfo.SubInfo"><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code></a><ul>
 <li><a class="reference internal" href="#psyflow.SubInfo.SubInfo.subject_data"><code class="docutils literal notranslate"><span class="pre">SubInfo.subject_data</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.SubInfo.SubInfo.fields"><code class="docutils literal notranslate"><span class="pre">SubInfo.fields</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.SubInfo.SubInfo.lang"><code class="docutils literal notranslate"><span class="pre">SubInfo.lang</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.SubInfo.SubInfo.collect"><code class="docutils literal notranslate"><span class="pre">SubInfo.collect()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.SubInfo.SubInfo.validate"><code class="docutils literal notranslate"><span class="pre">SubInfo.validate()</span></code></a></li>
 </ul>
