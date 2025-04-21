@@ -1,42 +1,67 @@
 import sys
+import tempfile
+import shutil
 from pathlib import Path
+
 import click
 from cookiecutter.main import cookiecutter
+from cookiecutter.exceptions import OutputDirExistsException
 import importlib.resources as pkg_res
 
-@click.command(context_settings={"ignore_unknown_options": True})
+@click.command()
 @click.argument("project_name", required=False)
 def climain(project_name):
     """
     psyflow-init [PROJECT_NAME]
 
-    If PROJECT_NAME is omitted, or equals the current folder name,
-    we scaffold *in place* (i.e. into CWD). Otherwise we create a
-    new folder PROJECT_NAME under CWD.
+    - No args: initialize current dir (in-place)
+    - Arg == current dir name: same as no args
+    - Otherwise: create ./PROJECT_NAME
     """
-    # locate your bundled template
+    # 1. Locate our bundled template
     tmpl_dir = pkg_res.files("psyflow.templates") / "cookiecutter-psyflow"
 
     cwd = Path.cwd()
-    # decide where cookiecutter should put the project
-    if project_name is None:
-        # no arg => in‐place
-        project_name = cwd.name
-        output_dir = cwd.parent
-    elif project_name == cwd.name:
-        # same name as current dir => in‐place
-        output_dir = cwd.parent
-    else:
-        # new subfolder under cwd
-        output_dir = None  # cookiecutter default is CWD
+    cur_name = cwd.name
 
-    # run cookiecutter
-    cookiecutter(
-        str(tmpl_dir),
+    # 2. Decide: in-place vs new-folder
+    in_place = (project_name is None) or (project_name == cur_name)
+
+    # 3. Choose final name
+    if in_place:
+        name = cur_name
+    else:
+        name = project_name
+
+    # 4. Cookiecutter kwargs
+    extra = {"project_name": name}
+    cc_kwargs = dict(
         no_input=True,
-        extra_context={"project_name": project_name},
-        output_dir=str(output_dir) if output_dir else None,
+        extra_context=extra
     )
+
+    if not in_place:
+        # Standard behavior: create a new ./<name> folder
+        cookiecutter(str(tmpl_dir), output_dir=str(cwd), **cc_kwargs)
+        return
+
+    # 5. In-place mode: render to a temp dir, then copy up
+    tmp = Path(tempfile.mkdtemp(prefix="psyflow-"))
+    try:
+        cookiecutter(str(tmpl_dir), output_dir=str(tmp), **cc_kwargs)
+        rendered = tmp / name
+
+        # Copy everything from rendered/* → cwd/*
+        for item in rendered.iterdir():
+            dest = cwd / item.name
+            if item.is_dir():
+                shutil.copytree(item, dest, dirs_exist_ok=True)
+            else:
+                shutil.copy2(item, dest)
+
+        click.echo(f"Initialized project in place: {cwd}")
+    finally:
+        shutil.rmtree(tmp)
 
 if __name__ == "__main__":
     climain()
