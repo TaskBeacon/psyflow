@@ -180,7 +180,7 @@ print(summary)
 ```
 
 ### 8. Realistic examples
-###### 8.1. Monetary Incentive Delay Task (MID) example.
+#### 8.1. Monetary Incentive Delay Task (MID) example.
 
 Note that we defined stim_bank and controller before the block loop, so they are available in the trial function across blocks. That means the dynamic controller is shared across blocks. If we want to have a different controller for each block, we should set it within the block loop.
 
@@ -226,7 +226,7 @@ df = pd.DataFrame(all_data)
 df.to_csv(settings.res_file, index=False)
 ```
 
-###### 8.2. Probalistic revesal learning (PRL) task example.
+#### 8.2. Probalistic revesal learning (PRL) task example.
 
 Note that we defined stim_bank within the block loop, so it is different for each block.
 

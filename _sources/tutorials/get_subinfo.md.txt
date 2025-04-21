@@ -92,3 +92,21 @@ The `subinfo_mapping` block maps internal field names and values to display labe
 
 
 This class helps unify your experimental metadata collection pipeline with minimal boilerplate. You can reuse the same config across experiments and localize it for different participant groups.
+
+### 6. Realistic Example
+```python
+with open('config/config.yaml', encoding='utf-8') as f:
+    config = yaml.safe_load(f)
+
+# 2. collect subject info
+subform_config = {
+    'subinfo_fields': config.get('subinfo_fields', []),
+    'subinfo_mapping': config.get('subinfo_mapping', {})
+}
+
+subform = SubInfo(subform_config)
+subject_data = subform.collect()
+if subject_data is None:
+    print("Participant cancelled — aborting experiment.")
+    sys.exit(0)
+```

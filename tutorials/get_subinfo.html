@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="content to be added" href="task_settings.html" /><link rel="prev" title="content to be added" href="getting_started.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="⚙️ TaskSettings: Managing Experimental Configuration" href="task_settings.html" /><link rel="prev" title="content to be added" href="getting_started.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
         <title>🧾 SubInfo: Participant Information Collector - psyflow 0.1.0 documentation</title>
@@ -207,7 +207,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">content to be added</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🧾 SubInfo: Participant Information Collector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="task_settings.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">content to be added</a></li>
@@ -374,6 +374,25 @@ else:
 </ul>
 <p>This class helps unify your experimental metadata collection pipeline with minimal boilerplate. You can reuse the same config across experiments and localize it for different participant groups.</p>
 </section>
+<section id="realistic-example">
+<h2>6. Realistic Example<a class="headerlink" href="#realistic-example" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config/config.yaml&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># 2. collect subject info</span>
+<span class="n">subform_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;subinfo_fields&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;subinfo_fields&#39;</span><span class="p">,</span> <span class="p">[]),</span>
+    <span class="s1">&#39;subinfo_mapping&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;subinfo_mapping&#39;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="p">}</span>
+
+<span class="n">subform</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">subform_config</span><span class="p">)</span>
+<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subform</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">subject_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Participant cancelled — aborting experiment.&quot;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -386,7 +405,7 @@ else:
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">content to be added</div>
+                <div class="title">⚙️ TaskSettings: Managing Experimental Configuration</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -438,6 +457,7 @@ else:
 <li><a class="reference internal" href="#how-it-works">3. How It Works</a></li>
 <li><a class="reference internal" href="#validation-behavior">4. Validation Behavior</a></li>
 <li><a class="reference internal" href="#localization-optional">5. Localization (Optional)</a></li>
+<li><a class="reference internal" href="#realistic-example">6. Realistic Example</a></li>
 </ul>
 </li>
 </ul>

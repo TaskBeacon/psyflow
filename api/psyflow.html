@@ -207,7 +207,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/getting_started.html">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/task_settings.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">content to be added</a></li>
@@ -735,101 +735,32 @@ Returns None if cancelled.</p>
 <dt class="sig sig-object py" id="psyflow.TaskSettings.TaskSettings">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.TaskSettings.</span></span><span class="sig-name descname"><span class="pre">TaskSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monitor='testMonitor'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units='norm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_color='gray'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fullscreen=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_blocks=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_trials=10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_list=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_seed=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_mode='same_across_sub'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overall_seed=2025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_file=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res_file=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path='./data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_name=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A configuration container for PsychoPy-based behavioral tasks.
-This dataclass manages all window settings, task structure parameters,
-response mappings, seeding strategies, and per-subject output paths.</p>
-<p>It supports loading from a flat dictionary (e.g., a YAML config), with
-additional keys promoted dynamically as attributes.</p>
+<p>Configuration container for PsychoPy-based tasks.</p>
+<p>This dataclass holds core experimental parameters and provides utility
+methods to set per-subject seeds, construct output paths, and dynamically
+extend settings from external config dictionaries.</p>
 <section id="features">
-<h3>Features:<a class="headerlink" href="#features" title="Link to this heading">¶</a></h3>
+<h3>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Window setup (size, monitor, screen, units)</p></li>
-<li><p>Task design parameters (blocks, trials, conditions)</p></li>
-<li><p>Response configuration (valid keys, default key)</p></li>
-<li><dl class="simple">
-<dt>Reproducible randomization:</dt><dd><ul>
-<li><p><cite>same_across_sub</cite>: use a global seed for all participants</p></li>
-<li><p><cite>same_within_sub</cite>: derive a deterministic seed from <cite>subject_id</cite></p></li>
+<li><p>Window display settings</p></li>
+<li><p>Experimental structure (blocks, trials, conditions)</p></li>
+<li><p>Response keys</p></li>
+<li><p>Flexible seeding strategies</p></li>
+<li><p>Auto-generated per-subject filenames</p></li>
 </ul>
-</dd>
-</dl>
-</li>
-<li><p>Per-subject file naming: <cite>.log</cite> and <cite>.csv</cite> files with timestamp</p></li>
-<li><p>Dynamic extension via <cite>from_dict</cite> and <cite>add_subinfo</cite></p></li>
-</ul>
-</section>
-<section id="parameters">
-<h3>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h3>
-<dl class="simple">
-<dt>size<span class="classifier">list[int]</span></dt><dd><p>Window resolution in pixels (e.g., [1920, 1080]).</p>
-</dd>
-<dt>monitor<span class="classifier">str</span></dt><dd><p>Name of the PsychoPy monitor profile.</p>
-</dd>
-<dt>units<span class="classifier">str</span></dt><dd><p>Units used for stimulus drawing (e.g., ‘deg’, ‘pix’, ‘norm’).</p>
-</dd>
-<dt>screen<span class="classifier">int</span></dt><dd><p>Screen index (usually 0 or 1).</p>
-</dd>
-<dt>bg_color<span class="classifier">str</span></dt><dd><p>Window background color (PsychoPy color string or RGB tuple).</p>
-</dd>
-<dt>fullscreen<span class="classifier">bool</span></dt><dd><p>Whether to launch the experiment in full-screen mode.</p>
-</dd>
-<dt>total_blocks<span class="classifier">int</span></dt><dd><p>Number of experimental blocks.</p>
-</dd>
-<dt>total_trials<span class="classifier">int</span></dt><dd><p>Total number of trials across all blocks.</p>
-</dd>
-<dt>key_list<span class="classifier">list[str]</span></dt><dd><p>Valid response keys for user input.</p>
-</dd>
-<dt>conditions<span class="classifier">list[str]</span></dt><dd><p>Condition labels (e.g., [‘reward’, ‘neutral’, ‘punishment’]).</p>
-</dd>
-<dt>block_seed<span class="classifier">Optional[list[int]]</span></dt><dd><p>List of seeds, one per block. If not provided, generated based on seed strategy.</p>
-</dd>
-<dt>seed_mode<span class="classifier">str</span></dt><dd><p>Strategy to control seed generation. One of:
-- “same_across_sub”: Use the same seed for every participant (requires <cite>overall_seed</cite>)
-- “same_within_sub”: Use subject_id to generate a unique seed</p>
-</dd>
-<dt>overall_seed<span class="classifier">int</span></dt><dd><p>The global seed used when <cite>seed_mode == ‘same_across_sub’</cite>.
-Defaults to 2025 if not provided.</p>
-</dd>
-<dt>trials_per_block<span class="classifier">int</span></dt><dd><p>Automatically computed as ceil(total_trials / total_blocks).</p>
-</dd>
-<dt>log_file<span class="classifier">Optional[str]</span></dt><dd><p>Filename for log output, set by <cite>add_subinfo()</cite> using subject ID and timestamp.</p>
-</dd>
-<dt>res_file<span class="classifier">Optional[str]</span></dt><dd><p>Filename for result CSV output, set by <cite>add_subinfo()</cite>.</p>
-</dd>
-</dl>
-</section>
-<section id="methods">
-<h3>Methods:<a class="headerlink" href="#methods" title="Link to this heading">¶</a></h3>
-<dl class="simple">
-<dt>from_dict(config: dict) -&gt; TaskSettings</dt><dd><p>Load TaskSettings from a flat configuration dictionary, automatically
-applying known fields and promoting extras to instance attributes.</p>
-</dd>
-<dt>add_subinfo(subinfo: dict)</dt><dd><dl class="simple">
-<dt>Accepts subject information (must include “subject_id”) and:</dt><dd><ul class="simple">
-<li><p>updates seed (if seed_mode == “same_within_sub”)</p></li>
-<li><p>generates output filenames using subject ID + timestamp</p></li>
-</ul>
-</dd>
-</dl>
-</dd>
-<dt>set_block_seed(seed_base: int)</dt><dd><p>Uses the given seed base to generate a per-block seed list (one int per block).</p>
-</dd>
-</dl>
-</section>
-<section id="example">
-<h3>Example:<a class="headerlink" href="#example" title="Link to this heading">¶</a></h3>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;total_blocks&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s1">&#39;total_trials&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span> <span class="s1">&#39;seed_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;same_within_sub&#39;</span><span class="p">}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">({</span><span class="s1">&#39;subject_id&#39;</span><span class="p">:</span> <span class="s1">&#39;P001&#39;</span><span class="p">})</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">block_seed</span><span class="p">)</span>  <span class="c1"># deterministic per subject</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">log_file</span><span class="p">)</span>    <span class="c1"># e.g., sub-P001_20250415-103355.log</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="p">)</span>    <span class="c1"># e.g., sub-P001_20250415-103355.csv</span>
-</pre></div>
-</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TaskSettings.TaskSettings.add_subinfo">
 <span class="sig-name descname"><span class="pre">add_subinfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings.add_subinfo" title="Link to this definition">¶</a></dt>
-<dd><p>Inject subject-specific info and set block seeds &amp; file names based on subject ID.</p>
+<dd><p>Add subject-specific information and set seed/file names accordingly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subinfo</strong> (<em>dict</em>) – Dictionary that must contain at least ‘subject_id’. Also used to
+construct per-subject output file names.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If ‘subject_id’ is missing from subinfo.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
@@ -850,7 +781,20 @@ applying known fields and promoting extras to instance attributes.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TaskSettings.TaskSettings.from_dict">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings.from_dict" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Create a TaskSettings instance from a flat dictionary.</p>
+<p>Known fields are applied normally; unknown keys are attached as attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – Dictionary of configuration options.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An initialized instance with config applied.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#psyflow.TaskSettings.TaskSettings" title="psyflow.TaskSettings.TaskSettings">TaskSettings</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="psyflow.TaskSettings.TaskSettings.fullscreen">
@@ -905,7 +849,13 @@ applying known fields and promoting extras to instance attributes.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TaskSettings.TaskSettings.set_block_seed">
 <span class="sig-name descname"><span class="pre">set_block_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed_base</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings.set_block_seed" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Generate a list of per-block seeds from a base seed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed_base</strong> (<em>int</em>) – Base seed used to generate a list of integers for each block.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="psyflow.TaskSettings.TaskSettings.size">
@@ -1149,8 +1099,8 @@ and logging with precision timing.</p>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit" title="psyflow.TrialUnit.TrialUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrialUnit</span></code></a></span></p>
 </dd>
 </dl>
-<section id="id6">
-<h4>Parameters:<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h4>
+<section id="parameters">
+<h4>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h4>
 <dl class="simple">
 <dt>frame_based<span class="classifier">bool</span></dt><dd><p>Whether to use frame-counted duration instead of time-based duration.</p>
 </dd>
