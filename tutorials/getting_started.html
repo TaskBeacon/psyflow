@@ -208,8 +208,9 @@
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html#setup-stimuli">3. setup stimuli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">content to be added</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Examples</span></p>
@@ -265,6 +266,19 @@
         <article role="main" id="furo-main-content">
           <section id="content-to-be-added">
 <h1>content to be added<a class="headerlink" href="#content-to-be-added" title="Link to this heading">¶</a></h1>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.TaskSettings</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.SubInfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.StimBank</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimBank</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.BlockUnit</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockUnit</span><span class="p">,</span> <span class="n">generate_balanced_conditions</span><span class="p">,</span> <span class="n">assign_stimuli</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.TrialUnit</span><span class="w"> </span><span class="kn">import</span> <span class="n">TrialUnit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.TriggerSender</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.TriggerBank</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerBank</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">show_ports</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
 </section>
 
         </article>

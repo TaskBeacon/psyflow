@@ -208,8 +208,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/getting_started.html">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/get_subinfo.html">content to be added</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/task_settings.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html#setup-stimuli">3. setup stimuli</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">content to be added</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Examples</span></p>
@@ -272,9 +273,7 @@
 <li class="toctree-l2"><a class="reference internal" href="psyflow.html#module-psyflow.BlockUnit">psyflow.BlockUnit module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="psyflow.html#psyflow.BlockUnit.BlockUnit"><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.BlockUnit.BlockUnit.add_trials"><code class="docutils literal notranslate"><span class="pre">BlockUnit.add_trials()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.BlockUnit.BlockUnit.assign_stimuli"><code class="docutils literal notranslate"><span class="pre">BlockUnit.assign_stimuli()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.BlockUnit.BlockUnit.generate_conditions"><code class="docutils literal notranslate"><span class="pre">BlockUnit.generate_conditions()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.BlockUnit.BlockUnit.generate_stim_sequence"><code class="docutils literal notranslate"><span class="pre">BlockUnit.generate_stim_sequence()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.BlockUnit.BlockUnit.logging_block_info"><code class="docutils literal notranslate"><span class="pre">BlockUnit.logging_block_info()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.BlockUnit.BlockUnit.on_end"><code class="docutils literal notranslate"><span class="pre">BlockUnit.on_end()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.BlockUnit.BlockUnit.on_start"><code class="docutils literal notranslate"><span class="pre">BlockUnit.on_start()</span></code></a></li>
@@ -283,8 +282,6 @@
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.BlockUnit.BlockUnit.to_dict"><code class="docutils literal notranslate"><span class="pre">BlockUnit.to_dict()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="psyflow.html#psyflow.BlockUnit.assign_stimuli"><code class="docutils literal notranslate"><span class="pre">assign_stimuli()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="psyflow.html#psyflow.BlockUnit.generate_balanced_conditions"><code class="docutils literal notranslate"><span class="pre">generate_balanced_conditions()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="psyflow.html#module-psyflow.StimBank">psyflow.StimBank module</a><ul>
@@ -295,6 +292,7 @@
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.StimBank.StimBank.describe"><code class="docutils literal notranslate"><span class="pre">StimBank.describe()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.StimBank.StimBank.export_to_yaml"><code class="docutils literal notranslate"><span class="pre">StimBank.export_to_yaml()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.StimBank.StimBank.get"><code class="docutils literal notranslate"><span class="pre">StimBank.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.StimBank.StimBank.get_and_format"><code class="docutils literal notranslate"><span class="pre">StimBank.get_and_format()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.StimBank.StimBank.get_group"><code class="docutils literal notranslate"><span class="pre">StimBank.get_group()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.StimBank.StimBank.get_selected"><code class="docutils literal notranslate"><span class="pre">StimBank.get_selected()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.StimBank.StimBank.has"><code class="docutils literal notranslate"><span class="pre">StimBank.has()</span></code></a></li>
@@ -334,9 +332,10 @@
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.TaskSettings.TaskSettings.monitor"><code class="docutils literal notranslate"><span class="pre">TaskSettings.monitor</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.TaskSettings.TaskSettings.overall_seed"><code class="docutils literal notranslate"><span class="pre">TaskSettings.overall_seed</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.TaskSettings.TaskSettings.res_file"><code class="docutils literal notranslate"><span class="pre">TaskSettings.res_file</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.TaskSettings.TaskSettings.response_key"><code class="docutils literal notranslate"><span class="pre">TaskSettings.response_key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.TaskSettings.TaskSettings.save_path"><code class="docutils literal notranslate"><span class="pre">TaskSettings.save_path</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.TaskSettings.TaskSettings.screen"><code class="docutils literal notranslate"><span class="pre">TaskSettings.screen</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.TaskSettings.TaskSettings.seed_mode"><code class="docutils literal notranslate"><span class="pre">TaskSettings.seed_mode</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.TaskSettings.TaskSettings.session_name"><code class="docutils literal notranslate"><span class="pre">TaskSettings.session_name</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.TaskSettings.TaskSettings.set_block_seed"><code class="docutils literal notranslate"><span class="pre">TaskSettings.set_block_seed()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.TaskSettings.TaskSettings.size"><code class="docutils literal notranslate"><span class="pre">TaskSettings.size</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="psyflow.html#psyflow.TaskSettings.TaskSettings.total_blocks"><code class="docutils literal notranslate"><span class="pre">TaskSettings.total_blocks</span></code></a></li>
@@ -389,7 +388,9 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="psyflow.html#module-psyflow.utils">psyflow.utils module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="psyflow.html#psyflow.utils.generate_balanced_conditions"><code class="docutils literal notranslate"><span class="pre">generate_balanced_conditions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="psyflow.html#psyflow.utils.show_ports"><code class="docutils literal notranslate"><span class="pre">show_ports()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="psyflow.html#psyflow.utils.taps"><code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="psyflow.html#module-psyflow">Module contents</a></li>
