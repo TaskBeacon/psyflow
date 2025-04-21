@@ -1,18 +1,140 @@
-# content to be added
+## 🏁 Getting Started with psyflow
+
+Welcome to **psyflow**, a lightweight framework for building PsychoPy experiments with modular, chainable components. This guide walks you through installation, basic setup, and running your first trial.
 
 
-```
-from psyflow.TaskSettings import TaskSettings
-from psyflow.SubInfo import SubInfo
-from psyflow.StimBank import StimBank
-from psyflow.BlockUnit import BlockUnit, generate_balanced_conditions, assign_stimuli
-from psyflow.TrialUnit import TrialUnit
-from psyflow.TriggerSender import TriggerSender
-from psyflow.TriggerBank import TriggerBank
-from psyflow.utils import show_ports
-```
+
+### 1. Installation
+
+Ensure you have PsychoPy installed:
+
+    pip install psychopy
+
+Then install psyflow (replace with actual package name if on PyPI):
+
+    pip install psyflow
+
+Or if you’re working from source:
+
+    git clone https://github.com/your-org/psyflow.git
+    cd psyflow
+    pip install -e .
 
 
-```
-from psyflow import *
-```
+
+### 2. Basic Experiment Structure
+
+A typical psyflow experiment has these core steps:
+
+1. **Configure** experiment settings (`TaskSettings`)  
+2. **Collect** participant info (`SubInfo`)  
+3. **Build** stimuli (`StimBank`)  
+4. **Define** triggers (`TriggerBank` + `TriggerSender`)  
+5. **Create** a trial (`TrialUnit`)  
+6. **Run** the trial and collect data  
+
+
+
+### 3. Configure Your Task
+
+    from psyflow import TaskSettings
+
+    config = {
+        "total_blocks": 2,
+        "total_trials": 20,
+        "seed_mode": "same_within_sub",
+        "key_list": ["left", "right"],
+        "conditions": ["reward", "neutral"],
+        "bg_color": "black"
+    }
+    settings = TaskSettings.from_dict(config)
+
+Later, after collecting `subject_id`:
+
+    settings.add_subinfo({"subject_id": "001", "session_name": "A"})
+
+This creates `settings.block_seed`, `settings.log_file`, and `settings.res_file`.
+
+
+
+### 4. Collect Participant Info
+
+    import yaml
+    from psyflow import SubInfo
+
+    config = yaml.safe_load(open("subinfo.yaml"))
+    collector = SubInfo(config)
+    subinfo = collector.collect()   # opens GUI
+    # e.g., {'subject_id':'001', 'session_name':'A'}
+
+Pass `subinfo` into settings via `add_subinfo()` above.
+
+
+
+### 5. Build Your Stimuli
+
+    from psyflow import StimBank
+    from psychopy.visual import TextStim, Circle
+
+    stim_bank = StimBank(win)
+    @stim_bank.define("fix")
+    def make_fix(win):
+        return TextStim(win, text="+", color="white")
+    stim_bank.add_from_dict({
+        "target": {"type":"circle","radius":0.5,"fillColor":"red"}
+    })
+    stim_bank.preload_all()
+
+Retrieve with:
+
+    fix = stim_bank.get("fix")
+    tgt = stim_bank.get("target")
+
+
+
+### 6. Set Up Triggers
+
+    from psyflow import TriggerBank, TriggerSender
+
+    tb = TriggerBank()
+    tb.add_from_yaml("triggers.yaml")   # or .add_from_dict(...)
+    sender = TriggerSender(lambda code: port.write(bytes([code])))
+
+
+
+### 7. Create & Run a Trial
+
+    from psyflow import TrialUnit
+
+    trial = TrialUnit(win, "T1", triggersender=sender)
+    trial \
+      .add_stim(fix, tgt) \
+      .on_start(lambda u: u.send_trigger(tb.get("fix_onset"))) \
+      .capture_response(
+         keys=["left","right"],
+         duration=1.0,
+         onset_trigger=tb.get("fix_onset"),
+         response_trigger={"left":tb.get("resp_L"), "right":tb.get("resp_R")},
+         timeout_trigger=tb.get("timeout"),
+         correct_keys=["left"],
+         highlight_stim={"left": highlight_left, "right": highlight_right}
+      ) \
+      .on_end(lambda u: print("Result:", u.state)) \
+      .run(frame_based=True)
+
+Inspect `trial.state`, save or append to data file.
+
+
+
+### 8. Putting It All Together
+
+Combine loops over blocks and trials:
+
+    for b in range(settings.total_blocks):
+        # generate conditions, run trial sequence...
+        pass
+
+Use `settings.res_file` to write headers and `trial.to_dict()` for rows.
+
+
+Congratulations—you’ve run your first psyflow trial! Explore additional features in each class’s documentation to customize timing, logging, and more. Happy experimenting!  
