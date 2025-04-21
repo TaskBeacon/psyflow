@@ -209,14 +209,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_trialunit.html">🎯 TrialUnit: Modular Trial Controller for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">content to be added</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_mid.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_resting_state.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_sst.html">content to be added</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -938,11 +933,16 @@ with flexible timing control.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.add_stim">
-<span class="sig-name descname"><span class="pre">add_stim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.add_stim" title="Link to this definition">¶</a></dt>
-<dd><p>Add a visual stimulus to the trial.</p>
+<span class="sig-name descname"><span class="pre">add_stim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">stims</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.add_stim" title="Link to this definition">¶</a></dt>
+<dd><p>Add one or more visual stimuli to the trial.</p>
+<p>Supports calling patterns:
+.add_stim(stimA)
+.add_stim(stimA, stimB, stimC)
+.add_stim([stimA, stimB, stimC])</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>stim</strong> (<em>visual.BaseVisualStim</em>) – A PsychoPy visual stimulus (e.g., TextStim, ImageStim).</p>
+<dd class="field-odd"><p><strong>*stims</strong> (<em>visual.BaseVisualStim</em><em> or </em><em>list</em><em> of </em><em>visual.BaseVisualStim</em>) – One or more PsychoPy visual stimuli, either passed as individual args
+or as a single list/tuple.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Returns self for chaining.</p>
@@ -1198,31 +1198,61 @@ and logging with precision timing.</p>
 <dt class="sig sig-object py" id="psyflow.TriggerBank.TriggerBank">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.TriggerBank.</span></span><span class="sig-name descname"><span class="pre">TriggerBank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">triggers=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TriggerBank.TriggerBank" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A container for mapping event labels to trigger codes (0–255).</p>
+<p>Supports adding mappings manually, from dicts, or from YAML files.
+Typically used with a TriggerSender to manage EEG/MEG event triggers.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TriggerBank.TriggerBank.add">
 <span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TriggerBank.TriggerBank.add" title="Link to this definition">¶</a></dt>
-<dd><p>Add a single event-code pair.</p>
+<dd><p>Add a single event-to-code mapping.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>event</strong> (<em>str</em>) – Event name.</p></li>
+<li><p><strong>code</strong> (<em>int</em>) – Integer code between 0 and 255.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If code is not an int in the allowed range.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TriggerBank.TriggerBank.add_from_dict">
 <span class="sig-name descname"><span class="pre">add_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_map</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TriggerBank.TriggerBank.add_from_dict" title="Link to this definition">¶</a></dt>
-<dd><p>Add multiple event-code mappings from a dictionary.</p>
+<dd><p>Add multiple trigger codes from a dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>trigger_map</strong> (<em>dict</em>) – Dictionary with keys as event names and values as ints or single-item lists.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TriggerBank.TriggerBank.add_from_yaml">
 <span class="sig-name descname"><span class="pre">add_from_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TriggerBank.TriggerBank.add_from_yaml" title="Link to this definition">¶</a></dt>
-<dd><p>Load triggers from a YAML file.</p>
+<dd><p>Load event triggers from a YAML file with a <cite>triggers:</cite> block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>yaml_path</strong> (<em>str</em>) – Path to the YAML file.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TriggerBank.TriggerBank.get">
 <span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TriggerBank.TriggerBank.get" title="Link to this definition">¶</a></dt>
-<dd><p>Get the trigger code (0–255) for a given event.</p>
+<dd><p>Retrieve the trigger code for a given event.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> (<em>str</em>) – Name of the event.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The corresponding trigger code (0–255) or None if not found.</p>
+</dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span></p>
+<dd class="field-odd"><p>int or None</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1241,18 +1271,25 @@ and logging with precision timing.</p>
 <dt class="sig sig-object py" id="psyflow.TriggerSender.TriggerSender">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.TriggerSender.</span></span><span class="sig-name descname"><span class="pre">TriggerSender</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_trigger_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_trigger_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TriggerSender.TriggerSender" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Generalized trigger sender. User provides the actual send function.</p>
-<p>Usage:
-&gt;&gt;&gt; Trigger(lambda code: ser.write(bytes([code])))
-&gt;&gt;&gt; Trigger(mock=True)  # For development/logging only</p>
+<p>A wrapper for sending EEG/MEG trigger codes with optional hooks and delays.</p>
+<p>Can be initialized with a real sending function or used in mock mode
+for development/testing without hardware.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">port</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">([</span><span class="n">c</span><span class="p">])))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">99</span><span class="p">)</span>
+</pre></div>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TriggerSender.TriggerSender.send">
 <span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TriggerSender.TriggerSender.send" title="Link to this definition">¶</a></dt>
-<dd><p>Send a trigger code via the registered trigger function.
-Handles pre/post callbacks and optional delay.</p>
+<dd><p>Send a trigger code using the configured function and callbacks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>code</strong> (<em>int</em><em> or </em><em>None</em>) – Trigger code to send. If None, it is skipped with a warning.</p>
+<dd class="field-odd"><p><strong>code</strong> (<em>int</em><em> or </em><em>None</em>) – The code to send. Skips if None and logs a warning.</p>
 </dd>
 </dl>
 </dd></dl>

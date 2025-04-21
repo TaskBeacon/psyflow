@@ -2,7 +2,7 @@
 
 `TaskSettings` is a configuration class that manages the structure, appearance, and subject-specific settings for your PsychoPy experiment.
 
-### 🧵 Summary of Key Methods (`TaskSettings`)
+### 🧵 Summary of Key Methods
 
 | Purpose                         | Method                        |
 |-|-|

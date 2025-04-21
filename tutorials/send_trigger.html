@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="content to be added" href="../examples/example_mid.html" /><link rel="prev" title="🎨 StimBank: Flexible Stimulus Management for PsychoPy" href="build_stimulus.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API Reference" href="../modules.html" /><link rel="prev" title="🎨 StimBank: Flexible Stimulus Management for PsychoPy" href="build_stimulus.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>content to be added - psyflow 0.1.0 documentation</title>
+        <title>⏱ Trigger System for EEG/MEG: TriggerBank + TriggerSender - psyflow 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -179,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -209,14 +209,9 @@
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_trialunit.html">🎯 TrialUnit: Modular Trial Controller for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">content to be added</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Examples</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_mid.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_resting_state.html">content to be added</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../examples/example_sst.html">content to be added</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -257,14 +252,172 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="content-to-be-added">
-<h1>content to be added<a class="headerlink" href="#content-to-be-added" title="Link to this heading">¶</a></h1>
+          <section id="trigger-system-for-eeg-meg-triggerbank-triggersender">
+<h1>⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code><a class="headerlink" href="#trigger-system-for-eeg-meg-triggerbank-triggersender" title="Link to this heading">¶</a></h1>
+<p>This system separates <strong>trigger definition</strong> (<code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code>) from <strong>trigger sending</strong> (<code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>), allowing you to maintain clean logic, central config, and robust signal dispatch for EEG/MEG experiments.</p>
+<section id="summary-of-key-methods">
+<h2>✅ Summary of Key Methods<a class="headerlink" href="#summary-of-key-methods" title="Link to this heading">¶</a></h2>
+<section id="triggerbank">
+<h3><code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code><a class="headerlink" href="#triggerbank" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Purpose</p></th>
+<th class="head"><p>Method</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Add one event-code</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.add(event,</span> <span class="pre">code)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Add from dict</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.add_from_dict(dict)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Add from YAML file</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.add_from_yaml(path)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Retrieve code</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.get(event)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="triggersender">
+<h3><code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code><a class="headerlink" href="#triggersender" title="Link to this heading">¶</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Purpose</p></th>
+<th class="head"><p>Method</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Send a trigger</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.send(code)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Use mock/debug mode</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TriggerSender(mock=True)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Add hooks (start/end)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">on_trigger_start/on_end</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Control post-delay</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">post_delay=0.001</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="defining-triggers-with-triggerbank">
+<h2>🗂 1. Defining Triggers with <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code><a class="headerlink" href="#defining-triggers-with-triggerbank" title="Link to this heading">¶</a></h2>
+<p>TriggerBank maps event labels (e.g., “cue_onset”, “response”) to integer codes.</p>
+<section id="a-define-manually">
+<h3>A. Define manually<a class="headerlink" href="#a-define-manually" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from your_package import TriggerBank
+
+tb = TriggerBank()
+tb.add(&quot;cue_onset&quot;, 32)
+tb.add(&quot;key_press&quot;, 33)
+</pre></div>
+</div>
+</section>
+<section id="b-load-from-a-dictionary">
+<h3>B. Load from a dictionary<a class="headerlink" href="#b-load-from-a-dictionary" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>tb.add_from_dict({
+    &quot;cue_onset&quot;: 32,
+    &quot;key_press&quot;: [33]  # also accepts single-item list (YAML-safe)
+})
+</pre></div>
+</div>
+</section>
+<section id="c-load-from-yaml">
+<h3>C. Load from YAML<a class="headerlink" href="#c-load-from-yaml" title="Link to this heading">¶</a></h3>
+<p>YAML format:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>triggers:
+  cue_onset: 32
+  key_press: [33]
+</pre></div>
+</div>
+<p>Code:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>tb.add_from_yaml(&quot;trigger_config.yaml&quot;)
+</pre></div>
+</div>
+</section>
+<section id="d-get-a-code">
+<h3>D. Get a code<a class="headerlink" href="#d-get-a-code" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>code = tb.get(&quot;key_press&quot;)  # returns 33 or None
+</pre></div>
+</div>
+</section>
+</section>
+<section id="sending-triggers-with-triggersender">
+<h2>2. Sending Triggers with <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code><a class="headerlink" href="#sending-triggers-with-triggersender" title="Link to this heading">¶</a></h2>
+<p>TriggerSender handles the dispatch logic. It wraps your actual send function (e.g., serial port) and can also run in mock/debug mode.</p>
+<section id="a-real-device-example">
+<h3>A. Real device example<a class="headerlink" href="#a-real-device-example" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>def send_to_port(code):
+    serial_port.write(bytes([code]))
+
+sender = TriggerSender(send_to_port)
+</pre></div>
+</div>
+</section>
+<section id="b-mock-mode-for-testing">
+<h3>B. Mock mode for testing<a class="headerlink" href="#b-mock-mode-for-testing" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sender = TriggerSender(mock=True)
+</pre></div>
+</div>
+</section>
+<section id="c-sending-a-trigger">
+<h3>C. Sending a trigger<a class="headerlink" href="#c-sending-a-trigger" title="Link to this heading">¶</a></h3>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sender.send(tb.get(&quot;cue_onset&quot;))
+</pre></div>
+</div>
+<p>This prints:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>[MockTrigger] Sent code: 32
+[Trigger] Trigger sent: 32
+</pre></div>
+</div>
+</section>
+</section>
+<section id="optional-hooks-and-delays">
+<h2>3. Optional Hooks and Delays<a class="headerlink" href="#optional-hooks-and-delays" title="Link to this heading">¶</a></h2>
+<p>You can register actions before/after sending triggers (e.g., opening and closing ports):</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>sender = TriggerSender(
+    trigger_func=send_to_port,
+    on_trigger_start=lambda: print(&quot;Opening port...&quot;),
+    on_trigger_end=lambda: print(&quot;Closing port...&quot;),
+    post_delay=0.005  # Wait 5ms after sending
+)
+</pre></div>
+</div>
+</section>
+<section id="realistic-example">
+<h2>4. Realistic Example<a class="headerlink" href="#realistic-example" title="Link to this heading">¶</a></h2>
+<p>Here we used mock mode for testing and a serial port for real device communication.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trigger_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;triggers&#39;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="p">}</span>
+<span class="n">triggerbank</span> <span class="o">=</span> <span class="n">TriggerBank</span><span class="p">(</span><span class="n">trigger_config</span><span class="p">)</span>
+<span class="n">ser</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">serial_for_url</span><span class="p">(</span><span class="s2">&quot;loop://&quot;</span><span class="p">,</span> <span class="n">baudrate</span><span class="o">=</span><span class="mi">115200</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">triggersender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span>
+    <span class="n">trigger_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">code</span><span class="p">:</span> <span class="n">ser</span><span class="o">.</span><span class="n">write</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">code</span><span class="p">)]),</span>
+    <span class="n">post_delay</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span>
+    <span class="n">on_trigger_start</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ser</span><span class="o">.</span><span class="n">open</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">ser</span><span class="o">.</span><span class="n">is_open</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">on_trigger_end</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">ser</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Using <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> and <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> gives you a clean separation of config and logic, making your experiment easier to debug, replicate, and maintain.</p>
+</section>
 </section>
 
         </article>
@@ -272,12 +425,12 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../examples/example_mid.html">
+          <a class="next-page" href="../modules.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">content to be added</div>
+                <div class="title">API Reference</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -310,8 +463,46 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a><ul>
+<li><a class="reference internal" href="#summary-of-key-methods">✅ Summary of Key Methods</a><ul>
+<li><a class="reference internal" href="#triggerbank"><code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code></a></li>
+<li><a class="reference internal" href="#triggersender"><code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#defining-triggers-with-triggerbank">🗂 1. Defining Triggers with <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code></a><ul>
+<li><a class="reference internal" href="#a-define-manually">A. Define manually</a></li>
+<li><a class="reference internal" href="#b-load-from-a-dictionary">B. Load from a dictionary</a></li>
+<li><a class="reference internal" href="#c-load-from-yaml">C. Load from YAML</a></li>
+<li><a class="reference internal" href="#d-get-a-code">D. Get a code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sending-triggers-with-triggersender">2. Sending Triggers with <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a><ul>
+<li><a class="reference internal" href="#a-real-device-example">A. Real device example</a></li>
+<li><a class="reference internal" href="#b-mock-mode-for-testing">B. Mock mode for testing</a></li>
+<li><a class="reference internal" href="#c-sending-a-trigger">C. Sending a trigger</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#optional-hooks-and-delays">3. Optional Hooks and Delays</a></li>
+<li><a class="reference internal" href="#realistic-example">4. Realistic Example</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
