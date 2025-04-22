@@ -1,4 +1,4 @@
-from psychopy.visual import TextStim, Circle, Rect, Polygon, ImageStim, ShapeStim, TextBox2
+from psychopy.visual import TextStim, Circle, Rect, Polygon, ImageStim, ShapeStim, TextBox2, MovieStim
 from psychopy import event
 from typing import Callable, Dict, Any, Type, Optional
 import yaml
@@ -13,6 +13,7 @@ STIM_CLASSES: Dict[str, Type] = {
     "polygon": Polygon,
     "image": ImageStim,
     "shape": ShapeStim,
+    "movie": MovieStim, 
 }
 
 
