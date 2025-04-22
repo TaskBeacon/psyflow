@@ -248,17 +248,28 @@ class TrialUnit:
             self._hooks["end"].append(func)
             return self
 
-    def duration(self, t: float | tuple[float, float]):
+    def duration(self, duration: float | list | tuple): 
         """
         Auto-close the trial after a fixed or jittered duration.
 
         Parameters
         ----------
-        t : float or tuple
+        duration : float or list
             Duration or (min, max) range for random sampling.
         """
-        t_val = random.uniform(*t) if isinstance(t, tuple) else t
+        local_rng = random.Random()
 
+        if isinstance(duration, (list, tuple)):
+            if len(duration) == 2:
+                t_val = local_rng.uniform(*duration)
+            elif len(duration) == 1:
+                t_val = duration[0]
+            else:
+                raise ValueError(f"Duration list/tuple must have 1 or 2 elements, got {len(duration)}")
+        elif isinstance(duration, (int, float)):
+            t_val = duration
+        else:
+            raise TypeError(f"Invalid duration type: {type(duration)}")
         def auto_close(unit: 'TrialUnit'):
             unit.set_state(
                 duration=t_val,
@@ -391,7 +402,7 @@ class TrialUnit:
     
     def show(
         self,
-        duration: float | list,
+        duration: float | list | tuple,
         onset_trigger: int = 0,
         frame_based: bool = True
     ) -> "TrialUnit":
@@ -400,7 +411,17 @@ class TrialUnit:
         (recommended for EEG/fMRI) or precise time-based loop.
         """
         local_rng = random.Random()
-        t_val = local_rng.uniform(*duration) if isinstance(duration, list) else duration
+        if isinstance(duration, (list, tuple)):
+            if len(duration) == 2:
+                t_val = local_rng.uniform(*duration)
+            elif len(duration) == 1:
+                t_val = duration[0]
+            else:
+                raise ValueError(f"Duration list/tuple must have 1 or 2 elements, got {len(duration)}")
+        elif isinstance(duration, (int, float)):
+            t_val = duration
+        else:
+            raise TypeError(f"Invalid duration type: {type(duration)}")
         self.set_state(duration=t_val)
 
         # --- Initial Flip (trigger locked to onset) ---
@@ -443,7 +464,7 @@ class TrialUnit:
     def capture_response(
         self,
         keys: list[str],
-        duration: float | list,
+        duration: float | list | tuple,
         onset_trigger: int = None,
         response_trigger: int | dict[str, int] = None,
         timeout_trigger: int = None,
@@ -481,7 +502,17 @@ class TrialUnit:
         """
         # decide total duration
         local_rng = random.Random()
-        t_val = local_rng.uniform(*duration) if isinstance(duration, list) else duration
+        if isinstance(duration, (list, tuple)):
+            if len(duration) == 2:
+                t_val = local_rng.uniform(*duration)
+            elif len(duration) == 1:
+                t_val = duration[0]
+            else:
+                raise ValueError(f"Duration list/tuple must have 1 or 2 elements, got {len(duration)}")
+        elif isinstance(duration, (int, float)):
+            t_val = duration
+        else:
+            raise TypeError(f"Invalid duration type: {type(duration)}")
         self.set_state(duration=t_val)
         
         # initial draw + trigger scheduling
