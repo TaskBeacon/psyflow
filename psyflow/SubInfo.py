@@ -104,14 +104,18 @@ class SubInfo:
                 break
 
         if status == "cancelled":
-            self.subject_data = None
-            gui.Dlg().addText(self._local("registration_failed")).show()
-            return None
+             self.subject_data= None
+             infoDlg=gui.Dlg()
+             infoDlg.addText(self._local("registration_failed"))
+             infoDlg.show()
+             return self.subject_data
 
         if status == "success":
-            self.subject_data = self._format_output(responses)
-            gui.Dlg().addText(self._local("registration_successful")).show()
-            return self.subject_data
+             self.subject_data = self._format_output(responses)
+             infoDlg=gui.Dlg()
+             infoDlg.addText(self._local("registration_successful"))
+             infoDlg.show()
+             return self.subject_data
 
     def validate(self, responses) -> bool:
         """

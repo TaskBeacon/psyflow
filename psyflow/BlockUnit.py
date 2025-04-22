@@ -188,16 +188,19 @@ class BlockUnit:
         if summary_func:
             summary = summary_func(self)
         else:
+            # Default summary: RT and hit rate per condition
             results = self.to_dict()
             conds = set(r["condition"] for r in results)
-            summary = {
-                cond: {
-                    "hit_rate": np.mean([r.get("target_hit", 0) for r in subset]),
-                    "avg_rt": np.mean([r.get("target_rt") for r in subset if r.get("target_rt") is not None])
+            summary = {}
+            for cond in conds:
+                subset = [r for r in results if r["condition"] == cond]
+                hit_rate = np.mean([r.get("target_hit", 0) for r in subset])
+                rt_values = [r["target_rt"] for r in subset if r.get("target_rt") is not None]
+                avg_rt = np.mean(rt_values) if rt_values else None
+                summary[cond] = {
+                     "hit_rate": hit_rate,
+                     "avg_rt": avg_rt
                 }
-                for cond in conds
-                if (subset := [r for r in results if r["condition"] == cond])
-            }
         self.meta["summary"] = summary
         return summary
 
