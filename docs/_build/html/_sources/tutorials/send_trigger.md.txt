@@ -2,7 +2,7 @@
 
 This system separates **trigger definition** (`TriggerBank`) from **trigger sending** (`TriggerSender`), allowing you to maintain clean logic, central config, and robust signal dispatch for EEG/MEG experiments.
 
-### ✅ Summary of Key Methods
+### 🧵 Summary of Key Methods 
 
 #### `TriggerBank`
 

@@ -482,22 +482,22 @@ executing lifecycle hooks, and collecting trial-level results.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.get_and_format">
 <span class="sig-name descname"><span class="pre">get_and_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">format_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.get_and_format" title="Link to this definition">¶</a></dt>
-<dd><p>Return a fresh TextStim with formatted text, keeping other properties unchanged.</p>
+<dd><p>Return a fresh TextStim or TextBox2 with formatted text, keeping other properties unchanged.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – Name of the registered TextStim.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the registered stimulus.</p></li>
 <li><p><strong>**format_kwargs</strong> – Formatting variables to apply to the <cite>text</cite> field.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A new TextStim object with formatted content.</p>
+<dd class="field-even"><p>A new formatted visual text stimulus.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>TextStim</p>
+<dd class="field-odd"><p>TextStim or TextBox2</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>TypeError</strong> – If the stimulus is not a TextStim.</p>
+<dd class="field-even"><p><strong>TypeError</strong> – If the stimulus is not a supported text type.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1003,11 +1003,11 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.duration">
-<span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.duration" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.duration" title="Link to this definition">¶</a></dt>
 <dd><p>Auto-close the trial after a fixed or jittered duration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>t</strong> (<em>float</em><em> or </em><em>tuple</em>) – Duration or (min, max) range for random sampling.</p>
+<dd class="field-odd"><p><strong>duration</strong> (<em>float</em><em> or </em><em>list</em>) – Duration or (min, max) range for random sampling.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1515,5 +1515,7 @@ with any remainder drawn at random and the entire sequence shuffled.</p>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <script src="../_static/translate-float.js?v=06629b87"></script>
     </body>
 </html>

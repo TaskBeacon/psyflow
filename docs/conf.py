@@ -49,6 +49,11 @@ source_suffix = {
 html_theme = "furo"
 html_static_path = ["_static"]
 # html_logo = "_static/logo.png"
+# html_js_files = [
+#     "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit",
+#     "translate-float.js"
+# ]
+
 
 html_theme_options = {
     "sidebar_hide_name": False,
