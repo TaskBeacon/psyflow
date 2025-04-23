@@ -299,7 +299,6 @@ class TrialUnit:
 
 
     def run(self, 
-            frame_based: bool = False,
             terminate_on_response: bool = True) -> "TrialUnit":
         """
         Full logic loop for displaying stimulus, collecting response, handling timeout,
@@ -307,8 +306,6 @@ class TrialUnit:
 
         Parameters:
         -----------
-        frame_based : bool
-            Whether to use frame-counted duration instead of time-based duration.
         terminate_on_response : bool
             Whether to terminate the trial upon receiving a response.
         """
@@ -329,65 +326,37 @@ class TrialUnit:
 
         all_keys = list(set(k for k_list, _ in self._hooks["response"] for k in k_list))
 
-        if frame_based:
-            # Estimate total frame duration based on maximum timeout
-            max_timeout = max((t for t, _ in self._hooks["timeout"]), default=5.0)
-            n_frames = int(round(max_timeout / self.frame_time))
 
-            for _ in range(n_frames-1):
-                if not (responded and terminate_on_response):
-                    for stim in self.stimuli:
-                        stim.draw()
-                self.win.flip()
+        # Estimate total frame duration based on maximum timeout
+        max_timeout = max((t for t, _ in self._hooks["timeout"]), default=5.0)
+        n_frames = int(round(max_timeout / self.frame_time))
 
-                keys = self.keyboard.getKeys(keyList=all_keys, waitRelease=False)
-                for key_obj in keys:
-                    key_name, key_rt = key_obj.name, key_obj.rt
-                    for valid_keys, hook in self._hooks["response"]:
-                        if key_name in valid_keys:
-                            hook(self, key_name, key_rt)
-                            responded = True
+        for _ in range(n_frames-1):
+            if not (responded and terminate_on_response):
+                for stim in self.stimuli:
+                    stim.draw()
+            self.win.flip()
 
-
-                elapsed = self.clock.getTime()
-                for timeout_duration, timeout_hook in self._hooks["timeout"]:
-                    if elapsed >= timeout_duration and not responded:
-                        self.set_state(
-                            timeout_triggered=True,
-                            duration=elapsed,
-                            close_time=core.getTime(),
-                            close_time_global=core.getAbsTime()
-                        )
-                        timeout_hook(self)
+            keys = self.keyboard.getKeys(keyList=all_keys, waitRelease=False)
+            for key_obj in keys:
+                key_name, key_rt = key_obj.name, key_obj.rt
+                for valid_keys, hook in self._hooks["response"]:
+                    if key_name in valid_keys:
+                        hook(self, key_name, key_rt)
                         responded = True
-        else:
-            # Time-based loop
-            while True:
-                if not (responded and self.terminate_on_response):
-                    for stim in self.stimuli:
-                        stim.draw()
-                self.win.flip()
-
-                keys = self.keyboard.getKeys(keyList=all_keys, waitRelease=False)
-                for key_obj in keys:
-                    key_name, key_rt = key_obj.name, key_obj.rt
-                    for valid_keys, hook in self._hooks["response"]:
-                        if key_name in valid_keys:
-                            hook(self, key_name, key_rt)
-                            responded = True
 
 
-                elapsed = self.clock.getTime()
-                for timeout_duration, timeout_hook in self._hooks["timeout"]:
-                    if elapsed >= timeout_duration and not responded:
-                        self.set_state(
-                            timeout_triggered=True,
-                            duration=elapsed,
-                            close_time=core.getTime(),
-                            close_time_global=core.getAbsTime()
-                        )
-                        timeout_hook(self)
-                        responded = True
+            elapsed = self.clock.getTime()
+            for timeout_duration, timeout_hook in self._hooks["timeout"]:
+                if elapsed >= timeout_duration and not responded:
+                    self.set_state(
+                        timeout_triggered=True,
+                        duration=elapsed,
+                        close_time=core.getTime(),
+                        close_time_global=core.getAbsTime()
+                    )
+                    timeout_hook(self)
+                    responded = True
 
         self.set_state(
             close_time=core.getTime(),
@@ -403,8 +372,8 @@ class TrialUnit:
     def show(
         self,
         duration: float | list | tuple,
-        onset_trigger: int = 0,
-        frame_based: bool = True
+        onset_trigger: int = None,
+        offset_trigger: int = None
     ) -> "TrialUnit":
         """
         Display the stimulus for a specified duration, either using frame-based timing
@@ -442,17 +411,14 @@ class TrialUnit:
         tclock = core.Clock()
         tclock.reset()
 
-        if frame_based:
-            n_frames = int(round(t_val / self.frame_time))
-            for _ in range(n_frames-1):
-                for stim in self.stimuli:
-                    stim.draw()
-                self.win.flip()
-        else:
-            while tclock.getTime() < t_val:
-                for stim in self.stimuli:
-                    stim.draw()
-                self.win.flip()
+        n_frames = int(round(t_val / self.frame_time))
+        for frame_i in range(n_frames-1):
+            for stim in self.stimuli:
+                stim.draw()
+                if offset_trigger and frame_i == n_frames - 2:
+                    self.win.callOnFlip(self.send_trigger, offset_trigger)
+            self.win.flip()
+
 
         self.set_state(
             close_time=self.clock.getTime(),
@@ -468,7 +434,6 @@ class TrialUnit:
         onset_trigger: int = None,
         response_trigger: int | dict[str, int] = None,
         timeout_trigger: int = None,
-        frame_based: bool = True,
         terminate_on_response: bool = True,
         correct_keys: list[str] | None = None, 
         highlight_stim: visual.BaseVisualStim | dict[str, visual.BaseVisualStim] = None,  
@@ -490,8 +455,6 @@ class TrialUnit:
             Trigger code for response, can be per-key.
         timeout_trigger : int
             Trigger code for timeout.
-        frame_based : bool
-            Whether to use frame counting instead of time-based control.
         correct_keys : list[str] | None
             If provided, only keys in this list count as hits.
         highlight_stim : VisualStim or dict
@@ -536,79 +499,42 @@ class TrialUnit:
         responded = False
         chosen_key = None  # track which key to highlight
 
-        if frame_based:
-            n_frames = int(round(t_val / self.frame_time))
-            for _ in range(n_frames-1):
-                # draw or blank?
-                if not (responded and terminate_on_response):
-                    for stim in self.stimuli:
-                        stim.draw()
-                # draw highlight if requested
-                if highlight_stim and (responded or dynamic_highlight):
-                    h = (highlight_stim.get(chosen_key)
-                        if isinstance(highlight_stim, dict)
-                        else highlight_stim)
-                    if h:
-                        h.draw()    
-                self.win.flip()
 
-                keypress = self.keyboard.getKeys(keyList=keys, waitRelease=False)
-                if keypress:
-                    k = keypress[0].name
-                    chosen_key = k 
-                    rt = self.clock.getTime()
-                    self.set_state(
-                        hit=k in correct_keys, 
-                        correct_keys=correct_keys,
-                        response=k, 
-                        key_press=True,
-                        rt=rt,
-                        close_time=self.clock.getTime(),
-                        close_time_global=core.getAbsTime()
-                    )
-                    code = (response_trigger.get(k, 1)
-                        if isinstance(response_trigger, dict)
-                        else response_trigger)
-                    self.send_trigger(code)
-                    self.set_state(response_trigger=code)
-                    responded = True
+        n_frames = int(round(t_val / self.frame_time))
+        for _ in range(n_frames-1):
+            # draw or blank?
+            if not (responded and terminate_on_response):
+                for stim in self.stimuli:
+                    stim.draw()
+            # draw highlight if requested
+            if highlight_stim and (responded or dynamic_highlight):
+                h = (highlight_stim.get(chosen_key)
+                    if isinstance(highlight_stim, dict)
+                    else highlight_stim)
+                if h:
+                    h.draw()    
+            self.win.flip()
 
-        else:
-
-            while self.clock.getTime() < t_val:
-                if not (responded and terminate_on_response):
-                    for stim in self.stimuli:
-                        stim.draw()
-                # draw highlight if requested
-                if highlight_stim and (responded or dynamic_highlight):
-                    h = (highlight_stim.get(chosen_key)
-                        if isinstance(highlight_stim, dict)
-                        else highlight_stim)
-                    if h:
-                        h.draw()
-                self.win.flip()
-
-                keypress = self.keyboard.getKeys(keyList=keys, waitRelease=False)
-                if keypress:
-                    k = keypress[0].name
-                    chosen_key = k 
-                    rt = self.clock.getTime()
-                    self.set_state(
-                        hit=k in correct_keys, 
-                        correct_keys=correct_keys,
-                        response=k, 
-                        key_press=True,
-                        rt=rt,
-                        close_time=self.clock.getTime(),
-                        close_time_global=core.getAbsTime()
-                    )
-
-                    code = (response_trigger.get(k, 1)
-                        if isinstance(response_trigger, dict)
-                        else response_trigger)
-                    self.send_trigger(code)
-                    self.set_state(response_trigger=code)
-                    responded = True
+            keypress = self.keyboard.getKeys(keyList=keys, waitRelease=False)
+            if keypress:
+                k = keypress[0].name
+                chosen_key = k 
+                rt = self.clock.getTime()
+                self.set_state(
+                    hit=k in correct_keys, 
+                    correct_keys=correct_keys,
+                    response=k, 
+                    key_press=True,
+                    rt=rt,
+                    close_time=self.clock.getTime(),
+                    close_time_global=core.getAbsTime()
+                )
+                code = (response_trigger.get(k, 1)
+                    if isinstance(response_trigger, dict)
+                    else response_trigger)
+                self.send_trigger(code)
+                self.set_state(response_trigger=code)
+                responded = True
 
 
         if not responded: 
