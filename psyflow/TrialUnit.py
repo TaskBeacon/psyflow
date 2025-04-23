@@ -415,15 +415,13 @@ class TrialUnit:
         for frame_i in range(n_frames-1):
             for stim in self.stimuli:
                 stim.draw()
-                if offset_trigger and frame_i == n_frames - 2:
-                    self.win.callOnFlip(self.send_trigger, offset_trigger)
+                if frame_i == n_frames - 2:
+                   self.win.callOnFlip(self.set_state,
+                                    offset_trigger=offset_trigger,
+                                    close_time=self.clock.getTime(),
+                                    close_time_global=core.getAbsTime())
+                   self.win.callOnFlip(self.send_trigger, offset_trigger)
             self.win.flip()
-
-
-        self.set_state(
-            close_time=self.clock.getTime(),
-            close_time_global=core.getAbsTime()
-        )
         self.log_unit()
         return self
 
