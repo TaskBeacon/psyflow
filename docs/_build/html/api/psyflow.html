@@ -955,7 +955,7 @@ or as a single list/tuple.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.capture_response">
-<span class="sig-name descname"><span class="pre">capture_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_based</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlight_stim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamic_highlight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.capture_response" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">capture_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlight_stim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamic_highlight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.capture_response" title="Link to this definition">¶</a></dt>
 <dd><p>Wait for a keypress or timeout. Supports both time-based and frame-based duration.
 Triggers and onset time synced to visual flip.</p>
 <dl class="field-list simple">
@@ -966,7 +966,6 @@ Triggers and onset time synced to visual flip.</p>
 <li><p><strong>onset_trigger</strong> (<em>int</em>) – Trigger code sent at stimulus onset.</p></li>
 <li><p><strong>response_trigger</strong> (<em>int</em><em> | </em><em>dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – Trigger code for response, can be per-key.</p></li>
 <li><p><strong>timeout_trigger</strong> (<em>int</em>) – Trigger code for timeout.</p></li>
-<li><p><strong>frame_based</strong> (<em>bool</em>) – Whether to use frame counting instead of time-based control.</p></li>
 <li><p><strong>correct_keys</strong> (<em>list</em><em>[</em><em>str</em><em>] </em><em>| </em><em>None</em>) – If provided, only keys in this list count as hits.</p></li>
 <li><p><strong>highlight_stim</strong> (<em>VisualStim</em><em> or </em><em>dict</em>) – If a single stim: draw it around whatever is chosen.
 If a dict: maps key names -&gt; highlight stimuli.</p></li>
@@ -1091,7 +1090,7 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frame_based</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.run" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.run" title="Link to this definition">¶</a></dt>
 <dd><p>Full logic loop for displaying stimulus, collecting response, handling timeout,
 and logging with precision timing.</p>
 <dl class="field-list simple">
@@ -1102,8 +1101,6 @@ and logging with precision timing.</p>
 <section id="parameters">
 <h4>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h4>
 <dl class="simple">
-<dt>frame_based<span class="classifier">bool</span></dt><dd><p>Whether to use frame-counted duration instead of time-based duration.</p>
-</dd>
 <dt>terminate_on_response<span class="classifier">bool</span></dt><dd><p>Whether to terminate the trial upon receiving a response.</p>
 </dd>
 </dl>
@@ -1143,7 +1140,7 @@ and logging with precision timing.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.show">
-<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_based</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.show" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.show" title="Link to this definition">¶</a></dt>
 <dd><p>Display the stimulus for a specified duration, either using frame-based timing
 (recommended for EEG/fMRI) or precise time-based loop.</p>
 <dl class="field-list simple">
@@ -1299,6 +1296,21 @@ for development/testing without hardware.</p>
 </section>
 <section id="module-psyflow.utils">
 <span id="psyflow-utils-module"></span><h2>psyflow.utils module<a class="headerlink" href="#module-psyflow.utils" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="psyflow.utils.count_down">
+<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">count_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">stim_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.utils.count_down" title="Link to this definition">¶</a></dt>
+<dd><p>Display a frame-accurate countdown using TextStim.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>win</strong> (<em>psychopy.visual.Window</em>) – The PsychoPy window to display the countdown in.</p></li>
+<li><p><strong>seconds</strong> (<em>int</em>) – How many seconds to count down from.</p></li>
+<li><p><strong>**stim_kwargs</strong> (<em>dict</em>) – Additional keyword arguments for TextStim (e.g., font, height, color).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="psyflow.utils.generate_balanced_conditions">
 <span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">generate_balanced_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_trials</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.utils.generate_balanced_conditions" title="Link to this definition">¶</a></dt>
@@ -1494,6 +1506,7 @@ with any remainder drawn at random and the entire sequence shuffled.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-psyflow.utils">psyflow.utils module</a><ul>
+<li><a class="reference internal" href="#psyflow.utils.count_down"><code class="docutils literal notranslate"><span class="pre">count_down()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.utils.generate_balanced_conditions"><code class="docutils literal notranslate"><span class="pre">generate_balanced_conditions()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.utils.show_ports"><code class="docutils literal notranslate"><span class="pre">show_ports()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.utils.taps"><code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
@@ -1515,7 +1528,5 @@ with any remainder drawn at random and the entire sequence shuffled.</p>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
-    <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-    <script src="../_static/translate-float.js?v=06629b87"></script>
     </body>
 </html>
