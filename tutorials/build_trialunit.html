@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="🎨 StimBank: Flexible Stimulus Management for PsychoPy" href="build_stimulus.html" /><link rel="prev" title="📦 BlockUnit: Managing Experimental Blocks" href="build_blocks.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>🎯 TrialUnit: Modular Trial Controller for PsychoPy - psyflow 0.1.0 documentation</title>
+        <title>🎯 StimUnit: Modular Trial Controller for PsychoPy - psyflow 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -204,12 +204,11 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">🏁 Getting Started with psyflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🎯 TrialUnit: Modular Trial Controller for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
 </ul>
@@ -258,9 +257,9 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="trialunit-modular-trial-controller-for-psychopy">
-<h1>🎯 TrialUnit: Modular Trial Controller for PsychoPy<a class="headerlink" href="#trialunit-modular-trial-controller-for-psychopy" title="Link to this heading">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">TrialUnit</span></code> wraps all the pieces of a single trial—stimulus presentation, response collection, triggers, timeouts, logging—into one reusable, chainable object. Below is a complete step‑by‑step guide on how to set it up and use it.</p>
+          <section id="stimunit-modular-trial-controller-for-psychopy">
+<h1>🎯 StimUnit: Modular Trial Controller for PsychoPy<a class="headerlink" href="#stimunit-modular-trial-controller-for-psychopy" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> wraps all the pieces of a single trial—stimulus presentation, response collection, triggers, timeouts, logging—into one reusable, chainable object. Below is a complete step‑by‑step guide on how to set it up and use it.</p>
 <section id="summary-of-key-methods">
 <h2>🧵 Summary of Key Methods<a class="headerlink" href="#summary-of-key-methods" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -322,8 +321,8 @@
 </section>
 <section id="initialization">
 <h2>1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h2>
-<p>Create a new <code class="docutils literal notranslate"><span class="pre">TrialUnit</span></code> by passing your window, a label, and (optionally) a <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import TrialUnit, TriggerSender
+<p>Create a new <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> by passing your window, a label, and (optionally) a <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import StimUnit, TriggerSender
 
 # Real trigger on a serial port:
 sender = TriggerSender(lambda code: port.write(bytes([code])))
@@ -331,7 +330,7 @@ sender = TriggerSender(lambda code: port.write(bytes([code])))
 # Or mock mode for local testing:
 sender = TriggerSender(mock=True)
 
-trial = TrialUnit(
+trial = StimUnit(
     win=win,
     unit_label=&quot;trial_01&quot;,
     triggersender=sender
@@ -480,7 +479,7 @@ trial.duration((1.0,2.0))   # random between 1.0–2.0 s
 <section id="chainable-api-showcase">
 <h2>9. Chainable API Showcase<a class="headerlink" href="#chainable-api-showcase" title="Link to this heading">¶</a></h2>
 <p>You can define and execute an entire trial in one fluid chain:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>trial = TrialUnit(win, &quot;T1&quot;, TriggerSender(mock=True))
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>trial = StimUnit(win, &quot;T1&quot;, TriggerSender(mock=True))
 
 trial \
   .add_stim(stimA, stimB) \
@@ -501,7 +500,7 @@ trial \
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">to</span> <span class="n">be</span> <span class="n">added</span>
 </pre></div>
 </div>
-<p>With <code class="docutils literal notranslate"><span class="pre">TrialUnit</span></code> you get a concise, expressive, and chainable API for building every aspect of your trial—visuals, inputs, timing, triggers, and data logging—without boilerplate. Happy experimenting!</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> you get a concise, expressive, and chainable API for building every aspect of your trial—visuals, inputs, timing, triggers, and data logging—without boilerplate. Happy experimenting!</p>
 </section>
 </section>
 </section>
@@ -511,26 +510,8 @@ trial \
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="build_stimulus.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">🎨 StimBank: Flexible Stimulus Management for PsychoPy</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="build_blocks.html">
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">📦 BlockUnit: Managing Experimental Blocks</div>
-                
-              </div>
-            </a>
+          
+          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -561,7 +542,7 @@ trial \
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">🎯 TrialUnit: Modular Trial Controller for PsychoPy</a><ul>
+<li><a class="reference internal" href="#">🎯 StimUnit: Modular Trial Controller for PsychoPy</a><ul>
 <li><a class="reference internal" href="#summary-of-key-methods">🧵 Summary of Key Methods</a></li>
 <li><a class="reference internal" href="#initialization">1. Initialization</a></li>
 <li><a class="reference internal" href="#adding-stimuli">2. Adding Stimuli</a></li>

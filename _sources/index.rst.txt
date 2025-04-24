@@ -23,7 +23,7 @@ Start with one of the tutorials below or explore the API reference.
    tutorials/get_subinfo
    tutorials/task_settings
    tutorials/build_blocks
-   tutorials/build_trialunit
+   tutorials/build_stimunit
    tutorials/build_stimulus
    tutorials/send_trigger
    

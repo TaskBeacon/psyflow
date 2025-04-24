@@ -1,6 +1,6 @@
-## 🎯 TrialUnit: Modular Trial Controller for PsychoPy
+## 🎯 StimUnit: Modular Trial Controller for PsychoPy
 
-`TrialUnit` wraps all the pieces of a single trial—stimulus presentation, response collection, triggers, timeouts, logging—into one reusable, chainable object. Below is a complete step‑by‑step guide on how to set it up and use it.
+`StimUnit` wraps all the pieces of a single trial—stimulus presentation, response collection, triggers, timeouts, logging—into one reusable, chainable object. Below is a complete step‑by‑step guide on how to set it up and use it.
 
 
 ### 🧵 Summary of Key Methods
@@ -27,9 +27,9 @@
 
 ### 1. Initialization
 
-Create a new `TrialUnit` by passing your window, a label, and (optionally) a `TriggerSender`:
+Create a new `StimUnit` by passing your window, a label, and (optionally) a `TriggerSender`:
 
-    from psyflow import TrialUnit, TriggerSender
+    from psyflow import StimUnit, TriggerSender
 
     # Real trigger on a serial port:
     sender = TriggerSender(lambda code: port.write(bytes([code])))
@@ -37,7 +37,7 @@ Create a new `TrialUnit` by passing your window, a label, and (optionally) a `Tr
     # Or mock mode for local testing:
     sender = TriggerSender(mock=True)
 
-    trial = TrialUnit(
+    trial = StimUnit(
         win=win,
         unit_label="trial_01",
         triggersender=sender
@@ -191,7 +191,7 @@ Pass `terminate=True` to close the window when done.
 
 You can define and execute an entire trial in one fluid chain:
 
-    trial = TrialUnit(win, "T1", TriggerSender(mock=True))
+    trial = StimUnit(win, "T1", TriggerSender(mock=True))
 
     trial \
       .add_stim(stimA, stimB) \
@@ -212,4 +212,4 @@ to be added
 ```
 
 
-With `TrialUnit` you get a concise, expressive, and chainable API for building every aspect of your trial—visuals, inputs, timing, triggers, and data logging—without boilerplate. Happy experimenting!
+With `StimUnit` you get a concise, expressive, and chainable API for building every aspect of your trial—visuals, inputs, timing, triggers, and data logging—without boilerplate. Happy experimenting!

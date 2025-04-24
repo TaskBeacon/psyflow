@@ -30,7 +30,7 @@ A typical psyflow experiment has these core steps:
 2. **Collect** participant info (`SubInfo`)  
 3. **Build** stimuli (`StimBank`)  
 4. **Define** triggers (`TriggerBank` + `TriggerSender`)  
-5. **Create** a trial (`TrialUnit`)  
+5. **Create** a trial (`StimUnit`)  
 6. **Run** the trial and collect data  
 
 
@@ -104,9 +104,9 @@ Retrieve with:
 
 ### 7. Create & Run a Trial
 
-    from psyflow import TrialUnit
+    from psyflow import StimUnit
 
-    trial = TrialUnit(win, "T1", triggersender=sender)
+    trial = StimUnit(win, "T1", triggersender=sender)
     trial \
       .add_stim(fix, tgt) \
       .on_start(lambda u: u.send_trigger(tb.get("fix_onset"))) \
