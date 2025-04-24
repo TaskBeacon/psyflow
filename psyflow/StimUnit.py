@@ -4,9 +4,9 @@ from typing import Callable, Optional, List, Dict, Any, Union
 import random
 from psyflow import TriggerSender
 
-class TrialUnit:
+class StimUnit:
     """
-    TrialUnit(win, unit_label, trigger=None)
+    StimUnit(win, unit_label, trigger=None)
 
     A modular trial unit for PsychoPy-based experiments. Designed to encapsulate
     stimulus presentation, response handling, event triggers, and lifecycle hooks
@@ -43,7 +43,7 @@ class TrialUnit:
         self._hooks: Dict[str, List] = {"start": [], "response": [], "timeout": [], "end": []}
         self.frame_time = self.win.monitorFramePeriod
 
-    def add_stim(self, *stims: Union[visual.BaseVisualStim, List[visual.BaseVisualStim]]) -> "TrialUnit":
+    def add_stim(self, *stims: Union[visual.BaseVisualStim, List[visual.BaseVisualStim]]) -> "StimUnit":
         """
         Add one or more visual stimuli to the trial.
 
@@ -60,7 +60,7 @@ class TrialUnit:
 
         Returns
         -------
-        TrialUnit
+        StimUnit
             Returns self for chaining.
         """
         # if the user passed a single list/tuple, unpack it
@@ -75,18 +75,18 @@ class TrialUnit:
         return self
 
 
-    def clear_stimuli(self) -> "TrialUnit":
+    def clear_stimuli(self) -> "StimUnit":
         """
         Clear all previously added stimuli from the trial.
 
         Returns
         -------
-        TrialUnit
+        StimUnit
         """
         self.stimuli.clear()
         return self
 
-    def set_state(self, prefix: Optional[str] = None, **kwargs) -> "TrialUnit":
+    def set_state(self, prefix: Optional[str] = None, **kwargs) -> "StimUnit":
         """
         Update internal state with optional key prefixing.
 
@@ -158,7 +158,7 @@ class TrialUnit:
             return target
         return dict(self.state)
 
-    def send_trigger(self, trigger_code: int) -> "TrialUnit":
+    def send_trigger(self, trigger_code: int) -> "StimUnit":
         """
         Send a trigger value via the connected trigger object.
 
@@ -169,7 +169,7 @@ class TrialUnit:
 
         Returns
         -------
-        TrialUnit
+        StimUnit
         """
         if self.triggersender is not None:
             self.triggersender.send(trigger_code)
@@ -179,10 +179,10 @@ class TrialUnit:
         """
         Log the current state using PsychoPy's logging mechanism.
         """
-        logging.data(f"[TrialUnit] Data: {self.state}")
+        logging.data(f"[StimUnit] Data: {self.state}")
 
 
-    def on_start(self, func: Optional[Callable[['TrialUnit'], None]] = None):
+    def on_start(self, func: Optional[Callable[['StimUnit'], None]] = None):
         """
         Register or decorate a function to call at trial start.
         """
@@ -195,7 +195,7 @@ class TrialUnit:
             self._hooks["start"].append(func)
             return self
 
-    def on_response(self, keys: List[str], func: Optional[Callable[['TrialUnit', str, float], None]] = None):
+    def on_response(self, keys: List[str], func: Optional[Callable[['StimUnit', str, float], None]] = None):
         """
         Register or decorate a function to call when a valid response key is pressed.
 
@@ -204,7 +204,7 @@ class TrialUnit:
         keys : list[str]
             Keys that trigger the callback.
         func : Callable or None
-            A function accepting (TrialUnit, key, rt) or None to use as decorator.
+            A function accepting (StimUnit, key, rt) or None to use as decorator.
         """
         if func is None:
             def decorator(f):
@@ -215,7 +215,7 @@ class TrialUnit:
             self._hooks["response"].append((keys, func))
             return self
 
-    def on_timeout(self, timeout: float, func: Optional[Callable[['TrialUnit'], None]] = None):
+    def on_timeout(self, timeout: float, func: Optional[Callable[['StimUnit'], None]] = None):
         """
         Register or decorate a function to call on timeout.
 
@@ -224,7 +224,7 @@ class TrialUnit:
         timeout : float
             Time in seconds after which timeout is triggered.
         func : Callable or None
-            A function accepting (TrialUnit) or None to use as decorator.
+            A function accepting (StimUnit) or None to use as decorator.
         """
         if func is None:
             def decorator(f):
@@ -235,7 +235,7 @@ class TrialUnit:
             self._hooks["timeout"].append((timeout, func))
             return self
 
-    def on_end(self, func: Optional[Callable[['TrialUnit'], None]] = None):
+    def on_end(self, func: Optional[Callable[['StimUnit'], None]] = None):
         """
         Register or decorate a function to call at the end of the trial.
         """
@@ -270,7 +270,7 @@ class TrialUnit:
             t_val = duration
         else:
             raise TypeError(f"Invalid duration type: {type(duration)}")
-        def auto_close(unit: 'TrialUnit'):
+        def auto_close(unit: 'StimUnit'):
             unit.set_state(
                 duration=t_val,
                 timeout_triggered=True,
@@ -288,7 +288,7 @@ class TrialUnit:
         keys : str
             One or more response keys.
         """
-        def close_fn(unit: 'TrialUnit', key: str, rt: float):
+        def close_fn(unit: 'StimUnit', key: str, rt: float):
             unit.set_state(
                 keys=key,
                 response_time=rt,
@@ -299,7 +299,7 @@ class TrialUnit:
 
 
     def run(self, 
-            terminate_on_response: bool = True) -> "TrialUnit":
+            terminate_on_response: bool = True) -> "StimUnit":
         """
         Full logic loop for displaying stimulus, collecting response, handling timeout,
         and logging with precision timing.
@@ -374,7 +374,7 @@ class TrialUnit:
         duration: float | list | tuple,
         onset_trigger: int = None,
         offset_trigger: int = None
-    ) -> "TrialUnit":
+    ) -> "StimUnit":
         """
         Display the stimulus for a specified duration, either using frame-based timing
         (recommended for EEG/fMRI) or precise time-based loop.
@@ -436,7 +436,7 @@ class TrialUnit:
         correct_keys: list[str] | None = None, 
         highlight_stim: visual.BaseVisualStim | dict[str, visual.BaseVisualStim] = None,  
         dynamic_highlight: bool = False,                                                  
-    ) -> "TrialUnit":
+    ) -> "StimUnit":
         """
         Wait for a keypress or timeout. Supports both time-based and frame-based duration.
         Triggers and onset time synced to visual flip.
@@ -555,7 +555,7 @@ class TrialUnit:
         keys: list[str] = ["space"],
         log_message: Optional[str] = None,
         terminate: bool = False
-    ) -> "TrialUnit":
+    ) -> "StimUnit":
         """
         Display the current stimuli and wait for a key press to continue or quit.
 
@@ -570,7 +570,7 @@ class TrialUnit:
 
         Returns
         -------
-        TrialUnit
+        StimUnit
         """
         self.set_state(wait_keys=keys)
 
@@ -603,7 +603,7 @@ class TrialUnit:
         msg = log_message or (
             "Experiment ended by key press." if terminate else f"Continuing after key '{key}'"
         )
-        logging.data(f"[TrialUnit] wait_and_continue: {msg}")
+        logging.data(f"[StimUnit] wait_and_continue: {msg}")
         self.log_unit()
 
         if terminate:

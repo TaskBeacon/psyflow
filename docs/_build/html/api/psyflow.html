@@ -209,7 +209,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_trialunit.html">🎯 TrialUnit: Modular Trial Controller for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_trialunit.html">🎯 StimUnit: Modular Trial Controller for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
 </ul>
@@ -881,11 +881,11 @@ construct per-subject output file names.</p>
 </dd></dl>
 
 </section>
-<section id="module-psyflow.TrialUnit">
-<span id="psyflow-trialunit-module"></span><h2>psyflow.TrialUnit module<a class="headerlink" href="#module-psyflow.TrialUnit" title="Link to this heading">¶</a></h2>
+<section id="module-psyflow.StimUnit">
+<span id="psyflow-trialunit-module"></span><h2>psyflow.StimUnit module<a class="headerlink" href="#module-psyflow.StimUnit" title="Link to this heading">¶</a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.TrialUnit.</span></span><span class="sig-name descname"><span class="pre">TrialUnit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triggersender</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.StimUnit.</span></span><span class="sig-name descname"><span class="pre">StimUnit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triggersender</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A modular trial unit for PsychoPy-based experiments. Designed to encapsulate
 stimulus presentation, response handling, event triggers, and lifecycle hooks
@@ -932,8 +932,8 @@ with flexible timing control.</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.add_stim">
-<span class="sig-name descname"><span class="pre">add_stim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">stims</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.add_stim" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.add_stim">
+<span class="sig-name descname"><span class="pre">add_stim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">stims</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.add_stim" title="Link to this definition">¶</a></dt>
 <dd><p>Add one or more visual stimuli to the trial.</p>
 <p>Supports calling patterns:
 .add_stim(stimA)
@@ -948,14 +948,14 @@ or as a single list/tuple.</p>
 <dd class="field-even"><p>Returns self for chaining.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit" title="psyflow.TrialUnit.TrialUnit">TrialUnit</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#psyflow.StimUnit.StimUnit" title="psyflow.StimUnit.StimUnit">StimUnit</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.capture_response">
-<span class="sig-name descname"><span class="pre">capture_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlight_stim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamic_highlight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.capture_response" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.capture_response">
+<span class="sig-name descname"><span class="pre">capture_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlight_stim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamic_highlight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.capture_response" title="Link to this definition">¶</a></dt>
 <dd><p>Wait for a keypress or timeout. Supports both time-based and frame-based duration.
 Triggers and onset time synced to visual flip.</p>
 <dl class="field-list simple">
@@ -973,25 +973,25 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit" title="psyflow.TrialUnit.TrialUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrialUnit</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#psyflow.StimUnit.StimUnit" title="psyflow.StimUnit.StimUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">StimUnit</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.clear_stimuli">
-<span class="sig-name descname"><span class="pre">clear_stimuli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.clear_stimuli" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.clear_stimuli">
+<span class="sig-name descname"><span class="pre">clear_stimuli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.clear_stimuli" title="Link to this definition">¶</a></dt>
 <dd><p>Clear all previously added stimuli from the trial.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit" title="psyflow.TrialUnit.TrialUnit">TrialUnit</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="#psyflow.StimUnit.StimUnit" title="psyflow.StimUnit.StimUnit">StimUnit</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.close_on">
-<span class="sig-name descname"><span class="pre">close_on</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.close_on" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.close_on">
+<span class="sig-name descname"><span class="pre">close_on</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.close_on" title="Link to this definition">¶</a></dt>
 <dd><p>Auto-close the trial on specific key press.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1001,8 +1001,8 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.duration">
-<span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.duration" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.duration">
+<span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.duration" title="Link to this definition">¶</a></dt>
 <dd><p>Auto-close the trial after a fixed or jittered duration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1012,8 +1012,8 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.get_state">
-<span class="sig-name descname"><span class="pre">get_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.get_state" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.get_state">
+<span class="sig-name descname"><span class="pre">get_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.get_state" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieve a value from internal state.</p>
 <p>Lookup order:
 1. Try exact key.
@@ -1038,8 +1038,8 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.log_unit">
-<span class="sig-name descname"><span class="pre">log_unit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.log_unit" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.log_unit">
+<span class="sig-name descname"><span class="pre">log_unit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.log_unit" title="Link to this definition">¶</a></dt>
 <dd><p>Log the current state using PsychoPy’s logging mechanism.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -1049,53 +1049,53 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.on_end">
-<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.on_end" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.on_end">
+<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_end" title="Link to this definition">¶</a></dt>
 <dd><p>Register or decorate a function to call at the end of the trial.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.on_response">
-<span class="sig-name descname"><span class="pre">on_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.on_response" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.on_response">
+<span class="sig-name descname"><span class="pre">on_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_response" title="Link to this definition">¶</a></dt>
 <dd><p>Register or decorate a function to call when a valid response key is pressed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>keys</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – Keys that trigger the callback.</p></li>
-<li><p><strong>func</strong> (<em>Callable</em><em> or </em><em>None</em>) – A function accepting (TrialUnit, key, rt) or None to use as decorator.</p></li>
+<li><p><strong>func</strong> (<em>Callable</em><em> or </em><em>None</em>) – A function accepting (StimUnit, key, rt) or None to use as decorator.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.on_start">
-<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.on_start" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.on_start">
+<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_start" title="Link to this definition">¶</a></dt>
 <dd><p>Register or decorate a function to call at trial start.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.on_timeout">
-<span class="sig-name descname"><span class="pre">on_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.on_timeout" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.on_timeout">
+<span class="sig-name descname"><span class="pre">on_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_timeout" title="Link to this definition">¶</a></dt>
 <dd><p>Register or decorate a function to call on timeout.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>timeout</strong> (<em>float</em>) – Time in seconds after which timeout is triggered.</p></li>
-<li><p><strong>func</strong> (<em>Callable</em><em> or </em><em>None</em>) – A function accepting (TrialUnit) or None to use as decorator.</p></li>
+<li><p><strong>func</strong> (<em>Callable</em><em> or </em><em>None</em>) – A function accepting (StimUnit) or None to use as decorator.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.run" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.run" title="Link to this definition">¶</a></dt>
 <dd><p>Full logic loop for displaying stimulus, collecting response, handling timeout,
 and logging with precision timing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit" title="psyflow.TrialUnit.TrialUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrialUnit</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#psyflow.StimUnit.StimUnit" title="psyflow.StimUnit.StimUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">StimUnit</span></code></a></span></p>
 </dd>
 </dl>
 <section id="parameters">
@@ -1108,22 +1108,22 @@ and logging with precision timing.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.send_trigger">
-<span class="sig-name descname"><span class="pre">send_trigger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_code</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.send_trigger" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.send_trigger">
+<span class="sig-name descname"><span class="pre">send_trigger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_code</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.send_trigger" title="Link to this definition">¶</a></dt>
 <dd><p>Send a trigger value via the connected trigger object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>trigger_code</strong> (<em>int</em>) – The value to send.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit" title="psyflow.TrialUnit.TrialUnit">TrialUnit</a></p>
+<dd class="field-even"><p><a class="reference internal" href="#psyflow.StimUnit.StimUnit" title="psyflow.StimUnit.StimUnit">StimUnit</a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.set_state">
-<span class="sig-name descname"><span class="pre">set_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.set_state" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.set_state">
+<span class="sig-name descname"><span class="pre">set_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.set_state" title="Link to this definition">¶</a></dt>
 <dd><p>Update internal state with optional key prefixing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1133,26 +1133,26 @@ and logging with precision timing.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit" title="psyflow.TrialUnit.TrialUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrialUnit</span></code></a></span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#psyflow.StimUnit.StimUnit" title="psyflow.StimUnit.StimUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">StimUnit</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.show">
-<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.show" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.show" title="Link to this definition">¶</a></dt>
 <dd><p>Display the stimulus for a specified duration, either using frame-based timing
 (recommended for EEG/fMRI) or precise time-based loop.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit" title="psyflow.TrialUnit.TrialUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrialUnit</span></code></a></span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#psyflow.StimUnit.StimUnit" title="psyflow.StimUnit.StimUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">StimUnit</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.to_dict" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.to_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Return the internal state dictionary, or merge into an external one.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1168,8 +1168,8 @@ and logging with precision timing.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.TrialUnit.TrialUnit.wait_and_continue">
-<span class="sig-name descname"><span class="pre">wait_and_continue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['space']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TrialUnit.TrialUnit.wait_and_continue" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.wait_and_continue">
+<span class="sig-name descname"><span class="pre">wait_and_continue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['space']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.wait_and_continue" title="Link to this definition">¶</a></dt>
 <dd><p>Display the current stimuli and wait for a key press to continue or quit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1180,7 +1180,7 @@ and logging with precision timing.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit" title="psyflow.TrialUnit.TrialUnit">TrialUnit</a></p>
+<dd class="field-even"><p><a class="reference internal" href="#psyflow.StimUnit.StimUnit" title="psyflow.StimUnit.StimUnit">StimUnit</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1464,25 +1464,25 @@ with any remainder drawn at random and the entire sequence shuffled.</p>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-psyflow.TrialUnit">psyflow.TrialUnit module</a><ul>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit"><code class="docutils literal notranslate"><span class="pre">TrialUnit</span></code></a><ul>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.add_stim"><code class="docutils literal notranslate"><span class="pre">TrialUnit.add_stim()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.capture_response"><code class="docutils literal notranslate"><span class="pre">TrialUnit.capture_response()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.clear_stimuli"><code class="docutils literal notranslate"><span class="pre">TrialUnit.clear_stimuli()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.close_on"><code class="docutils literal notranslate"><span class="pre">TrialUnit.close_on()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.duration"><code class="docutils literal notranslate"><span class="pre">TrialUnit.duration()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.get_state"><code class="docutils literal notranslate"><span class="pre">TrialUnit.get_state()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.log_unit"><code class="docutils literal notranslate"><span class="pre">TrialUnit.log_unit()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.on_end"><code class="docutils literal notranslate"><span class="pre">TrialUnit.on_end()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.on_response"><code class="docutils literal notranslate"><span class="pre">TrialUnit.on_response()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.on_start"><code class="docutils literal notranslate"><span class="pre">TrialUnit.on_start()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.on_timeout"><code class="docutils literal notranslate"><span class="pre">TrialUnit.on_timeout()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.run"><code class="docutils literal notranslate"><span class="pre">TrialUnit.run()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.send_trigger"><code class="docutils literal notranslate"><span class="pre">TrialUnit.send_trigger()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.set_state"><code class="docutils literal notranslate"><span class="pre">TrialUnit.set_state()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.show"><code class="docutils literal notranslate"><span class="pre">TrialUnit.show()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.to_dict"><code class="docutils literal notranslate"><span class="pre">TrialUnit.to_dict()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.TrialUnit.TrialUnit.wait_and_continue"><code class="docutils literal notranslate"><span class="pre">TrialUnit.wait_and_continue()</span></code></a></li>
+<li><a class="reference internal" href="#module-psyflow.StimUnit">psyflow.StimUnit module</a><ul>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit"><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code></a><ul>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.add_stim"><code class="docutils literal notranslate"><span class="pre">StimUnit.add_stim()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.capture_response"><code class="docutils literal notranslate"><span class="pre">StimUnit.capture_response()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.clear_stimuli"><code class="docutils literal notranslate"><span class="pre">StimUnit.clear_stimuli()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.close_on"><code class="docutils literal notranslate"><span class="pre">StimUnit.close_on()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.duration"><code class="docutils literal notranslate"><span class="pre">StimUnit.duration()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.get_state"><code class="docutils literal notranslate"><span class="pre">StimUnit.get_state()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.log_unit"><code class="docutils literal notranslate"><span class="pre">StimUnit.log_unit()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.on_end"><code class="docutils literal notranslate"><span class="pre">StimUnit.on_end()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.on_response"><code class="docutils literal notranslate"><span class="pre">StimUnit.on_response()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.on_start"><code class="docutils literal notranslate"><span class="pre">StimUnit.on_start()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.on_timeout"><code class="docutils literal notranslate"><span class="pre">StimUnit.on_timeout()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.run"><code class="docutils literal notranslate"><span class="pre">StimUnit.run()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.send_trigger"><code class="docutils literal notranslate"><span class="pre">StimUnit.send_trigger()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.set_state"><code class="docutils literal notranslate"><span class="pre">StimUnit.set_state()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.show"><code class="docutils literal notranslate"><span class="pre">StimUnit.show()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.to_dict"><code class="docutils literal notranslate"><span class="pre">StimUnit.to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.wait_and_continue"><code class="docutils literal notranslate"><span class="pre">StimUnit.wait_and_continue()</span></code></a></li>
 </ul>
 </li>
 </ul>

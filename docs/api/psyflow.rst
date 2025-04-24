@@ -36,10 +36,10 @@ psyflow.TaskSettings module
    :undoc-members:
    :show-inheritance:
 
-psyflow.TrialUnit module
+psyflow.StimUnit module
 ------------------------
 
-.. automodule:: psyflow.TrialUnit
+.. automodule:: psyflow.StimUnit
    :members:
    :undoc-members:
    :show-inheritance:

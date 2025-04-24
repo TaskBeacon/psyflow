@@ -209,7 +209,7 @@
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_trialunit.html">🎯 TrialUnit: Modular Trial Controller for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_trialunit.html">🎯 StimUnit: Modular Trial Controller for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
 </ul>
@@ -286,7 +286,7 @@ pip install -e .
 <li><p><strong>Collect</strong> participant info (<code class="docutils literal notranslate"><span class="pre">SubInfo</span></code>)</p></li>
 <li><p><strong>Build</strong> stimuli (<code class="docutils literal notranslate"><span class="pre">StimBank</span></code>)</p></li>
 <li><p><strong>Define</strong> triggers (<code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>)</p></li>
-<li><p><strong>Create</strong> a trial (<code class="docutils literal notranslate"><span class="pre">TrialUnit</span></code>)</p></li>
+<li><p><strong>Create</strong> a trial (<code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>)</p></li>
 <li><p><strong>Run</strong> the trial and collect data</p></li>
 </ol>
 </section>
@@ -357,9 +357,9 @@ sender = TriggerSender(lambda code: port.write(bytes([code])))
 </section>
 <section id="create-run-a-trial">
 <h2>7. Create &amp; Run a Trial<a class="headerlink" href="#create-run-a-trial" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import TrialUnit
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import StimUnit
 
-trial = TrialUnit(win, &quot;T1&quot;, triggersender=sender)
+trial = StimUnit(win, &quot;T1&quot;, triggersender=sender)
 trial \
   .add_stim(fix, tgt) \
   .on_start(lambda u: u.send_trigger(tb.get(&quot;fix_onset&quot;))) \

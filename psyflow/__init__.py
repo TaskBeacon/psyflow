@@ -6,7 +6,7 @@ from .BlockUnit import BlockUnit
 from .StimBank import StimBank
 from .SubInfo import SubInfo
 from .TaskSettings import TaskSettings
-from .TrialUnit import TrialUnit
+from .StimUnit import StimUnit
 from .TriggerBank import TriggerBank
 from .TriggerSender import TriggerSender
 from .utils import *

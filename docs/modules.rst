@@ -6,7 +6,7 @@ API Reference
    :caption: API Reference
 
    psyflow/BlockUnit
-   psyflow/TrialUnit
+   psyflow/StimUnit
    psyflow/StimBank
    psyflow/SubInfo
    psyflow/TriggerBank

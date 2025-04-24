@@ -1,4 +1,4 @@
-from psyflow import TrialUnit
+from psyflow import StimUnit
 from functools import partial
 
 def run_trial(win, kb, settings, condition, stim_bank, controller, trigger_sender, trigger_bank):
@@ -8,7 +8,7 @@ def run_trial(win, kb, settings, condition, stim_bank, controller, trigger_sende
     """
 
     trial_data = {"condition": condition}
-    make_unit = partial(TrialUnit, win=win, trigger_sender=trigger_sender)
+    make_unit = partial(StimUnit, win=win, trigger_sender=trigger_sender)
 
     # --- Fixation ---
     make_unit(unit_label='fixation').add_stim(stim_bank.get("fixation")) \
