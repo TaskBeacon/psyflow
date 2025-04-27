@@ -51,6 +51,7 @@ class TaskSettings:
     trials_per_block: int = field(init=False)
     log_file: Optional[str] = None
     res_file: Optional[str] = None
+    json_file: Optional[str] = None
 
     # --- File path info ---
     save_path: Optional[str] = './data'
@@ -124,6 +125,7 @@ class TaskSettings:
 
         self.log_file = os.path.join(self.save_path, f"{basename}.log")
         self.res_file = os.path.join(self.save_path, f"{basename}.csv")
+        self.json_file = os.path.join(self.save_path, f"{basename}.json")
 
     def __repr__(self):
         """
@@ -131,6 +133,29 @@ class TaskSettings:
         """
         base = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
         return f"{self.__class__.__name__}({base})"
+    
+    def save_to_json(self):
+        """
+        Save the current TaskSettings instance to a JSON file.
+        """
+        if not self.json_file:
+            raise ValueError("json_file path is not set. Make sure to call add_subinfo() first.")
+
+        settings_dict = {
+            k: v for k, v in self.__dict__.items()
+            if not k.startswith('_') and not callable(v)
+        }
+        # Handle types that JSON can't serialize directly
+        for key, val in settings_dict.items():
+            if isinstance(val, set):
+                settings_dict[key] = list(val)
+
+        with open(self.json_file, 'w', encoding='utf-8') as f:
+            from json import dump
+            dump(settings_dict, f, indent=2, ensure_ascii=False)
+        
+        print(f"[INFO] Settings saved to {self.json_file}")
+
 
     @classmethod
     def from_dict(cls, config: dict):
@@ -157,3 +182,4 @@ class TaskSettings:
         for k, v in extras.items():
             setattr(settings, k, v)
         return settings
+    
