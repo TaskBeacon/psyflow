@@ -98,44 +98,6 @@ class StimBank:
             self._instantiated[name] = self._registry[name](self.win)
         return self._instantiated[name]
 
-    # def get_and_format(self, name: str, **format_kwargs) -> TextStim:
-    #     """
-    #     Return a fresh TextStim with formatted text, keeping other properties unchanged.
-
-    #     Parameters
-    #     ----------
-    #     name : str
-    #         Name of the registered TextStim.
-    #     **format_kwargs
-    #         Formatting variables to apply to the `text` field.
-
-    #     Returns
-    #     -------
-    #     TextStim
-    #         A new TextStim object with formatted content.
-
-    #     Raises
-    #     ------
-    #     TypeError
-    #         If the stimulus is not a TextStim.
-    #     """
-    #     original = self.get(name)
-    #     if not isinstance(original, TextStim):
-    #         raise TypeError(f"Stimulus '{name}' is not a TextStim.")
-
-    #     sig = inspect.signature(TextStim.__init__)
-    #     valid_args = {k for k in sig.parameters if k not in ('self', 'win')}
-
-    #     copied_kwargs = {
-    #         k: original.__dict__[k]
-    #         for k in valid_args
-    #         if k in original.__dict__
-    #     }
-
-    #     copied_kwargs["text"] = original.text.format(**format_kwargs)
-    #     return TextStim(win=self.win, **copied_kwargs)
-
-
     def get_and_format(self, name: str, **format_kwargs):
         """
         Return a fresh TextStim or TextBox2 with formatted text, keeping other properties unchanged.
@@ -143,40 +105,90 @@ class StimBank:
         Parameters
         ----------
         name : str
-            Name of the registered stimulus.
+            Name of the registered stimulus (TextStim or TextBox2).
         **format_kwargs
             Formatting variables to apply to the `text` field.
 
         Returns
         -------
-        TextStim or TextBox2
+           TextStim or TextBox2
             A new formatted visual text stimulus.
-
         Raises
         ------
         TypeError
-            If the stimulus is not a supported text type.
+            If the stimulus is not a TextStim.
         """
         original = self.get(name)
+        if  isinstance(original, TextStim):
+            sig = inspect.signature(TextStim.__init__)
+            valid_args = {k for k in sig.parameters if k not in ('self', 'win')}
 
-        if isinstance(original, TextStim):
-            cls = TextStim
+            copied_kwargs = {
+                k: original.__dict__[k]
+                for k in valid_args
+                if k in original.__dict__
+            }
+
+            copied_kwargs["text"] = original.text.format(**format_kwargs)
+            return TextStim(win=self.win, **copied_kwargs)
         elif isinstance(original, TextBox2):
-            cls = TextBox2
+            sig = inspect.signature(TextBox2.__init__)
+            valid_args = {k for k in sig.parameters if k not in ('self', 'win')}
+
+            copied_kwargs = {
+                k: original.__dict__[k]
+                for k in valid_args
+                if k in original.__dict__
+            }
+
+            copied_kwargs["text"] = original.text.format(**format_kwargs)
+            return TextBox2(win=self.win, **copied_kwargs)
         else:
             raise TypeError(f"Stimulus '{name}' is not a supported text type (TextStim/TextBox2).")
+    
 
-        sig = inspect.signature(cls.__init__)
-        valid_args = {k for k in sig.parameters if k not in ('self', 'win')}
 
-        copied_kwargs = {
-            k: getattr(original, k)
-            for k in valid_args
-            if hasattr(original, k)
-        }
+    # def get_and_format(self, name: str, **format_kwargs):
+    #     """
+    #     Return a fresh TextStim or TextBox2 with formatted text, keeping other properties unchanged.
 
-        copied_kwargs["text"] = original.text.format(**format_kwargs)
-        return cls(win=self.win, **copied_kwargs)
+    #     Parameters
+    #     ----------
+    #     name : str
+    #         Name of the registered stimulus.
+    #     **format_kwargs
+    #         Formatting variables to apply to the `text` field.
+
+    #     Returns
+    #     -------
+    #     TextStim or TextBox2
+    #         A new formatted visual text stimulus.
+
+    #     Raises
+    #     ------
+    #     TypeError
+    #         If the stimulus is not a supported text type.
+    #     """
+    #     original = self.get(name)
+
+    #     if isinstance(original, TextStim):
+    #         cls = TextStim
+    #     elif isinstance(original, TextBox2):
+    #         cls = TextBox2
+    #     else:
+    #         raise TypeError(f"Stimulus '{name}' is not a supported text type (TextStim/TextBox2).")
+
+    #     sig = inspect.signature(cls.__init__)
+    #     valid_args = {k for k in sig.parameters if k not in ('self', 'win')}
+
+    #     copied_kwargs = {
+    #         k: getattr(original, k)
+    #         for k in valid_args
+    #         if hasattr(original, k)
+    #     }
+
+    #     copied_kwargs["text"] = original.text.format(**format_kwargs)
+    #     return cls(win=self.win, **copied_kwargs)
     def rebuild(self, name: str, update_cache: bool = False, **overrides):
         """
         Rebuild a stimulus with optional updated parameters.
