@@ -395,7 +395,11 @@ class StimUnit:
 
         # --- Initial Flip (trigger locked to onset) ---
         for stim in self.stimuli:
-            stim.draw()
+            # if it’s a sound, schedule play() on the flip
+            if hasattr(stim, "play") and callable(stim.play):
+                self.win.callOnFlip(stim.play)
+            else:
+                stim.draw()
         self.win.callOnFlip(self.send_trigger, onset_trigger)
         self.win.callOnFlip(self.set_state, 
                             onset_time=self.clock.getTime(), 
@@ -527,7 +531,7 @@ class StimUnit:
                     close_time=self.clock.getTime(),
                     close_time_global=core.getAbsTime()
                 )
-                code = (response_trigger.get(k, 1)
+                code = (response_trigger.get(k, None)
                     if isinstance(response_trigger, dict)
                     else response_trigger)
                 self.send_trigger(code)

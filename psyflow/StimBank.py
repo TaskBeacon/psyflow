@@ -1,5 +1,6 @@
 from psychopy.visual import TextStim, Circle, Rect, Polygon, ImageStim, ShapeStim, TextBox2, MovieStim
-from psychopy import event
+from psychopy import event, core
+from psychopy.sound import Sound
 from typing import Callable, Dict, Any, Type, Optional
 import yaml
 import inspect
@@ -14,6 +15,7 @@ STIM_CLASSES: Dict[str, Type] = {
     "image": ImageStim,
     "shape": ShapeStim,
     "movie": MovieStim, 
+    "sound": Sound,
 }
 
 
@@ -293,27 +295,58 @@ class StimBank:
         for i, name in enumerate(keys):
             self._preview(name, wait_keys=(i == len(keys) - 1))
 
+    # def _preview(self, name: str, wait_keys: bool = True):
+    #     """
+    #     Internal utility to preview a single stimulus.
+
+    #     Parameters
+    #     ----------
+    #     name : str
+    #         Stimulus name.
+    #     wait_keys : bool
+    #         Wait for key press after preview.
+    #     """
+    #     try:
+    #         stim = self.get(name)
+    #         self.win.flip(clearBuffer=True)
+    #         stim.draw()
+    #         self.win.flip()
+    #         print(f"Preview: '{name}'")
+    #         if wait_keys:
+    #             event.waitKeys()
+    #     except Exception as e:
+    #         print(f"[Preview Error] Could not preview '{name}': {e}")
+
     def _preview(self, name: str, wait_keys: bool = True):
         """
-        Internal utility to preview a single stimulus.
+        Internal utility to preview a single stimulus (image or sound).
 
         Parameters
         ----------
         name : str
             Stimulus name.
         wait_keys : bool
-            Wait for key press after preview.
+            Wait for key press after preview (only for visual).
         """
         try:
             stim = self.get(name)
             self.win.flip(clearBuffer=True)
-            stim.draw()
-            self.win.flip()
-            print(f"Preview: '{name}'")
-            if wait_keys:
-                event.waitKeys()
+
+            if hasattr(stim, "draw") and callable(stim.draw):
+                stim.draw()
+                self.win.flip()
+                print(f"Preview (visual): '{name}'")
+                if wait_keys:
+                    event.waitKeys()
+            elif hasattr(stim, "play") and callable(stim.play):
+                stim.play()
+                print(f"Preview (sound): '{name}'")
+                core.wait(stim.getDuration())  # wait for playback to finish
+            else:
+                print(f"[Preview Warning] Stimulus '{name}' is neither drawable nor playable.")
         except Exception as e:
             print(f"[Preview Error] Could not preview '{name}': {e}")
+
 
     def keys(self) -> list[str]:
         """
