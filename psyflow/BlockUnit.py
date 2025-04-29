@@ -170,6 +170,7 @@ class BlockUnit:
         self.meta['block_end_time'] = core.getAbsTime()
         self.meta['duration'] = self.meta['block_end_time'] - self.meta['block_start_time']
         logging.data(f"[BlockUnit] Finished '{self.block_id}' in {self.meta['duration']:.2f}s")
+        return self
 
     def summarize(self, summary_func: Optional[Callable[['BlockUnit'], Dict[str, Any]]] = None) -> Dict[str, Any]:
         """
@@ -204,9 +205,9 @@ class BlockUnit:
         self.meta["summary"] = summary
         return summary
 
-    def to_dict(self, target: Optional[List[Dict[str, Any]]] = None) -> List[Dict[str, Any]]:
+    def to_dict(self, target: Optional[List[Dict[str, Any]]] = None) -> "BlockUnit":
         """
-        Return or append trial results.
+        Append trial results to a target list, or return self for chaining.
 
         Parameters
         ----------
@@ -215,13 +216,24 @@ class BlockUnit:
 
         Returns
         -------
-        list of dict
-            Trial result dictionaries.
+        BlockUnit
+            The BlockUnit itself for chaining.
         """
         if target is not None:
             target.extend(self.results)
-            return target
+        return self
+    
+    def get_dict(self) -> List[Dict[str, Any]]:
+        """
+        Return trial results without modifying anything.
+
+        Returns
+        -------
+        list of dict
+            Trial result dictionaries.
+        """
         return self.results
+
 
     def __len__(self) -> int:
         """
