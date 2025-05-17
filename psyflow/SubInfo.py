@@ -143,6 +143,13 @@ class SubInfo:
         """
         for i, field in enumerate(self.fields):
             val = responses[i]
+            if field['type'] == 'string' or field['type'] == 'choice':
+                if val is None or str(val).strip() == "":
+                    infoDlg = gui.Dlg()
+                    infoDlg.addText(
+                        self._local("invalid_input").format(field=self._local(field['name'])))
+                    infoDlg.show()
+                    return False
             if field['type'] == 'int':
                 try:
                     val = int(val)
@@ -157,9 +164,11 @@ class SubInfo:
                     if digits is not None and len(str(val)) != digits:
                         raise ValueError
                 except:
-                    gui.Dlg().addText(
+                    infoDlg = gui.Dlg()
+                    infoDlg.addText(
                         self._local("invalid_input").format(field=self._local(field['name']))
-                    ).show()
+                    )
+                    infoDlg.show()
                     return False
         return True
 
