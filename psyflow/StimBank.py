@@ -32,7 +32,7 @@ class StimBank:
     - Centralized retrieval, lazy instantiation, and batch preview
     """
 
-    def __init__(self, win):
+    def __init__(self, win, config: Optional[dict] = None):
         """
         Initialize the stimulus bank with a PsychoPy Window.
 
@@ -40,10 +40,14 @@ class StimBank:
         ----------
         win : psychopy.visual.Window
             The window object used to instantiate visual stimuli.
+        config : dict, optional
+            Dictionary of stimuli to load at initialization.
         """
         self.win = win
         self._registry: Dict[str, Callable[[Any], Any]] = {}
         self._instantiated: Dict[str, Any] = {}
+        if config:
+            self.add_from_dict(config)
 
     def define(self, name: str):
         """
@@ -64,19 +68,14 @@ class StimBank:
             return func
         return decorator
 
-    def build_all(self):
+    def preload_all(self):
         """
         Instantiate all registered stimuli and cache them internally.
         """
         for name, factory in self._registry.items():
             if name not in self._instantiated:
                 self._instantiated[name] = factory(self.win)
-
-    def preload_all(self):
-        """
-        Alias for `build_all()`, used to clarify preload intent in experiment setup.
-        """
-        self.build_all()
+        return self
 
     def get(self, name: str):
         """
@@ -448,6 +447,7 @@ class StimBank:
 
             kwargs = {k: v for k, v in spec.items() if k != "type"}
             self._registry[name] = self.make_factory(stim_class, kwargs, name)
+        return self
 
     def validate_dict(self, config: dict, strict: bool = False):
         """
