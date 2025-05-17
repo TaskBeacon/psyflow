@@ -68,15 +68,20 @@ class SubInfo:
         """
         return self.field_map.get(key, key)
 
-    def collect(self) -> dict:
+    def collect(self, exit_on_cancel: bool = True) -> dict:
         """
         Show a dialog to collect participant input. Loops until valid or cancelled.
 
+        Parameters
+        ----------
+        exit_on_cancel : bool
+            If True, exit the program if the user cancels input.
+
         Returns
         -------
-        dict
-            Cleaned response dictionary with English field keys.
-            Returns None if cancelled.
+        dict or None
+            Cleaned response dictionary with English field keys,
+            or None if cancelled and exit_on_cancel is False.
         """
         success = False
         responses = None
@@ -99,23 +104,28 @@ class SubInfo:
                 break
 
             if self.validate(responses):
-                success = True
                 status = "success"
+                success = True
                 break
 
         if status == "cancelled":
-             self.subject_data= None
-             infoDlg=gui.Dlg()
-             infoDlg.addText(self._local("registration_failed"))
-             infoDlg.show()
-             return self.subject_data
+            self.subject_data = None
+            infoDlg = gui.Dlg()
+            infoDlg.addText(self._local("registration_failed"))
+            infoDlg.show()
+
+            if exit_on_cancel:
+                print("Participant cancelled — aborting experiment.")
+                import sys
+                sys.exit(0)
+            return None
 
         if status == "success":
-             self.subject_data = self._format_output(responses)
-             infoDlg=gui.Dlg()
-             infoDlg.addText(self._local("registration_successful"))
-             infoDlg.show()
-             return self.subject_data
+            self.subject_data = self._format_output(responses)
+            infoDlg = gui.Dlg()
+            infoDlg.addText(self._local("registration_successful"))
+            infoDlg.show()
+            return self.subject_data
 
     def validate(self, responses) -> bool:
         """
