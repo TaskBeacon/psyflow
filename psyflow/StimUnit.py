@@ -1,4 +1,4 @@
-from psychopy import core, visual, logging
+from psychopy import core, visual, logging, sound
 from psychopy.hardware.keyboard import Keyboard
 from typing import Callable, Optional, List, Dict, Any, Union
 import random
@@ -43,9 +43,9 @@ class StimUnit:
         self._hooks: Dict[str, List] = {"start": [], "response": [], "timeout": [], "end": []}
         self.frame_time = self.win.monitorFramePeriod
 
-    def add_stim(self, *stims: Union[visual.BaseVisualStim, List[visual.BaseVisualStim]]) -> "StimUnit":
+    def add_stim(self, *stims: Union[visual.BaseVisualStim, sound.Sound, List[Union[visual.BaseVisualStim, sound.Sound]]]) -> "StimUnit":
         """
-        Add one or more visual stimuli to the trial.
+        Add one or more visual or sound stimuli to the trial.
 
         Supports calling patterns:
         .add_stim(stimA)
@@ -54,25 +54,24 @@ class StimUnit:
 
         Parameters
         ----------
-        *stims : visual.BaseVisualStim or list of visual.BaseVisualStim
-            One or more PsychoPy visual stimuli, either passed as individual args
-            or as a single list/tuple.
+        *stims : visual.BaseVisualStim or sound.Sound or list of such
+            One or more PsychoPy stimuli (visual or audio).
 
         Returns
         -------
         StimUnit
             Returns self for chaining.
         """
-        # if the user passed a single list/tuple, unpack it
         if len(stims) == 1 and isinstance(stims[0], (list, tuple)):
             stims = stims[0]
 
         for stim in stims:
-            if not isinstance(stim, visual.BaseVisualStim):
-                raise TypeError(f"add_stim expects PsychoPy visual stimuli, got {type(stim)}")
+            if not isinstance(stim, (visual.BaseVisualStim, sound.Sound)):
+                raise TypeError(f"add_stim expects visual or sound stimuli, got {type(stim)}")
             self.stimuli.append(stim)
 
         return self
+
 
 
     def clear_stimuli(self) -> "StimUnit":
@@ -139,7 +138,25 @@ class StimUnit:
         return self.state.get(full_key, default)
 
 
-    def to_dict(self, target: Optional[dict] = None) -> dict:
+    def to_dict(self, target: Optional[dict] = None) -> 'StimUnit':
+        """
+        Return the internal state dictionary, or merge into an external one.
+
+        Parameters
+        ----------
+        target : dict, optional
+            If provided, updates this dict in-place and returns it.
+
+        Returns
+        -------
+        StimUnit
+            StimUnit for chaining.
+        """
+        if target is not None:
+            target.update(self.state)
+        return self
+    
+    def get_dict(self, target: Optional[dict] = None) -> dict:
         """
         Return the internal state dictionary, or merge into an external one.
 
@@ -153,9 +170,6 @@ class StimUnit:
         dict
             The internal state (or merged result if target is provided).
         """
-        if target is not None:
-            target.update(self.state)
-            return target
         return dict(self.state)
 
     def send_trigger(self, trigger_code: int) -> "StimUnit":
@@ -415,9 +429,10 @@ class StimUnit:
         tclock = core.Clock()
         tclock.reset()
 
+        visual_stims = [s for s in self.stimuli if hasattr(s, "draw") and callable(s.draw)]
         n_frames = int(round(t_val / self.frame_time))
         for frame_i in range(n_frames-1):
-            for stim in self.stimuli:
+            for stim in visual_stims:
                 stim.draw()
                 if frame_i == n_frames - 2:
                    self.win.callOnFlip(self.set_state,

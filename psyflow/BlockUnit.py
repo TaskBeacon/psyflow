@@ -1,6 +1,8 @@
 import numpy as np
 from typing import Callable, Any, List, Dict, Optional
 from psychopy import core, logging
+from typing import Union, List, Dict, Literal
+import re
 
 
 class BlockUnit:
@@ -223,7 +225,7 @@ class BlockUnit:
             target.extend(self.results)
         return self
     
-    def get_dict(self) -> List[Dict[str, Any]]:
+    def get_all_data(self) -> List[Dict[str, Any]]:
         """
         Return trial results without modifying anything.
 
@@ -233,6 +235,55 @@ class BlockUnit:
             Trial result dictionaries.
         """
         return self.results
+    
+    def get_trial_data(
+        self,
+        key: str,
+        pattern: Union[str, List[str]],
+        match_type: Literal['exact', 'startswith', 'endswith', 'regex'] = 'exact',
+        negate: bool = False
+    ) -> List[Dict]:
+        """
+        Filter trial data based on value of a key using matching rules.
+
+        Parameters
+        ----------
+        key : str
+            The key in each trial dict to match against.
+        pattern : str or list of str
+            One or more patterns to match.
+        match_type : {'exact', 'startswith', 'endswith', 'regex'}
+            Type of string matching to use.
+        negate : bool
+            If True, return trials that do NOT match the pattern(s).
+
+        Returns
+        -------
+        List[Dict]
+            Filtered list of trial dicts.
+        """
+
+        if not hasattr(self, 'results'):
+            return []
+
+        patterns = pattern if isinstance(pattern, list) else [pattern]
+
+        def match(value: str) -> bool:
+            for pat in patterns:
+                if match_type == 'exact' and value == pat:
+                    return True
+                elif match_type == 'startswith' and value.startswith(pat):
+                    return True
+                elif match_type == 'endswith' and value.endswith(pat):
+                    return True
+                elif match_type == 'regex' and re.search(pat, value):
+                    return True
+            return False
+
+        return [
+            trial for trial in self.results
+            if negate ^ match(str(trial.get(key, '')))
+        ]
 
 
     def __len__(self) -> int:
