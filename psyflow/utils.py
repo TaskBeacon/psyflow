@@ -101,3 +101,47 @@ def count_down(win, seconds=3, **stim_kwargs):
         while cd_clock.getTime() < 1.0:
             stim.draw()
             win.flip()
+
+
+from typing import Dict, List, Optional
+import yaml
+def load_config(config_file: str = 'config/config.yaml',
+                extra_keys: Optional[List[str]] = None) -> Dict:
+    """
+    Load a config.yaml file and return a structured dictionary.
+
+    Parameters
+    ----------
+    config_file : str
+        Path to YAML config file.
+    extra_keys : list of str, optional
+        Additional top-level keys to extract as 'xxx_config'.
+
+    Returns
+    -------
+    dict
+        Dictionary with structured configs.
+    """
+    with open(config_file, encoding='utf-8') as f:
+        config = yaml.safe_load(f)
+
+    task_keys = ['window', 'task', 'timing']
+    output = {
+        'raw': config,
+        'task_config': {k: v for key in task_keys for k, v in config.get(key, {}).items()},
+        'stim_config': config.get('stimuli', {}),
+        'subform_config': {
+            'subinfo_fields': config.get('subinfo_fields', []),
+            'subinfo_mapping': config.get('subinfo_mapping', {}),
+        },
+        'trigger_config': config.get('triggers', {}),
+        'controller_config': config.get('controller', {}),
+    }
+
+    if extra_keys:
+        for key in extra_keys:
+            key_name = f'{key}_config'
+            if key_name not in output:
+                output[key_name] = config.get(key, {})
+
+    return output
