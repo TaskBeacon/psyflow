@@ -1,5 +1,4 @@
-# config.yaml
-# === Subject info ===
+# === Subject Information ===
 subinfo_fields:
   - name: subject_id
     type: int
@@ -19,89 +18,150 @@ subinfo_fields:
     choices: [Male, Female]
 
 subinfo_mapping:
-    subject_id: "Subject ID (three digits)"
-    session_name: "Session Name"
-    experimenter: "Experimenter"
-    gender: "Gender"
-    registration_failed: "Registration failed."
-    registration_successful: "Registration successful！"
-    invalid_input: "Field {field} input is invalid."
+  subject_id: "被试号"
+  session_name: "Session名称(Practice/Experiment)"
+  experimenter: "主试姓名或缩写"
+  gender: "性别"
+  Male: "男"
+  Female: "女"
+  registration_failed: "注册失败。"
+  registration_successful: "注册成功！"
+  invalid_input: "字段 {field} 输入无效。"
 
-
-# === Window settings ===
+# === Window Settings ===
 window:
   size: [1920, 1080]
   monitor: testMonitor
   units: deg
   screen: 1
-  bg_color: gray
+  bg_color: black
   fullscreen: True
 
-# === Task-level settings ===
+# === Task-Level Settings ===
 task:
-  total_blocks: 2
-  total_trials: 10
-  trial_per_block: 5
-  conditions: [win, lose, neut]
-  key_list: [down]
+  total_blocks: 3
+  total_trials: 240
+  trial_per_block: 80
+  conditions: []  # Fill in specific condition labels as needed
+  key_list: [f, j]
+  left_key: f
+  right_key: j
+  delta: 10  # Point increment/decrement (used in reward-based tasks)
   seed_mode: "same_across_sub"
 
-
-# === Stimuli (for MID task) ===
+# === Stimuli Definitions ===
 stimuli:
   fixation:
     type: text
     text: "+"
     color: white
 
-  
+  # Example of image stimuli (e.g., faces, objects)
+  image_left:
+    type: image
+    pos: [-4.5, 0]
+    size: [4.5, 5]
+
+  image_right:
+    type: image
+    pos: [4.5, 0]
+    size: [4.5, 5]
+
+  # Optional target indicator (e.g., dot in dot-probe task)
+  left_target:
+    type: circle
+    radius: 1.2
+    pos: [-4, 0]
+    color: white
+
+  right_target:
+    type: circle
+    radius: 1.2
+    pos: [4, 0]
+    color: white
+
+  # Feedback text examples
+  win_feedback:
+    type: text
+    text: "+10分"
+    color: green
+
+  lose_feedback:
+    type: text
+    text: "-10分"
+    color: red
+
+  no_response_feedback:
+    type: text
+    text: "未反应：-10分"
+    color: yellow
+
+  # Instruction and break texts (use markdown-style multiline text)
+  instruction_text:
+    type: textbox
+    text: |
+      【任务说明】
+
+      请按照提示进行反应。
+      按下【F】表示左侧，按下【J】表示右侧。
+      请快速而准确地响应。
+      
+      准备好后请按【空格键】开始任务。
+    font: SimHei
+    alignment: center
+    letterHeight: 0.78
+    color: white
+
   block_break:
     type: text
     text: |
-      Take a break! 
-      When you are ready, press space to continue.
-    color: white
+      第 {block_num} / {total_blocks} 部分完成
+      当前得分：{score}
 
-  block_feedback:
-    type: text
-    text: |
-      Block {block_num} of {total_blocks} completed. 
-      Accuaracy: {accuracy:.2f}
-      Reward: {reward:.2f}
-      Press space to continue.
+      休息一下，按【空格键】继续
     color: white
-
-  instruction_text:
-    type: text
-    text: |
-      In this task, you will see a series of cues and targets. 
-      Your task is to respond to the cues as quickly as possible. 
-      If you respond to a cue, you will earn 10 points. 
-      If you do not respond to a cue, you will earn 0 points. 
-      Press space to continue.
-    color: white
-
+    height: 0.78
 
   good_bye:
-    type: text
+    type: textbox
     text: |
-      Thank you for participating!
-      Press space to exit.
+      【任务结束】
+
+      总得分：{total_score}
+      感谢您的参与！
+      请按【空格键】退出任务。
     color: white
+    font: SimHei
+    alignment: center
+    letterHeight: 0.78
 
-# === Timing & Adaptivity ===
+# === Timing Settings ===
 timing:
-  fixation_duration: [0.8, 1.0]
- 
+  fixation_duration: [0.4, 0.8]         # Random range or fixed duration
+  cue_duration: 0.5                     # Optional: duration of cue/prime
+  target_duration: 1.2                  # Response time window
+  feedback_duration: 0.8                # Feedback display time
+  iti_duration: [0.5, 0.8]              # Inter-trial interval
 
-
+# === Trigger Codes (can be expanded as needed) ===
 triggers:
   exp_onset: 98
   exp_end: 99
-
   block_onset: 100
   block_end: 101
-
   fixation_onset: 1
+  cue_onset: 2
+  target_onset: 3
+  key_press: 4
+  no_response: 5
+  feedback_onset: 6
 
-
+# === Controller Settings (optional, used for adaptive difficulty) ===
+controller:
+  type: staircase                        # or "probabilistic", "fixed", etc.
+  initial_ssd: 0.25                      # For SST
+  min_ssd: 0.05
+  max_ssd: 0.5
+  step: 0.05
+  target_success: 0.5
+  condition_specific: false             # Set to true if adapting per condition
