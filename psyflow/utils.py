@@ -145,3 +145,68 @@ def load_config(config_file: str = 'config/config.yaml',
                 output[key_name] = config.get(key, {})
 
     return output
+
+from psychopy.visual import Window
+from psychopy.hardware import keyboard
+from psychopy import event, core, logging
+from psychopy.visual import Window
+from psychopy.hardware import keyboard
+from psychopy import event, core, logging
+from typing import Tuple
+
+
+def initialize_exp(settings, screen_id: int = 1) -> Tuple[Window, keyboard.Keyboard]:
+    """
+    Initialize the experiment environment including window, keyboard, logging, and global quit key.
+
+    Parameters:
+        settings: Configuration object with display, logging, and task settings.
+        screen_id (int): ID of the screen to display the experiment window on.
+
+    Returns:
+        Tuple[Window, Keyboard]: The initialized PsychoPy window and keyboard objects.
+    """
+    # === Window Setup ===
+    win = Window(
+        size=getattr(settings, 'size', [1024, 768]),
+        fullscr=getattr(settings, 'fullscreen', False),
+        screen=screen_id,
+        monitor=getattr(settings, 'monitor', 'testMonitor'),
+        units=getattr(settings, 'units', 'pix'),
+        color=getattr(settings, 'bg_color', [0, 0, 0]),
+        gammaErrorPolicy='ignore'
+    )
+
+    # === Keyboard Setup ===
+    kb = keyboard.Keyboard()
+    win.mouseVisible = False
+
+    # === Global Quit Key (Ctrl+Q) ===
+    try:
+        event.globalKeys.clear()  # Ensure no duplicate 'q' entries
+    except Exception:
+        pass
+
+    event.globalKeys.add(
+        key='q',
+        modifiers=['ctrl'],
+        func=lambda: (win.close(), core.quit()),
+        name='shutdown'
+    )
+
+    # === Frame Timing ===
+    try:
+        settings.frame_time_seconds = win.monitorFramePeriod
+        settings.win_fps = win.getActualFrameRate() or 60  # fallback if FPS detection fails
+    except Exception as e:
+        print(f"[Warning] Could not determine frame rate: {e}")
+        settings.frame_time_seconds = 1 / 60
+        settings.win_fps = 60
+
+    # === Logging Setup ===
+    log_path = getattr(settings, 'log_file', 'experiment.log')
+    logging.setDefaultClock(core.Clock())
+    logging.LogFile(log_path, level=logging.DATA, filemode='a')
+    logging.console.setLevel(logging.INFO)
+
+    return win, kb
