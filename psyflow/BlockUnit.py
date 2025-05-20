@@ -89,32 +89,6 @@ class BlockUnit:
         self.trials = list(self.conditions)
         return self
     
-    def assign_stim(
-        self,
-        func: Callable[[List[Any], int], List[Dict[str, Any]]],
-        **kwargs
-    ) -> "BlockUnit":
-        """
-        Assign stimuli based on the current trial condition list.
-
-        Parameters
-        ----------
-        func : Callable
-            A function that takes in a list of condition labels and returns
-            a list of trial dicts with keys like 'condition', 'stim', etc.
-            Signature: func(trial_conditions, block_index, **kwargs) -> List[dict]
-
-        kwargs : dict
-            Extra arguments passed to the assigner function.
-
-        Returns
-        -------
-        BlockUnit
-            The updated BlockUnit with assigned stimuli in `self.trials`.
-        """
-        self.trials = func(self.trials, self.block_idx, **kwargs)
-        return self
-
     def add_trials(self, trial_list: List[Any]) -> "BlockUnit":
         """
         Manually set the trial list.
