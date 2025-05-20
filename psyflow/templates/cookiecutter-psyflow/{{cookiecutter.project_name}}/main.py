@@ -114,5 +114,4 @@ df = pd.DataFrame(all_data)
 df.to_csv(settings.res_file, index=False)
 
 # Clean up
-win.close()
 core.quit()
