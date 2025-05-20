@@ -62,9 +62,10 @@ class BlockUnit:
 
     def generate_conditions(
         self,
-        func: Callable[[int, List[str], Optional[int]], np.ndarray],
+        func: Callable,
         n_trials: Optional[int] = None,
-        condition_labels: Optional[List[str]] = None
+        condition_labels: Optional[List[str]] = None,
+        **kwargs
     ) -> "BlockUnit":
         """
         Generate trial conditions using a user-defined function.
@@ -72,20 +73,25 @@ class BlockUnit:
         Parameters
         ----------
         func : Callable
-            Function to generate conditions. Signature: (n_trials, labels, seed) -> np.ndarray.
+            A condition generation function, e.g., generate_nback_conditions.
+            Must accept (n_trials, condition_labels, seed=...) and any additional kwargs.
         n_trials : int, optional
-            Number of trials. Defaults to `self.n_trials`.
+            Number of trials for this block. Defaults to `self.n_trials`.
         condition_labels : list of str, optional
-            List of possible condition labels. Defaults to `settings.conditions`.
+            Condition categories. Defaults to `settings.conditions`.
+        kwargs : dict
+            Additional task-specific arguments (e.g., n_back=2, digits=['A','B','C']).
 
         Returns
         -------
         BlockUnit
-            The same instance for method chaining.
+            This BlockUnit instance (for chaining).
         """
         n = n_trials or self.n_trials
         labels = condition_labels or getattr(self.settings, "conditions", ["A", "B", "C"])
-        self.conditions = func(n, labels, seed=self.seed)
+
+        logging.data(f"[BlockUnit] Generating conditions using {func.__name__} with extra args: {kwargs}")
+        self.conditions = func(n, labels, seed=self.seed, **kwargs)
         self.trials = list(self.conditions)
         return self
     
