@@ -146,13 +146,13 @@ class BlockUnit:
         self._on_end.append(func)
         return self
 
-    def run_trial(self, run_trial_func: Callable, **extra_args):
+    def run_trial(self, func: Callable, **kwargs):
         """
         Run all trials using a specified trial function.
 
         Parameters
         ----------
-        run_trial_func : Callable
+        func : Callable
             Function to run each trial. Must accept (win, kb, settings, condition, **extra_args).
         extra_args : dict
             Additional arguments passed to the trial function.
@@ -164,7 +164,7 @@ class BlockUnit:
             hook(self)
 
         for i, cond in enumerate(self.trials):
-            result = run_trial_func(self.win, self.kb, self.settings, cond, **extra_args)
+            result = func(self.win, self.kb, self.settings, cond, **kwargs)
             result.update({
                 "trial_index": i,
                 "block_id": self.block_id,
