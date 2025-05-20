@@ -31,11 +31,12 @@ subinfo_mapping:
 # === Window Settings ===
 window:
   size: [1920, 1080]
-  monitor: testMonitor
   units: deg
   screen: 1
-  bg_color: black
+  bg_color: gray
   fullscreen: True
+  monitor_width_cm: 33.62
+  monitor_distance_cm: 57
 
 # === Task-Level Settings ===
 task:

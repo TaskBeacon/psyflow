@@ -148,7 +148,7 @@ def load_config(config_file: str = 'config/config.yaml',
 
 from psychopy.visual import Window
 from psychopy.hardware import keyboard
-from psychopy import event, core, logging
+from psychopy import event, core, logging, monitors
 from psychopy.visual import Window
 from psychopy.hardware import keyboard
 from psychopy import event, core, logging
@@ -167,11 +167,16 @@ def initialize_exp(settings, screen_id: int = 1) -> Tuple[Window, keyboard.Keybo
         Tuple[Window, Keyboard]: The initialized PsychoPy window and keyboard objects.
     """
     # === Window Setup ===
+    mon = monitors.Monitor('tempMonitor')
+    mon.setWidth(getattr(settings, 'monitor_width_cm', 35.5))
+    mon.setDistance(getattr(settings, 'monitor_distance_cm', 60))
+    mon.setSizePix(getattr(settings, 'size', [1024, 768]))
+
     win = Window(
         size=getattr(settings, 'size', [1024, 768]),
         fullscr=getattr(settings, 'fullscreen', False),
         screen=screen_id,
-        monitor=getattr(settings, 'monitor', 'testMonitor'),
+        monitor=mon,
         units=getattr(settings, 'units', 'pix'),
         color=getattr(settings, 'bg_color', [0, 0, 0]),
         gammaErrorPolicy='ignore'
