@@ -1,8 +1,9 @@
 from psychopy.visual import TextStim, Circle, Rect, Polygon, ImageStim, ShapeStim, TextBox2, MovieStim
 from psychopy import event, core
 
-from psychopy import prefs
-prefs.hardware['audioLib'] = ['pyo', 'sounddevice', 'pygame']
+# set this if sounddevice is not working
+# from psychopy import prefs 
+# prefs.hardware['audioLib'] = ['pyo', 'sounddevice', 'pygame']
 from psychopy.sound import Sound
 from typing import Callable, Dict, Any, Type, Optional
 import yaml
