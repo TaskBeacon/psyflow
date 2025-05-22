@@ -385,16 +385,54 @@ class StimUnit:
     
     def show(
         self,
-        duration: float | list | tuple,
+        duration: float | list | tuple | None = None,
         onset_trigger: int = None,
         offset_trigger: int = None
     ) -> "StimUnit":
         """
-        Display the stimulus for a specified duration, either using frame-based timing
-        (recommended for EEG/fMRI) or precise time-based loop.
+        Display the stimulus for a specified duration, using frame-based timing
+        (recommended for EEG/fMRI). Audio playback is automatically started on stimulus onset.
+
+        If duration is None, the longest duration of any sound stimulus will be used.
+        If duration is set explicitly, it will be respected even if shorter than any sound duration.
+
+        Parameters
+        ----------
+        duration : float | list | tuple | None
+            Duration of stimulus presentation (in seconds). Can be:
+            - A fixed number
+            - A (min, max) range to sample from
+            - None → automatically use max sound duration (if any)
+        onset_trigger : int
+            Trigger code to send at stimulus onset.
+        offset_trigger : int
+            Trigger code to send at stimulus offset.
+
+        Returns
+        -------
+        StimUnit
+
+        Behavior Table
+        --------------
+        | Condition                                | Behavior                                             |
+        |------------------------------------------|------------------------------------------------------|
+        | duration=None                            | Uses longest sound (or 0.0 if no sound)             |
+        | duration=(1, 2)                          | Samples uniformly in [1, 2], regardless of sound    |
+        | duration=1.0 + sound is 2.5 seconds      | Screen ends at 1.0s, sound may be cut off early     |
+        | duration=None + sound is 2.5 seconds     | Screen and sound will both last full 2.5s           |
         """
         local_rng = random.Random()
-        if isinstance(duration, (list, tuple)):
+
+        # auto-select duration from sound stimuli if not provided
+        if duration is None:
+            t_val = 0.0
+            for stim in self.stimuli:
+                if hasattr(stim, "getDuration") and callable(stim.getDuration):
+                    try:
+                        t_val = max(t_val, stim.getDuration())
+                    except Exception:
+                        continue
+        elif isinstance(duration, (list, tuple)):
             if len(duration) == 2:
                 t_val = local_rng.uniform(*duration)
             elif len(duration) == 1:
@@ -405,42 +443,46 @@ class StimUnit:
             t_val = duration
         else:
             raise TypeError(f"Invalid duration type: {type(duration)}")
+
         self.set_state(duration=t_val)
 
         # --- Initial Flip (trigger locked to onset) ---
         for stim in self.stimuli:
-            # if it’s a sound, schedule play() on the flip
             if hasattr(stim, "play") and callable(stim.play):
                 self.win.callOnFlip(stim.play)
             else:
                 stim.draw()
+
         self.win.callOnFlip(self.send_trigger, onset_trigger)
-        self.win.callOnFlip(self.set_state, 
-                            onset_time=self.clock.getTime(), 
-                            onset_time_global=core.getAbsTime(),
-                            onset_trigger=onset_trigger)
-        flip_time = self.win.flip()  # clear to avoid flickering
-
-        self.set_state(
-            flip_time=flip_time
+        self.win.callOnFlip(
+            self.set_state,
+            onset_time=self.clock.getTime(),
+            onset_time_global=core.getAbsTime(),
+            onset_trigger=onset_trigger
         )
+        flip_time = self.win.flip()
+        self.set_state(flip_time=flip_time)
 
-        # --- Frame-based or precise timing ---
+        # --- Frame-based visual presentation ---
         tclock = core.Clock()
         tclock.reset()
 
         visual_stims = [s for s in self.stimuli if hasattr(s, "draw") and callable(s.draw)]
         n_frames = int(round(t_val / self.frame_time))
-        for frame_i in range(n_frames-1):
+
+        for frame_i in range(n_frames - 1):
             for stim in visual_stims:
                 stim.draw()
-                if frame_i == n_frames - 2:
-                   self.win.callOnFlip(self.set_state,
-                                    offset_trigger=offset_trigger,
-                                    close_time=self.clock.getTime(),
-                                    close_time_global=core.getAbsTime())
-                   self.win.callOnFlip(self.send_trigger, offset_trigger)
+            if frame_i == n_frames - 2:
+                self.win.callOnFlip(
+                    self.set_state,
+                    offset_trigger=offset_trigger,
+                    close_time=self.clock.getTime(),
+                    close_time_global=core.getAbsTime()
+                )
+                self.win.callOnFlip(self.send_trigger, offset_trigger)
             self.win.flip()
+
         self.log_unit()
         return self
 
