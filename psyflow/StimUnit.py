@@ -572,11 +572,12 @@ class StimUnit:
     def wait_and_continue(
         self,
         keys: list[str] = ["space"],
+        min_wait: float = 0.0,
         log_message: Optional[str] = None,
         terminate: bool = False
     ) -> "StimUnit":
         """
-        Display the current stimuli and wait for a key press to continue or quit.
+        Display the current stimuli (visual and sound) and wait for a key press to continue or quit.
 
         Parameters
         ----------
@@ -586,31 +587,53 @@ class StimUnit:
             Optional log message (default: auto-generated).
         terminate : bool
             If True, the experiment will quit after key press.
+        min_wait : float
+            Minimum time in seconds to wait before accepting a key press
+            (default 0.0).
 
         Returns
         -------
         StimUnit
         """
+        # record which keys we're waiting for
         self.set_state(wait_keys=keys)
 
+        # prepare to show/play all stimuli on flip
         for stim in self.stimuli:
-            stim.draw()
-        self.win.callOnFlip(self.set_state, 
-                        onset_time=self.clock.getTime(), 
-                        onset_time_global=core.getAbsTime())
+            if hasattr(stim, "play") and callable(stim.play):
+                # schedule sound playback at the moment of screen flip
+                self.win.callOnFlip(stim.play)
+            else:
+                # draw visual stimuli
+                stim.draw()
+
+        # record onset times and start clock
+        self.win.callOnFlip(self.set_state,
+                            onset_time=self.clock.getTime(),
+                            onset_time_global=core.getAbsTime())
         self.win.callOnFlip(self.clock.reset)
         flip_time = self.win.flip()
         self.keyboard.clearEvents()
         self.set_state(flip_time=flip_time)
+
+        # loop until a valid key is pressed after min_wait seconds
         while True:
+            # for sound stimuli we don't need to re-schedule play()
+            # so only redraw visuals
             for stim in self.stimuli:
-                stim.draw()
+                if not (hasattr(stim, "play") and callable(stim.play)):
+                    stim.draw()
             self.win.flip()
 
             keys_pressed = self.keyboard.getKeys(keyList=keys, waitRelease=False)
             if keys_pressed:
+                elapsed = self.clock.getTime()
+                # enforce minimum wait time
+                if elapsed < min_wait:
+                    continue
+
                 key = keys_pressed[0].name
-                rt = self.clock.getTime()
+                rt = elapsed
                 self.set_state(
                     response=key,
                     response_time=rt,
@@ -619,6 +642,7 @@ class StimUnit:
                 )
                 break
 
+        # logging
         msg = log_message or (
             "Experiment ended by key press." if terminate else f"Continuing after key '{key}'"
         )
