@@ -3,7 +3,7 @@ from psychopy import event, core
 
 # set this if sounddevice is not working
 from psychopy import prefs 
-prefs.hardware['audioLib'] = ['pyo', 'sounddevice', 'pygame']
+prefs.hardware['audioLib'] = ['pyo', 'pygame']
 import asyncio
 import edge_tts
 from psychopy.sound import Sound
@@ -570,6 +570,7 @@ class StimBank:
             # clear any cached instance so get() picks up the new Sound
             self._instantiated.pop(f"{key}_voice", None)
             print(f"[Success] Registered new stimulus '{key}_voice'")
+        return self
 
 
     def add_voice(self,
@@ -628,3 +629,5 @@ class StimBank:
         self._instantiated.pop(stim_label, None)
 
         print(f"[Success] Registered new voice stimulus '{stim_label}'")
+
+        return self

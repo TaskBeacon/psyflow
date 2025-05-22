@@ -572,7 +572,7 @@ class StimUnit:
     def wait_and_continue(
         self,
         keys: list[str] = ["space"],
-        min_wait: float = 0.0,
+        min_wait: Optional[float] = None,
         log_message: Optional[str] = None,
         terminate: bool = False
     ) -> "StimUnit":
@@ -583,31 +583,39 @@ class StimUnit:
         ----------
         keys : list[str]
             Keys that allow the trial to proceed (default: ["space"]).
+        min_wait : float or None
+            Minimum time to wait before accepting key press. If None, and any sound
+            stimuli are present, it is automatically set to the longest sound duration.
         log_message : str, optional
             Optional log message (default: auto-generated).
         terminate : bool
             If True, the experiment will quit after key press.
-        min_wait : float
-            Minimum time in seconds to wait before accepting a key press
-            (default 0.0).
 
         Returns
         -------
         StimUnit
         """
-        # record which keys we're waiting for
         self.set_state(wait_keys=keys)
 
-        # prepare to show/play all stimuli on flip
+        # auto-compute min_wait if not provided
+        if min_wait is None:
+            min_wait = 0.0
+            for stim in self.stimuli:
+                if hasattr(stim, "getDuration") and callable(stim.getDuration):
+                    try:
+                        dur = stim.getDuration()
+                        if dur is not None:
+                            min_wait = max(min_wait, dur)
+                    except Exception:
+                        continue
+
+        # draw/play all stimuli at onset
         for stim in self.stimuli:
             if hasattr(stim, "play") and callable(stim.play):
-                # schedule sound playback at the moment of screen flip
                 self.win.callOnFlip(stim.play)
             else:
-                # draw visual stimuli
                 stim.draw()
 
-        # record onset times and start clock
         self.win.callOnFlip(self.set_state,
                             onset_time=self.clock.getTime(),
                             onset_time_global=core.getAbsTime())
@@ -616,10 +624,7 @@ class StimUnit:
         self.keyboard.clearEvents()
         self.set_state(flip_time=flip_time)
 
-        # loop until a valid key is pressed after min_wait seconds
         while True:
-            # for sound stimuli we don't need to re-schedule play()
-            # so only redraw visuals
             for stim in self.stimuli:
                 if not (hasattr(stim, "play") and callable(stim.play)):
                     stim.draw()
@@ -628,7 +633,6 @@ class StimUnit:
             keys_pressed = self.keyboard.getKeys(keyList=keys, waitRelease=False)
             if keys_pressed:
                 elapsed = self.clock.getTime()
-                # enforce minimum wait time
                 if elapsed < min_wait:
                     continue
 
@@ -642,7 +646,6 @@ class StimUnit:
                 )
                 break
 
-        # logging
         msg = log_message or (
             "Experiment ended by key press." if terminate else f"Continuing after key '{key}'"
         )
@@ -653,4 +656,5 @@ class StimUnit:
             self.win.close()
 
         return self
+
 
