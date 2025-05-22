@@ -2,12 +2,15 @@ from psychopy.visual import TextStim, Circle, Rect, Polygon, ImageStim, ShapeSti
 from psychopy import event, core
 
 # set this if sounddevice is not working
-# from psychopy import prefs 
-# prefs.hardware['audioLib'] = ['pyo', 'sounddevice', 'pygame']
+from psychopy import prefs 
+prefs.hardware['audioLib'] = ['pyo', 'sounddevice', 'pygame']
+import asyncio
+import edge_tts
 from psychopy.sound import Sound
 from typing import Callable, Dict, Any, Type, Optional
 import yaml
 import inspect
+import os
 
 # Mapping string names in YAML to actual PsychoPy classes
 STIM_CLASSES: Dict[str, Type] = {
@@ -498,3 +501,130 @@ class StimBank:
                 print(msg)
             if not unknown_args and not missing_args:
                 print(f"✅ [{name}] OK")
+
+
+
+    def convert_to_voice(self,
+                         keys: list[str],
+                         overwrite: bool = False,
+                         voice: str = "zh-CN-XiaoxiaoNeural"):
+        """
+        Convert specified TextStim/TextBox2 stimuli to speech (MP3) and register them
+        as new Sound stimuli in this StimBank.
+
+        Parameters
+        ----------
+        keys : list[str]
+            List of registered stimulus names to convert.
+        overwrite : bool
+            If True, overwrite existing MP3 files (default False).
+        voice : str
+            Name of the TTS voice to use (default "zh-CN-XiaoxiaoNeural").
+            edge-tts --list-voices
+        """
+        assets_dir = "assets"
+        # create the assets folder only if it doesn't already exist
+        if not os.path.isdir(assets_dir):
+            os.mkdir(assets_dir)
+
+        for key in keys:
+            # try to retrieve the registered stimulus
+            try:
+                stim = self.get(key)
+            except KeyError:
+                print(f"[Error] Stimulus '{key}' is not defined. Skipping.")
+                continue
+
+            # only convert if the stimulus has a .text attribute
+            text = getattr(stim, "text", None)
+            if not isinstance(text, str):
+                print(f"[Warning] '{key}' has no text property. Skipping.")
+                continue
+
+            # determine output MP3 path
+            mp3_filename = f"{key}_voice.mp3"
+            mp3_path = os.path.join(assets_dir, mp3_filename)
+
+            if os.path.isfile(mp3_path) and not overwrite:
+                print(f"[Info] '{mp3_filename}' exists and overwrite=False. Skipping generation.")
+            else:
+                print(f"[Info] Generating TTS for '{key}' → '{mp3_filename}' …")
+
+                async def _generate():
+                    await edge_tts.Communicate(text=text, voice=voice).save(mp3_path)
+
+                try:
+                    # run the async TTS generation
+                    asyncio.run(_generate())
+                except Exception as e:
+                    print(f"[Error] Failed to generate speech for '{key}': {e}")
+                    print("Possible reasons:")
+                    print(" • No internet connection or unstable network")
+                    print(" • HTTPS proxies not supported by edge-tts")
+                    print(" • Incorrect or unsupported voice name")
+                    print(" • edge-tts not installed or version mismatch")
+                    continue
+
+            # register the new MP3 as a Sound stimulus
+            self._registry[f"{key}_voice"] = lambda win, p=mp3_path: Sound(p)
+            # clear any cached instance so get() picks up the new Sound
+            self._instantiated.pop(f"{key}_voice", None)
+            print(f"[Success] Registered new stimulus '{key}_voice'")
+
+
+    def add_voice(self,
+                  stim_label: str,
+                  text: str,
+                  overwrite: bool = False,
+                  voice: str = "zh-CN-XiaoxiaoNeural"):
+        """
+        Convert arbitrary text to speech (MP3) and register it as a new Sound stimulus.
+
+        Parameters
+        ----------
+        stim_label : str
+            The name under which to register the new voice stimulus, 
+            and the base filename for the MP3 (e.g. 'welcome_voice' → 'assets/welcome_voice.mp3').
+        text : str
+            The text to synthesize.
+        overwrite : bool
+            If True, overwrite an existing MP3 file. Default is False.
+        voice : str
+            The TTS voice to use (default "zh-CN-XiaoxiaoNeural").
+            edge-tts --list-voices
+        """
+        # 1. Ensure the assets directory exists
+        assets_dir = "assets"
+        if not os.path.isdir(assets_dir):
+            os.mkdir(assets_dir)
+
+        # 2. Build the full path for the MP3
+        mp3_filename = f"{stim_label}.mp3"
+        mp3_path = os.path.join(assets_dir, mp3_filename)
+
+        # 3. Synthesize if needed
+        if os.path.isfile(mp3_path) and not overwrite:
+            print(f"[Info] '{mp3_filename}' already exists (overwrite=False). Skipping synthesis.")
+        else:
+            print(f"[Info] Generating TTS for '{stim_label}' → '{mp3_filename}' …")
+
+            async def _generate():
+                await edge_tts.Communicate(text=text, voice=voice).save(mp3_path)
+
+            try:
+                asyncio.run(_generate())
+            except Exception as e:
+                print(f"[Error] Failed to generate speech for '{stim_label}': {e}")
+                print("Possible reasons:")
+                print(" • No internet connection or unstable network")
+                print(" • HTTPS proxies not supported by edge-tts")
+                print(" • Incorrect or unsupported voice name")
+                print(" • edge-tts not installed or version mismatch")
+                return
+
+        # 4. Register the new MP3 as a Sound stimulus
+        self._registry[stim_label] = lambda win, p=mp3_path: Sound(p)
+        # 5. Clear any cached instance so future get() returns the new Sound
+        self._instantiated.pop(stim_label, None)
+
+        print(f"[Success] Registered new voice stimulus '{stim_label}'")
