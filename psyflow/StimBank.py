@@ -2,8 +2,8 @@ from psychopy.visual import TextStim, Circle, Rect, Polygon, ImageStim, ShapeSti
 from psychopy import event, core
 
 # set this if sounddevice is not working
-from psychopy import prefs 
-prefs.hardware['audioLib'] = ['pyo', 'pygame']
+# from psychopy import prefs 
+# prefs.hardware['audioLib'] = ['pyo', 'pygame']
 import asyncio
 import edge_tts
 from psychopy.sound import Sound
