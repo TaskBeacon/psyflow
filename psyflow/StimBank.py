@@ -505,7 +505,7 @@ class StimBank:
 
 
     def convert_to_voice(self,
-                         keys: list[str],
+                         keys: list[str] | str,
                          overwrite: bool = False,
                          voice: str = "zh-CN-YunyangNeural"):
         """
@@ -522,6 +522,8 @@ class StimBank:
             Name of the TTS voice to use (default 'zh-CN-YunyangNeural').
             edge-tts --list-voices
         """
+        if isinstance(keys, str):
+            keys = [keys]
         assets_dir = "assets"
         # create the assets folder only if it doesn't already exist
         if not os.path.isdir(assets_dir):
