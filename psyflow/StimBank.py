@@ -507,7 +507,7 @@ class StimBank:
     def convert_to_voice(self,
                          keys: list[str],
                          overwrite: bool = False,
-                         voice: str = "zh-CN-XiaoxiaoNeural"):
+                         voice: str = "zh-CN-YunyangNeural"):
         """
         Convert specified TextStim/TextBox2 stimuli to speech (MP3) and register them
         as new Sound stimuli in this StimBank.
@@ -519,7 +519,7 @@ class StimBank:
         overwrite : bool
             If True, overwrite existing MP3 files (default False).
         voice : str
-            Name of the TTS voice to use (default "zh-CN-XiaoxiaoNeural").
+            Name of the TTS voice to use (default 'zh-CN-YunyangNeural').
             edge-tts --list-voices
         """
         assets_dir = "assets"
