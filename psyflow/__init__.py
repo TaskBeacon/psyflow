@@ -6,7 +6,7 @@ from .BlockUnit import BlockUnit
 from .StimBank import StimBank
 from .SubInfo import SubInfo
 from .TaskSettings import TaskSettings
-from .StimUnit import StimUnit
 from .TriggerSender import TriggerSender
+from .StimUnit import StimUnit
 from .utils import *
 from .cli import climain
