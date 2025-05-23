@@ -113,12 +113,16 @@ class BlockUnit:
             self.conditions = func(n, labels, seed=use_seed, **kwargs)
         else:
             # --- default weighted, balanced generation ---
+   
             rng = random.Random(use_seed)
             n_labels = len(labels)
 
             # default to equal weights if none provided
             if weights is None:
                 weights = [1.0] * n_labels
+            elif len(weights) != len(labels):
+                raise ValueError("Length of weights must match number of condition_labels.")
+
             total_w = sum(weights)
 
             # compute base counts (floor) and remainder
@@ -148,13 +152,10 @@ class BlockUnit:
                     result.extend([lbl] * cnt)
                 rng.shuffle(result)
 
-            self.conditions = np.array(result, dtype=object)
-
-        # update trials list and log distribution
-        self.trials = list(self.conditions)
-        dist = {lbl: self.trials.count(lbl) for lbl in set(self.trials)}
-        logging.data(f"[BlockUnit] Condition distribution: {dist}")
-
+            self.conditions = result
+        if not isinstance(self.conditions, list): # make sure the dist work
+            self.conditions = list(self.conditions)
+        print((f"[BlockUnit] Blockconditions: {self.conditions}"))
         return self
 
 
@@ -362,6 +363,6 @@ class BlockUnit:
         logging.data(f"[BlockUnit] Blockid: {self.block_id}")
         logging.data(f"[BlockUnit] Blockidx: {self.block_idx}")
         logging.data(f"[BlockUnit] Blockseed: {self.seed}")
-        logging.data(f"[BlockUnit] Blocktrials: {len(self.conditions)}")
+        logging.data(f"[BlockUnit] Blocktrial-N: {len(self.conditions)}")
         logging.data(f"[BlockUnit] Blockdist: {dist}")
         logging.data(f"[BlockUnit] Blockconditions: {self.conditions}")
