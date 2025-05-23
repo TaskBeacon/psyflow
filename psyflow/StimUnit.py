@@ -32,14 +32,20 @@ class StimUnit:
         Duration of a single frame in seconds (default: 1/60 for 60Hz).
     """
 
-    def __init__(self, win: visual.Window, unit_label: str, triggersender: Optional[TriggerSender] = None):
+    def __init__(
+    self,
+    win: visual.Window,
+    unit_label: str,
+    triggersender: Optional[TriggerSender] = None,
+    keyboard: Optional[Keyboard] = None
+):
         self.win = win
         self.label = unit_label
         self.triggersender = triggersender
         self.stimuli: List[visual.BaseVisualStim] = []
         self.state: Dict[str, Any] = {}
         self.clock = core.Clock()
-        self.keyboard = Keyboard()
+        self.keyboard = keyboard or Keyboard()
         self._hooks: Dict[str, List] = {"start": [], "response": [], "timeout": [], "end": []}
         self.frame_time = self.win.monitorFramePeriod
 
