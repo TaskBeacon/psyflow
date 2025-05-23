@@ -34,10 +34,10 @@ class StimUnit:
 
     def __init__(
     self,
-    win: visual.Window,
     unit_label: str,
-    triggersender: Optional[TriggerSender] = None,
-    keyboard: Optional[Keyboard] = None
+    win: visual.Window,
+    kb: Optional[Keyboard] = None,
+    triggersender: Optional[TriggerSender] = None
 ):
         self.win = win
         self.label = unit_label
@@ -45,7 +45,7 @@ class StimUnit:
         self.stimuli: List[visual.BaseVisualStim] = []
         self.state: Dict[str, Any] = {}
         self.clock = core.Clock()
-        self.keyboard = keyboard or Keyboard()
+        self.kb = kb or Keyboard()
         self._hooks: Dict[str, List] = {"start": [], "response": [], "timeout": [], "end": []}
         self.frame_time = self.win.monitorFramePeriod
 
@@ -341,7 +341,7 @@ class StimUnit:
         self.win.callOnFlip(self.set_state, onset_time=self.clock.getTime(),onset_time_global=core.getAbsTime())
         self.win.callOnFlip(self.clock.reset)
         self.win.flip()
-        self.keyboard.clearEvents()
+        self.kb.clearEvents()
         responded = False
 
         all_keys = list(set(k for k_list, _ in self._hooks["response"] for k in k_list))
@@ -357,7 +357,7 @@ class StimUnit:
                     stim.draw()
             self.win.flip()
 
-            keys = self.keyboard.getKeys(keyList=all_keys, waitRelease=False)
+            keys = self.kb.getKeys(keyList=all_keys, waitRelease=False)
             for key_obj in keys:
                 key_name, key_rt = key_obj.name, key_obj.rt
                 for valid_keys, hook in self._hooks["response"]:
@@ -552,7 +552,7 @@ class StimUnit:
                         onset_time_global=core.getAbsTime(),
                         onset_trigger=onset_trigger)
         self.win.callOnFlip(self.clock.reset)
-        self.keyboard.clearEvents()
+        self.kb.clearEvents()
         flip_time = self.win.flip()
         self.set_state(flip_time=flip_time)
 
@@ -580,7 +580,7 @@ class StimUnit:
                     h.draw()    
             self.win.flip()
 
-            keypress = self.keyboard.getKeys(keyList=keys, waitRelease=False)
+            keypress = self.kb.getKeys(keyList=keys, waitRelease=False)
             if keypress:
                 k = keypress[0].name
                 chosen_key = k 
@@ -669,7 +669,7 @@ class StimUnit:
                             onset_time_global=core.getAbsTime())
         self.win.callOnFlip(self.clock.reset)
         flip_time = self.win.flip()
-        self.keyboard.clearEvents()
+        self.kb.clearEvents()
         self.set_state(flip_time=flip_time)
 
         while True:
@@ -678,7 +678,7 @@ class StimUnit:
                     stim.draw()
             self.win.flip()
 
-            keys_pressed = self.keyboard.getKeys(keyList=keys, waitRelease=False)
+            keys_pressed = self.kb.getKeys(keyList=keys, waitRelease=False)
             if keys_pressed:
                 elapsed = self.clock.getTime()
                 if elapsed < min_wait:
