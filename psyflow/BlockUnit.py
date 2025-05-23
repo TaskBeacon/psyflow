@@ -52,7 +52,6 @@ class BlockUnit:
         self.seed = settings.block_seed[self.block_idx] if seed is None else seed
 
         self.conditions: Optional[np.ndarray] = None
-        self.trials: List[Any] = []
 
         self.results: List[Dict[str, Any]] = []
         self.meta: Dict[str, Any] = {}
@@ -92,16 +91,15 @@ class BlockUnit:
 
         logging.data(f"[BlockUnit] Generating conditions using {func.__name__} with extra args: {kwargs}")
         self.conditions = func(n, labels, seed=self.seed, **kwargs)
-        self.trials = list(self.conditions)
         return self
-    
-    def add_trials(self, trial_list: List[Any]) -> "BlockUnit":
+
+    def add_condition(self, condition_list: List[Any]) -> "BlockUnit":
         """
-        Manually set the trial list.
+        Manually set the condition list.
 
         Parameters
         ----------
-        trial_list : list
+        condition_list : list
             A list of trial condition labels.
 
         Returns
@@ -109,7 +107,7 @@ class BlockUnit:
         BlockUnit
             The same instance for method chaining.
         """
-        self.trials = trial_list
+        self.conditions = condition_list
         return self
 
     def on_start(self, func: Optional[Callable[['BlockUnit'], None]] = None):
@@ -163,7 +161,7 @@ class BlockUnit:
         for hook in self._on_start:
             hook(self)
 
-        for i, cond in enumerate(self.trials):
+        for i, cond in enumerate(self.conditions):
             result = func(self.win, self.kb, self.settings, cond, **kwargs)
             result.update({
                 "trial_index": i,
@@ -291,25 +289,14 @@ class BlockUnit:
             if negate ^ match(str(trial.get(key, '')))
         ]
 
-
-    def __len__(self) -> int:
-        """
-        Return the number of trials in the block.
-
-        Returns
-        -------
-        int
-        """
-        return len(self.trials)
-
     def logging_block_info(self):
         """
         Log block metadata including ID, index, seed, trial count, and condition distribution.
         """
-        dist = {c: self.trials.count(c) for c in set(self.trials)} if self.trials else {}
+        dist = {c: self.conditions.count(c) for c in set(self.conditions)} if self.conditions else {}
         logging.data(f"[BlockUnit] Blockid: {self.block_id}")
         logging.data(f"[BlockUnit] Blockidx: {self.block_idx}")
         logging.data(f"[BlockUnit] Blockseed: {self.seed}")
-        logging.data(f"[BlockUnit] Blocktrials: {len(self.trials)}")
+        logging.data(f"[BlockUnit] Blocktrials: {len(self.conditions)}")
         logging.data(f"[BlockUnit] Blockdist: {dist}")
         logging.data(f"[BlockUnit] Blockconditions: {self.conditions}")
