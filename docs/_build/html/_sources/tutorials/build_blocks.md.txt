@@ -217,9 +217,9 @@ for block_i in range(settings.total_blocks):
     
     block.to_dict(all_data)
     if block_i < settings.total_blocks - 1:
-        StimUnit(win, 'block').add_stim(stim_bank.get('block_break')).wait_and_continue()
+        StimUnit('block', win, kb).add_stim(stim_bank.get('block_break')).wait_and_continue()
     else:
-        StimUnit(win, 'block').add_stim(stim_bank.get_and_format('good_bye', reward=100)).wait_and_continue(terminate=True)
+        StimUnit('block', win, kb).add_stim(stim_bank.get_and_format('good_bye', reward=100)).wait_and_continue(terminate=True)
     
 # Save all data to CSV
 df = pd.DataFrame(all_data)
@@ -271,9 +271,9 @@ for block_i in range(settings.total_blocks):
     
     block.to_dict(all_data)
     if block_i < settings.total_blocks - 1:
-        StimUnit(win, 'block').add_stim(stim_bank.get('block_break')).wait_and_continue()
+        StimUnit('block', win, kb).add_stim(stim_bank.get('block_break')).wait_and_continue()
     else:
-        StimUnit(win, 'block').add_stim(stim_bank.get('good_bye')).wait_and_continue(terminate=True)
+        StimUnit('block', win, kb).add_stim(stim_bank.get('good_bye')).wait_and_continue(terminate=True)
     
 df = pd.DataFrame(all_data)
 df.to_csv(settings.res_file, index=False)

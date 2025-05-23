@@ -106,7 +106,7 @@ Retrieve with:
 
     from psyflow import StimUnit
 
-    trial = StimUnit(win, "T1", triggersender=sender)
+    trial = StimUnit("T1", win, kb, triggersender=sender)
     trial \
       .add_stim(fix, tgt) \
       .on_start(lambda u: u.send_trigger(tb.get("fix_onset"))) \

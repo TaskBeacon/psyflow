@@ -53,10 +53,10 @@ asset_pool = None
 settings.save_to_json()
 
 # Show instruction text and images if available
-StimUnit(win, 'instruction_text').add_stim(stim_bank.get('instruction_text')).wait_and_continue()
+StimUnit('instruction_text', win, kb).add_stim(stim_bank.get('instruction_text')).wait_and_continue()
 for key in ['instruction_image1', 'instruction_image2']:
     if key in stim_bank.bank:
-        StimUnit(win, key).add_stim(stim_bank.get(key)).wait_and_continue()
+        StimUnit(key, win, kb).add_stim(stim_bank.get(key)).wait_and_continue()
 
 # Run task blocks
 all_data = []
@@ -101,11 +101,11 @@ for block_i in range(settings.total_blocks):
             for t in stop_trials
         ) / len(stop_trials) if stop_trials else 0
 
-    StimUnit(win, 'block').add_stim(stim_bank.get_and_format('block_break', **kwargs)).wait_and_continue()
+    StimUnit('block', win, kb).add_stim(stim_bank.get_and_format('block_break', **kwargs)).wait_and_continue()
 
 # Final screen (e.g., goodbye or total score)
 final_score = sum(t.get("feedback_delta", 0) for t in all_data)
-StimUnit(win, 'block').add_stim(
+StimUnit('block', win, kb).add_stim(
     stim_bank.get_and_format('good_bye', total_score=final_score)
 ).wait_and_continue(terminate=True)
 

@@ -6,7 +6,7 @@ from psyflow import TriggerSender
 
 class StimUnit:
     """
-    StimUnit(win, unit_label, trigger=None)
+    StimUnit(unit_label,win, kb,  trigger=None)
 
     A modular trial unit for PsychoPy-based experiments. Designed to encapsulate
     stimulus presentation, response handling, event triggers, and lifecycle hooks
