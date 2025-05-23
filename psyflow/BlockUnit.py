@@ -3,6 +3,7 @@ from typing import Callable, Any, List, Dict, Optional
 from psychopy import core, logging
 from typing import Union, List, Dict, Literal
 import re
+import random
 
 
 class BlockUnit:
@@ -61,37 +62,101 @@ class BlockUnit:
 
     def generate_conditions(
         self,
-        func: Callable,
+        func: Optional[Callable] = None,
         n_trials: Optional[int] = None,
-        condition_labels: Optional[List[str]] = None,
+        condition_labels: Optional[List[Any]] = None,
+        weights: Optional[List[float]] = None,
+        order: Literal['random', 'sequential'] = 'random',
+        seed: Optional[int] = None,
         **kwargs
     ) -> "BlockUnit":
         """
-        Generate trial conditions using a user-defined function.
+        Generate trial conditions for this block.
+
+        If `func` is provided, delegate generation to it. Otherwise, use the built-in
+        weighted, balanced generator with optional sequential vs. random ordering.
 
         Parameters
         ----------
-        func : Callable
-            A condition generation function, e.g., generate_nback_conditions.
-            Must accept (n_trials, condition_labels, seed=...) and any additional kwargs.
+        func : Callable, optional
+            User-supplied generator with signature
+            `(n_trials, condition_labels, seed=..., **kwargs) -> array-like`.
         n_trials : int, optional
-            Number of trials for this block. Defaults to `self.n_trials`.
-        condition_labels : list of str, optional
-            Condition categories. Defaults to `settings.conditions`.
-        kwargs : dict
-            Additional task-specific arguments (e.g., n_back=2, digits=['A','B','C']).
+            Number of trials in this block. Defaults to `self.n_trials`.
+        condition_labels : list of Any, optional
+            Labels for each condition. Defaults to `self.settings.conditions`.
+        weights : list of float, optional
+            Relative weight for each label; defaults to equal weights.
+        order : {'random','sequential'}
+            If 'sequential', interleave labels in the order given; if 'random',
+            build the list then shuffle.
+        seed : int, optional
+            Overrides `self.seed` for this generation call, without mutating
+            the block's stored seed.
+        **kwargs : dict
+            Extra keyword arguments passed to `func` when used.
 
         Returns
         -------
         BlockUnit
-            This BlockUnit instance (for chaining).
+            Returns self for chaining.
         """
+        # determine trial count and labels
         n = n_trials or self.n_trials
         labels = condition_labels or getattr(self.settings, "conditions", ["A", "B", "C"])
 
-        logging.data(f"[BlockUnit] Generating conditions using {func.__name__} with extra args: {kwargs}")
-        self.conditions = func(n, labels, seed=self.seed, **kwargs)
+        # allow per-call seed override
+        use_seed = seed if seed is not None else self.seed
+
+        if func:
+            logging.data(f"[BlockUnit] Generating via custom func {func.__name__} (seed={use_seed})")
+            self.conditions = func(n, labels, seed=use_seed, **kwargs)
+        else:
+            # --- default weighted, balanced generation ---
+            rng = random.Random(use_seed)
+            n_labels = len(labels)
+
+            # default to equal weights if none provided
+            if weights is None:
+                weights = [1.0] * n_labels
+            total_w = sum(weights)
+
+            # compute base counts (floor) and remainder
+            raw = [n * w / total_w for w in weights]
+            counts = [int(x) for x in raw]
+            rem = n - sum(counts)
+
+            # distribute remainder according to weights
+            if rem > 0:
+                extra = rng.choices(labels, weights=weights, k=rem)
+                for lbl in extra:
+                    counts[labels.index(lbl)] += 1
+
+            # build the sequence
+            if order == 'sequential':
+                seq = []
+                cnts = counts.copy()
+                while sum(cnts) > 0:
+                    for i, lbl in enumerate(labels):
+                        if cnts[i] > 0:
+                            seq.append(lbl)
+                            cnts[i] -= 1
+                result = seq
+            else:
+                result = []
+                for lbl, cnt in zip(labels, counts):
+                    result.extend([lbl] * cnt)
+                rng.shuffle(result)
+
+            self.conditions = np.array(result, dtype=object)
+
+        # update trials list and log distribution
+        self.trials = list(self.conditions)
+        dist = {lbl: self.trials.count(lbl) for lbl in set(self.trials)}
+        logging.data(f"[BlockUnit] Condition distribution: {dist}")
+
         return self
+
 
     def add_condition(self, condition_list: List[Any]) -> "BlockUnit":
         """
