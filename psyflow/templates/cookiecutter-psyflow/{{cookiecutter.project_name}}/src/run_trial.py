@@ -34,7 +34,7 @@ def run_trial(
     trial_data = {"condition": condition}
 
     # === Helper for creating StimUnits ===
-    make_unit = partial(StimUnit, win=win, triggersender=trigger_sender)
+    make_unit = partial(StimUnit, win=win, kb=kb,  triggersender=trigger_sender)
 
     # === 1. Fixation (optional) ===
     if "fixation" in stim_bank.bank:
