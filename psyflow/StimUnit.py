@@ -32,7 +32,7 @@ class StimUnit:
         Duration of a single frame in seconds (default: 1/60 for 60Hz).
     """
 
-    def __init__(self, win: visual.Window, unit_label: str, triggersender: Optional[Any] = None):
+    def __init__(self, win: visual.Window, unit_label: str, triggersender: Optional[TriggerSender] = None):
         self.win = win
         self.label = unit_label
         self.triggersender = triggersender
