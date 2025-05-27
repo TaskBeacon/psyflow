@@ -580,26 +580,32 @@ class StimUnit:
                     h.draw()    
             self.win.flip()
 
-            keypress = self.kb.getKeys(keyList=keys, waitRelease=False)
-            if keypress:
-                k = keypress[0].name
-                chosen_key = k 
-                rt = self.clock.getTime()
-                self.set_state(
-                    hit=k in correct_keys, 
-                    correct_keys=correct_keys,
-                    response=k, 
-                    key_press=True,
-                    rt=rt,
-                    close_time=self.clock.getTime(),
-                    close_time_global=core.getAbsTime()
-                )
-                code = (response_trigger.get(k, None)
-                    if isinstance(response_trigger, dict)
-                    else response_trigger)
-                self.send_trigger(code)
-                self.set_state(response_trigger=code)
-                responded = True
+            # only listen for keys if we haven’t responded or if dynamic_highlight=True
+            if not responded or dynamic_highlight:
+                keypress = self.kb.getKeys(keyList=keys, waitRelease=False)
+                if keypress:
+                    k = keypress[0].name
+                    chosen_key = k 
+                    rt = self.clock.getTime()
+                    self.set_state(
+                        hit=k in correct_keys, 
+                        correct_keys=correct_keys,
+                        response=k, 
+                        key_press=True,
+                        rt=rt,
+                        close_time=self.clock.getTime(),
+                        close_time_global=core.getAbsTime()
+                    )
+                    code = (response_trigger.get(k, None)
+                        if isinstance(response_trigger, dict)
+                        else response_trigger)
+                    self.send_trigger(code)
+                    self.set_state(response_trigger=code)
+                    responded = True
+                     
+                     # if we should stop immediately, break out
+                    if terminate_on_response and not dynamic_highlight:
+                        break
 
 
         if not responded: 
