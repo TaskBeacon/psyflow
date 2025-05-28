@@ -26,8 +26,7 @@ class TaskSettings:
 
     # --- Window settings ---
     size: List[int] = field(default_factory=lambda: [1920, 1080])
-    monitor: str = 'testMonitor'
-    units: str = 'norm'
+    units: str = 'deg'
     screen: int = 1
     bg_color: str = 'gray'
     fullscreen: bool = True
