@@ -43,15 +43,6 @@ class SubInfo:
             })
             self.field_map.setdefault('subject_id', 'Subject ID (3 digits)')
 
-        # Ensure session_name field
-        if not any(f['name'] == 'session_name' for f in self.fields):
-            print("[SubInfo] WARNING: 'session_name' field missing. Adding default.")
-            self.fields.insert(0, {
-                'name': 'session_name',
-                'type': 'str'
-            })
-            self.field_map.setdefault('session_name', 'Session Name')
-
     def _local(self, key: str) -> str:
         """
         Translate a field key to the localized label if available.

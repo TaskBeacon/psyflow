@@ -55,7 +55,7 @@ class TaskSettings:
 
     # --- File path info ---
     save_path: Optional[str] = './data'
-    session_name: Optional[str] = None
+    task_name: Optional[str] = None
 
     def __post_init__(self):
         """
@@ -118,8 +118,8 @@ class TaskSettings:
 
         # Construct log/result filenames
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        if self.session_name:
-            basename = f"sub-{subject_id}_session_{self.session_name}_{timestamp}"
+        if self.task_name:
+            basename = f"sub-{subject_id}_task_{self.task_name}_{timestamp}"
         else:
             basename = f"sub-{subject_id}_{timestamp}"
 
