@@ -313,7 +313,7 @@ stim_bank.add_from_dict(stim_config)
 stim_bank.preload_all()
 ```
 
-#### 10.2. Probalistic reversal learning (PRL) task example.
+#### 10.2. Probabilistic reversal learning (PRL) task example.
 
 ```yaml
 stimuli:
