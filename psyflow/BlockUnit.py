@@ -217,9 +217,9 @@ class BlockUnit:
         Parameters
         ----------
         func : Callable
-            Function to run each trial. Must accept (win, kb, settings, condition, **extra_args).
-        extra_args : dict
-            Additional arguments passed to the trial function.
+            Function to run each trial. Must accept ``(win, kb, settings, condition, **kwargs)``.
+        **kwargs : dict
+            Additional keyword arguments forwarded to ``func``.
         """
         self.meta['block_start_time'] = core.getAbsTime()
         self.logging_block_info()
