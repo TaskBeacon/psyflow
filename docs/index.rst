@@ -34,6 +34,12 @@ Start with one of the tutorials below or explore the API reference.
 
    modules
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Development
+
+   release
+
 
 Indices and tables
 ==================

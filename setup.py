@@ -1,8 +1,18 @@
+from pathlib import Path
+import re
 from setuptools import setup, find_packages
+
+
+def read_version() -> str:
+    text = Path(__file__).with_name("pyproject.toml").read_text()
+    match = re.search(r'^version\s*=\s*"([^"]+)"', text, re.MULTILINE)
+    if not match:
+        raise RuntimeError("Version not found in pyproject.toml")
+    return match.group(1)
 
 setup(
     name="psyflow",
-    version="0.1.0",
+    version=read_version(),
     description="A utility package for building modular PsychoPy experiments.",
     author="Zhipeng Cao",
     author_email="zhipeng30@foxmail.com",

@@ -1,0 +1,5 @@
+# Release workflow
+
+1. Update the version number in `pyproject.toml` under the `[project]` section.
+2. Commit the change with a message that includes `[publish]` to trigger the release pipeline.
+3. Build and upload the package as usual.
