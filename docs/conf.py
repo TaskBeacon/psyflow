@@ -9,7 +9,11 @@
 project = 'psyflow'
 copyright = '2025, Zhipeng Cao'
 author = 'Zhipeng Cao'
-release = '0.1.0'
+import os
+import sys
+sys.path.insert(0, os.path.abspath(".."))  # so Sphinx can find your package
+from psyflow._version import read_version
+release = read_version()
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -26,11 +30,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 html_theme = 'alabaster'
 html_static_path = ['_static']
-
-
-import os
-import sys
-sys.path.insert(0, os.path.abspath(".."))  # so Sphinx can find your package
 
 # Enable extensions
 extensions = [

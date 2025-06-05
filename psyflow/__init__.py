@@ -1,7 +1,6 @@
-"""
-psyflow: A utility package for modular PsychoPy experiment development
-"""
-__version__ = "0.1.0"
+"""psyflow: A utility package for modular PsychoPy experiment development."""
+
+from ._version import __version__
 from .BlockUnit import BlockUnit
 from .StimBank import StimBank
 from .SubInfo import SubInfo
