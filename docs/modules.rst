@@ -9,7 +9,6 @@ API Reference
    psyflow/StimUnit
    psyflow/StimBank
    psyflow/SubInfo
-   psyflow/TriggerBank
    psyflow/TriggerSender
    psyflow/TaskSettings
    psyflow/utils
