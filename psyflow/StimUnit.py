@@ -146,7 +146,7 @@ class StimUnit:
 
     def to_dict(self, target: Optional[dict] = None) -> 'StimUnit':
         """
-        Return the internal state dictionary, or merge into an external one.
+        Return the StimUnit
 
         Parameters
         ----------
