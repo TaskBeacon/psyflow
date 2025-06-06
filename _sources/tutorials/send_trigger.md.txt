@@ -1,17 +1,8 @@
-# ⏱ Trigger System for EEG/MEG: `TriggerBank` + `TriggerSender`
+# ⏱ Trigger System for EEG/MEG: Trigger Dictionary + `TriggerSender`
 
-This system separates **trigger definition** (`TriggerBank`) from **trigger sending** (`TriggerSender`), allowing you to maintain clean logic, central config, and robust signal dispatch for EEG/MEG experiments.
+Store your event codes in a plain dictionary and let `TriggerSender` handle the dispatch. This keeps your configuration centralized and your send logic simple.
 
 ### 🧵 Summary of Key Methods 
-
-#### `TriggerBank`
-
-| Purpose                  | Method                  |
-|--|--|
-| Add one event-code       | `.add(event, code)`      |
-| Add from dict            | `.add_from_dict(dict)`   |
-| Add from YAML file       | `.add_from_yaml(path)`   |
-| Retrieve code            | `.get(event)`            |
 
 #### `TriggerSender`
 
@@ -23,40 +14,34 @@ This system separates **trigger definition** (`TriggerBank`) from **trigger send
 | Control post-delay         | `post_delay=0.001`       |
 
 
-### 🗂 1. Defining Triggers with `TriggerBank`
+### 🗂 1. Prepare a Trigger Dictionary
 
-TriggerBank maps event labels (e.g., "cue_onset", "response") to integer codes.
+Store event labels (e.g., "cue_onset", "response") as keys in a dictionary with integer codes as values.
 
 #### A. Define manually
 
-    from your_package import TriggerBank
-
-    tb = TriggerBank()
-    tb.add("cue_onset", 32)
-    tb.add("key_press", 33)
-
-#### B. Load from a dictionary
-
-    tb.add_from_dict({
+    triggers = {
         "cue_onset": 32,
-        "key_press": [33]  # also accepts single-item list (YAML-safe)
-    })
+        "key_press": 33,
+    }
 
-#### C. Load from YAML
+#### B. Load from YAML
 
 YAML format:
 
     triggers:
       cue_onset: 32
-      key_press: [33]
+      key_press: 33
 
 Code:
 
-    tb.add_from_yaml("trigger_config.yaml")
+    import yaml
+    with open("trigger_config.yaml") as f:
+        triggers = yaml.safe_load(f)["triggers"]
 
-#### D. Get a code
+#### C. Get a code
 
-    code = tb.get("key_press")  # returns 33 or None
+    code = triggers["key_press"]  # returns 33
 
 
 
@@ -77,7 +62,7 @@ TriggerSender handles the dispatch logic. It wraps your actual send function (e.
 
 #### C. Sending a trigger
 
-    sender.send(tb.get("cue_onset"))
+    sender.send(triggers["cue_onset"])
 
 This prints:
 
@@ -104,7 +89,6 @@ Here we used mock mode for testing and a serial port for real device communicati
 trigger_config = {
     **config.get('triggers', {})
 }
-triggerbank = TriggerBank(trigger_config)
 ser = serial.serial_for_url("loop://", baudrate=115200, timeout=1)
 triggersender = TriggerSender(
     trigger_func=lambda code: ser.write([1, 225, 1, 0, (code)]),
@@ -114,4 +98,4 @@ triggersender = TriggerSender(
 )
 ```
 
-Using `TriggerBank` and `TriggerSender` gives you a clean separation of config and logic, making your experiment easier to debug, replicate, and maintain.
+Using a trigger dictionary with `TriggerSender` keeps configuration and logic separated, making your experiment easier to debug, replicate, and maintain.

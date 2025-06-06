@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="🧾 SubInfo: Participant Information Collector" href="get_subinfo.html" /><link rel="prev" title="Welcome to psyflow’s documentation!" href="../index.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="API Reference" href="../modules.html" /><link rel="prev" title="⏱ Trigger System for EEG/MEG: Trigger Dictionary + TriggerSender" href="send_trigger.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>🏁 Getting Started with psyflow - psyflow 0.1.0 documentation</title>
+        <title>🖥️ CLI Usage and taps() - psyflow 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -179,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -205,13 +205,13 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🏁 Getting Started with psyflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">🏁 Getting Started with psyflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: Trigger Dictionary + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">🖥️ CLI Usage and <code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🖥️ CLI Usage and <code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -242,7 +242,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/tutorials/getting_started.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/tutorials/cli_usage.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -256,145 +256,27 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="getting-started-with-psyflow">
-<h1>🏁 Getting Started with psyflow<a class="headerlink" href="#getting-started-with-psyflow" title="Link to this heading">¶</a></h1>
-<p>Welcome to <strong>psyflow</strong>, a lightweight framework for building PsychoPy experiments with modular, chainable components. This guide walks you through installation, basic setup, and running your first trial.</p>
-<section id="installation">
-<h2>1. Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
-<p>Ensure you have PsychoPy installed:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>pip install psychopy
+          <section id="cli-usage-and-taps">
+<h1>🖥️ CLI Usage and <code class="docutils literal notranslate"><span class="pre">taps()</span></code><a class="headerlink" href="#cli-usage-and-taps" title="Link to this heading">¶</a></h1>
+<p>psyflow includes a small command-line tool for creating a new project from the bundled template. From a terminal run:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>psyflow-init [PROJECT_NAME]
 </pre></div>
 </div>
-<p>Then install psyflow (replace with actual package name if on PyPI):</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>pip install psyflow
-</pre></div>
-</div>
-<p>Or if you’re working from source:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/your-org/psyflow.git
-cd psyflow
-pip install -e .
-</pre></div>
-</div>
-</section>
-<section id="basic-experiment-structure">
-<h2>2. Basic Experiment Structure<a class="headerlink" href="#basic-experiment-structure" title="Link to this heading">¶</a></h2>
-<p>A typical psyflow experiment has these core steps:</p>
-<ol class="arabic simple">
-<li><p><strong>Configure</strong> experiment settings (<code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code>)</p></li>
-<li><p><strong>Collect</strong> participant info (<code class="docutils literal notranslate"><span class="pre">SubInfo</span></code>)</p></li>
-<li><p><strong>Build</strong> stimuli (<code class="docutils literal notranslate"><span class="pre">StimBank</span></code>)</p></li>
-<li><p><strong>Define</strong> triggers (a dictionary of codes + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>)</p></li>
-<li><p><strong>Create</strong> a trial (<code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>)</p></li>
-<li><p><strong>Run</strong> the trial and collect data</p></li>
-</ol>
-</section>
-<section id="configure-your-task">
-<h2>3. Configure Your Task<a class="headerlink" href="#configure-your-task" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import TaskSettings
+<p>With no argument or when <code class="docutils literal notranslate"><span class="pre">[PROJECT_NAME]</span></code> matches the current folder name, the template files are generated in place. Otherwise a new directory of that name is created next to your current path.</p>
+<p>The same behavior is available programmatically through <code class="docutils literal notranslate"><span class="pre">psyflow.utils.taps()</span></code> if you prefer calling it from Python:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">taps</span>
 
-config = {
-    &quot;total_blocks&quot;: 2,
-    &quot;total_trials&quot;: 20,
-    &quot;seed_mode&quot;: &quot;same_within_sub&quot;,
-    &quot;key_list&quot;: [&quot;left&quot;, &quot;right&quot;],
-    &quot;conditions&quot;: [&quot;reward&quot;, &quot;neutral&quot;],
-    &quot;bg_color&quot;: &quot;black&quot;
-}
-settings = TaskSettings.from_dict(config)
+<span class="c1"># create or populate &quot;MyStudy&quot; using the default template</span>
+<span class="n">taps</span><span class="p">(</span><span class="s2">&quot;MyStudy&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Later, after collecting <code class="docutils literal notranslate"><span class="pre">subject_id</span></code>:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>settings.add_subinfo({&quot;subject_id&quot;: &quot;001&quot;, &quot;session_name&quot;: &quot;A&quot;})
-</pre></div>
-</div>
-<p>This creates <code class="docutils literal notranslate"><span class="pre">settings.block_seed</span></code>, <code class="docutils literal notranslate"><span class="pre">settings.log_file</span></code>, and <code class="docutils literal notranslate"><span class="pre">settings.res_file</span></code>.</p>
-</section>
-<section id="collect-participant-info">
-<h2>4. Collect Participant Info<a class="headerlink" href="#collect-participant-info" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import yaml
-from psyflow import SubInfo
-
-config = yaml.safe_load(open(&quot;subinfo.yaml&quot;))
-collector = SubInfo(config)
-subinfo = collector.collect()   # opens GUI
-# e.g., {&#39;subject_id&#39;:&#39;001&#39;, &#39;session_name&#39;:&#39;A&#39;}
-</pre></div>
-</div>
-<p>Pass <code class="docutils literal notranslate"><span class="pre">subinfo</span></code> into settings via <code class="docutils literal notranslate"><span class="pre">add_subinfo()</span></code> above.</p>
-</section>
-<section id="build-your-stimuli">
-<h2>5. Build Your Stimuli<a class="headerlink" href="#build-your-stimuli" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import StimBank
-from psychopy.visual import TextStim, Circle
-
-stim_bank = StimBank(win)
-@stim_bank.define(&quot;fix&quot;)
-def make_fix(win):
-    return TextStim(win, text=&quot;+&quot;, color=&quot;white&quot;)
-stim_bank.add_from_dict({
-    &quot;target&quot;: {&quot;type&quot;:&quot;circle&quot;,&quot;radius&quot;:0.5,&quot;fillColor&quot;:&quot;red&quot;}
-})
-stim_bank.preload_all()
-</pre></div>
-</div>
-<p>Retrieve with:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fix = stim_bank.get(&quot;fix&quot;)
-tgt = stim_bank.get(&quot;target&quot;)
-</pre></div>
-</div>
-</section>
-<section id="set-up-triggers">
-<h2>6. Set Up Triggers<a class="headerlink" href="#set-up-triggers" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import yaml
-from psyflow import TriggerSender
-
-with open(&quot;triggers.yaml&quot;) as f:
-    triggers = yaml.safe_load(f)
-
-sender = TriggerSender(lambda code: port.write(bytes([code])))
-</pre></div>
-</div>
-</section>
-<section id="create-run-a-trial">
-<h2>7. Create &amp; Run a Trial<a class="headerlink" href="#create-run-a-trial" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import StimUnit
-
-trial = StimUnit(&quot;T1&quot;, win, kb, triggersender=sender)
-trial \
-  .add_stim(fix, tgt) \
-  .on_start(lambda u: u.send_trigger(triggers[&quot;fix_onset&quot;])) \
-  .capture_response(
-     keys=[&quot;left&quot;,&quot;right&quot;],
-     duration=1.0,
-     onset_trigger=triggers[&quot;fix_onset&quot;],
-     response_trigger={&quot;left&quot;:triggers[&quot;resp_L&quot;], &quot;right&quot;:triggers[&quot;resp_R&quot;]},
-     timeout_trigger=triggers[&quot;timeout&quot;],
-     correct_keys=[&quot;left&quot;],
-     highlight_stim={&quot;left&quot;: highlight_left, &quot;right&quot;: highlight_right}
-  ) \
-  .on_end(lambda u: print(&quot;Result:&quot;, u.state)) \
-  .run(frame_based=True)
-</pre></div>
-</div>
-<p>Inspect <code class="docutils literal notranslate"><span class="pre">trial.state</span></code>, save or append to data file.</p>
-</section>
-<section id="putting-it-all-together">
-<h2>8. Putting It All Together<a class="headerlink" href="#putting-it-all-together" title="Link to this heading">¶</a></h2>
-<p>Combine loops over blocks and trials:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>for b in range(settings.total_blocks):
-    # generate conditions, run trial sequence...
-    pass
-</pre></div>
-</div>
-<p>Use <code class="docutils literal notranslate"><span class="pre">settings.res_file</span></code> to write headers and <code class="docutils literal notranslate"><span class="pre">trial.to_dict()</span></code> for rows.</p>
-<p>Congratulations—you’ve run your first psyflow trial! Explore additional features in each class’s documentation to customize timing, logging, and more. Happy experimenting!</p>
-</section>
+<p>Both approaches use cookiecutter to copy the bundled <code class="docutils literal notranslate"><span class="pre">cookiecutter-psyflow</span></code> template into your project.</p>
 </section>
 
         </article>
@@ -402,23 +284,23 @@ trial \
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="get_subinfo.html">
+          <a class="next-page" href="../modules.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">🧾 SubInfo: Participant Information Collector</div>
+                <div class="title">API Reference</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../index.html">
+          <a class="prev-page" href="send_trigger.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Home</div>
+                <div class="title">⏱ Trigger System for EEG/MEG: Trigger Dictionary + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></div>
                 
               </div>
             </a>
@@ -440,34 +322,8 @@ trial \
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">🏁 Getting Started with psyflow</a><ul>
-<li><a class="reference internal" href="#installation">1. Installation</a></li>
-<li><a class="reference internal" href="#basic-experiment-structure">2. Basic Experiment Structure</a></li>
-<li><a class="reference internal" href="#configure-your-task">3. Configure Your Task</a></li>
-<li><a class="reference internal" href="#collect-participant-info">4. Collect Participant Info</a></li>
-<li><a class="reference internal" href="#build-your-stimuli">5. Build Your Stimuli</a></li>
-<li><a class="reference internal" href="#set-up-triggers">6. Set Up Triggers</a></li>
-<li><a class="reference internal" href="#create-run-a-trial">7. Create &amp; Run a Trial</a></li>
-<li><a class="reference internal" href="#putting-it-all-together">8. Putting It All Together</a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

@@ -26,6 +26,7 @@ Start with one of the tutorials below or explore the API reference.
    tutorials/build_stimunit
    tutorials/build_stimulus
    tutorials/send_trigger
+   tutorials/cli_usage
    
 
 .. toctree::
@@ -33,6 +34,12 @@ Start with one of the tutorials below or explore the API reference.
    :caption: API Reference
 
    modules
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Development
+
+   release
 
 
 Indices and tables

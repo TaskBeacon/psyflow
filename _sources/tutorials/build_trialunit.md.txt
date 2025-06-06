@@ -191,7 +191,7 @@ Pass `terminate=True` to close the window when done.
 
 You can define and execute an entire trial in one fluid chain:
 
-    trial = StimUnit(win, "T1", TriggerSender(mock=True))
+    trial = StimUnit( "T1",win, kb, TriggerSender(mock=True))
 
     trial \
       .add_stim(stimA, stimB) \
