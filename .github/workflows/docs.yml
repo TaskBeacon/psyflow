@@ -16,4 +16,4 @@ jobs:
           python-version: '3.x'
       - run: pip install -r docs/requirements.txt ghp-import
       - run: make -C docs html
-      - run: ghp-import -p -f -n docs/_build/html
+      - run: ghp-import -p -f -n docs/_build/html 
