@@ -23,6 +23,9 @@ setup(
         "pandas",
         "click",           # for CLI support
         "cookiecutter",    # for template-based scaffolding
+        "pyyaml",          # for YAML configuration parsing
+        "pyserial",        # for serial port communication
+        "edge-tts",        # for text-to-speech support
     ],
     entry_points={
         "console_scripts": [
