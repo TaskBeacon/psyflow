@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="⏱ Trigger System for EEG/MEG: TriggerBank + TriggerSender" href="send_trigger.html" /><link rel="prev" title="📦 BlockUnit: Managing Experimental Blocks" href="build_blocks.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="⏱ Trigger System for EEG/MEG: Trigger Dictionary + TriggerSender" href="send_trigger.html" /><link rel="prev" title="📦 BlockUnit: Managing Experimental Blocks" href="build_blocks.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
         <title>🎨 StimBank: Flexible Stimulus Management for PsychoPy - psyflow 0.1.0 documentation</title>
@@ -210,13 +210,18 @@
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: Trigger Dictionary + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">🖥️ CLI Usage and <code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Release workflow</a></li>
 </ul>
 
 </div>
@@ -586,8 +591,8 @@ stim_bank.add_from_dict(stim_dict)
 </pre></div>
 </div>
 </section>
-<section id="probalistic-reversal-learning-prl-task-example">
-<h3>10.2. Probalistic reversal learning (PRL) task example.<a class="headerlink" href="#probalistic-reversal-learning-prl-task-example" title="Link to this heading">¶</a></h3>
+<section id="probabilistic-reversal-learning-prl-task-example">
+<h3>10.2. Probabilistic reversal learning (PRL) task example.<a class="headerlink" href="#probabilistic-reversal-learning-prl-task-example" title="Link to this heading">¶</a></h3>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">stimuli</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">fixation</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
@@ -783,6 +788,26 @@ stim_bank.add_from_dict(stim_dict)
 The way to assign stimuli and generate conditions is a core part of the experiment design.</p>
 </section>
 </section>
+<section id="converting-text-to-speech">
+<h2>11. Converting Text to Speech<a class="headerlink" href="#converting-text-to-speech" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">convert_to_voice</span></code> allows you to synthesize existing text stimuli into spoken audio using <a class="reference external" href="https://github.com/rany2/edge-tts">edge-tts</a>. It creates a new <code class="docutils literal notranslate"><span class="pre">Sound</span></code> entry with the suffix <code class="docutils literal notranslate"><span class="pre">_voice</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convert two registered TextStim objects to speech</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">convert_to_voice</span><span class="p">([</span><span class="s2">&quot;instruction_text&quot;</span><span class="p">,</span> <span class="s2">&quot;block_feedback&quot;</span><span class="p">],</span>
+                           <span class="n">voice</span><span class="o">=</span><span class="s2">&quot;en-US-AriaNeural&quot;</span><span class="p">)</span>
+<span class="c1"># Afterwards you can access them as Sound stimuli</span>
+<span class="n">sound</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;instruction_text_voice&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If you just want to generate speech from arbitrary text, use <code class="docutils literal notranslate"><span class="pre">add_voice</span></code> which registers a new entry directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create and register a custom voice clip</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_voice</span><span class="p">(</span><span class="s2">&quot;intro_voice&quot;</span><span class="p">,</span>
+                   <span class="s2">&quot;Welcome to the experiment!&quot;</span><span class="p">,</span>
+                   <span class="n">voice</span><span class="o">=</span><span class="s2">&quot;en-GB-RyanNeural&quot;</span><span class="p">)</span>
+<span class="n">intro</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;intro_voice&quot;</span><span class="p">)</span>
+<span class="n">intro</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -795,7 +820,7 @@ The way to assign stimuli and generate conditions is a core part of the experime
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></div>
+                <div class="title">⏱ Trigger System for EEG/MEG: Trigger Dictionary + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -857,10 +882,11 @@ The way to assign stimuli and generate conditions is a core part of the experime
 <li><a class="reference internal" href="#validating-definitions">9. Validating Definitions</a></li>
 <li><a class="reference internal" href="#realistic-examples">10. Realistic Examples</a><ul>
 <li><a class="reference internal" href="#monetary-incentive-delay-task-mid-example">10.1. Monetary Incentive Delay Task (MID) example.</a></li>
-<li><a class="reference internal" href="#probalistic-reversal-learning-prl-task-example">10.2. Probalistic reversal learning (PRL) task example.</a></li>
+<li><a class="reference internal" href="#probabilistic-reversal-learning-prl-task-example">10.2. Probabilistic reversal learning (PRL) task example.</a></li>
 <li><a class="reference internal" href="#dealing-with-complicated-conditions-and-stimulus">10.3. Dealing with complicated conditions and stimulus 😱</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#converting-text-to-speech">11. Converting Text to Speech</a></li>
 </ul>
 </li>
 </ul>

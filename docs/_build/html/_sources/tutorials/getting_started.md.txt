@@ -29,7 +29,7 @@ A typical psyflow experiment has these core steps:
 1. **Configure** experiment settings (`TaskSettings`)  
 2. **Collect** participant info (`SubInfo`)  
 3. **Build** stimuli (`StimBank`)  
-4. **Define** triggers (`TriggerBank` + `TriggerSender`)  
+4. **Define** triggers (a dictionary of codes + `TriggerSender`)
 5. **Create** a trial (`StimUnit`)  
 6. **Run** the trial and collect data  
 
@@ -94,10 +94,12 @@ Retrieve with:
 
 ### 6. Set Up Triggers
 
-    from psyflow import TriggerBank, TriggerSender
+    import yaml
+    from psyflow import TriggerSender
 
-    tb = TriggerBank()
-    tb.add_from_yaml("triggers.yaml")   # or .add_from_dict(...)
+    with open("triggers.yaml") as f:
+        triggers = yaml.safe_load(f)
+
     sender = TriggerSender(lambda code: port.write(bytes([code])))
 
 
@@ -106,16 +108,16 @@ Retrieve with:
 
     from psyflow import StimUnit
 
-    trial = StimUnit( "T1", win,kb, triggersender=sender)
+    trial = StimUnit("T1", win, kb, triggersender=sender)
     trial \
       .add_stim(fix, tgt) \
-      .on_start(lambda u: u.send_trigger(tb.get("fix_onset"))) \
+      .on_start(lambda u: u.send_trigger(triggers["fix_onset"])) \
       .capture_response(
          keys=["left","right"],
          duration=1.0,
-         onset_trigger=tb.get("fix_onset"),
-         response_trigger={"left":tb.get("resp_L"), "right":tb.get("resp_R")},
-         timeout_trigger=tb.get("timeout"),
+         onset_trigger=triggers["fix_onset"],
+         response_trigger={"left":triggers["resp_L"], "right":triggers["resp_R"]},
+         timeout_trigger=triggers["timeout"],
          correct_keys=["left"],
          highlight_stim={"left": highlight_left, "right": highlight_right}
       ) \

@@ -210,13 +210,18 @@
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: Trigger Dictionary + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">🖥️ CLI Usage and <code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Release workflow</a></li>
 </ul>
 
 </div>
@@ -486,9 +491,9 @@
     
     <span class="n">block</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">block_i</span> <span class="o">&lt;</span> <span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s1">&#39;block&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;block_break&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
+        <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;block&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;block_break&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s1">&#39;block&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get_and_format</span><span class="p">(</span><span class="s1">&#39;good_bye&#39;</span><span class="p">,</span> <span class="n">reward</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">(</span><span class="n">terminate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;block&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get_and_format</span><span class="p">(</span><span class="s1">&#39;good_bye&#39;</span><span class="p">,</span> <span class="n">reward</span><span class="o">=</span><span class="mi">100</span><span class="p">))</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">(</span><span class="n">terminate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
 <span class="c1"># Save all data to CSV</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
@@ -496,8 +501,8 @@
 </pre></div>
 </div>
 </section>
-<section id="probalistic-revesal-learning-prl-task-example">
-<h3>8.2. Probalistic revesal learning (PRL) task example.<a class="headerlink" href="#probalistic-revesal-learning-prl-task-example" title="Link to this heading">¶</a></h3>
+<section id="probabilistic-reversal-learning-prl-task-example">
+<h3>8.2. Probabilistic reversal learning (PRL) task example.<a class="headerlink" href="#probabilistic-reversal-learning-prl-task-example" title="Link to this heading">¶</a></h3>
 <p>Note that we defined stim_bank within the block loop, so it is different for each block.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">block_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">):</span>
@@ -539,9 +544,9 @@
     
     <span class="n">block</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">block_i</span> <span class="o">&lt;</span> <span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s1">&#39;block&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;block_break&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
+        <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;block&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;block_break&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s1">&#39;block&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;good_bye&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">(</span><span class="n">terminate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;block&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;good_bye&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">(</span><span class="n">terminate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -617,7 +622,7 @@
 <li><a class="reference internal" href="#putting-it-all-together">7. Putting It All Together</a></li>
 <li><a class="reference internal" href="#realistic-examples">8. Realistic examples</a><ul>
 <li><a class="reference internal" href="#monetary-incentive-delay-task-mid-example">8.1. Monetary Incentive Delay Task (MID) example.</a></li>
-<li><a class="reference internal" href="#probalistic-revesal-learning-prl-task-example">8.2. Probalistic revesal learning (PRL) task example.</a></li>
+<li><a class="reference internal" href="#probabilistic-reversal-learning-prl-task-example">8.2. Probabilistic reversal learning (PRL) task example.</a></li>
 </ul>
 </li>
 </ul>

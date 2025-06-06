@@ -313,7 +313,7 @@ stim_bank.add_from_dict(stim_config)
 stim_bank.preload_all()
 ```
 
-#### 10.2. Probalistic reversal learning (PRL) task example.
+#### 10.2. Probabilistic reversal learning (PRL) task example.
 
 ```yaml
 stimuli:
@@ -514,3 +514,25 @@ trial_info = assign_stim_from_condition(condition, asset_pool)
 ```
 So in this case, the stim_bank is more of the container for the placeholder stimuli.
 The way to assign stimuli and generate conditions is a core part of the experiment design.
+### 11. Converting Text to Speech
+
+`convert_to_voice` allows you to synthesize existing text stimuli into spoken audio using [edge-tts](https://github.com/rany2/edge-tts). It creates a new `Sound` entry with the suffix `_voice`.
+
+```python
+# Convert two registered TextStim objects to speech
+stim_bank.convert_to_voice(["instruction_text", "block_feedback"],
+                           voice="en-US-AriaNeural")
+# Afterwards you can access them as Sound stimuli
+sound = stim_bank.get("instruction_text_voice")
+```
+
+If you just want to generate speech from arbitrary text, use `add_voice` which registers a new entry directly:
+
+```python
+# Create and register a custom voice clip
+stim_bank.add_voice("intro_voice",
+                   "Welcome to the experiment!",
+                   voice="en-GB-RyanNeural")
+intro = stim_bank.get("intro_voice")
+intro.play()
+```

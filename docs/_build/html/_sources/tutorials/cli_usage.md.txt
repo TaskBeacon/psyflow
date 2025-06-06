@@ -1,0 +1,18 @@
+## 🖥️ CLI Usage and `taps()`
+
+psyflow includes a small command-line tool for creating a new project from the bundled template. From a terminal run:
+
+    psyflow-init [PROJECT_NAME]
+
+With no argument or when `[PROJECT_NAME]` matches the current folder name, the template files are generated in place. Otherwise a new directory of that name is created next to your current path.
+
+The same behavior is available programmatically through `psyflow.utils.taps()` if you prefer calling it from Python:
+
+```python
+from psyflow.utils import taps
+
+# create or populate "MyStudy" using the default template
+taps("MyStudy")
+```
+
+Both approaches use cookiecutter to copy the bundled `cookiecutter-psyflow` template into your project.

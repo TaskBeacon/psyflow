@@ -210,13 +210,18 @@
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: Trigger Dictionary + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">🖥️ CLI Usage and <code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Release workflow</a></li>
 </ul>
 
 </div>
@@ -284,7 +289,7 @@ pip install -e .
 <li><p><strong>Configure</strong> experiment settings (<code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code>)</p></li>
 <li><p><strong>Collect</strong> participant info (<code class="docutils literal notranslate"><span class="pre">SubInfo</span></code>)</p></li>
 <li><p><strong>Build</strong> stimuli (<code class="docutils literal notranslate"><span class="pre">StimBank</span></code>)</p></li>
-<li><p><strong>Define</strong> triggers (<code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>)</p></li>
+<li><p><strong>Define</strong> triggers (a dictionary of codes + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>)</p></li>
 <li><p><strong>Create</strong> a trial (<code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>)</p></li>
 <li><p><strong>Run</strong> the trial and collect data</p></li>
 </ol>
@@ -346,10 +351,12 @@ tgt = stim_bank.get(&quot;target&quot;)
 </section>
 <section id="set-up-triggers">
 <h2>6. Set Up Triggers<a class="headerlink" href="#set-up-triggers" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import TriggerBank, TriggerSender
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import yaml
+from psyflow import TriggerSender
 
-tb = TriggerBank()
-tb.add_from_yaml(&quot;triggers.yaml&quot;)   # or .add_from_dict(...)
+with open(&quot;triggers.yaml&quot;) as f:
+    triggers = yaml.safe_load(f)
+
 sender = TriggerSender(lambda code: port.write(bytes([code])))
 </pre></div>
 </div>
@@ -358,16 +365,16 @@ sender = TriggerSender(lambda code: port.write(bytes([code])))
 <h2>7. Create &amp; Run a Trial<a class="headerlink" href="#create-run-a-trial" title="Link to this heading">¶</a></h2>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import StimUnit
 
-trial = StimUnit(win, &quot;T1&quot;, triggersender=sender)
+trial = StimUnit(&quot;T1&quot;, win, kb, triggersender=sender)
 trial \
   .add_stim(fix, tgt) \
-  .on_start(lambda u: u.send_trigger(tb.get(&quot;fix_onset&quot;))) \
+  .on_start(lambda u: u.send_trigger(triggers[&quot;fix_onset&quot;])) \
   .capture_response(
      keys=[&quot;left&quot;,&quot;right&quot;],
      duration=1.0,
-     onset_trigger=tb.get(&quot;fix_onset&quot;),
-     response_trigger={&quot;left&quot;:tb.get(&quot;resp_L&quot;), &quot;right&quot;:tb.get(&quot;resp_R&quot;)},
-     timeout_trigger=tb.get(&quot;timeout&quot;),
+     onset_trigger=triggers[&quot;fix_onset&quot;],
+     response_trigger={&quot;left&quot;:triggers[&quot;resp_L&quot;], &quot;right&quot;:triggers[&quot;resp_R&quot;]},
+     timeout_trigger=triggers[&quot;timeout&quot;],
      correct_keys=[&quot;left&quot;],
      highlight_stim={&quot;left&quot;: highlight_left, &quot;right&quot;: highlight_right}
   ) \

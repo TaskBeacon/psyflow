@@ -226,7 +226,7 @@ df = pd.DataFrame(all_data)
 df.to_csv(settings.res_file, index=False)
 ```
 
-#### 8.2. Probalistic revesal learning (PRL) task example.
+#### 8.2. Probabilistic reversal learning (PRL) task example.
 
 Note that we defined stim_bank within the block loop, so it is different for each block.
 

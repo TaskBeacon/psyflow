@@ -208,13 +208,18 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials/task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">⏱ Trigger System for EEG/MEG: <code class="docutils literal notranslate"><span class="pre">TriggerBank</span></code> + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">⏱ Trigger System for EEG/MEG: Trigger Dictionary + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">🖥️ CLI Usage and <code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
 </ul>
 </li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Release workflow</a></li>
 </ul>
 
 </div>
@@ -252,29 +257,23 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#J"><strong>J</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
 </section>
 <section id="A" class="genindex-section">
   <h2>A</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/psyflow.html#psyflow.TriggerBank.TriggerBank.add">add() (psyflow.TriggerBank.TriggerBank method)</a>
+        <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit.add_condition">add_condition() (psyflow.BlockUnit.BlockUnit method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.add_from_dict">add_from_dict() (psyflow.StimBank.StimBank method)</a>
-
-        <ul>
-          <li><a href="api/psyflow.html#psyflow.TriggerBank.TriggerBank.add_from_dict">(psyflow.TriggerBank.TriggerBank method)</a>
 </li>
-        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/psyflow.html#psyflow.TriggerBank.TriggerBank.add_from_yaml">add_from_yaml() (psyflow.TriggerBank.TriggerBank method)</a>
-</li>
         <li><a href="api/psyflow.html#psyflow.StimUnit.StimUnit.add_stim">add_stim() (psyflow.StimUnit.StimUnit method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.add_subinfo">add_subinfo() (psyflow.TaskSettings.TaskSettings method)</a>
 </li>
-        <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit.add_trials">add_trials() (psyflow.BlockUnit.BlockUnit method)</a>
+        <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.add_voice">add_voice() (psyflow.StimBank.StimBank method)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -286,13 +285,11 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.bg_color">bg_color (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
-        <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.block_seed">block_seed (psyflow.TaskSettings.TaskSettings attribute)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit">BlockUnit (class in psyflow.BlockUnit)</a>
+        <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.block_seed">block_seed (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
-        <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.build_all">build_all() (psyflow.StimBank.StimBank method)</a>
+        <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit">BlockUnit (class in psyflow.BlockUnit)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -313,6 +310,8 @@
         <li><a href="api/psyflow.html#psyflow.SubInfo.SubInfo.collect">collect() (psyflow.SubInfo.SubInfo method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.conditions">conditions (psyflow.TaskSettings.TaskSettings attribute)</a>
+</li>
+        <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.convert_to_voice">convert_to_voice() (psyflow.StimBank.StimBank method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.utils.count_down">count_down() (in module psyflow.utils)</a>
 </li>
@@ -364,25 +363,25 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/psyflow.html#psyflow.utils.generate_balanced_conditions">generate_balanced_conditions() (in module psyflow.utils)</a>
-</li>
         <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit.generate_conditions">generate_conditions() (psyflow.BlockUnit.BlockUnit method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.get">get() (psyflow.StimBank.StimBank method)</a>
-
-        <ul>
-          <li><a href="api/psyflow.html#psyflow.TriggerBank.TriggerBank.get">(psyflow.TriggerBank.TriggerBank method)</a>
 </li>
-        </ul></li>
+        <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit.get_all_data">get_all_data() (psyflow.BlockUnit.BlockUnit method)</a>
+</li>
+        <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.get_and_format">get_and_format() (psyflow.StimBank.StimBank method)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.get_and_format">get_and_format() (psyflow.StimBank.StimBank method)</a>
+        <li><a href="api/psyflow.html#psyflow.StimUnit.StimUnit.get_dict">get_dict() (psyflow.StimUnit.StimUnit method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.get_group">get_group() (psyflow.StimBank.StimBank method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.get_selected">get_selected() (psyflow.StimBank.StimBank method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.StimUnit.StimUnit.get_state">get_state() (psyflow.StimUnit.StimUnit method)</a>
+</li>
+        <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit.get_trial_data">get_trial_data() (psyflow.BlockUnit.BlockUnit method)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -393,6 +392,26 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.has">has() (psyflow.StimBank.StimBank method)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="I" class="genindex-section">
+  <h2>I</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/psyflow.html#psyflow.utils.initialize_exp">initialize_exp() (in module psyflow.utils)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="J" class="genindex-section">
+  <h2>J</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.json_file">json_file (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -416,6 +435,8 @@
   <h2>L</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/psyflow.html#psyflow.utils.load_config">load_config() (in module psyflow.utils)</a>
+</li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.log_file">log_file (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
     </ul></td>
@@ -450,17 +471,11 @@
 </li>
           <li><a href="api/psyflow.html#module-psyflow.TaskSettings">psyflow.TaskSettings</a>
 </li>
-          <li><a href="api/psyflow.html#module-psyflow.TriggerBank">psyflow.TriggerBank</a>
-</li>
           <li><a href="api/psyflow.html#module-psyflow.TriggerSender">psyflow.TriggerSender</a>
 </li>
           <li><a href="api/psyflow.html#module-psyflow.utils">psyflow.utils</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.monitor">monitor (psyflow.TaskSettings.TaskSettings attribute)</a>
-</li>
     </ul></td>
   </tr></table>
 </section>
@@ -526,6 +541,8 @@
           <li><a href="api/psyflow.html#module-psyflow.StimBank">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     psyflow.StimUnit
 
@@ -533,8 +550,6 @@
           <li><a href="api/psyflow.html#module-psyflow.StimUnit">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     psyflow.SubInfo
 
@@ -547,13 +562,6 @@
 
         <ul>
           <li><a href="api/psyflow.html#module-psyflow.TaskSettings">module</a>
-</li>
-        </ul></li>
-        <li>
-    psyflow.TriggerBank
-
-        <ul>
-          <li><a href="api/psyflow.html#module-psyflow.TriggerBank">module</a>
 </li>
         </ul></li>
         <li>
@@ -598,6 +606,8 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.save_path">save_path (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
+        <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.save_to_json">save_to_json() (psyflow.TaskSettings.TaskSettings method)</a>
+</li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.screen">screen (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.seed_mode">seed_mode (psyflow.TaskSettings.TaskSettings attribute)</a>
@@ -605,8 +615,6 @@
         <li><a href="api/psyflow.html#psyflow.TriggerSender.TriggerSender.send">send() (psyflow.TriggerSender.TriggerSender method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.StimUnit.StimUnit.send_trigger">send_trigger() (psyflow.StimUnit.StimUnit method)</a>
-</li>
-        <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.session_name">session_name (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.set_block_seed">set_block_seed() (psyflow.TaskSettings.TaskSettings method)</a>
 </li>
@@ -640,6 +648,8 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/psyflow.html#psyflow.utils.taps">taps() (in module psyflow.utils)</a>
 </li>
+        <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.task_name">task_name (psyflow.TaskSettings.TaskSettings attribute)</a>
+</li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings">TaskSettings (class in psyflow.TaskSettings)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit.to_dict">to_dict() (psyflow.BlockUnit.BlockUnit method)</a>
@@ -648,17 +658,13 @@
           <li><a href="api/psyflow.html#psyflow.StimUnit.StimUnit.to_dict">(psyflow.StimUnit.StimUnit method)</a>
 </li>
         </ul></li>
-        <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.total_blocks">total_blocks (psyflow.TaskSettings.TaskSettings attribute)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.total_blocks">total_blocks (psyflow.TaskSettings.TaskSettings attribute)</a>
+</li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.total_trials">total_trials (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.trials_per_block">trials_per_block (psyflow.TaskSettings.TaskSettings attribute)</a>
-</li>
-        <li><a href="api/psyflow.html#psyflow.TriggerBank.TriggerBank">TriggerBank (class in psyflow.TriggerBank)</a>
-</li>
-        <li><a href="api/psyflow.html#psyflow.TriggerBank.TriggerBank.triggers">triggers (psyflow.TriggerBank.TriggerBank attribute)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.TriggerSender.TriggerSender">TriggerSender (class in psyflow.TriggerSender)</a>
 </li>

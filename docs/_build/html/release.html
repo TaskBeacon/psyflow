@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="🏁 Getting Started with psyflow" href="tutorials/getting_started.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="API Reference" href="modules.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>psyflow 0.1.0 documentation</title>
+        <title>Release workflow - psyflow 0.1.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/logo_settings.css?v=510bd44c" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="#"><div class="brand">psyflow 0.1.0 documentation</div></a>
+      <a href="index.html"><div class="brand">psyflow 0.1.0 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -188,7 +188,7 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
   
   <div class="sidebar-logo-container">
     <img class="sidebar-logo only-light" src="_static/logo_white-removebg.png" alt="Light Logo"/>
@@ -220,8 +220,8 @@
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="release.html">Release workflow</a></li>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Release workflow</a></li>
 </ul>
 
 </div>
@@ -242,7 +242,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/index.rst.txt" title="View this page">
+  <a class="muted-link" href="_sources/release.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -262,49 +262,13 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="welcome-to-psyflows-documentation">
-<h1>Welcome to psyflow’s documentation!<a class="headerlink" href="#welcome-to-psyflows-documentation" title="Link to this heading">¶</a></h1>
-<p><strong>psyflow</strong> is a modular framework for building cognitive and behavioral tasks using PsychoPy and Python code.</p>
-<ul class="simple">
-<li><p>🚀 Easy to compose trials and blocks</p></li>
-<li><p>🧠 EEG/MEG-friendly trigger sending</p></li>
-<li><p>🎯 Perfect for cognitive experiments in research</p></li>
-</ul>
-<p>Start with one of the tutorials below or explore the API reference.</p>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/getting_started.html">🏁 Getting Started with psyflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">⏱ Trigger System for EEG/MEG: Trigger Dictionary + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">🖥️ CLI Usage and <code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a><ul class="simple">
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="release.html">Release workflow</a></li>
-</ul>
-</div>
-</section>
-<section id="indices-and-tables">
-<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading">¶</a></h1>
-<ul class="simple">
-<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
-<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
-<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
-</ul>
+          <section id="release-workflow">
+<h1>Release workflow<a class="headerlink" href="#release-workflow" title="Link to this heading">¶</a></h1>
+<ol class="arabic simple">
+<li><p>Update the version number in <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> under the <code class="docutils literal notranslate"><span class="pre">[project]</span></code> section.</p></li>
+<li><p>Commit the change with a message that includes <code class="docutils literal notranslate"><span class="pre">[publish]</span></code> to trigger the release pipeline.</p></li>
+<li><p>Build and upload the package as usual.</p></li>
+</ol>
 </section>
 
         </article>
@@ -312,16 +276,18 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="tutorials/getting_started.html">
+          
+          <a class="prev-page" href="modules.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
-                  <span>Next</span>
+                  <span>Previous</span>
                 </div>
-                <div class="title">🏁 Getting Started with psyflow</div>
+                
+                <div class="title">API Reference</div>
+                
               </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
