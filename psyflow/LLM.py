@@ -1,111 +1,132 @@
 import os
+import json
 import re
-from typing import Any, Callable, Dict, List, Optional, Tuple
-
+import tempfile
+import requests
+from typing import Any, Dict, List, Union, Optional, Callable, Tuple
+from urllib.parse import urlparse
+import tiktoken
 # --- Custom Exception for LLM API Errors ---
 class LLMAPIError(Exception):
     """
-    Custom exception for unifying LLM API errors across different providers.
+    Exception raised for errors returned by LLM providers.
 
-    Attributes:
-        message (str): A human-readable error message.
-        status_code (Optional[int]]): The HTTP status code, if available.
-        api_response (Optional[Any]): Raw API response or SDK error details.
+    :param message: Human-readable description of the error.
+    :param status_code: HTTP status code if applicable.
+    :param api_response: Raw response from the provider or SDK error details.
     """
     def __init__(self, message: str, status_code: Optional[int] = None, api_response: Optional[Any] = None):
         super().__init__(message)
         self.status_code = status_code
         self.api_response = api_response
 
-
-class LLMAPIError(Exception):
-    """Unified exception for LLM API errors."""
-    def __init__(self, message: str, status_code: Optional[int] = None, api_response: Optional[Any] = None):
-        super().__init__(message)
-        self.status_code = status_code
-        self.api_response = api_response
-
-
-# Type for custom‐provider handlers
+# --- Type for custom-provider handlers ---
 ProviderHandler = Callable[[str, Dict[str, Any]], str]
 
 class LLMClient:
     """
-    Unified interface to multiple LLM backends with optional deterministic mode.
+    Unified client for multiple LLM backends, plus utilities for task-document conversion and translation.
 
-    Providers:
-      - "gemini"   → google-genai SDK
-      - "openai"   → OpenAI SDK
-      - "deepseek" → OpenAI SDK with custom base_url
+    Supported providers:
+      - ``gemini``  : Google GenAI SDK
+      - ``openai``  : Official OpenAI SDK
+      - ``deepseek``: OpenAI SDK with custom base_url
+
+    Attributes:
+        provider:        Lowercase provider name.
+        api_key:         API key for authentication.
+        model:           Model identifier to use.
+        _sdk_client:     Underlying SDK client instance.
+        knowledge_base:  Few-shot examples for generation context.
     """
 
     _custom_handlers: Dict[str, ProviderHandler] = {}
 
     def __init__(self, provider: str, api_key: str, model: str):
+        """
+        Initialize the LLMClient.
+
+        :param provider:  Name of the LLM provider (gemini, openai, deepseek).
+        :param api_key:   Authentication key for the provider.
+        :param model:     Default model identifier.
+        """
         self.provider = provider.lower()
         self.api_key = api_key
         self.model = model
         self._sdk_client: Any = None
+        self.knowledge_base: List[Tuple[List[str], List[str], str]] = []
+        self.last_prompt: Optional[str] = None
+        self.last_prompt_token_count: Optional[int] = None
+        self.prompt_token_limit: int = 10000  # Default token limit for prompts
 
         if self.provider == "gemini":
-            try:
-                from google import genai
-                from google.genai.types import GenerateContentConfig, SafetySetting
-                self._sdk_client = genai.Client(api_key=self.api_key)
-                self._GenerateContentConfig = GenerateContentConfig
-                self._SafetySetting = SafetySetting
-            except ImportError as e:
-                raise ImportError("Install google-genai: pip install google-genai") from e
+            from google import genai  # noqa: F401
+            from google.genai.types import GenerateContentConfig  # noqa: F401
+            self._sdk_client = genai.Client(api_key=self.api_key)
+            self._GenerateContentConfig = GenerateContentConfig
+
         elif self.provider in ("openai", "deepseek"):
-            try:
-                import openai
-                from openai import OpenAI
-                base = "https://api.deepseek.com/v1" if self.provider == "deepseek" else None
-                self._sdk_client = OpenAI(api_key=self.api_key, base_url=base)
-            except ImportError as e:
-                raise ImportError("Install openai: pip install openai") from e
+            from openai import OpenAI  # noqa: F401
+            base_url = "https://api.deepseek.com/v1" if self.provider == "deepseek" else None
+            self._sdk_client = OpenAI(api_key=self.api_key, base_url=base_url)
+
+        else:
+            raise ValueError(f"Unsupported provider '{provider}'")
 
     @classmethod
     def register_provider(cls, name: str, handler: ProviderHandler):
+        """
+        Register a custom provider handler.
+
+        :param name:    Identifier for the custom provider.
+        :param handler: Callable that takes (prompt, kwargs) and returns response string.
+        """
         cls._custom_handlers[name.lower()] = handler
 
     def generate(self, prompt: str, *, deterministic: bool = False, **kwargs) -> str:
         """
-        Generate text. If deterministic=True, forces a deterministic decode by
-        zeroing out sampling parameters.
-        """
-        if deterministic:
-            kwargs["temperature"]     = 0.0
-            kwargs["top_p"]           = 1.0
-            kwargs["top_k"]           = 1
-            kwargs["candidate_count"] = 1  # for Gemini only
+        Generate text completion from the configured model.
 
+        :param prompt:       Input prompt for the LLM.
+        :param deterministic: If True, zero out sampling randomness.
+        :param kwargs:       Additional generation parameters (e.g., temperature, stop).
+        :return:             Generated text response.
+        :raises LLMAPIError: If the provider returns an error.
+        """
+        # Apply deterministic settings
+        if deterministic:
+            kwargs.update({
+                "temperature": 0.0,
+                "top_p": 1.0,
+                "top_k": 1,
+                "candidate_count": 1,
+            })
         p = self.provider
 
+        # --- Gemini ---
         if p == "gemini":
-            if not self._sdk_client:
-                raise ValueError("Gemini client not initialized.")
+            params = self._filter_genai_kwargs(kwargs)
+            config = self._GenerateContentConfig(**params) if params else None
             try:
-                params = self._filter_genai_kwargs(kwargs.copy())
-                safety = params.pop("safety_settings", None)
-                config = self._GenerateContentConfig(**params) if params else None
-                safety_list = [self._SafetySetting(**s) for s in safety] if safety else None
-
-                resp = self._sdk_client.models.generate_content(
-                    model=self.model,
-                    contents=prompt,
-                    config=config,
-                    safety_settings=safety_list
-                )
+                if config:
+                    resp = self._sdk_client.models.generate_content(
+                        model=self.model,
+                        contents=prompt,
+                        config=config
+                    )
+                else:
+                    resp = self._sdk_client.models.generate_content(
+                        model=self.model,
+                        contents=prompt
+                    )
                 return resp.text
             except Exception as e:
                 raise LLMAPIError(f"Gemini API error: {e}")
 
+        # --- OpenAI / Deepseek ---
         if p in ("openai", "deepseek"):
-            if not self._sdk_client:
-                raise ValueError(f"{p.capitalize()} client not initialized.")
+            params = self._filter_openai_kwargs(kwargs)
             try:
-                params = self._filter_openai_kwargs(kwargs.copy())
                 resp = self._sdk_client.chat.completions.create(
                     model=self.model,
                     messages=[{"role": "user", "content": prompt}],
@@ -114,44 +135,88 @@ class LLMClient:
                 )
                 choice = resp.choices[0].message.content if resp.choices else None
                 if choice is None:
-                    raise LLMAPIError("No content in response", api_response=resp.model_dump())
+                    raise LLMAPIError("No content in response", api_response=resp)
                 return choice
             except Exception as e:
                 raise LLMAPIError(f"{p.capitalize()} API error: {e}")
 
+        # --- Custom handler ---
         handler = self._custom_handlers.get(p)
         if handler:
             try:
                 return handler(prompt, {"model": self.model, **kwargs})
             except Exception as e:
-                raise LLMAPIError(f"Custom handler '{p}' error: {e}")
+                raise LLMAPIError(f"Handler '{p}' error: {e}")
 
-        raise ValueError(f"No handler for provider '{self.provider}'")
+        raise ValueError(f"No handler for provider '{p}'")
 
-    def test_connection(self, timeout: float = 5.0) -> bool:
+    def list_models(self) -> List[str]:
+        """
+        Retrieve a list of available model IDs for the current provider.
+
+        :return:             List of model identifiers.
+        :raises LLMAPIError: If no models are returned or listing fails.
+        """
         p = self.provider
         if p == "gemini":
-            models = self._sdk_client.models.list(timeout=timeout)
-            if not models:
-                raise LLMAPIError("No models returned from Gemini")
-            return True
-        if p in ("openai", "deepseek"):
-            models = self._sdk_client.models.list(request_timeout=timeout)
-            if not getattr(models, "data", None):
-                raise LLMAPIError(f"No models returned from {p.capitalize()}")
-            return True
-        handler = self._custom_handlers.get(p)
-        if handler:
-            handler("", {"model": self.model, "max_tokens": 1})
-            return True
-        raise ValueError(f"No connection test for provider '{p}'")
+            raw = self._sdk_client.models.list()
+            names = [m.name.split("/",1)[-1] for m in raw]
+        elif p in ("openai", "deepseek"):
+            resp = self._sdk_client.models.list()
+            data = getattr(resp, "data", None)
+            if not data:
+                raise LLMAPIError(f"No models from {p}")
+            names = [m.id for m in data]
+        else:
+            raise ValueError(f"Provider '{p}' does not support model listing")
+
+        if not names:
+            raise LLMAPIError(f"Empty model list for {p}")
+        return names
+
+    def test(self, ping: str = "Hello", max_tokens: int = 1) -> Optional[str]:
+        """
+        Smoke test connection and small completion.
+
+        1. Ensures the configured model exists.
+        2. Sends a small ping and returns its response.
+
+        :param ping:       Prompt to send for testing.
+        :param max_tokens: Maximum tokens to request.
+        :return:           Ping response string.
+        :raises LLMAPIError: On model not found or generation failure.
+        """
+        available = self.list_models()
+        if self.model not in available:
+            raise LLMAPIError(f"Model '{self.model}' not in {available}")
+        return self.generate(
+            prompt=ping,
+            deterministic=True,
+            temperature=0.0,
+            max_tokens=max_tokens
+        )
+    
+    def _count_tokens(self, text: str) -> int:
+        """
+        Return the token count for `text` under the currently-configured model.
+        Requires `tiktoken`.
+        """
+        try:
+            enc = tiktoken.encoding_for_model(self.model)
+        except KeyError:
+            # fallback to default encoding
+            enc = tiktoken.get_encoding("cl100k_base")
+        return len(enc.encode(text))
 
     @staticmethod
     def _filter_genai_kwargs(params: Dict[str, Any]) -> Dict[str, Any]:
-        allowed = {
-            "temperature", "max_tokens", "top_p", "top_k",
-            "stop", "candidate_count", "system_instruction"
-        }
+        """
+        Filter and rename kwargs for Google GenAI.
+
+        :param params: Raw generation parameters.
+        :return:       Filtered and mapped parameters.
+        """
+        allowed = {"temperature","max_tokens","top_p","top_k","stop","candidate_count","system_instruction"}
         mapped: Dict[str, Any] = {}
         for k, v in params.items():
             if k not in allowed:
@@ -162,222 +227,325 @@ class LLMClient:
                 mapped["stop_sequences"] = v
             else:
                 mapped[k] = v
-        if "safety_settings" in params:
-            mapped["safety_settings"] = params["safety_settings"]
         return mapped
 
     @staticmethod
     def _filter_openai_kwargs(params: Dict[str, Any]) -> Dict[str, Any]:
-        valid = {
-            "temperature", "max_tokens", "top_p", "stop",
-            "presence_penalty", "frequency_penalty",
-            "n", "logit_bias", "stream"
-        }
+        """
+        Filter kwargs for OpenAI-style chat completions.
+
+        :param params: Raw generation parameters.
+        :return:       Filtered parameters for OpenAI SDK.
+        """
+        valid = {"temperature","max_tokens","top_p","stop","presence_penalty","frequency_penalty","n","logit_bias","stream"}
         return {k: v for k, v in params.items() if k in valid}
 
 
-class TaskMapper:
-    """
-    Bidirectional converter between task code/config and README text,
-    with support for translation and few-shot examples from a curated knowledge base.
-
-    Methods:
-      - task2doc: Summarize Python task code and YAML configs into a README.md narrative.
-      - doc2task: Reconstruct task code and config from a README.md and save under a TAPS folder.
-      - translate: Translate text, preserving formatting and code fences.
-      - add_example: Add a new few-shot example to the knowledge base.
-
-    Attributes:
-        llm: The LLMClient instance for text generation.
-        examples: List of examples, each as (logic_paths, config_paths, readme_text).
-    """
-
-    def __init__(
-        self,
-        llm_client: LLMClient,
-        examples: Optional[List[Tuple[List[str], List[str], str]]] = None
-    ):
-        """
-        Args:
-            llm_client: Initialized LLMClient for text generation.
-            examples:   Optional list of examples, each a tuple
-                        (logic_paths, config_paths, readme_text) for few-shot prompting.
-        """
-        self.llm = llm_client
-        self.examples = examples or []
-
-    def add_example(
-        self,
-        logic_paths: List[str],
-        config_paths: List[str],
-        readme_text: str
-    ) -> None:
-        """
-        Add a few-shot example by specifying code and config file paths, plus the README narrative.
-        """
-        self.examples.append((logic_paths, config_paths, readme_text))
-
     @staticmethod
-    def _read_file(path: str) -> Optional[str]:
-        try:
-            with open(path, 'r', encoding='utf-8') as f:
-                return f.read().strip()
-        except Exception:
+    def _parse_entry(
+        entry: Dict[str, Union[str, List[str]]]
+    ) -> Dict[str, str]:
+        """
+        Parse one dict of {key → file(s)/URL(s)/text} into {key → combined text}.
+
+        :param entry:  
+          A mapping where each value is either:
+            - a list of local file paths or HTTP URLs
+            - a raw text string
+        :return:  
+          A dict mapping each key to the concatenated text contents.
+        """
+        out: Dict[str, str] = {}
+        def _load(loc: str) -> Optional[str]:
+            # Local file?
+            if os.path.isfile(loc):
+                with open(loc, 'r', encoding='utf-8') as f:
+                    return f.read()
+            # URL?
+            parsed = urlparse(loc)
+            if parsed.scheme in ("http", "https"):
+                resp = requests.get(loc, timeout=10)
+                resp.raise_for_status()
+                return resp.text
             return None
 
-    def _build_sections(
-        self,
-        logic_paths: List[str],
-        config_paths: List[str]
-    ) -> str:
-        """
-        Create fenced code blocks for logic and config file contents.
-        """
-        parts: List[str] = []
-        for p in logic_paths:
-            content = self._read_file(p)
-            if content:
-                parts.append(f"```python\n{content}\n```")
-        for p in config_paths:
-            content = self._read_file(p)
-            if content:
-                parts.append(f"```yaml\n{content}\n```")
-        return "\n\n".join(parts)
+        for key, val in entry.items():
+            if isinstance(val, list):
+                chunks = []
+                for loc in val:
+                    txt = _load(loc)
+                    if txt:
+                        chunks.append(txt)
+                if chunks:
+                    out[key] = "\n\n".join(chunks)
 
-    def _build_examples(self) -> str:
+            elif isinstance(val, str):
+                if val.startswith(("http://", "https://")):
+                    txt = _load(val)
+                    if txt:
+                        out[key] = txt
+                else:
+                    out[key] = val.strip()
+
+        return out
+    
+    
+    def add_knowledge(
+            self,
+            source: Union[
+                str,                                  # path to JSON file
+                List[Dict[str, Union[str, List[str]]]]  # in-memory entries
+            ]
+        ) -> None:
         """
-        Construct few-shot example blocks with separate Code, Config, and README sections.
+        Bulk-load few-shot examples into memory from either:
+        
+        1. A JSON file path containing a list of example-dicts, or
+        2. A list of example-dicts directly.
+        
+        Each example-dict maps keys to either:
+          • List[str] of file paths or URLs → will be parsed via `_parse_entry()`
+          • Raw text (str)                 → will be stripped and stored as-is
+        
+        :param source:
+          - If `str`, treated as path to a JSON file containing List[Dict[...]].
+          - If `list`, treated as in-memory list of example dicts.
+        :raises ValueError: on invalid JSON structure or unsupported source type.
         """
-        if not self.examples:
-            return ""
-        blocks: List[str] = []
-        for idx, (logic_paths, config_paths, readme) in enumerate(self.examples, start=1):
-            # Code section
-            code_blocks = []
-            for p in logic_paths:
-                content = self._read_file(p)
-                if content:
-                    code_blocks.append(f"```python\n{content}\n```")
-            # Config section
-            cfg_blocks = []
-            for p in config_paths:
-                content = self._read_file(p)
-                if content:
-                    cfg_blocks.append(f"```yaml\n{content}\n```")
-            blocks.append(f"### Example {idx} Code\n" + "\n\n".join(code_blocks))
-            blocks.append(f"### Example {idx} Config\n" + "\n\n".join(cfg_blocks))
-            blocks.append(f"### Example {idx} README\n```markdown\n{readme}\n```")
-        return "\n\n".join(blocks)
+        if isinstance(source, str):
+            # load from JSON file
+            with open(source, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            if not isinstance(data, list):
+                raise ValueError("Expected a JSON file containing a list of examples")
+            for ex in data:
+                if isinstance(ex, dict):
+                    # assume already parsed JSON examples
+                    self.knowledge_base.append(ex)
+        elif isinstance(source, list):
+            # parse each entry (files/URLs/raw text) into text blobs
+            for ex in source:
+                if not isinstance(ex, dict):
+                    continue
+                parsed = self._parse_entry(ex)
+                if parsed:
+                    self.knowledge_base.append(parsed)
+        else:
+            raise ValueError(
+                "add_knowledge() requires a JSON file path or a list of example-dicts"
+            )
+
+    def save_knowledge(self, json_path: str) -> None:
+        """
+        Write current knowledge_base (a list of dicts) to a JSON file.
+        """
+        with open(json_path, 'w', encoding='utf-8') as f:
+            json.dump(self.knowledge_base, f, indent=2, ensure_ascii=False)
+
+
 
     def task2doc(
         self,
-        logic_paths: List[str],
+        logic_paths: Optional[List[str]] = None,
         config_paths: Optional[List[str]] = None,
         prompt: Optional[str] = None,
         deterministic: bool = False,
         temperature: float = 0.2,
-        max_tokens: int = 1500
+        max_tokens: int = 1500,
+        output_path: Optional[str] = None
     ) -> str:
         """
-        Summarize code + config files into a structured README.md narrative.
+        Summarize a task into README.md.
 
-        Args:
-            logic_paths: List of paths to .py files.
-            config_paths: Optional list of paths to .yaml files.
-            prompt: Optional custom instruction prompt.
-            deterministic: If True, forces deterministic decoding.
-            temperature: Sampling temperature.
-            max_tokens: Max tokens to generate.
+        1. Renders few-shot examples from `knowledge_base`.  
+        2. Inserts your instruction.  
+        3. Renders the one-off task context.  
+        4. Sends the combined JSON payload to the LLM.  
+        5. Optionally writes the result to `output_path`.
 
-        Returns:
-            Generated README.md content.
+        :param logic_paths:   Python file paths for this task context.
+        :param config_paths:  YAML config paths for this task context.
+        :param prompt:        Custom instruction (defaults provided).
+        :param deterministic: Force deterministic decoding.
+        :param temperature:   Sampling temperature (ignored if deterministic).
+        :param max_tokens:    Maximum tokens to generate.
+        :param output_path:
+          - If a directory, writes “README.md” inside it.
+          - If a path ending in “.md”, writes to that file.
+          - If omitted, no file is written.
+        :return:              The generated README content.
         """
-        default_prompt = (
-            "You are a documentation assistant. Produce a concise, well-structured README.md:\n"
-            "1. Summarize purpose and key functions of the Python code.\n"
-            "2. Explain each top-level configuration option."
-        )
-        instruction = prompt if prompt is not None else default_prompt
-        parts: List[str] = []
-        ex = self._build_examples()
-        if ex:
-            parts.append(ex)
-        parts.append(instruction)
-        body = self._build_sections(logic_paths, config_paths or [])
-        parts.append(body)
-        full_prompt = "\n\n".join(parts)
+        # ── 1) Resolve defaults ─────────────────────────────────────
+        logic  = logic_paths  or ["./src/run_trial.py", "./src/utils.py", "./main.py"]
+        config = config_paths or ["./config/config.yaml"]
 
-        return self.llm.generate(
+        # ── 2) Build one-off context dict (no side-effects) ─────────
+        task_context = self._parse_entry({
+            "task_logic":  logic,
+            "task_config": config
+        })
+
+        # ── 3) Build prompt payload in three parts ─────────────────
+        instr = prompt or (
+            "You are a documentation assistant. Using the examples above, produce a concise README.md"
+            " for the following task that:\n"
+            "1) Summarize the core task logic.\n"
+            "2) Explain the configuration options.\n"
+            ""
+        )
+
+        if self.knowledge_base:
+            payload = {
+                "examples":   self.knowledge_base,  # few-shot KB
+                "instruction": instr,               # your request
+                "context":    task_context               # this task’s code + config
+            }
+        else:
+            payload = {
+                "instruction": instr,               # your request
+                "context":    task_context               # this task’s code + config
+            }
+        full_prompt = json.dumps(payload, indent=2, ensure_ascii=False)
+
+        # ── 4) Store & enforce token limits ─────────────────────────
+        self.last_prompt = full_prompt
+        self.last_prompt_token_count = self._count_tokens(full_prompt)
+        if self.last_prompt_token_count > self.prompt_token_limit:
+            raise LLMAPIError(
+                f"Prompt too large ({self.last_prompt_token_count} tokens). "
+                f"Limit is {self.prompt_token_limit}."
+                "Try to reduce the number of instructions or the number of examples."
+                "Or increase the prompt_token_limit in the LLMClient instance."
+            )
+
+        # ── 5) Call the LLM ────────────────────────────────────────
+        result = self.generate(
             prompt=full_prompt,
             deterministic=deterministic,
             temperature=temperature,
             max_tokens=max_tokens
         )
 
+        # ── 6) Optionally write out to a README.md file ───────────
+        if output_path:
+            # If a directory, create it (if needed) and write README.md inside
+            if os.path.isdir(output_path):
+                out_file = os.path.join(output_path, "README.md")
+            else:
+                # Not a dir: if endswith .md and parent dir exists, use it
+                _, ext = os.path.splitext(output_path)
+                if ext.lower() == ".md":
+                    parent = os.path.dirname(output_path)
+                    if parent and not os.path.isdir(parent):
+                        os.makedirs(parent, exist_ok=True)
+                    out_file = output_path
+                else:
+                    # Treat as a directory
+                    os.makedirs(output_path, exist_ok=True)
+                    out_file = os.path.join(output_path, "README.md")
+            with open(out_file, "w", encoding="utf-8") as fw:
+                fw.write(result)
+
+        return result
+            
     def doc2task(
         self,
-        readme_text: str,
+        doc_text: str,
         taps_root: str = ".",
         prompt: Optional[str] = None,
         deterministic: bool = False,
         temperature: float = 0.2,
-        max_tokens: int = 1500
-    ) -> Tuple[str, str]:
+        max_tokens: int = 1500,
+        file_names: Optional[List[str]] = None,
+        return_raw: bool = False
+    ) -> Union[str, Dict[str,str]]:
         """
-        Reconstruct task code and config from a README.md narrative,
-        save under `taps_root/<task_name>/` and return (code_path, config_path).
+        Reconstruct multiple interdependent source files from a task description,
+        with utils.py treated as optional.
 
-        Args:
-            readme_text: The README.md content to parse.
-            taps_root: Root directory for saving the task.
-            prompt: Optional custom instruction prompt.
-            deterministic: If True, forces deterministic decoding.
-            temperature: Sampling temperature.
-            max_tokens: Max tokens to generate.
-
-        Returns:
-            Tuple of (path_to_python_file, path_to_yaml_file).
+        :param doc_text:    Directory, README path, or raw description string.
+        :param taps_root:   Root folder to write outputs under `<task_name>/`.
+        :param prompt:      Custom instruction prompt (defaults shown below).
+        :param deterministic: Force deterministic sampling.
+        :param temperature: Sampling temperature.
+        :param max_tokens:  Max tokens to generate.
+        :param file_names:  List of filenames to request. Defaults to
+                            ["run_trial.py","utils.py","main.py","config.yaml"].
+        :param return_raw:  If True, return raw LLM markdown; no files written.
+        :return:
+        - If return_raw: the raw markdown string from the LLM.
+        - Otherwise: a dict mapping each filename → its saved path (excluding any empty utils.py).
+        :raises ValueError: if any **required** section is missing (all except utils.py).
         """
-        default_prompt = (
-            "You are a task-generation assistant. Given this README.md, reconstruct "
-            "the task's code and YAML config. Provide two fenced blocks: python and yaml."
+        # 1) Load doc_text into `desc`
+        if os.path.isdir(doc_text):
+            md = os.path.join(doc_text, "README.md")
+            with open(md, 'r', encoding='utf-8') as f: desc = f.read()
+        elif os.path.isfile(doc_text) and doc_text.lower().endswith((".md", ".txt")):
+            with open(doc_text, 'r', encoding='utf-8') as f: desc = f.read()
+        else:
+            desc = doc_text
+
+        # 2) Determine files (utils.py is optional)
+        fnames = file_names or ["run_trial.py", "utils.py", "main.py", "config.yaml"]
+        required = {"run_trial.py", "main.py", "config.yaml"}
+
+        # 3) Build instruction
+        instr = prompt or (
+            "You are a code-generation assistant. Given the examples below and the task description, "
+            "output markdown sections for each file. Use headers ### <filename> followed by a fenced block:\n\n" +
+            "\n".join(f"### {fn}" for fn in fnames) +
+            "\n\nUse ```python for .py files and ```yaml for .yaml. Omit utils.py if unused."
         )
-        instruction = prompt if prompt is not None else default_prompt
-        parts: List[str] = []
-        ex = self._build_examples()
-        if ex:
-            parts.append(ex)
-        parts.append(instruction)
-        parts.append(readme_text)
-        full_prompt = "\n\n".join(parts)
 
-        raw = self.llm.generate(
+        # 4) Build payload
+        payload: Dict[str, Any] = {"instruction": instr, "description": desc}
+        if self.knowledge_base:
+            payload["examples"] = self.knowledge_base
+
+        full_prompt = json.dumps(payload, indent=2, ensure_ascii=False)
+
+        # 5) Token check
+        self.last_prompt = full_prompt
+        self.last_prompt_token_count = self._count_tokens(full_prompt)
+        if self.last_prompt_token_count > self.prompt_token_limit:
+            raise LLMAPIError(f"Prompt too large ({self.last_prompt_token_count} tokens).")
+
+        # 6) Call LLM
+        raw = self.generate(
             prompt=full_prompt,
             deterministic=deterministic,
             temperature=temperature,
             max_tokens=max_tokens
         )
-        code_match = re.search(r'```python\n(.*?)```', raw, re.S)
-        yaml_match = re.search(r'```yaml\n(.*?)```', raw, re.S)
-        if not code_match or not yaml_match:
-            raise ValueError("Missing code or config blocks in output.")
-
-        code = code_match.group(1).strip()
-        config = yaml_match.group(1).strip()
-        m = re.search(r'^#\s*(.+)', readme_text, re.M)
-        name = m.group(1).strip() if m else 'generated_task'
-        task_name = re.sub(r'\W+', '_', name.lower()).strip('_')
+        # 7) Extract sections
+        out_paths: Dict[str, str] = {}
+        tm = re.search(r'^#\s*(.+)', desc, re.M)
+        title = tm.group(1).strip() if tm else "task"
+        task_name = re.sub(r'\W+','_', title.lower()).strip('_')
         task_dir = os.path.join(taps_root, task_name)
         os.makedirs(task_dir, exist_ok=True)
 
-        code_path = os.path.join(task_dir, f"{task_name}.py")
-        cfg_path = os.path.join(task_dir, f"{task_name}.yaml")
-        with open(code_path, 'w', encoding='utf-8') as fc:
-            fc.write(code)
-        with open(cfg_path, 'w', encoding='utf-8') as fy:
-            fy.write(config)
+        for fn in fnames:
+            lang = "yaml" if fn.endswith(".yaml") else "python"
+            pattern = rf"###\s*{re.escape(fn)}\s*```{lang}\n(.*?)```"
+            m = re.search(pattern, raw, re.S)
+            if not m or not m.group(1).strip():
+                if fn in required:
+                    raise ValueError(f"Required section for `{fn}` not found or empty.")
+                else:
+                    # skip optional utils.py
+                    continue
+            content = m.group(1).strip()
+            path = os.path.join(task_dir, fn)
+            with open(path, 'w', encoding='utf-8') as f:
+                f.write(content)
+            out_paths[fn] = path
+        if return_raw:
+            return raw
+        else:
+            return out_paths
 
-        return code_path, cfg_path
 
     def translate(
         self,
@@ -389,32 +557,29 @@ class TaskMapper:
         max_tokens: int = 800
     ) -> str:
         """
-        Translate text into a target language, preserving formatting and code fences.
+        Translate text, capturing raw prompt and token count before sending.
 
-        Args:
-            text: The text to translate.
-            target_language: e.g. "Japanese", "French".
-            prompt: Optional custom instruction prompt.
-            deterministic: If True, forces deterministic decoding.
-            temperature: Sampling temperature.
-            max_tokens: Max tokens to generate.
-
-        Returns:
-            Translated text.
+        :param text:             Input text to translate.
+        :param target_language:  Target language name.
+        :param prompt:           Optional custom instruction prompt.
+        :param deterministic:    Force deterministic output.
+        :param temperature:      Sampling temperature.
+        :param max_tokens:       Max tokens to generate.
+        :return:                 Translated text.
         """
-        default_prompt = (
-            f"Translate the following text into {target_language}, preserving formatting and code fences."
-        )
-        instruction = prompt if prompt is not None else default_prompt
-        parts: List[str] = []
-        ex = self._build_examples()
-        if ex:
-            parts.append(ex)
-        parts.append(instruction)
-        parts.append(text)
-        full_prompt = "\n\n".join(parts)
+        instr = prompt or f"Translate the following text into {target_language}, preserving formatting."
 
-        return self.llm.generate(
+        payload = {
+            "examples": self.build_examples_json(),
+            "instruction": instr,
+            "text": text
+        }
+        full_prompt = json.dumps(payload, indent=2, ensure_ascii=False)
+
+        self.last_prompt = full_prompt
+        self.last_prompt_token_count = self._count_tokens(full_prompt)
+
+        return self.generate(
             prompt=full_prompt,
             deterministic=deterministic,
             temperature=temperature,

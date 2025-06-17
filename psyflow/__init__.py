@@ -9,3 +9,4 @@ from .TriggerSender import TriggerSender
 from .StimUnit import StimUnit
 from .utils import *
 from .cli import climain
+from .LLM import LLMClient
