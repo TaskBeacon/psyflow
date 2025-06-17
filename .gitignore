@@ -57,3 +57,5 @@ Thumbs.db
 *.swp
 
 deploy_docs.bat
+
+apikey.txt
