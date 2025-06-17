@@ -455,7 +455,7 @@ class LLMClient:
         prompt: Optional[str] = None,
         deterministic: bool = False,
         temperature: float = 0.2,
-        max_tokens: int = 1500,
+        max_tokens: int = 10000,
         file_names: Optional[List[str]] = None,
         return_raw: bool = False
     ) -> Union[str, Dict[str,str]]:
@@ -499,9 +499,17 @@ class LLMClient:
         )
 
         # 4) Build payload
-        payload: Dict[str, Any] = {"instruction": instr, "description": desc}
         if self.knowledge_base:
-            payload["examples"] = self.knowledge_base
+            payload = {
+                "examples":   self.knowledge_base,  # few-shot KB
+                "instruction": instr,               # your request
+                "context":    desc               # this task’s code + config
+            }
+        else:
+            payload = {
+                "instruction": instr,               # your request
+                "context":    desc               # this task’s code + config
+            }
 
         full_prompt = json.dumps(payload, indent=2, ensure_ascii=False)
 
