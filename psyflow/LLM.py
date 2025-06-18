@@ -9,7 +9,6 @@ import tiktoken
 from importlib import resources
 import yaml
 from psyflow import load_config
-
 # --- Custom Exception for LLM API Errors ---
 class LLMAPIError(Exception):
     """
@@ -246,40 +245,28 @@ class LLMClient:
         valid = {"temperature","max_tokens","top_p","stop","presence_penalty","frequency_penalty","n","logit_bias","stream"}
         return {k: v for k, v in params.items() if k in valid}
 
-    @staticmethod
-    def _fence_content(path: str, content: str) -> str:
-        """
-        Wrap content in a markdown fence based on file extension.
-        """
-        ext = os.path.splitext(path)[1].lower()
-        if ext in ('.py', '.js', '.ts'):
-            lang = 'python'
-        elif ext in ('.yaml', '.yml'):
-            lang = 'yaml'
-        elif ext in ('.md', '.markdown'):
-            # already markdown—no fence
-            return content
-        else:
-            lang = ''
-        if lang:
-            return f"```{lang}\n{content}\n```"
-        return content
 
+    @staticmethod
     def _parse_entry(
-        self,
         entry: Dict[str, Union[str, List[str]]]
     ) -> Dict[str, str]:
         """
-        Parse one dict of {key → file(s)/URL(s)/text} into {key → fenced markdown/text}.
+        Parse one dict of {key → file(s)/URL(s)/text} into {key → combined text}.
+
+        :param entry:  
+          A mapping where each value is either:
+            - a list of local file paths or HTTP URLs
+            - a raw text string
+        :return:  
+          A dict mapping each key to the concatenated text contents.
         """
         out: Dict[str, str] = {}
-
         def _load(loc: str) -> Optional[str]:
-            # Local file
+            # Local file?
             if os.path.isfile(loc):
                 with open(loc, 'r', encoding='utf-8') as f:
                     return f.read()
-            # URL
+            # URL?
             parsed = urlparse(loc)
             if parsed.scheme in ("http", "https"):
                 resp = requests.get(loc, timeout=10)
@@ -289,76 +276,76 @@ class LLMClient:
 
         for key, val in entry.items():
             if isinstance(val, list):
-                parts: List[str] = []
+                chunks = []
                 for loc in val:
-                    txt = _load(loc) or ''
+                    txt = _load(loc)
                     if txt:
-                        parts.append(self._fence_content(loc, txt))
-                if parts:
-                    out[key] = "\n\n".join(parts)
+                        chunks.append(txt)
+                if chunks:
+                    out[key] = "\n\n".join(chunks)
 
             elif isinstance(val, str):
                 if val.startswith(("http://", "https://")):
-                    txt = _load(val) or ''
+                    txt = _load(val)
                     if txt:
                         out[key] = txt
-                elif os.path.isfile(val):
-                    txt = _load(val) or ''
-                    if txt:
-                        out[key] = self._fence_content(val, txt)
                 else:
-                    # raw text
                     out[key] = val.strip()
 
         return out
-
+    
+    
     def add_knowledge(
-        self,
-        source: Union[
-            str,                                   # path to JSON or MD file
-            List[Dict[str, Union[str, List[str]]]] # in-memory entries
-        ]
-    ) -> None:
+            self,
+            source: Union[
+                str,                                  # path to JSON file
+                List[Dict[str, Union[str, List[str]]]]  # in-memory entries
+            ]
+        ) -> None:
         """
-        Bulk-load few-shot examples:
-          • If `source` is a .json -> load list of dicts (no parsing)
-          • If `source` is a .md -> load single entry under key 'markdown'
-          • If `source` is a list -> parse each via _parse_entry()
+        Bulk-load few-shot examples into memory from either:
+        
+        1. A JSON file path containing a list of example-dicts, or
+        2. A list of example-dicts directly.
+        
+        Each example-dict maps keys to either:
+          • List[str] of file paths or URLs → will be parsed via `_parse_entry()`
+          • Raw text (str)                 → will be stripped and stored as-is
+        
+        :param source:
+          - If `str`, treated as path to a JSON file containing List[Dict[...]].
+          - If `list`, treated as in-memory list of example dicts.
+        :raises ValueError: on invalid JSON structure or unsupported source type.
         """
         if isinstance(source, str):
-            ext = os.path.splitext(source)[1].lower()
-            if ext == '.json':
-                with open(source, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                if not isinstance(data, list):
-                    raise ValueError("JSON must contain a list of example-dicts")
-                for ex in data:
-                    if isinstance(ex, dict):
-                        self.knowledge_base.append(ex)
-            elif ext in ('.md', '.markdown'):
-                # treat entire markdown file as one example
-                entry = self._parse_entry({'markdown': source})
-                if entry:
-                    self.knowledge_base.append(entry)
-            else:
-                raise ValueError("Unsupported file type for add_knowledge; use .json or .md")
+            # load from JSON file
+            with open(source, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            if not isinstance(data, list):
+                raise ValueError("Expected a JSON file containing a list of examples")
+            for ex in data:
+                if isinstance(ex, dict):
+                    # assume already parsed JSON examples
+                    self.knowledge_base.append(ex)
         elif isinstance(source, list):
+            # parse each entry (files/URLs/raw text) into text blobs
             for ex in source:
                 if not isinstance(ex, dict):
-                    raise ValueError("Each item in list must be a dict")
+                    continue
                 parsed = self._parse_entry(ex)
                 if parsed:
                     self.knowledge_base.append(parsed)
         else:
-            raise ValueError("add_knowledge requires a JSON path, MD path, or list of dicts")
+            raise ValueError(
+                "add_knowledge() requires a JSON file path or a list of example-dicts"
+            )
 
     def save_knowledge(self, json_path: str) -> None:
         """
-        Write current knowledge_base (list of dicts) to a JSON file.
+        Write current knowledge_base (a list of dicts) to a JSON file.
         """
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(self.knowledge_base, f, indent=2, ensure_ascii=False)
-    
 
     @staticmethod
     def _strip_code_fences(text: str) -> str:
