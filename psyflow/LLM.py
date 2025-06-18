@@ -6,6 +6,10 @@ import requests
 from typing import Any, Dict, List, Union, Optional, Callable, Tuple
 from urllib.parse import urlparse
 import tiktoken
+from importlib import resources
+import yaml
+from psyflow import load_config
+
 # --- Custom Exception for LLM API Errors ---
 class LLMAPIError(Exception):
     """
@@ -58,6 +62,8 @@ class LLMClient:
         self.last_prompt: Optional[str] = None
         self.last_prompt_token_count: Optional[int] = None
         self.prompt_token_limit: int = 10000  # Default token limit for prompts
+        self.last_response: Optional[str] = None
+        self.last_response_token_count: Optional[int] = None
 
         if self.provider == "gemini":
             from google import genai  # noqa: F401
@@ -240,28 +246,40 @@ class LLMClient:
         valid = {"temperature","max_tokens","top_p","stop","presence_penalty","frequency_penalty","n","logit_bias","stream"}
         return {k: v for k, v in params.items() if k in valid}
 
-
     @staticmethod
+    def _fence_content(path: str, content: str) -> str:
+        """
+        Wrap content in a markdown fence based on file extension.
+        """
+        ext = os.path.splitext(path)[1].lower()
+        if ext in ('.py', '.js', '.ts'):
+            lang = 'python'
+        elif ext in ('.yaml', '.yml'):
+            lang = 'yaml'
+        elif ext in ('.md', '.markdown'):
+            # already markdown—no fence
+            return content
+        else:
+            lang = ''
+        if lang:
+            return f"```{lang}\n{content}\n```"
+        return content
+
     def _parse_entry(
+        self,
         entry: Dict[str, Union[str, List[str]]]
     ) -> Dict[str, str]:
         """
-        Parse one dict of {key → file(s)/URL(s)/text} into {key → combined text}.
-
-        :param entry:  
-          A mapping where each value is either:
-            - a list of local file paths or HTTP URLs
-            - a raw text string
-        :return:  
-          A dict mapping each key to the concatenated text contents.
+        Parse one dict of {key → file(s)/URL(s)/text} into {key → fenced markdown/text}.
         """
         out: Dict[str, str] = {}
+
         def _load(loc: str) -> Optional[str]:
-            # Local file?
+            # Local file
             if os.path.isfile(loc):
                 with open(loc, 'r', encoding='utf-8') as f:
                     return f.read()
-            # URL?
+            # URL
             parsed = urlparse(loc)
             if parsed.scheme in ("http", "https"):
                 resp = requests.get(loc, timeout=10)
@@ -271,79 +289,130 @@ class LLMClient:
 
         for key, val in entry.items():
             if isinstance(val, list):
-                chunks = []
+                parts: List[str] = []
                 for loc in val:
-                    txt = _load(loc)
+                    txt = _load(loc) or ''
                     if txt:
-                        chunks.append(txt)
-                if chunks:
-                    out[key] = "\n\n".join(chunks)
+                        parts.append(self._fence_content(loc, txt))
+                if parts:
+                    out[key] = "\n\n".join(parts)
 
             elif isinstance(val, str):
                 if val.startswith(("http://", "https://")):
-                    txt = _load(val)
+                    txt = _load(val) or ''
                     if txt:
                         out[key] = txt
+                elif os.path.isfile(val):
+                    txt = _load(val) or ''
+                    if txt:
+                        out[key] = self._fence_content(val, txt)
                 else:
+                    # raw text
                     out[key] = val.strip()
 
         return out
-    
-    
+
     def add_knowledge(
-            self,
-            source: Union[
-                str,                                  # path to JSON file
-                List[Dict[str, Union[str, List[str]]]]  # in-memory entries
-            ]
-        ) -> None:
+        self,
+        source: Union[
+            str,                                   # path to JSON or MD file
+            List[Dict[str, Union[str, List[str]]]] # in-memory entries
+        ]
+    ) -> None:
         """
-        Bulk-load few-shot examples into memory from either:
-        
-        1. A JSON file path containing a list of example-dicts, or
-        2. A list of example-dicts directly.
-        
-        Each example-dict maps keys to either:
-          • List[str] of file paths or URLs → will be parsed via `_parse_entry()`
-          • Raw text (str)                 → will be stripped and stored as-is
-        
-        :param source:
-          - If `str`, treated as path to a JSON file containing List[Dict[...]].
-          - If `list`, treated as in-memory list of example dicts.
-        :raises ValueError: on invalid JSON structure or unsupported source type.
+        Bulk-load few-shot examples:
+          • If `source` is a .json -> load list of dicts (no parsing)
+          • If `source` is a .md -> load single entry under key 'markdown'
+          • If `source` is a list -> parse each via _parse_entry()
         """
         if isinstance(source, str):
-            # load from JSON file
-            with open(source, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-            if not isinstance(data, list):
-                raise ValueError("Expected a JSON file containing a list of examples")
-            for ex in data:
-                if isinstance(ex, dict):
-                    # assume already parsed JSON examples
-                    self.knowledge_base.append(ex)
+            ext = os.path.splitext(source)[1].lower()
+            if ext == '.json':
+                with open(source, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                if not isinstance(data, list):
+                    raise ValueError("JSON must contain a list of example-dicts")
+                for ex in data:
+                    if isinstance(ex, dict):
+                        self.knowledge_base.append(ex)
+            elif ext in ('.md', '.markdown'):
+                # treat entire markdown file as one example
+                entry = self._parse_entry({'markdown': source})
+                if entry:
+                    self.knowledge_base.append(entry)
+            else:
+                raise ValueError("Unsupported file type for add_knowledge; use .json or .md")
         elif isinstance(source, list):
-            # parse each entry (files/URLs/raw text) into text blobs
             for ex in source:
                 if not isinstance(ex, dict):
-                    continue
+                    raise ValueError("Each item in list must be a dict")
                 parsed = self._parse_entry(ex)
                 if parsed:
                     self.knowledge_base.append(parsed)
         else:
-            raise ValueError(
-                "add_knowledge() requires a JSON file path or a list of example-dicts"
-            )
+            raise ValueError("add_knowledge requires a JSON path, MD path, or list of dicts")
 
     def save_knowledge(self, json_path: str) -> None:
         """
-        Write current knowledge_base (a list of dicts) to a JSON file.
+        Write current knowledge_base (list of dicts) to a JSON file.
         """
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(self.knowledge_base, f, indent=2, ensure_ascii=False)
+    
 
+    @staticmethod
+    def _strip_code_fences(text: str) -> str:
+        """
+        Remove a leading ```…\n and a trailing \n``` fence if present.
+        """
+        # remove leading fence
+        text = re.sub(r'^\s*```[^\n]*\n', '', text)
+        # remove trailing fence
+        text = re.sub(r'\n```$', '', text)
+        return text
+    
+    @staticmethod
+    def _save_readme(content: str, output_path: str) -> None:
+        """
+        Write `content` to `output_path`, handling directories and file extensions.
+        """
+        if os.path.isdir(output_path):
+            out_file = os.path.join(output_path, "README.md")
+        else:
+            base, ext = os.path.splitext(output_path)
+            if ext.lower() == ".md":
+                os.makedirs(os.path.dirname(output_path) or ".", exist_ok=True)
+                out_file = output_path
+            else:
+                os.makedirs(output_path, exist_ok=True)
+                out_file = os.path.join(output_path, "README.md")
 
+        cleaned = LLMClient._strip_code_fences(content)
+        with open(out_file, "w", encoding="utf-8") as fw:
+            fw.write(cleaned)
 
+    def save_readme(self, *args) -> None:
+        """
+        Save a README to disk. Call as either:
+          save_readme(output_path)
+          save_readme(content, output_path)
+
+        If only output_path is provided, uses self.last_response.
+        """
+        if len(args) == 1:
+            content = self.last_response
+            output_path = args[0]
+        elif len(args) == 2:
+            content, output_path = args
+        else:
+            raise ValueError("save_readme() expects save_readme(path) or save_readme(content, path)")
+
+        if not content:
+            raise ValueError("No content available to save. Have you called task2doc() yet?")
+        try:
+            self._save_readme(content, output_path)
+        except Exception as e:
+            print(f"Warning: failed to write README to {output_path}: {e}")
     def task2doc(
         self,
         logic_paths: Optional[List[str]] = None,
@@ -355,70 +424,71 @@ class LLMClient:
         output_path: Optional[str] = None
     ) -> str:
         """
-        Summarize a task into README.md.
-
-        1. Renders few-shot examples from `knowledge_base`.  
-        2. Inserts your instruction.  
-        3. Renders the one-off task context.  
-        4. Sends the combined JSON payload to the LLM.  
-        5. Optionally writes the result to `output_path`.
-
-        :param logic_paths:   Python file paths for this task context.
-        :param config_paths:  YAML config paths for this task context.
-        :param prompt:        Custom instruction (defaults provided).
-        :param deterministic: Force deterministic decoding.
-        :param temperature:   Sampling temperature (ignored if deterministic).
-        :param max_tokens:    Maximum tokens to generate.
-        :param output_path:
-          - If a directory, writes “README.md” inside it.
-          - If a path ending in “.md”, writes to that file.
-          - If omitted, no file is written.
-        :return:              The generated README content.
+        Summarize a task into README.md. If `prompt` is None, loads the
+        instruction template from `psyflow/templates/task2doc_prompt.txt`.
         """
-        # ── 1) Resolve defaults ─────────────────────────────────────
-        logic  = logic_paths  or ["./src/run_trial.py", "./src/utils.py", "./main.py"]
-        config = config_paths or ["./config/config.yaml"]
+        # ── 1) Resolve defaults and validate existence ────────────────────
+        # Required logic files
+        default_logic = ["./src/run_trial.py", "./main.py"]
+        # Optional helper
+        optional_utils = "./src/utils.py"
 
-        # ── 2) Build one-off context dict (no side-effects) ─────────
+        # Use user-specified logic_paths if given, else defaults
+        if logic_paths:
+            logic = logic_paths
+        else:
+            logic = default_logic.copy()
+            if os.path.exists(optional_utils):
+                logic.append(optional_utils)
+
+        # Ensure each logic file exists
+        missing_logic = [p for p in logic if not os.path.exists(p)]
+        if missing_logic:
+            raise FileNotFoundError(
+                f"The following logic files were not found: {missing_logic}"
+            )
+
+        # Config file(s)
+        default_config = ["./config/config.yaml"]
+        config = config_paths if config_paths else default_config
+
+        # Ensure each config file exists
+        missing_cfg = [p for p in config if not os.path.exists(p)]
+        if missing_cfg:
+            raise FileNotFoundError(
+                f"The following config files were not found: {missing_cfg}"
+            )
+
+        # 2) Build one-off context
         task_context = self._parse_entry({
             "task_logic":  logic,
             "task_config": config
         })
 
-        # ── 3) Build prompt payload in three parts ─────────────────
-        instr = prompt or (
-            "You are a documentation assistant. Using the examples above, produce a concise README.md"
-            " for the following task that:\n"
-            "1) Summarize the core task logic.\n"
-            "2) Explain the configuration options.\n"
-            ""
+        # 3) Determine instruction text
+        instr_text = prompt or resources.read_text(
+            "psyflow.templates", "task2doc_prompt.txt"
         )
 
+        # 4) Build payload
+        payload: Dict[str, Any] = {
+            "task_context": task_context,
+            "instruction":  instr_text,
+        }
         if self.knowledge_base:
-            payload = {
-                "examples":   self.knowledge_base,  # few-shot KB
-                "instruction": instr,               # your request
-                "context":    task_context               # this task’s code + config
-            }
-        else:
-            payload = {
-                "instruction": instr,               # your request
-                "context":    task_context               # this task’s code + config
-            }
+            payload["examples"] = self.knowledge_base
         full_prompt = json.dumps(payload, indent=2, ensure_ascii=False)
 
-        # ── 4) Store & enforce token limits ─────────────────────────
+        # 5) Store & enforce token limits for prompt
         self.last_prompt = full_prompt
         self.last_prompt_token_count = self._count_tokens(full_prompt)
         if self.last_prompt_token_count > self.prompt_token_limit:
             raise LLMAPIError(
-                f"Prompt too large ({self.last_prompt_token_count} tokens). "
-                f"Limit is {self.prompt_token_limit}."
-                "Try to reduce the number of instructions or the number of examples."
-                "Or increase the prompt_token_limit in the LLMClient instance."
+                f"Prompt too large ({self.last_prompt_token_count} tokens), "
+                f"limit is {self.prompt_token_limit}."
             )
 
-        # ── 5) Call the LLM ────────────────────────────────────────
+        # 6) Call LLM
         result = self.generate(
             prompt=full_prompt,
             deterministic=deterministic,
@@ -426,28 +496,152 @@ class LLMClient:
             max_tokens=max_tokens
         )
 
-        # ── 6) Optionally write out to a README.md file ───────────
+        # store response and its token count
+        self.last_response = result
+        self.last_response_token_count = self._count_tokens(result)
+
+        # 7) Optionally write to disk (uses save_readme)
         if output_path:
-            # If a directory, create it (if needed) and write README.md inside
-            if os.path.isdir(output_path):
-                out_file = os.path.join(output_path, "README.md")
-            else:
-                # Not a dir: if endswith .md and parent dir exists, use it
-                _, ext = os.path.splitext(output_path)
-                if ext.lower() == ".md":
-                    parent = os.path.dirname(output_path)
-                    if parent and not os.path.isdir(parent):
-                        os.makedirs(parent, exist_ok=True)
-                    out_file = output_path
-                else:
-                    # Treat as a directory
-                    os.makedirs(output_path, exist_ok=True)
-                    out_file = os.path.join(output_path, "README.md")
-            with open(out_file, "w", encoding="utf-8") as fw:
-                fw.write(result)
+            self.save_readme(output_path)
 
         return result
-            
+
+    def translate(
+        self,
+        text: str,
+        target_language: str,
+        prompt: Optional[str] = None,
+        deterministic: bool = False,
+        temperature: float = 0.2,
+        max_tokens: int = 800
+    ) -> str:
+        """
+        Translate arbitrary text into the target language, preserving formatting.
+
+        :param text:             The text to translate.
+        :param target_language:  Language to translate into (e.g. "Chinese").
+        :param prompt:           Optional custom instruction. If None, a default
+                                 “Translate the following text into X…” prompt is used.
+        :param deterministic:    If True, forces deterministic decoding (temp=0, top_p=1).
+        :param temperature:      Sampling temperature (ignored if deterministic).
+        :param max_tokens:       Maximum tokens to generate in the translation.
+        :return:                 The translated text.
+        """
+        # 1) Build instruction
+        instr = prompt or f"Translate the following text into {target_language}, preserving formatting."
+
+        # 2) Build JSON payload for clarity and structure
+        payload = {
+            "instruction": instr,
+            "text":        text
+        }
+        full_prompt = json.dumps(payload, indent=2, ensure_ascii=False)
+
+        # 3) Record prompt & token count
+        self.last_prompt = full_prompt
+        self.last_prompt_token_count = self._count_tokens(full_prompt)
+
+        # 4) Call the LLM
+        result = self.generate(
+            prompt=full_prompt,
+            deterministic=deterministic,
+            temperature=temperature,
+            max_tokens=max_tokens
+        )
+
+        # 5) Record response & its token count
+        self.last_response = result
+        self.last_response_token_count = self._count_tokens(result)
+
+        return result
+
+    def translate_config(
+        self,
+        target_language: str,
+        config: Optional[Union[str, Dict[str, Any]]] = None,
+        output_dir: Optional[str] = None,
+        output_name: Optional[str] = None,
+        prompt: Optional[str] = None,
+        deterministic: bool = False,
+        temperature: float = 0.2,
+        max_tokens: int = 500
+    ) -> Dict[str, Any]:
+        """
+        Translate selected fields of a YAML config:
+          - subinfo_mapping values
+          - any stimuli entries where type is 'text' or 'textbox'
+
+        If `config` is:
+          • a file path (str) → load via load_config()
+          • a dict returned from load_config()
+          • None → will look for "./config/config.yaml" by default
+
+        If `output_dir` is provided, writes out a translated YAML:
+          • filename is `output_name` if given, else
+            original basename + ".translated.yaml".
+
+        Returns the final raw YAML dict.
+        """
+        # 1) Determine config source
+        if config is None:
+            default_path = os.path.join(os.getcwd(), "config", "config.yaml")
+            if not os.path.exists(default_path):
+                raise FileNotFoundError(f"No config given and default not found at {default_path}")
+            config = default_path
+
+        # 2) Load or unwrap structured config
+        if isinstance(config, str):
+            structured = load_config(config)
+            raw_yaml = structured['raw']
+            original_name = os.path.splitext(os.path.basename(config))[0]
+        elif isinstance(config, dict) and 'raw' in config:
+            structured = config
+            raw_yaml = structured['raw']
+            original_name = "config"
+        else:
+            raise ValueError("`config` must be None, a path, or a dict from load_config()")
+
+        # 3) Translate subinfo_mapping
+        mapping = structured['subform_config']['subinfo_mapping']
+        for key, val in mapping.items():
+            if isinstance(val, str) and val.strip():
+                mapping[key] = self.translate(
+                    text=val,
+                    target_language=target_language,
+                    prompt=prompt or f"Translate this label into {target_language}:",
+                    deterministic=deterministic,
+                    temperature=temperature,
+                    max_tokens=max_tokens
+                )
+
+        # 4) Translate stimuli text fields
+        stim_config = structured['stim_config']
+        for name, spec in stim_config.items():
+            stype = spec.get('type')
+            if stype in ('text', 'textbox') and 'text' in spec:
+                original = spec['text']
+                if isinstance(original, str) and original.strip():
+                    translated = self.translate(
+                        text=original,
+                        target_language=target_language,
+                        prompt=prompt or f"Translate this stimulus text into {target_language}:",
+                        deterministic=deterministic,
+                        temperature=temperature,
+                        max_tokens=max_tokens
+                    )
+                    raw_yaml['stimuli'][name]['text'] = translated
+
+        # 5) Optionally write translated YAML to disk
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+            filename = output_name or f"{original_name}.translated.yaml"
+            out_path = os.path.join(output_dir, filename)
+            with open(out_path, 'w', encoding='utf-8') as f:
+                yaml.safe_dump(raw_yaml, f, allow_unicode=True)
+
+        return raw_yaml
+
+
     def doc2task(
         self,
         doc_text: str,
@@ -555,41 +749,3 @@ class LLMClient:
             return out_paths
 
 
-    def translate(
-        self,
-        text: str,
-        target_language: str,
-        prompt: Optional[str] = None,
-        deterministic: bool = False,
-        temperature: float = 0.2,
-        max_tokens: int = 800
-    ) -> str:
-        """
-        Translate text, capturing raw prompt and token count before sending.
-
-        :param text:             Input text to translate.
-        :param target_language:  Target language name.
-        :param prompt:           Optional custom instruction prompt.
-        :param deterministic:    Force deterministic output.
-        :param temperature:      Sampling temperature.
-        :param max_tokens:       Max tokens to generate.
-        :return:                 Translated text.
-        """
-        instr = prompt or f"Translate the following text into {target_language}, preserving formatting."
-
-        payload = {
-            "examples": self.build_examples_json(),
-            "instruction": instr,
-            "text": text
-        }
-        full_prompt = json.dumps(payload, indent=2, ensure_ascii=False)
-
-        self.last_prompt = full_prompt
-        self.last_prompt_token_count = self._count_tokens(full_prompt)
-
-        return self.generate(
-            prompt=full_prompt,
-            deterministic=deterministic,
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
