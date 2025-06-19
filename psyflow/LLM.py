@@ -503,26 +503,19 @@ class LLMClient:
         max_tokens: int = 800
     ) -> str:
         """
-        Translate arbitrary text into the target language, preserving formatting.
-
-        :param text:             The text to translate.
-        :param target_language:  Language to translate into (e.g. "Chinese").
-        :param prompt:           Optional custom instruction. If None, a default
-                                 “Translate the following text into X…” prompt is used.
-        :param deterministic:    If True, forces deterministic decoding (temp=0, top_p=1).
-        :param temperature:      Sampling temperature (ignored if deterministic).
-        :param max_tokens:       Maximum tokens to generate in the translation.
-        :return:                 The translated text.
+        Translate arbitrary text into the target language, preserving formatting
+        and placeholders. Returns only the translated text—no explanations.
         """
-        # 1) Build instruction
-        instr = prompt or f"Translate the following text into {target_language}, preserving formatting."
+        # 1) Build a strict instruction
+        instr = prompt or (
+            f"Translate the following text into {target_language}. "
+            "Output ONLY the translated text, preserving orignal formatting, "
+            "indentation, and placeholder tokens (e.g. {field}). "
+            "Do NOT include any explanations or comments."
+        )
 
-        # 2) Build JSON payload for clarity and structure
-        payload = {
-            "instruction": instr,
-            "text":        text
-        }
-        full_prompt = json.dumps(payload, indent=2, ensure_ascii=False)
+        # 2) Combine instruction and text
+        full_prompt = instr + "\n\n" + text
 
         # 3) Record prompt & token count
         self.last_prompt = full_prompt
@@ -534,13 +527,19 @@ class LLMClient:
             deterministic=deterministic,
             temperature=temperature,
             max_tokens=max_tokens
-        )
+        ) or ""
 
         # 5) Record response & its token count
         self.last_response = result
         self.last_response_token_count = self._count_tokens(result)
 
         return result
+
+    def _str_presenter(dumper, data):
+        # if the string has a newline, use block style;
+        # otherwise fall back to the default
+        style = '|' if '\n' in data else None
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style=style)
 
     def translate_config(
         self,
@@ -559,21 +558,20 @@ class LLMClient:
           - any stimuli entries where type is 'text' or 'textbox'
 
         If `config` is:
-          • a file path (str) → load via load_config()
+          • a file path (str) → loaded via load_config()
           • a dict returned from load_config()
-          • None → will look for "./config/config.yaml" by default
+          • None → defaults to "./config/config.yaml"
 
         If `output_dir` is provided, writes out a translated YAML:
-          • filename is `output_name` if given, else
-            original basename + ".translated.yaml".
+          filename is `output_name` if given, else original basename + ".translated.yaml".
 
-        Returns the final raw YAML dict.
+        Returns the updated raw YAML dict.
         """
         # 1) Determine config source
         if config is None:
             default_path = os.path.join(os.getcwd(), "config", "config.yaml")
             if not os.path.exists(default_path):
-                raise FileNotFoundError(f"No config given and default not found at {default_path}")
+                raise FileNotFoundError(f"No config found at {default_path}")
             config = default_path
 
         # 2) Load or unwrap structured config
@@ -595,7 +593,10 @@ class LLMClient:
                 mapping[key] = self.translate(
                     text=val,
                     target_language=target_language,
-                    prompt=prompt or f"Translate this label into {target_language}:",
+                    prompt=prompt or (
+                        f"Translate this label into {target_language}. "
+                         "Output ONLY the translated text, preserving original format. No trailing newline"
+                    ),
                     deterministic=deterministic,
                     temperature=temperature,
                     max_tokens=max_tokens
@@ -604,29 +605,67 @@ class LLMClient:
         # 4) Translate stimuli text fields
         stim_config = structured['stim_config']
         for name, spec in stim_config.items():
-            stype = spec.get('type')
-            if stype in ('text', 'textbox') and 'text' in spec:
+            if spec.get('type') in ('text', 'textbox') and 'text' in spec:
                 original = spec['text']
                 if isinstance(original, str) and original.strip():
-                    translated = self.translate(
+                    raw_yaml['stimuli'][name]['text'] = self.translate(
                         text=original,
                         target_language=target_language,
-                        prompt=prompt or f"Translate this stimulus text into {target_language}:",
+                        prompt=prompt or (
+                            f"Translate this stimulus text into {target_language}. "
+                            "Output ONLY the translated text, preserving original format. No trailing newline"
+                        ),
                         deterministic=deterministic,
                         temperature=temperature,
                         max_tokens=max_tokens
                     )
-                    raw_yaml['stimuli'][name]['text'] = translated
 
         # 5) Optionally write translated YAML to disk
         if output_dir:
             os.makedirs(output_dir, exist_ok=True)
             filename = output_name or f"{original_name}.translated.yaml"
             out_path = os.path.join(output_dir, filename)
-            with open(out_path, 'w', encoding='utf-8') as f:
-                yaml.safe_dump(raw_yaml, f, allow_unicode=True)
+            
+            LLMDumper = type("LLMDumper", (yaml.SafeDumper,), {})
+            def _str_presenter(dumper, data):
+                style = '|' if '\n' in data else None
+                return dumper.represent_scalar(
+                    'tag:yaml.org,2002:str',
+                    data,
+                    style=style
+                )
+            LLMDumper.add_representer(str, _str_presenter)
+            def _list_presenter(dumper, data):
+            # inline only for lists of scalars length ≤ 10
+                if (
+                    len(data) <= 10 and
+                    all(not isinstance(x, (dict, list)) for x in data)
+                ):
+                    flow = True
+                else:
+                    flow = False
+                return dumper.represent_sequence("tag:yaml.org,2002:seq", data, flow_style=flow)
+            LLMDumper.add_representer(list, _list_presenter)
 
-        return raw_yaml
+            # Monkey‐patch it onto SafeDumper:
+            yaml.SafeDumper.add_representer(str, _str_presenter)
+            with open(out_path, 'w', encoding='utf-8') as f:
+                yaml.dump(raw_yaml, f, allow_unicode=True,sort_keys=False, Dumper=LLMDumper)
+        
+        task_keys = ['window', 'task', 'timing']
+        structured_config = {
+            'raw': raw_yaml,
+            'task_config': {k: v for key in task_keys for k, v in raw_yaml.get(key, {}).items()},
+            'stim_config': raw_yaml.get('stimuli', {}),
+            'subform_config': {
+                'subinfo_fields': raw_yaml.get('subinfo_fields', []),
+                'subinfo_mapping': raw_yaml.get('subinfo_mapping', {}),
+            },
+            'trigger_config': raw_yaml.get('triggers', {}),
+            'controller_config': raw_yaml.get('controller', {}),
+        }
+
+        return structured_config
 
 
     def doc2task(

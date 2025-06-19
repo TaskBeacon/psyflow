@@ -34,10 +34,10 @@ Extract the full task name and use it as the document’s top-level heading.
   - PsyFlow Version  
   - PsychoPy Version  
 
-## 2. Task Overview  
+## 1. Task Overview  
 • One concise paragraph summarizing the goal and design of the task.
 
-## 3. Task Flow  
+## 2. Task Flow  
 Split into two subtables—**Block-Level Flow** and **Trial-Level Flow**—plus **Controller Logic** and **other logics** if `util.py` exists.  
 • Block-Level Flow comes from `main.py`.  
 • Trial-Level Flow comes from `run_trial.py`.  
@@ -47,7 +47,7 @@ Split into two subtables—**Block-Level Flow** and **Trial-Level Flow**—plus 
 Leave a blank line after each table before continuing.  
 Each description must be detailed enough that an LLM could reconstruct the code. Incorporate any timing parameters or stimuli defined in `config.yaml` into the descriptions.
 
-## 4. Configuration Summary  
+## 3. Configuration Summary  
 Note that all settings live in `config/config.yaml`. 
 In this section, summarize each subsection in its own table (with header, separator, blank line):
 
@@ -73,9 +73,9 @@ Example:
 
 **f. Adaptive Controller (if exists)** — a table with columns: Parameter, Value  
 
-## 5. Methods (for academic publication)  
+## 4. Methods (for academic publication)  
 Write this like a Methods section in a paper, with academic tone and clarity.
-Prepare one or two paragraph containing the following:   
+Prepare two or three paragraphs containing the following:   
 - What participants see at each step  
 - Any adaptive algorithms or parameters  
 - The rationale behind major design choices  
