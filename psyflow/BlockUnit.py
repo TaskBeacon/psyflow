@@ -7,11 +7,33 @@ import random
 
 
 class BlockUnit:
-    """
-    A container that manages a block of experimental trials.
+    """Block-level controller for trials.
 
-    BlockUnit is responsible for generating trial conditions, running trials, 
-    executing lifecycle hooks, and collecting trial-level results.
+    This object generates trial conditions, executes each trial, and stores
+    metadata. It exposes hooks for custom start/end logic and summary methods.
+
+    Attributes
+    ----------
+    block_id : str
+        Identifier for the block.
+    block_idx : int
+        Index of this block in the experiment.
+    n_trials : int
+        Number of trials to execute.
+    settings : dict
+        Experiment settings container.
+    win : Any
+        PsychoPy window used for drawing.
+    kb : Any
+        PsychoPy keyboard used for responses.
+    seed : int
+        Seed used for randomisation.
+    conditions : list of Any or None
+        Ordered list of condition labels for each trial.
+    results : list of dict
+        Accumulated trial results after :meth:`run_trial`.
+    meta : dict
+        Additional block metadata such as start time and duration.
     """
 
     def __init__(

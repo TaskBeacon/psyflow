@@ -202,9 +202,18 @@ class LLMClient:
         )
     
     def _count_tokens(self, text: str) -> int:
-        """
-        Return the token count for `text` under the currently-configured model.
-        Requires `tiktoken`.
+        """Count tokens for the active model.
+
+        Parameters
+        ----------
+        text : str
+            Text to be encoded.
+
+        Returns
+        -------
+        int
+            Number of tokens consumed by ``text`` under the current model's
+            tokenizer.
         """
         try:
             enc = tiktoken.encoding_for_model(self.model)

@@ -1,7 +1,15 @@
 
 def show_ports():
-    """
-    List all available serial ports with descriptions.
+    """List all available serial ports.
+
+    The function prints a numbered list of connected serial ports with a short
+    description. It is mainly intended for quick troubleshooting when choosing
+    a port for trigger boxes or external devices.
+
+    Returns
+    -------
+    None
+        This function is executed for its side effect of printing to ``stdout``.
     """
     import serial.tools.list_ports
     ports = list(serial.tools.list_ports.comports())
@@ -17,14 +25,36 @@ def show_ports():
 
 from cookiecutter.main import cookiecutter
 import importlib.resources as pkg_res
+
+
 def taps(task_name: str, template: str = "cookiecutter-psyflow"):
-    # locate the template folder inside the installed package
+    """Generate a task skeleton using the bundled template.
+
+    Parameters
+    ----------
+    task_name : str
+        Name of the new task directory to create.
+    template : str, optional
+        Name of the template folder inside the package. Defaults to
+        ``"cookiecutter-psyflow"``.
+
+    Returns
+    -------
+    str
+        Path to the newly created project directory.
+
+    Examples
+    --------
+    >>> taps("mytask")
+    "mytask"
+    """
     tmpl_dir = pkg_res.files("psyflow") / template
     cookiecutter(
         str(tmpl_dir),
         no_input=True,
         extra_context={"project_name": task_name}
     )
+    return task_name
 
 
 from psychopy import visual, core
@@ -40,6 +70,11 @@ def count_down(win, seconds=3, **stim_kwargs):
         How many seconds to count down from.
     **stim_kwargs : dict
         Additional keyword arguments for TextStim (e.g., font, height, color).
+
+    Returns
+    -------
+    None
+        The countdown is shown on ``win`` for its side effect.
     """
     cd_clock = core.Clock()
     for i in reversed(range(1, seconds + 1)):
@@ -68,6 +103,11 @@ def load_config(config_file: str = 'config/config.yaml',
     -------
     dict
         Dictionary with structured configs.
+
+    Examples
+    --------
+    >>> cfg = load_config('config/config.yaml')
+    >>> cfg['task_config']['screen_width']
     """
     with open(config_file, encoding='utf-8') as f:
         config = yaml.safe_load(f)
@@ -103,15 +143,24 @@ from typing import Tuple
 
 
 def initialize_exp(settings, screen_id: int = 1) -> Tuple[Window, keyboard.Keyboard]:
-    """
-    Initialize the experiment environment including window, keyboard, logging, and global quit key.
+    """Set up the PsychoPy window, keyboard and logging.
 
-    Parameters:
-        settings: Configuration object with display, logging, and task settings.
-        screen_id (int): ID of the screen to display the experiment window on.
+    Parameters
+    ----------
+    settings : Any
+        Configuration object with attributes describing window and logging
+        settings.
+    screen_id : int, optional
+        Monitor index to open the window on. Defaults to ``1``.
 
-    Returns:
-        Tuple[Window, Keyboard]: The initialized PsychoPy window and keyboard objects.
+    Returns
+    -------
+    tuple of (Window, Keyboard)
+        The created PsychoPy ``Window`` and ``Keyboard`` objects.
+
+    Examples
+    --------
+    >>> win, kb = initialize_exp(my_settings)
     """
     # === Window Setup ===
     mon = monitors.Monitor('tempMonitor')
@@ -178,9 +227,20 @@ def list_supported_voices(
     filter_lang: Optional[str] = None,
     human_readable: bool = False
 ):
-    """
-    – Returns raw voice dicts if human_readable=False.
-    – Prints a formatted table (including VoicePersonalities) if human_readable=True.
+    """Query available edge-tts voices.
+
+    Parameters
+    ----------
+    filter_lang : str, optional
+        Return only voices whose locale starts with this prefix.
+    human_readable : bool, optional
+        If ``True`` print a formatted table; otherwise return the raw list.
+
+    Returns
+    -------
+    list of dict or None
+        The raw voice dictionaries if ``human_readable`` is ``False``,
+        otherwise ``None``.
     """
     voices = asyncio.run(_list_supported_voices_async(filter_lang))
     if not human_readable:

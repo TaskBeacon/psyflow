@@ -73,8 +73,12 @@ class StimBank:
         return decorator
 
     def preload_all(self):
-        """
-        Instantiate all registered stimuli and cache them internally.
+        """Instantiate all registered stimuli.
+
+        Returns
+        -------
+        StimBank
+            The object itself for method chaining.
         """
         for name, factory in self._registry.items():
             if name not in self._instantiated:

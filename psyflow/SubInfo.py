@@ -73,6 +73,12 @@ class SubInfo:
         dict or None
             Cleaned response dictionary with English field keys,
             or None if cancelled and exit_on_cancel is False.
+
+        Examples
+        --------
+        >>> cfg = {'subinfo_fields': [{'name': 'age', 'type': 'int'}]}
+        >>> info = SubInfo(cfg)
+        >>> info.collect(exit_on_cancel=False)
         """
         success = False
         responses = None

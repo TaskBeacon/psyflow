@@ -172,6 +172,11 @@ class TaskSettings:
         -------
         TaskSettings
             An initialized instance with config applied.
+
+        Examples
+        --------
+        >>> cfg = {'total_blocks': 2, 'total_trials': 20}
+        >>> TaskSettings.from_dict(cfg)
         """
         known_keys = set(f.name for f in cls.__dataclass_fields__.values())
         init_args = {k: v for k, v in config.items() if k in known_keys}
