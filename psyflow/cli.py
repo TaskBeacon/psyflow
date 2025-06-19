@@ -11,12 +11,22 @@ import importlib.resources as pkg_res
 @click.command()
 @click.argument("project_name", required=False)
 def climain(project_name):
-    """
-    psyflow-init [PROJECT_NAME]
+    """Create a new PsychoPy task from the bundled template.
 
-    - No args: initialize current dir (in-place)
-    - Arg == current dir name: same as no args
-    - Otherwise: create ./PROJECT_NAME
+    Parameters
+    ----------
+    project_name : str, optional
+        Name of the project directory. If omitted or equal to the current
+        directory name, files are generated in place.
+
+    Returns
+    -------
+    None
+        Files are created on disk for their side effect.
+
+    Examples
+    --------
+    >>> psyflow-init mytask
     """
     # 1. Locate our bundled template
     tmpl_dir = pkg_res.files("psyflow.templates") / "cookiecutter-psyflow"

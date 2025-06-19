@@ -196,8 +196,15 @@ class StimUnit:
         return self
 
     def log_unit(self) -> None:
-        """
-        Log the current state using PsychoPy's logging mechanism.
+        """Write the current trial state to PsychoPy logs.
+
+        All key-value pairs stored in :attr:`state` are emitted using
+        ``logging.data`` which allows post‑hoc reconstruction of each trial.
+
+        Examples
+        --------
+        >>> unit.set_state(response="space")
+        >>> unit.log_unit()
         """
         logging.data(f"[StimUnit] Data: {self.state}")
 
@@ -318,16 +325,27 @@ class StimUnit:
         return self.on_response(list(keys), close_fn)
 
 
-    def run(self, 
+    def run(self,
             terminate_on_response: bool = True) -> "StimUnit":
-        """
-        Full logic loop for displaying stimulus, collecting response, handling timeout,
-        and logging with precision timing.
+        """Execute the full trial lifecycle.
 
-        Parameters:
-        -----------
-        terminate_on_response : bool
-            Whether to terminate the trial upon receiving a response.
+        This method draws all registered stimuli, handles response and timeout
+        events, executes registered hooks and logs the final state.
+
+        Parameters
+        ----------
+        terminate_on_response : bool, optional
+            If ``True`` the trial ends immediately once a response is
+            registered. Defaults to ``True``.
+
+        Returns
+        -------
+        StimUnit
+            The instance itself for chaining.
+
+        Examples
+        --------
+        >>> StimUnit("trial1", win).run()
         """
         self.set_state(global_time=core.getAbsTime())
 

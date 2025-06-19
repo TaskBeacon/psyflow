@@ -58,7 +58,16 @@ class TriggerSender:
         Parameters
         ----------
         code : int or None
-            The code to send. Skips if None and logs a warning.
+            The code to send. If ``None`` the method does nothing and logs a
+            warning.
+
+        Returns
+        -------
+        None
+
+        Examples
+        --------
+        >>> sender.send(1)
         """
         if code is None:
             logging.warning("[Trigger] Skipping trigger send: code is None")
