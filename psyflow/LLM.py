@@ -1,7 +1,6 @@
 import os
 import json
 import re
-import tempfile
 import requests
 from typing import Any, Dict, List, Union, Optional, Callable, Tuple
 from urllib.parse import urlparse
