@@ -11,16 +11,15 @@ For each section below, include every detail—parameters, timings, flow logic, 
 
 **IMPORTANT TABLE FORMATTING RULES (apply to every table in sections 1–4):**  
 1. Always start with a header row and a separator row, for example:  
-2. After the separator row, include **one blank line** before listing data rows.  
-3. Do **not** omit the blank line—this ensures the table closes properly.  
-4. Do **not** add extra pipes or indentation.
+2. Do **not** omit the blank line—this ensures the table closes properly.  
+3. Do **not** add extra pipes or indentation.
 
 # Task Name  
 Extract the full task name and use it as the document’s top-level heading.
 
 ## (Meta Information) we don't need the meta information as header, we just show table  
-• Render as a Markdown table with two columns: Field and Value.  
-• Include this header and separator row exactly, then a blank line:  
+• Render as a Markdown table with two columns: Field and Value. 
+• Include this header and separator row exactly
   | Field                | Value                        |  
   |----------------------|------------------------------|  
 
@@ -30,9 +29,10 @@ Extract the full task name and use it as the document’s top-level heading.
   - URL / Repository  
   - Short Description  
   - Created By  
-  - Date Created  
+  - Date Updated 
   - PsyFlow Version  
   - PsychoPy Version  
+  Try your best to fill the table, if you are not sure leave them as blank.
 
 ## 1. Task Overview  
 • One concise paragraph summarizing the goal and design of the task.

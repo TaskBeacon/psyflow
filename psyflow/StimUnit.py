@@ -488,24 +488,32 @@ class StimUnit:
         self.set_state(flip_time=flip_time)
 
         # --- Frame-based visual presentation ---
-        tclock = core.Clock()
-        tclock.reset()
-
         visual_stims = [s for s in self.stimuli if hasattr(s, "draw") and callable(s.draw)]
         n_frames = int(round(t_val / self.frame_time))
 
         for frame_i in range(n_frames - 1):
             for stim in visual_stims:
                 stim.draw()
-            if frame_i == n_frames - 2:
-                self.win.callOnFlip(
-                    self.set_state,
-                    offset_trigger=offset_trigger,
-                    close_time=self.clock.getTime(),
-                    close_time_global=core.getAbsTime()
-                )
-                self.win.callOnFlip(self.send_trigger, offset_trigger)
+            # if frame_i == n_frames - 2: # if it is the last frame, schedule the offset
+            #     self.win.callOnFlip(
+            #         self.set_state,
+            #         offset_trigger=offset_trigger,
+            #         close_time=self.clock.getTime(),
+            #         close_time_global=core.getAbsTime()
+            #     )
+            #     self.win.callOnFlip(self.send_trigger, offset_trigger)
             self.win.flip()
+        self.set_state(
+            close_time=self.clock.getTime(),
+            close_time_global=core.getAbsTime()
+        )
+        self.send_trigger(offset_trigger)
+        #         self.set_state,
+        #         offset_trigger=offset_trigger,
+        #         close_time=self.clock.getTime(),
+        #         close_time_global=core.getAbsTime()
+        #     )
+        #     self.win.callOnFlip(self.send_trigger, offset_trigger)
 
         self.log_unit()
         return self

@@ -32,6 +32,8 @@ extensions = [
     "sphinx.ext.autodoc",              # Auto pull docstrings
     "sphinx.ext.napoleon",             # Google/Numpy style docstrings
     "sphinx_autodoc_typehints",        # Type hints in docs
+    "sphinx.ext.viewcode",
+    "sphinx.ext.githubpages",
 ]
 
 # Allow both .rst and .md files
