@@ -509,7 +509,6 @@ class StimUnit:
         )
         self.send_trigger(offset_trigger)
 
-
         self.log_unit()
         return self
 

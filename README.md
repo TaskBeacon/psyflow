@@ -29,6 +29,6 @@ that contains `[publish]` in the commit message will trigger the
 [`publish`](.github/workflows/publish.yml) workflow. The workflow builds
 sdist and wheel via `python -m build` and uploads them to PyPI using the
 `pypa/gh-action-pypi-publish` action. The upload requires a
-`PYPI_API_TOKEN` secret configured in the repository.
+`PYPI_API_TOKEN` secret configured in the repository. 
 
 
