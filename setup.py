@@ -26,6 +26,10 @@ setup(
         "pyyaml",          # for YAML configuration parsing
         "pyserial",        # for serial port communication
         "edge-tts",        # for text-to-speech support
+        "requests",        # for HTTP requests
+        "tiktoken",        # for token counting
+        "openai",          # OpenAI API client
+        "google-generativeai",  # Google GenAI SDK
     ],
     entry_points={
         "console_scripts": [

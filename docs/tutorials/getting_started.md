@@ -10,13 +10,13 @@ Ensure you have PsychoPy installed:
 
     pip install psychopy
 
-Then install psyflow (replace with actual package name if on PyPI):
+Then install psyflow from PyPI:
 
-    pip install psyflow
+    pip install psyflow==0.1.0
 
 Or if you’re working from source:
 
-    git clone https://github.com/your-org/psyflow.git
+    git clone https://github.com/TaskBeacon/psyflow.git
     cd psyflow
     pip install -e .
 
