@@ -508,12 +508,7 @@ class StimUnit:
             close_time_global=core.getAbsTime()
         )
         self.send_trigger(offset_trigger)
-        #         self.set_state,
-        #         offset_trigger=offset_trigger,
-        #         close_time=self.clock.getTime(),
-        #         close_time_global=core.getAbsTime()
-        #     )
-        #     self.win.callOnFlip(self.send_trigger, offset_trigger)
+
 
         self.log_unit()
         return self
