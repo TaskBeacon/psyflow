@@ -18,6 +18,10 @@ dependencies = [
     "pyyaml",
     "pyserial",
     "edge-tts",
+    "requests",
+    "tiktoken",
+    "openai",
+    "google-generativeai",
 ]
 dynamic = ["entry-points"]
 
