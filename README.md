@@ -22,6 +22,17 @@ scaffolds a new project using the bundled cookiecutter template.
 Comprehensive documentation and tutorials are available on the
 [GitHub&nbsp;Pages site](https://taskbeacon.github.io/psyflow/).
 
+### Building the documentation
+
+To generate the HTML docs locally:
+
+```bash
+pip install -r docs/requirements.txt
+sphinx-build -b html docs docs/_build/html
+```
+
+Open `docs/_build/html/index.html` in a browser to view them.
+
 ## Publishing to PyPI
 
 Releases are automated with GitHub Actions. Any push to the `main` branch
