@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="🧾 SubInfo: Participant Information Collector" href="get_subinfo.html" /><link rel="prev" title="Welcome to psyflow’s documentation!" href="../index.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="SubInfo: Collecting Participant Information" href="get_subinfo.html" /><link rel="prev" title="Welcome to psyflow’s documentation!" href="../index.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>🏁 Getting Started with psyflow - psyflow 0.1.0 documentation</title>
+        <title>Getting Started with psyflow - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">psyflow 0.1.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">psyflow 0.1.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo only-dark" src="../_static/logo_black-removebg.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">psyflow 0.1.0 documentation</span>
+  <span class="sidebar-brand-text">psyflow 0.1.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -205,13 +205,13 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🏁 Getting Started with psyflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: Trigger Dictionary + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">🖥️ CLI Usage and <code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Getting Started with psyflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -263,137 +263,403 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="getting-started-with-psyflow">
-<h1>🏁 Getting Started with psyflow<a class="headerlink" href="#getting-started-with-psyflow" title="Link to this heading">¶</a></h1>
-<p>Welcome to <strong>psyflow</strong>, a lightweight framework for building PsychoPy experiments with modular, chainable components. This guide walks you through installation, basic setup, and running your first trial.</p>
+<h1>Getting Started with psyflow<a class="headerlink" href="#getting-started-with-psyflow" title="Link to this heading">¶</a></h1>
+<p>Welcome to <strong>psyflow</strong>, a powerful yet lightweight framework for building PsychoPy experiments with modular, chainable components. This guide will walk you through installation, basic setup, and running your first experiment.</p>
+<section id="what-is-psyflow">
+<h2>What is psyflow?<a class="headerlink" href="#what-is-psyflow" title="Link to this heading">¶</a></h2>
+<p>Psyflow is a framework that simplifies the creation of cognitive and behavioral experiments by providing:</p>
+<ul class="simple">
+<li><p><strong>Modular components</strong> that can be easily combined and reused</p></li>
+<li><p><strong>Chainable methods</strong> for intuitive experiment construction</p></li>
+<li><p><strong>EEG/MEG-friendly</strong> trigger handling for precise timing</p></li>
+<li><p><strong>Flexible stimulus management</strong> through code or configuration files</p></li>
+<li><p><strong>Structured data collection</strong> for consistent experimental design</p></li>
+</ul>
+</section>
 <section id="installation">
-<h2>1. Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
-<p>Ensure you have PsychoPy installed:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>pip install psychopy
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<section id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h3>
+<p>Before installing psyflow, make sure you have PsychoPy installed:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>psychopy
 </pre></div>
 </div>
-<p>Then install psyflow (replace with actual package name if on PyPI):</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>pip install psyflow
+</section>
+<section id="installing-psyflow">
+<h3>Installing psyflow<a class="headerlink" href="#installing-psyflow" title="Link to this heading">¶</a></h3>
+<p>You can install psyflow directly from PyPI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="nv">psyflow</span><span class="o">==</span><span class="m">0</span>.1.0
 </pre></div>
 </div>
-<p>Or if you’re working from source:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>git clone https://github.com/your-org/psyflow.git
-cd psyflow
-pip install -e .
+<p>Or if you prefer to work with the source code:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/TaskBeacon/psyflow.git
+<span class="nb">cd</span><span class="w"> </span>psyflow
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 </pre></div>
 </div>
+</section>
 </section>
 <section id="basic-experiment-structure">
-<h2>2. Basic Experiment Structure<a class="headerlink" href="#basic-experiment-structure" title="Link to this heading">¶</a></h2>
-<p>A typical psyflow experiment has these core steps:</p>
+<h2>Basic Experiment Structure<a class="headerlink" href="#basic-experiment-structure" title="Link to this heading">¶</a></h2>
+<p>A typical psyflow experiment follows these core steps:</p>
 <ol class="arabic simple">
-<li><p><strong>Configure</strong> experiment settings (<code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code>)</p></li>
-<li><p><strong>Collect</strong> participant info (<code class="docutils literal notranslate"><span class="pre">SubInfo</span></code>)</p></li>
-<li><p><strong>Build</strong> stimuli (<code class="docutils literal notranslate"><span class="pre">StimBank</span></code>)</p></li>
-<li><p><strong>Define</strong> triggers (a dictionary of codes + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>)</p></li>
-<li><p><strong>Create</strong> a trial (<code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>)</p></li>
-<li><p><strong>Run</strong> the trial and collect data</p></li>
+<li><p><strong>Configure experiment settings</strong> using <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code></p>
+<ul class="simple">
+<li><p>Define blocks, trials, conditions, and randomization</p></li>
+<li><p>Set up display parameters and response keys</p></li>
+</ul>
+</li>
+<li><p><strong>Collect participant information</strong> with <code class="docutils literal notranslate"><span class="pre">SubInfo</span></code></p>
+<ul class="simple">
+<li><p>Create customizable input forms</p></li>
+<li><p>Validate participant data</p></li>
+</ul>
+</li>
+<li><p><strong>Build stimuli</strong> using <code class="docutils literal notranslate"><span class="pre">StimBank</span></code></p>
+<ul class="simple">
+<li><p>Register visual and auditory stimuli</p></li>
+<li><p>Load stimuli from configuration files or code</p></li>
+</ul>
+</li>
+<li><p><strong>Define triggers</strong> with <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></p>
+<ul class="simple">
+<li><p>Set up EEG/MEG compatible triggers</p></li>
+<li><p>Configure timing and callbacks</p></li>
+</ul>
+</li>
+<li><p><strong>Create trials</strong> with <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code></p>
+<ul class="simple">
+<li><p>Combine stimuli into trial sequences</p></li>
+<li><p>Add response handling and timing control</p></li>
+</ul>
+</li>
+<li><p><strong>Organize blocks</strong> using <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code></p>
+<ul class="simple">
+<li><p>Group trials into experimental blocks</p></li>
+<li><p>Manage condition balancing and randomization</p></li>
+</ul>
+</li>
+<li><p><strong>Run the experiment and collect data</strong></p>
+<ul class="simple">
+<li><p>Execute trials and blocks</p></li>
+<li><p>Save results in structured formats</p></li>
+</ul>
+</li>
 </ol>
 </section>
+<section id="step-by-step-guide">
+<h2>Step-by-Step Guide<a class="headerlink" href="#step-by-step-guide" title="Link to this heading">¶</a></h2>
 <section id="configure-your-task">
-<h2>3. Configure Your Task<a class="headerlink" href="#configure-your-task" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import TaskSettings
+<h3>1. Configure Your Task<a class="headerlink" href="#configure-your-task" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> class provides a centralized way to manage experiment parameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
 
-config = {
-    &quot;total_blocks&quot;: 2,
-    &quot;total_trials&quot;: 20,
-    &quot;seed_mode&quot;: &quot;same_within_sub&quot;,
-    &quot;key_list&quot;: [&quot;left&quot;, &quot;right&quot;],
-    &quot;conditions&quot;: [&quot;reward&quot;, &quot;neutral&quot;],
-    &quot;bg_color&quot;: &quot;black&quot;
-}
-settings = TaskSettings.from_dict(config)
+<span class="c1"># Create settings from a dictionary</span>
+<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;total_blocks&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>                  <span class="c1"># Number of experimental blocks</span>
+    <span class="s2">&quot;total_trials&quot;</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>                <span class="c1"># Total trials across all blocks</span>
+    <span class="s2">&quot;seed_mode&quot;</span><span class="p">:</span> <span class="s2">&quot;same_within_sub&quot;</span><span class="p">,</span>    <span class="c1"># Randomization strategy</span>
+    <span class="s2">&quot;key_list&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">],</span>     <span class="c1"># Response keys</span>
+    <span class="s2">&quot;conditions&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">,</span> <span class="s2">&quot;neutral&quot;</span><span class="p">],</span> <span class="c1"># Experimental conditions</span>
+    <span class="s2">&quot;bg_color&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span>               <span class="c1"># Window background color</span>
+    <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>              <span class="c1"># Window size in pixels</span>
+    <span class="s2">&quot;fullscreen&quot;</span><span class="p">:</span> <span class="kc">True</span>                 <span class="c1"># Fullscreen mode</span>
+<span class="p">}</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Later, after collecting <code class="docutils literal notranslate"><span class="pre">subject_id</span></code>:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>settings.add_subinfo({&quot;subject_id&quot;: &quot;001&quot;, &quot;session_name&quot;: &quot;A&quot;})
+<p>After collecting participant information, you can add it to your settings:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add subject information to generate file paths and seeds</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">({</span><span class="s2">&quot;subject_id&quot;</span><span class="p">:</span> <span class="s2">&quot;001&quot;</span><span class="p">,</span> <span class="s2">&quot;session_name&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
-<p>This creates <code class="docutils literal notranslate"><span class="pre">settings.block_seed</span></code>, <code class="docutils literal notranslate"><span class="pre">settings.log_file</span></code>, and <code class="docutils literal notranslate"><span class="pre">settings.res_file</span></code>.</p>
+<p>This automatically creates:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">settings.block_seed</span></code>: Random seeds for each block</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">settings.log_file</span></code>: Path for PsychoPy log file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">settings.res_file</span></code>: Path for results data file</p></li>
+</ul>
 </section>
-<section id="collect-participant-info">
-<h2>4. Collect Participant Info<a class="headerlink" href="#collect-participant-info" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import yaml
-from psyflow import SubInfo
+<section id="collect-participant-information">
+<h3>2. Collect Participant Information<a class="headerlink" href="#collect-participant-information" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> class creates customizable GUI dialogs for collecting participant data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span>
 
-config = yaml.safe_load(open(&quot;subinfo.yaml&quot;))
-collector = SubInfo(config)
-subinfo = collector.collect()   # opens GUI
-# e.g., {&#39;subject_id&#39;:&#39;001&#39;, &#39;session_name&#39;:&#39;A&#39;}
+<span class="c1"># Load configuration from YAML file</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;subinfo.yaml&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># Example YAML configuration:</span>
+<span class="c1"># subinfo_fields:</span>
+<span class="c1">#   - name: subject_id</span>
+<span class="c1">#     type: int</span>
+<span class="c1">#     constraints: {min: 101, max: 999, digits: 3}</span>
+<span class="c1">#   - name: age</span>
+<span class="c1">#     type: int</span>
+<span class="c1">#     constraints: {min: 18, max: 100}</span>
+<span class="c1">#   - name: condition</span>
+<span class="c1">#     type: choice</span>
+<span class="c1">#     choices: [control, experimental]</span>
+<span class="c1"># subinfo_mapping:</span>
+<span class="c1">#   subject_id: &quot;Participant ID&quot;</span>
+<span class="c1">#   age: &quot;Age (years)&quot;</span>
+<span class="c1">#   condition: &quot;Condition Group&quot;</span>
+
+<span class="c1"># Create collector and show dialog</span>
+<span class="n">collector</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">subinfo</span> <span class="o">=</span> <span class="n">collector</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>  <span class="c1"># Opens GUI dialog</span>
+
+<span class="c1"># Result example: {&#39;subject_id&#39;: &#39;001&#39;, &#39;age&#39;: 25, &#39;condition&#39;: &#39;control&#39;}</span>
 </pre></div>
 </div>
-<p>Pass <code class="docutils literal notranslate"><span class="pre">subinfo</span></code> into settings via <code class="docutils literal notranslate"><span class="pre">add_subinfo()</span></code> above.</p>
+<p>Pass this information to your settings:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subinfo</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="build-your-stimuli">
-<h2>5. Build Your Stimuli<a class="headerlink" href="#build-your-stimuli" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import StimBank
-from psychopy.visual import TextStim, Circle
+<h3>3. Build Your Stimuli<a class="headerlink" href="#build-your-stimuli" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> class provides a flexible way to manage stimuli:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimBank</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.visual</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextStim</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">Window</span>
 
-stim_bank = StimBank(win)
-@stim_bank.define(&quot;fix&quot;)
-def make_fix(win):
-    return TextStim(win, text=&quot;+&quot;, color=&quot;white&quot;)
-stim_bank.add_from_dict({
-    &quot;target&quot;: {&quot;type&quot;:&quot;circle&quot;,&quot;radius&quot;:0.5,&quot;fillColor&quot;:&quot;red&quot;}
-})
-stim_bank.preload_all()
-</pre></div>
-</div>
-<p>Retrieve with:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>fix = stim_bank.get(&quot;fix&quot;)
-tgt = stim_bank.get(&quot;target&quot;)
+<span class="c1"># Create PsychoPy window</span>
+<span class="n">win</span> <span class="o">=</span> <span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">fullscr</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span><span class="p">,</span> 
+             <span class="n">color</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">bg_color</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">units</span><span class="p">)</span>
+
+<span class="c1"># Create stimulus bank</span>
+<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
+
+<span class="c1"># Method 1: Register stimuli using decorators</span>
+<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_fixation</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;feedback_correct&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_feedback</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Correct!&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+
+<span class="c1"># Method 2: Register stimuli from dictionary/YAML</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">({</span>
+    <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;circle&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lineColor&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;cue&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mf">1.2</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="c1"># Preload all stimuli (optional but recommended)</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>
+
+<span class="c1"># Retrieve stimuli when needed</span>
+<span class="n">fixation</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="set-up-triggers">
-<h2>6. Set Up Triggers<a class="headerlink" href="#set-up-triggers" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import yaml
-from psyflow import TriggerSender
+<h3>4. Set Up Triggers<a class="headerlink" href="#set-up-triggers" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> class handles EEG/MEG trigger codes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
 
-with open(&quot;triggers.yaml&quot;) as f:
-    triggers = yaml.safe_load(f)
+<span class="c1"># Load trigger codes from YAML</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;triggers.yaml&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">triggers</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
-sender = TriggerSender(lambda code: port.write(bytes([code])))
+<span class="c1"># Example YAML content:</span>
+<span class="c1"># fix_onset: 1</span>
+<span class="c1"># target_onset: 2</span>
+<span class="c1"># resp_L: 11</span>
+<span class="c1"># resp_R: 12</span>
+<span class="c1"># timeout: 99</span>
+
+<span class="c1"># For real hardware (e.g., parallel port)</span>
+<span class="c1"># import parallel</span>
+<span class="c1"># port = parallel.ParallelPort(address=0x0378)  # Adjust address as needed</span>
+<span class="c1"># sender = TriggerSender(lambda code: port.write(bytes([code])))</span>
+
+<span class="c1"># For development/testing (mock mode)</span>
+<span class="n">sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Test trigger</span>
+<span class="n">sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">triggers</span><span class="p">[</span><span class="s2">&quot;fix_onset&quot;</span><span class="p">])</span>  <span class="c1"># Prints: [MockTrigger] Sent code: 1</span>
 </pre></div>
 </div>
 </section>
 <section id="create-run-a-trial">
-<h2>7. Create &amp; Run a Trial<a class="headerlink" href="#create-run-a-trial" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>from psyflow import StimUnit
+<h3>5. Create &amp; Run a Trial<a class="headerlink" href="#create-run-a-trial" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> class manages individual trials:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.hardware.keyboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Keyboard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span>
 
-trial = StimUnit(&quot;T1&quot;, win, kb, triggersender=sender)
-trial \
-  .add_stim(fix, tgt) \
-  .on_start(lambda u: u.send_trigger(triggers[&quot;fix_onset&quot;])) \
-  .capture_response(
-     keys=[&quot;left&quot;,&quot;right&quot;],
-     duration=1.0,
-     onset_trigger=triggers[&quot;fix_onset&quot;],
-     response_trigger={&quot;left&quot;:triggers[&quot;resp_L&quot;], &quot;right&quot;:triggers[&quot;resp_R&quot;]},
-     timeout_trigger=triggers[&quot;timeout&quot;],
-     correct_keys=[&quot;left&quot;],
-     highlight_stim={&quot;left&quot;: highlight_left, &quot;right&quot;: highlight_right}
-  ) \
-  .on_end(lambda u: print(&quot;Result:&quot;, u.state)) \
-  .run(frame_based=True)
+<span class="c1"># Create keyboard for responses</span>
+<span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
+
+<span class="c1"># Create trial unit</span>
+<span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;trial_1&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
+
+<span class="c1"># Configure trial using chainable methods</span>
+<span class="n">trial</span> \
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">unit</span><span class="p">:</span> <span class="n">unit</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">(</span><span class="n">triggers</span><span class="p">[</span><span class="s2">&quot;fix_onset&quot;</span><span class="p">]))</span> \
+    <span class="o">.</span><span class="n">show_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">show_stim</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">trigger</span><span class="o">=</span><span class="n">triggers</span><span class="p">[</span><span class="s2">&quot;target_onset&quot;</span><span class="p">])</span> \
+    <span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
+        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">],</span>
+        <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">onset_trigger</span><span class="o">=</span><span class="n">triggers</span><span class="p">[</span><span class="s2">&quot;target_onset&quot;</span><span class="p">],</span>
+        <span class="n">response_trigger</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="n">triggers</span><span class="p">[</span><span class="s2">&quot;resp_L&quot;</span><span class="p">],</span> 
+            <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="n">triggers</span><span class="p">[</span><span class="s2">&quot;resp_R&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="n">timeout_trigger</span><span class="o">=</span><span class="n">triggers</span><span class="p">[</span><span class="s2">&quot;timeout&quot;</span><span class="p">],</span>
+        <span class="n">correct_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">],</span>
+    <span class="p">)</span> \
+    <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">unit</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span> \
+    <span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">frame_based</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Access trial results</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RT: </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rt&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Correct: </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;correct&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Inspect <code class="docutils literal notranslate"><span class="pre">trial.state</span></code>, save or append to data file.</p>
+</section>
+<section id="organizing-blocks">
+<h3>6. Organizing Blocks<a class="headerlink" href="#organizing-blocks" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> class helps manage multiple trials:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockUnit</span>
+
+<span class="c1"># Create a block</span>
+<span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
+    <span class="n">block_id</span><span class="o">=</span><span class="s2">&quot;block_1&quot;</span><span class="p">,</span>
+    <span class="n">block_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
+    <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>
+    <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>
+<span class="p">)</span>
+
+<span class="c1"># Generate balanced conditions</span>
+<span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span>
+    <span class="n">condition_labels</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">conditions</span><span class="p">,</span>
+    <span class="n">order</span><span class="o">=</span><span class="s2">&quot;random&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Define trial execution function</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">trial_idx</span><span class="p">,</span> <span class="n">block</span><span class="p">):</span>
+    <span class="c1"># Create trial</span>
+    <span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trial_</span><span class="si">{</span><span class="n">trial_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
+    
+    <span class="c1"># Configure based on condition</span>
+    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;reward&quot;</span><span class="p">:</span>
+        <span class="n">target_color</span> <span class="o">=</span> <span class="s2">&quot;gold&quot;</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># neutral</span>
+        <span class="n">target_color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span>
+    
+    <span class="c1"># Update stimulus</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="n">target_color</span><span class="p">)</span>
+    
+    <span class="c1"># Run trial (simplified)</span>
+    <span class="n">trial</span> \
+        <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">show_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">show_stim</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">capture_response</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">key_list</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    
+    <span class="c1"># Return trial data</span>
+    <span class="k">return</span> <span class="n">trial</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+<span class="c1"># Run all trials in the block</span>
+<span class="n">block</span><span class="o">.</span><span class="n">run_trials</span><span class="p">(</span><span class="n">run_trial</span><span class="p">)</span>
+
+<span class="c1"># Get block results</span>
+<span class="n">block_results</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+</pre></div>
+</div>
 </section>
 <section id="putting-it-all-together">
-<h2>8. Putting It All Together<a class="headerlink" href="#putting-it-all-together" title="Link to this heading">¶</a></h2>
-<p>Combine loops over blocks and trials:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>for b in range(settings.total_blocks):
-    # generate conditions, run trial sequence...
-    pass
+<h3>7. Putting It All Together<a class="headerlink" href="#putting-it-all-together" title="Link to this heading">¶</a></h3>
+<p>Here’s how to combine everything into a complete experiment:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize experiment components</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">subinfo</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">subinfo_config</span><span class="p">)</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subinfo</span><span class="p">)</span>
+
+<span class="n">win</span> <span class="o">=</span> <span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">fullscr</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span><span class="p">,</span> 
+             <span class="n">color</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">bg_color</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">units</span><span class="p">)</span>
+<span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
+
+<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
+<span class="c1"># ... register stimuli ...</span>
+
+<span class="n">sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Run blocks</span>
+<span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">b_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">):</span>
+    <span class="c1"># Create block</span>
+    <span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
+        <span class="n">block_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;block_</span><span class="si">{</span><span class="n">b_idx</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">block_idx</span><span class="o">=</span><span class="n">b_idx</span><span class="p">,</span>
+        <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
+        <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>
+        <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># Generate conditions</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span><span class="n">condition_labels</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">conditions</span><span class="p">)</span>
+    
+    <span class="c1"># Add block start/end hooks</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">())</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">())</span>
+    
+    <span class="c1"># Run all trials</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">run_trials</span><span class="p">(</span><span class="n">run_trial</span><span class="p">)</span>
+    
+    <span class="c1"># Save block results</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">target_list</span><span class="o">=</span><span class="n">all_results</span><span class="p">)</span>
+    
+    <span class="c1"># Show break between blocks (except after last block)</span>
+    <span class="k">if</span> <span class="n">b_idx</span> <span class="o">&lt;</span> <span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">break_text</span> <span class="o">=</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Take a break. Press space to continue.&quot;</span><span class="p">,</span> 
+                             <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">break_text</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+        <span class="n">kb</span><span class="o">.</span><span class="n">waitKeys</span><span class="p">(</span><span class="n">keyList</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;space&quot;</span><span class="p">])</span>
+
+<span class="c1"># Save all results</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Clean up</span>
+<span class="n">win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Use <code class="docutils literal notranslate"><span class="pre">settings.res_file</span></code> to write headers and <code class="docutils literal notranslate"><span class="pre">trial.to_dict()</span></code> for rows.</p>
-<p>Congratulations—you’ve run your first psyflow trial! Explore additional features in each class’s documentation to customize timing, logging, and more. Happy experimenting!</p>
+</section>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
+<p>Congratulations! You’ve learned the basics of creating experiments with psyflow. To dive deeper into specific components, check out these tutorials:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="get_subinfo.html"><span class="std std-doc">Collecting Participant Information</span></a></p></li>
+<li><p><a class="reference internal" href="task_settings.html"><span class="std std-doc">Configuring Task Settings</span></a></p></li>
+<li><p><a class="reference internal" href="build_blocks.html"><span class="std std-doc">Building Experimental Blocks</span></a></p></li>
+<li><p><a class="reference internal" href="build_trialunit.html"><span class="std std-doc">Creating Trial Units</span></a></p></li>
+<li><p><a class="reference internal" href="build_stimulus.html"><span class="std std-doc">Managing Stimuli</span></a></p></li>
+<li><p><a class="reference internal" href="send_trigger.html"><span class="std std-doc">Sending EEG/MEG Triggers</span></a></p></li>
+<li><p><a class="reference internal" href="cli_usage.html"><span class="std std-doc">Using the Command Line Interface</span></a></p></li>
+</ul>
+<p>Happy experimenting!</p>
 </section>
 </section>
 
@@ -407,7 +673,7 @@ trial \
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">🧾 SubInfo: Participant Information Collector</div>
+                <div class="title">SubInfo: Collecting Participant Information</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -452,15 +718,25 @@ trial \
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">🏁 Getting Started with psyflow</a><ul>
-<li><a class="reference internal" href="#installation">1. Installation</a></li>
-<li><a class="reference internal" href="#basic-experiment-structure">2. Basic Experiment Structure</a></li>
-<li><a class="reference internal" href="#configure-your-task">3. Configure Your Task</a></li>
-<li><a class="reference internal" href="#collect-participant-info">4. Collect Participant Info</a></li>
-<li><a class="reference internal" href="#build-your-stimuli">5. Build Your Stimuli</a></li>
-<li><a class="reference internal" href="#set-up-triggers">6. Set Up Triggers</a></li>
-<li><a class="reference internal" href="#create-run-a-trial">7. Create &amp; Run a Trial</a></li>
-<li><a class="reference internal" href="#putting-it-all-together">8. Putting It All Together</a></li>
+<li><a class="reference internal" href="#">Getting Started with psyflow</a><ul>
+<li><a class="reference internal" href="#what-is-psyflow">What is psyflow?</a></li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li><a class="reference internal" href="#installing-psyflow">Installing psyflow</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#basic-experiment-structure">Basic Experiment Structure</a></li>
+<li><a class="reference internal" href="#step-by-step-guide">Step-by-Step Guide</a><ul>
+<li><a class="reference internal" href="#configure-your-task">1. Configure Your Task</a></li>
+<li><a class="reference internal" href="#collect-participant-information">2. Collect Participant Information</a></li>
+<li><a class="reference internal" href="#build-your-stimuli">3. Build Your Stimuli</a></li>
+<li><a class="reference internal" href="#set-up-triggers">4. Set Up Triggers</a></li>
+<li><a class="reference internal" href="#create-run-a-trial">5. Create &amp; Run a Trial</a></li>
+<li><a class="reference internal" href="#organizing-blocks">6. Organizing Blocks</a></li>
+<li><a class="reference internal" href="#putting-it-all-together">7. Putting It All Together</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
 </ul>
@@ -472,7 +748,7 @@ trial \
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=01f34227"></script>
+</div><script src="../_static/documentation_options.js?v=a58bc63e"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>

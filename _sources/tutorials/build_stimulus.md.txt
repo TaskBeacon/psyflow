@@ -1,538 +1,504 @@
-## 🎨 StimBank: Flexible Stimulus Management for PsychoPy
+# StimBank: Flexible Stimulus Management for PsychoPy
 
-`StimBank` is a hybrid registry system that allows you to manage PsychoPy stimuli using both decorators and YAML/dictionary specifications. It supports dynamic construction, formatting, lazy loading, previewing, and exporting of stimuli.
+## Overview
 
-`StimBank` offers a declarative and reusable way to manage visual components in your PsychoPy experiments. Whether you're defining stimuli programmatically or loading them from config files, `StimBank` gives you the tools to keep things modular, inspectable, and flexible.
+`StimBank` is a powerful stimulus management system for PsychoPy experiments that solves several common challenges:
 
-### 🧵 Summary of Key Methods
+- **Centralized stimulus management**: Define all visual elements in one place
+- **Multiple definition methods**: Use Python code or configuration files
+- **Lazy loading**: Only instantiate stimuli when needed
+- **Dynamic formatting**: Update text stimuli with variable content
+- **Batch operations**: Preview, export, and validate multiple stimuli
 
-| Purpose                    | Method                        |
-|-------------------------------------|--------------------------------------|
-| Register (decorator)      | `@stim_bank.define(name)`     |
-| Register (dict)           | `.add_from_dict()`            |
-| Get one stimulus          | `.get(name)`                  |
-| Get many (selected/group) | `.get_selected(keys)` / `.get_group(prefix)` |
-| Preview stimuli           | `.preview_all()` etc.         |
-| Format `TextStim`         | `.get_and_format(name, **kwargs)` |
-| Override stimulus         | `.rebuild(name, **kwargs)`    |
-| YAML export/import        | `.export_to_yaml()` / `add_from_dict()` |
-| Validate config           | `.validate_dict()`            |
+Whether you're building a simple experiment or a complex protocol with dozens of visual elements, `StimBank` helps keep your code organized, maintainable, and flexible.
 
+## Key Features
 
+| Feature | Description |
+|---------|-------------|
+| Dual registration | Define stimuli via decorators or YAML/dictionaries |
+| Lazy instantiation | Create stimuli only when needed to optimize performance |
+| Grouping | Retrieve related stimuli by prefix or explicit selection |
+| Text formatting | Insert dynamic values into text stimuli |
+| Stimulus rebuilding | Modify stimulus properties on-the-fly |
+| Preview functionality | Visually inspect all stimuli during development |
+| Configuration export | Save stimulus definitions to YAML for reuse |
 
+## Quick Reference
+
+| Purpose | Method | Example |
+|---------|--------|--------|
+| Initialize | `StimBank(win)` | `bank = StimBank(win)` |
+| Register (decorator) | `@bank.define(name)` | `@bank.define("fixation")` |
+| Register (dict) | `.add_from_dict(dict)` | `bank.add_from_dict(config)` |
+| Get stimulus | `.get(name)` | `stim = bank.get("target")` |
+| Get multiple | `.get_selected(keys)` | `stims = bank.get_selected(["fix", "cue"])` |
+| Get by prefix | `.get_group(prefix)` | `cues = bank.get_group("cue_")` |
+| Format text | `.get_and_format(name, **kwargs)` | `bank.get_and_format("msg", name="John")` |
+| Modify stimulus | `.rebuild(name, **kwargs)` | `bank.rebuild("target", fillColor="blue")` |
+| Preview all | `.preview_all()` | `bank.preview_all()` |
+| Export config | `.export_to_yaml(file)` | `bank.export_to_yaml("stimuli.yaml")` |
+
+## Detailed Usage Guide
 
 ### 1. Initialization
 
-To begin, create a `StimBank` instance with your PsychoPy window:
+Create a `StimBank` instance with your PsychoPy window:
 
-    from your_package import StimBank
+```python
+from psychopy.visual import Window
+from psyflow import StimBank
 
-    stim_bank = StimBank(win)
+# Create PsychoPy window
+win = Window(size=[1024, 768], color="black", units="deg")
 
+# Initialize stimulus bank
+stim_bank = StimBank(win)
+```
 
+You can also provide an initial configuration dictionary:
 
-### 2. Registering Stimuli (Two Ways)
+```python
+config = {
+    "fixation": {"type": "text", "text": "+", "height": 1.0, "color": "white"}
+}
+stim_bank = StimBank(win, config=config)
+```
 
-#### Option A: Register via Decorator
+### 2. Registering Stimuli
 
-Use `@stim_bank.define("name")` to register a stimulus-generating function:
+#### Method 1: Using Decorators
 
-    @stim_bank.define("fixation")
-    def make_fix(win):
-        return TextStim(win, text="+")
+The decorator approach gives you full flexibility with Python code:
 
-    @stim_bank.define("cue_circle")
-    def make_cue(win):
-        return Circle(win, radius=1.0, fillColor='blue')
+```python
+from psychopy.visual import TextStim, Circle, ImageStim
 
-#### Option B: Register via Dictionary
+@stim_bank.define("fixation")
+def make_fixation(win):
+    return TextStim(win, text="+", color="white", height=1.0)
 
-You can also register multiple stimuli using `.add_from_dict()`:
+@stim_bank.define("target")
+def make_target(win):
+    return Circle(
+        win, 
+        radius=0.5, 
+        fillColor="red", 
+        lineColor="white", 
+        lineWidth=2
+    )
 
-    stim_bank.add_from_dict({
-        "my_text": {
-            "type": "text",
-            "text": "Hello!",
-            "pos": [0, 0],
-            "color": "white"
-        },
-        "left_target": {
-            "type": "circle",
-            "radius": 2,
-            "pos": [-4, 0],
-            "fillColor": "red"
-        }
-    })
+@stim_bank.define("feedback_correct")
+def make_feedback(win):
+    return TextStim(
+        win,
+        text="Correct!",
+        color="green",
+        height=0.8,
+        pos=[0, -2]
+    )
 
+# Complex stimuli with multiple components
+@stim_bank.define("compound_stimulus")
+def make_compound(win):
+    # Create a container (ShapeStim) with multiple elements
+    container = ShapeStim(win, fillColor=None, lineColor=None)
+    
+    # Add child stimuli
+    circle = Circle(win, radius=1.0, fillColor="blue")
+    text = TextStim(win, text="A", color="white")
+    
+    # Return the container with references to children
+    container._circle = circle
+    container._text = text
+    
+    # Define a custom draw method
+    original_draw = container.draw
+    def custom_draw():
+        circle.draw()
+        text.draw()
+        original_draw()
+    container.draw = custom_draw
+    
+    return container
+```
 
+#### Method 2: Using Dictionaries or YAML
+
+The dictionary approach is more declarative and can be loaded from YAML files:
+
+```python
+# Direct dictionary definition
+stim_config = {
+    "instructions": {
+        "type": "text",
+        "text": "Press SPACE to begin",
+        "height": 0.7,
+        "color": "white",
+        "pos": [0, 3]
+    },
+    "left_target": {
+        "type": "circle",
+        "radius": 0.8,
+        "pos": [-5, 0],
+        "fillColor": "blue"
+    },
+    "right_target": {
+        "type": "circle",
+        "radius": 0.8,
+        "pos": [5, 0],
+        "fillColor": "red"
+    },
+    "image_stimulus": {
+        "type": "image",
+        "image": "images/stimulus.png",
+        "size": [4, 3]
+    }
+}
+
+# Add to stimulus bank
+stim_bank.add_from_dict(stim_config)
+```
+
+Loading from YAML file:
+
+```python
+import yaml
+
+# Load from YAML file
+with open("stimuli.yaml", "r") as f:
+    yaml_config = yaml.safe_load(f)
+
+stim_bank.add_from_dict(yaml_config)
+```
+
+Example YAML file (`stimuli.yaml`):
+
+```yaml
+fixation:
+  type: text
+  text: +
+  height: 1.0
+  color: white
+
+target:
+  type: circle
+  radius: 0.5
+  fillColor: red
+  lineColor: white
+
+feedback:
+  type: text
+  text: "Correct: {score} points"
+  height: 0.8
+  color: green
+  pos: [0, -2]
+```
 
 ### 3. Retrieving Stimuli
 
-Get a single stimulus (instantiated lazily):
+#### Getting Individual Stimuli
 
-    stim = stim_bank.get("my_text")
+```python
+# Get a single stimulus (instantiated lazily)
+fixation = stim_bank.get("fixation")
+fixation.draw()
+win.flip()
+
+# Check if a stimulus exists
+if stim_bank.has("target"):
+    target = stim_bank.get("target")
+    target.draw()
+```
+
+#### Getting Multiple Stimuli
+
+```python
+# Get specific stimuli by name
+selected_stimuli = stim_bank.get_selected(["fixation", "target", "feedback"])
+for stim in selected_stimuli:
     stim.draw()
 
-Get a group of stimuli by name or prefix:
+# Get all stimuli with a common prefix
+cue_stimuli = stim_bank.get_group("cue_")
+# Returns all stimuli with keys like "cue_left", "cue_right", etc.
 
-    stim_bank.get_selected(["my_text", "left_target"])
-    stim_bank.get_group("cue_")  # e.g., all keys like "cue_circle", "cue_square"
-
-List all available keys:
-
-    stim_bank.keys()
-
-Check if a stimulus exists:
-
-    stim_bank.has("fixation")  # returns True or False
-
-
+# Get all available stimulus keys
+all_keys = stim_bank.keys()
+print(f"Available stimuli: {all_keys}")
+```
 
 ### 4. Dynamic Text Formatting
 
-If you registered a `TextStim`, you can format its contents dynamically,
-for example you used {username} as placeholder when defining the text:
+For `TextStim` objects, you can use Python's string formatting syntax in the text and then insert values at runtime:
 
-    stim = stim_bank.get_and_format("my_text", username="Zhang")
-    stim.draw()  # will show "Hello, Zhang!" if the text was "Hello, {username}!"
+```python
+# Define a text stimulus with placeholders
+stim_bank.add_from_dict({
+    "score_message": {
+        "type": "text",
+        "text": "Score: {points} points\nAccuracy: {accuracy}%",
+        "height": 0.7,
+        "color": "white"
+    },
+    "welcome": {
+        "type": "text",
+        "text": "Welcome, {participant_name}!",
+        "height": 1.0,
+        "color": "yellow"
+    }
+})
 
+# Format with values at runtime
+score_text = stim_bank.get_and_format("score_message", 
+                                    points=150, 
+                                    accuracy=87.5)
+score_text.draw()
 
-### 5. Rebuilding or Overriding Stimuli
+# Format with participant name
+welcome_text = stim_bank.get_and_format("welcome", 
+                                      participant_name="Alex")
+welcome_text.draw()
+```
 
-For other stimulus, you can rebuild them with new parameters, a good way to get rid of the `clone` or `deepcopy` that does not work for visual stimuli.
+### 5. Rebuilding and Modifying Stimuli
 
-Important note: 
-1. The rebuilding process will not update the original stimulus in the bank. It creates a new instance with the same properties, but you can specify new ones.
-2. It works for the class but not for the visual stimuli per se. stim_bank.get('some_stim").rebuild() will give an error that `rebuild` is not a method of the visual stimuli.
+You can modify stimulus properties on-the-fly:
 
-To get a fresh instance of a stimulus with new properties:
+```python
+# Rebuild a stimulus with new properties
+blue_target = stim_bank.rebuild("target", fillColor="blue", radius=0.7)
+blue_target.draw()
 
-    new_stim = stim_bank.rebuild("left_target", radius=4, fillColor="green")
+# The original definition remains unchanged
+original_target = stim_bank.get("target")  # Still red with radius=0.5
+```
 
-Optionally, update the internal cache: (This will update the one saved in stim_bank)
+This is particularly useful for condition-dependent stimuli:
 
-    stim_bank.rebuild("left_target", update_cache=True, fillColor="green")
-
-
+```python
+def run_trial(condition):
+    if condition == "reward":
+        target = stim_bank.rebuild("target", fillColor="gold")
+    else:  # "neutral" condition
+        target = stim_bank.rebuild("target", fillColor="gray")
+    
+    # Run trial with the modified target
+    # ...
+```
 
 ### 6. Previewing Stimuli
 
-You can preview stimuli one by one:
-
-    stim_bank.preview_all()
-
-Preview a specific group by name prefix:
-
-    stim_bank.preview_group("cue_")
-
-Preview a selected list of keys:
-
-    stim_bank.preview_selected(["my_text", "left_target"])
-
-
-
-
-### 7. Describing Parameters
-
-Use `describe(name)` to print all valid parameters for the stimulus type:
-
-    stim_bank.describe("left_target")
-
-Output example:
-
-    🧾 Description of 'left_target' (Circle)
-      - radius: required
-      - pos: default=(0, 0)
-      - fillColor: default='white'
-
-
-
-### 8. YAML Export and Import
-
-Export all dictionary-based stimuli to YAML:
-
-    stim_bank.export_to_yaml("my_stimuli.yaml")
-
-This includes only stimuli added via `add_from_dict()` or YAML — not decorators.
-
-You can later reload these using:
-
-    import yaml
-
-    with open("my_stimuli.yaml", "r") as f:
-        stim_dict = yaml.safe_load(f)
-
-    stim_bank.add_from_dict(stim_dict)
-
-
-
-### 9. Validating Definitions
-
-Use `.validate_dict()` to check your dictionary for mistakes:
-
-    stim_bank.validate_dict(stim_dict, strict=False)
-
-This prints warnings for unknown or missing arguments. Set `strict=True` to raise exceptions instead. When using add_from_dict() or YAML, it will validate the dictionary before adding it to the bank.
-
-### 10. Realistic Examples
-#### 10.1. Monetary Incentive Delay Task (MID) example.
-
-```yaml
-# === Stimuli (for MID task) ===
-stimuli:
-  fixation:
-    type: text
-    text: "+"
-    color: white
-
-  win_cue:
-    type: circle
-    radius: 3
-    fillColor: magenta
-    lineColor: black
-
-  lose_cue:
-    type: rect
-    width: 6
-    height: 6
-    fillColor: yellow
-    lineColor: black
-
-  neut_cue:
-    type: polygon
-    edges: 3
-    size: 6
-    fillColor: cyan
-    lineColor: black
-
-  win_target:
-    type: circle
-    radius: 3
-    fillColor: black
-    lineColor: black
-
-  lose_target:
-    type: rect
-    width: 6
-    height: 6
-    fillColor: black
-    lineColor: black
-
-  neut_target:
-    type: polygon
-    edges: 3
-    size: 6
-    fillColor: black
-    lineColor: black
-
-  win_hit_feedback:
-    type: text
-    text: "You earned 10 points!"
-    color: white
-
-  win_miss_feedback:
-    type: text
-    text: "You earned 0 points."
-    color: white
-
-  lose_hit_feedback:
-    type: text
-    text: "You earned 0 points."
-    color: white
-
-  lose_miss_feedback:
-    type: text
-    text: "You earned -10 points."
-    color: white
-
-  neut_hit_feedback:
-    type: text
-    text: "You earned 0 points."
-    color: white
-
-  neut_miss_feedback:
-    type: text
-    text: "You earned 0 points."
-    color: white
-
-  
-  block_break:
-    type: text
-    text: |
-      Take a break! 
-      When you are ready, press space to continue.
-    color: white
-
-  block_feedback:
-    type: text
-    text: |
-      Block {block_num} of {total_blocks} completed. 
-      Accuaracy: {accuracy:.2f}
-      Reward: {reward:.2f}
-      Press space to continue.
-    color: white
-
-  instruction_text:
-    type: text
-    text: |
-      In this task, you will see a series of cues and targets. 
-      Your task is to respond to the cues as quickly as possible. 
-      If you respond to a cue, you will earn 10 points. 
-      If you do not respond to a cue, you will earn 0 points. 
-      Press space to continue.
-    color: white
-
-  instruction_image1:
-    type: image
-    image: ./assets/instruction_iamge1.bmp
-
-  instruction_image2:
-    type: image
-    image: ./assets/instruction_image2.bmp
-
-  good_bye:
-    type: text
-    text: |
-      Thank you for participating!
-      Your final reward is {reward:.2f}.
-      Press space to exit.
-    color: white
-```
-
-As everything is almost static, we just need to load them to stim_bank.
+During development, you can preview all stimuli to ensure they appear as expected:
 
 ```python
-# 5. Setup stimulus bank
-stim_bank = StimBank(win)
-# Preload all for safety
+# Preview all stimuli (one at a time with key press to advance)
+stim_bank.preview_all()
 
-stim_config={
-    **config.get('stimuli', {})
-}
-stim_bank.add_from_dict(stim_config)
-stim_bank.preload_all()
+# Preview specific stimuli
+stim_bank.preview_selected(["fixation", "target"])
+
+# Preview stimuli with a common prefix
+stim_bank.preview_group("feedback_")
 ```
 
-#### 10.2. Probabilistic reversal learning (PRL) task example.
+### 7. Exporting Configurations
 
-```yaml
-stimuli:
-  fixation:
-    type: text
-    text: "+"
-    color: white
-  
-  win_feedback:
-    type: text
-    text: "You won!"
-    color: green
-
-  lose_feedback:
-    type: text
-    text: "You lost!"
-    color: red
-  
-  no_response_feedback:
-    type: text
-    text: "No response!"
-    color: yellow
-
-  stima:
-    type: image
-    size: [5, 5]
-  
-  stimb:
-    type: image
-    size: [5, 5]
-
-  highlight_left:
-    type: rect
-    lineColor: 'white'
-    lineWidth: 3
-    pos: [-4, -0.3]
-    width: 3
-    height: 4
-
-  highlight_right:
-    type: rect
-    lineColor: 'white'
-    lineWidth: 3
-    pos: [4, -0.3]
-    width: 3
-    height: 4
-```
-
-Each block we use a pair of images, so we need to load them in the loop. 
+You can export stimulus definitions to YAML for reuse or documentation:
 
 ```python
+# Export all stimuli to YAML
+stim_bank.export_to_yaml("exported_stimuli.yaml")
 
-files = sorted(glob.glob("assets/*.png"))
-pairs = list(zip(files[::2], files[1::2]))
-
-stim_config={
-    **config.get('stimuli', {})
-}
-all_data = []
-for block_i in range(settings.total_blocks):
-    stim_bank=StimBank(win)
-    stima_img, stimb_img = pairs[block_i]
-    cfg = stim_config.copy()
-    cfg['stima']['image'] = stima_img
-    cfg['stimb']['image'] = stimb_img
-    stim_bank.add_from_dict(cfg)
-    stim_bank.preload_all()
-```
-Then we will rebuild them based on the condition (this is in the `run_trial` function)
-
-```python
-    if condition == "AB":
-        stima = stim_bank.rebuild('stima',pos=(-4,0))
-        stimb = stim_bank.rebuild('stimb',pos=(4,0))
-    elif condition == "BA":
-        stimb = stim_bank.rebuild('stimb',pos=(-4,0))
-        stima = stim_bank.rebuild('stima',pos=(4,0))
-
-    make_unit(unit_label="cue") \
-        .add_stim(stima) \
-        .add_stim(stimb)
+# Export selected stimuli
+stim_bank.export_to_yaml("targets.yaml", 
+                        keys=["left_target", "right_target"])
 ```
 
-#### 10.3. Dealing with complicated conditions and stimulus 😱
-In the emotional dot probe tasks, we need to take the emotion, gender, location and probe location into account when setup the conditions. In the task, we have defined 20 conditons, and assigned relevant stimuli to them.
+### 8. Advanced: Sound Stimuli
+
+In addition to visual stimuli, `StimBank` can also manage sound stimuli:
 
 ```python
-def assign_stim_from_condition(condition: str, asset_pool: AssetPool) -> dict:
-    """
-    Assigns left/right faces to a given condition label using the AssetPool.
+from psychopy.sound import Sound
 
-    Parameters:
-    -----------
-    condition : str
-        A condition label, e.g., 'PN_F_L', 'SN_M_R', etc.
-    asset_pool : AssetPool
-        An instance of the AssetPool class with loaded stimuli.
+# Using decorator
+@stim_bank.define("beep")
+def make_beep(win):
+    return Sound(value=1000, secs=0.5)  # 1000 Hz tone for 0.5 seconds
 
-    Returns:
-    --------
-    dict with keys: condition, left_stim, right_stim, target_position
-    """
-    emotion, gender, target = condition.split('_')
-
-    # Map emotion code to left/right stimulus categories
-    if emotion == 'PN':
-        left_key, right_key = 'P_' + gender, 'N_' + gender
-    elif emotion == 'NP':
-        left_key, right_key = 'N_' + gender, 'P_' + gender
-    elif emotion == 'SN':
-        left_key, right_key = 'S_' + gender, 'N_' + gender
-    elif emotion == 'NS':
-        left_key, right_key = 'N_' + gender, 'S_' + gender
-    elif emotion == 'NN':
-        left_key = right_key = 'N_' + gender
-    else:
-        raise ValueError(f"Unknown emotion code: {emotion}")
-
-    # Draw from pool
-    left_stim = asset_pool.draw(left_key)
-    right_stim = asset_pool.draw(right_key)
-
-    return {
-        'condition': condition,
-        'left_stim': left_stim,
-        'right_stim': right_stim,
-        'target_position': 'left' if target == 'L' else 'right'
+# Using dictionary
+stim_bank.add_from_dict({
+    "correct_sound": {
+        "type": "sound",
+        "value": "sounds/correct.wav"
+    },
+    "error_sound": {
+        "type": "sound",
+        "value": "sounds/error.wav"
     }
+})
 
-class AssetPool:
-    def __init__(self, stim_list: Dict[str, List[str]], seed: int = 42):
-        self.rng = random.Random(seed)
-        self.original = stim_list
-        self.pool = {k: [] for k in stim_list}  # working pools start empty
-
-    def draw(self, key: str) -> str:
-        """Draw one stimulus from the specified key pool."""
-        if not self.pool[key]:
-            self.pool[key] = self.original[key][:]
-            self.rng.shuffle(self.pool[key])
-        return self.pool[key].pop()
-
-import os
-from collections import defaultdict
-def get_stim_list_from_assets(asset_dir: str = './assets') -> dict:
-    stim_list = defaultdict(list)
-    for file in os.listdir(asset_dir):
-        if file.lower().endswith('.bmp'):
-            name = file.upper()
-            if name.startswith('HF'):
-                stim_list['P_F'].append(file)
-            elif name.startswith('HM'):
-                stim_list['P_M'].append(file)
-            elif name.startswith('NEF'):
-                stim_list['N_F'].append(file)
-            elif name.startswith('NEM'):
-                stim_list['N_M'].append(file)
-            elif name.startswith('SAF'):
-                stim_list['S_F'].append(file)
-            elif name.startswith('SAM'):
-                stim_list['S_M'].append(file)
-    return dict(stim_list)
-# Example usage:
-
-stim_list = get_stim_list_from_assets('./assets')
-stim_pool = StimPool(stim_list, seed=123)
-
-trial = assign_stim_from_condition('PN_F_L', stim_pool)
-print(trial)
-# {
-#   'condition': 'PN_F_L',
-#   'left_face': 'HF1.BMP',
-#   'right_face': 'NEF3.BMP',
-#   'probe_position': 'left'
-# }
+# Play a sound
+beep = stim_bank.get("beep")
+beep.play()
 ```
 
-For use the of stim_bank, we can define include a placeholder stim in the stim_bank.
+### 9. Advanced: Text-to-Speech
+
+Psyflow includes experimental support for text-to-speech using Microsoft Edge TTS:
+
+```python
+# Define a TTS stimulus
+stim_bank.add_from_dict({
+    "instructions_tts": {
+        "type": "tts",
+        "text": "Welcome to the experiment. Press space to begin.",
+        "voice": "en-US-AriaNeural",  # Microsoft Edge TTS voice
+        "rate": "+0%",               # Speed adjustment
+        "volume": "+0%"              # Volume adjustment
+    }
+})
+
+# Get and play TTS
+tts = stim_bank.get("instructions_tts")
+tts.play()
+```
+
+## Complete Example
+
+Here's a complete example showing how to use `StimBank` in an experiment:
+
+```python
+from psychopy import visual, core, event
+from psychopy.hardware.keyboard import Keyboard
+from psyflow import StimBank
+import yaml
+
+# Create window and keyboard
+win = visual.Window(size=[1024, 768], color="black", units="deg")
+kb = Keyboard()
+
+# Initialize stimulus bank
+stim_bank = StimBank(win)
+
+# Load stimuli from YAML
+with open("experiment_stimuli.yaml", "r") as f:
+    stim_config = yaml.safe_load(f)
+
+stim_bank.add_from_dict(stim_config)
+
+# Add programmatic stimuli
+@stim_bank.define("fixation")
+def make_fixation(win):
+    return visual.TextStim(win, text="+", height=1.0, color="white")
+
+# Run a simple trial
+def run_trial(condition, participant_name):
+    # Show welcome with participant name
+    welcome = stim_bank.get_and_format("welcome", participant_name=participant_name)
+    welcome.draw()
+    win.flip()
+    core.wait(2.0)
+    
+    # Show fixation
+    fixation = stim_bank.get("fixation")
+    fixation.draw()
+    win.flip()
+    core.wait(0.5)
+    
+    # Show condition-specific target
+    if condition == "reward":
+        target = stim_bank.rebuild("target", fillColor="gold")
+    else:
+        target = stim_bank.rebuild("target", fillColor="silver")
+    
+    target.draw()
+    win.flip()
+    
+    # Wait for response
+    keys = kb.waitKeys(keyList=["left", "right"])
+    response = keys[0].name if keys else None
+    rt = keys[0].rt if keys else None
+    
+    # Show feedback
+    if response == "left":
+        feedback = stim_bank.get_and_format("feedback", 
+                                          correct=True, 
+                                          points=10)
+    else:
+        feedback = stim_bank.get_and_format("feedback", 
+                                          correct=False, 
+                                          points=0)
+    
+    feedback.draw()
+    win.flip()
+    core.wait(1.0)
+    
+    return {"condition": condition, "response": response, "rt": rt}
+
+# Run experiment
+results = []
+for condition in ["neutral", "reward", "neutral", "reward"]:
+    trial_result = run_trial(condition, "Participant")
+    results.append(trial_result)
+
+# Clean up
+win.close()
+```
+
+Example YAML file (`experiment_stimuli.yaml`):
+
 ```yaml
-stimuli:  
-  left_stim:
-    type: image
-    pos: [-4.5, 0]
-    size: [4.5, 5]
-  
-  right_stim:
-    type: image
-    pos: [4.5, 0]
-    size: [4.5, 5]
+welcome:
+  type: text
+  text: "Welcome, {participant_name}!"
+  height: 1.0
+  color: "yellow"
+  pos: [0, 0]
+
+target:
+  type: circle
+  radius: 0.8
+  fillColor: "red"
+  lineColor: "white"
+  lineWidth: 2
+  pos: [0, 0]
+
+feedback:
+  type: text
+  text: "{correct|Correct!|Incorrect!} You earned {points} points."
+  height: 0.8
+  color: "white"
+  pos: [0, -2]
 ```
 
-Then find out the left and right stimuli based on the condition and rebuild them.
+## Best Practices
 
-```python
-trial_info = assign_stim_from_condition(condition, asset_pool)
-    left_stim = stim_bank.rebuild('left_stim', image=os.path.join('assets', trial_info['left_stim']))
-    right_stim = stim_bank.rebuild('right_stim', image=os.path.join('assets', trial_info['right_stim']))
-```
-So in this case, the stim_bank is more of the container for the placeholder stimuli.
-The way to assign stimuli and generate conditions is a core part of the experiment design.
-### 11. Converting Text to Speech
+1. **Organize by function**: Group related stimuli with common prefixes (e.g., `cue_left`, `cue_right`).
 
-`convert_to_voice` allows you to synthesize existing text stimuli into spoken audio using [edge-tts](https://github.com/rany2/edge-tts). It creates a new `Sound` entry with the suffix `_voice`.
+2. **Separate content from presentation**: Use configuration files for content that might change (text, images) and code for complex presentation logic.
 
-```python
-# Convert two registered TextStim objects to speech
-stim_bank.convert_to_voice(["instruction_text", "block_feedback"],
-                           voice="en-US-AriaNeural")
-# Afterwards you can access them as Sound stimuli
-sound = stim_bank.get("instruction_text_voice")
-```
+3. **Preload when needed**: Call `stim_bank.preload_all()` before the experiment starts if you want to front-load initialization time.
 
-If you just want to generate speech from arbitrary text, use `add_voice` which registers a new entry directly:
+4. **Use rebuilding sparingly**: While convenient, rebuilding stimuli frequently can impact performance. For stimuli that change on every trial, consider registering separate versions.
 
-```python
-# Create and register a custom voice clip
-stim_bank.add_voice("intro_voice",
-                   "Welcome to the experiment!",
-                   voice="en-GB-RyanNeural")
-intro = stim_bank.get("intro_voice")
-intro.play()
-```
+5. **Document your stimuli**: Include comments in your YAML files or code to explain the purpose of each stimulus.
+
+## Troubleshooting
+
+- **Stimulus not appearing**: Check if the stimulus is properly registered and that its properties (like position and color) are valid.
+
+- **Format errors**: Ensure that placeholders in text stimuli match the keywords provided to `get_and_format()`.
+
+- **Performance issues**: If your experiment slows down, consider preloading stimuli and minimizing rebuilding operations.
+
+- **YAML parsing errors**: Verify your YAML syntax, especially indentation and special characters.
+
+## Next Steps
+
+Now that you understand how to use `StimBank`, you can:
+
+- Explore the [StimUnit tutorial](build_trialunit.md) to learn how to create trial sequences
+- Check out the [BlockUnit tutorial](build_blocks.md) to organize trials into blocks
+- Learn about [trigger sending](send_trigger.md) for EEG/MEG experiments

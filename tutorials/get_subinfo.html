@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="⚙️ TaskSettings: Managing Experimental Configuration" href="task_settings.html" /><link rel="prev" title="🏁 Getting Started with psyflow" href="getting_started.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="TaskSettings: Configuring Your Experiment" href="task_settings.html" /><link rel="prev" title="Getting Started with psyflow" href="getting_started.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>🧾 SubInfo: Participant Information Collector - psyflow 0.1.0 documentation</title>
+        <title>SubInfo: Collecting Participant Information - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">psyflow 0.1.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">psyflow 0.1.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo only-dark" src="../_static/logo_black-removebg.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">psyflow 0.1.0 documentation</span>
+  <span class="sidebar-brand-text">psyflow 0.1.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -205,13 +205,13 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="getting_started.html">🏁 Getting Started with psyflow</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🧾 SubInfo: Participant Information Collector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">⏱ Trigger System for EEG/MEG: Trigger Dictionary + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">🖥️ CLI Usage and <code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with psyflow</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SubInfo: Collecting Participant Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -262,135 +262,444 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="subinfo-participant-information-collector">
-<h1>🧾 SubInfo: Participant Information Collector<a class="headerlink" href="#subinfo-participant-information-collector" title="Link to this heading">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> is a flexible and localizable class for collecting subject information using GUI dialogs. It supports field definitions from YAML or Python dictionaries, and is useful for creating standardized subject registration forms.</p>
-<section id="summary-of-key-methods">
-<h2>🧵 Summary of Key Methods<a class="headerlink" href="#summary-of-key-methods" title="Link to this heading">¶</a></h2>
+          <section id="subinfo-collecting-participant-information">
+<h1>SubInfo: Collecting Participant Information<a class="headerlink" href="#subinfo-collecting-participant-information" title="Link to this heading">¶</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> class provides a flexible and user-friendly way to collect participant information at the beginning of an experiment. It creates standardized GUI dialogs that can be customized through configuration files, supporting multiple field types and localization for international studies.</p>
+<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> solves several common challenges in participant registration:</p>
+<ul class="simple">
+<li><p><strong>Standardization</strong>: Create consistent participant information forms across experiments</p></li>
+<li><p><strong>Validation</strong>: Automatically validate input based on field constraints</p></li>
+<li><p><strong>Localization</strong>: Display forms in the participant’s language</p></li>
+<li><p><strong>Configuration</strong>: Define forms using YAML or dictionaries for easy modification</p></li>
+<li><p><strong>Integration</strong>: Seamlessly connect with other psyflow components</p></li>
+</ul>
+</section>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>Purpose</p></th>
-<th class="head"><p>Method</p></th>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Description</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Collect participant info</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.collect()</span></code></p></td>
+<tr class="row-even"><td><p>Multiple field types</p></td>
+<td><p>Support for string, integer, and choice (dropdown) fields</p></td>
 </tr>
-<tr class="row-odd"><td><p>Access result</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.subject_data</span></code></p></td>
+<tr class="row-odd"><td><p>Input validation</p></td>
+<td><p>Enforce constraints like min/max values and digit length</p></td>
 </tr>
-<tr class="row-even"><td><p>Validate responses</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.validate()</span></code></p></td>
+<tr class="row-even"><td><p>Localization</p></td>
+<td><p>Display field labels and messages in any language</p></td>
 </tr>
-<tr class="row-odd"><td><p>Format output</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">._format_output()</span></code></p></td>
+<tr class="row-odd"><td><p>YAML configuration</p></td>
+<td><p>Define forms using human-readable configuration files</p></td>
 </tr>
-<tr class="row-even"><td><p>Localization helper</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">._local(key)</span></code></p></td>
+<tr class="row-even"><td><p>Automatic defaults</p></td>
+<td><p>Add standard fields like subject_id if not specified</p></td>
+</tr>
+<tr class="row-odd"><td><p>Error handling</p></td>
+<td><p>Clear error messages for invalid input</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
-<section id="configuration-format-yaml">
-<h2>1. Configuration Format (YAML)<a class="headerlink" href="#configuration-format-yaml" title="Link to this heading">¶</a></h2>
-<p>Here’s an example YAML you might use:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>subinfo_fields:
-  - name: subject_id
-    type: int
-    constraints:
-      min: 101
-      max: 199
-      digits: 3
+<section id="quick-reference">
+<h2>Quick Reference<a class="headerlink" href="#quick-reference" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Purpose</p></th>
+<th class="head"><p>Method</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Initialize</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SubInfo(config)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">subinfo</span> <span class="pre">=</span> <span class="pre">SubInfo(config)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Collect info</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.collect()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">=</span> <span class="pre">subinfo.collect()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Access data</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.subject_data</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">subject_id</span> <span class="pre">=</span> <span class="pre">subinfo.subject_data['subject_id']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Validate input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.validate()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">is_valid</span> <span class="pre">=</span> <span class="pre">subinfo.validate()</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="detailed-usage-guide">
+<h2>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h2>
+<section id="configuring-the-form">
+<h3>1. Configuring the Form<a class="headerlink" href="#configuring-the-form" title="Link to this heading">¶</a></h3>
+<section id="option-a-using-a-yaml-configuration">
+<h4>Option A: Using a YAML Configuration<a class="headerlink" href="#option-a-using-a-yaml-configuration" title="Link to this heading">¶</a></h4>
+<p>YAML provides a clean, readable way to define your form structure:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># subinfo_config.yaml</span>
+<span class="nt">subinfo_fields</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subject_id</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span>
+<span class="w">    </span><span class="nt">constraints</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">101</span>
+<span class="w">      </span><span class="nt">max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">999</span>
+<span class="w">      </span><span class="nt">digits</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
 
-  - name: subject_name
-    type: string
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">age</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span>
+<span class="w">    </span><span class="nt">constraints</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">18</span>
+<span class="w">      </span><span class="nt">max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
 
-  - name: gender
-    type: choice
-    choices: [Male, Female]
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gender</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">choice</span>
+<span class="w">    </span><span class="nt">choices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Male</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Female</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Non-binary</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Prefer not to say</span><span class="p p-Indicator">]</span>
 
-subinfo_mapping:
-  subject_id: &quot;编号&quot;
-  subject_name: &quot;姓名&quot;
-  gender: &quot;性别&quot;
-  Male: &quot;男&quot;
-  Female: &quot;女&quot;
-  registration_successful: &quot;注册成功！&quot;
-  registration_failed: &quot;注册取消。&quot;
-  invalid_input: &quot;无效的输入：{field}&quot;
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">handedness</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">choice</span>
+<span class="w">    </span><span class="nt">choices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Right</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Left</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Ambidextrous</span><span class="p p-Indicator">]</span>
+
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vision</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">choice</span>
+<span class="w">    </span><span class="nt">choices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Normal</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Corrected-to-normal</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Impaired</span><span class="p p-Indicator">]</span>
+
+<span class="c1"># Optional localization mapping</span>
+<span class="nt">subinfo_mapping</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">subject_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Participant</span><span class="nv"> </span><span class="s">ID&quot;</span>
+<span class="w">  </span><span class="nt">age</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Age&quot;</span>
+<span class="w">  </span><span class="nt">gender</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Gender&quot;</span>
+<span class="w">  </span><span class="nt">handedness</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Handedness&quot;</span>
+<span class="w">  </span><span class="nt">vision</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Vision&quot;</span>
+<span class="w">  </span><span class="nt">Male</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Male&quot;</span>
+<span class="w">  </span><span class="nt">Female</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Female&quot;</span>
+<span class="w">  </span><span class="nt">Non-binary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Non-binary&quot;</span>
+<span class="w">  </span><span class="nt">Prefer not to say</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Prefer</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">say&quot;</span>
+<span class="w">  </span><span class="nt">Right</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Right&quot;</span>
+<span class="w">  </span><span class="nt">Left</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Left&quot;</span>
+<span class="w">  </span><span class="nt">Ambidextrous</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Ambidextrous&quot;</span>
+<span class="w">  </span><span class="nt">Normal</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Normal&quot;</span>
+<span class="w">  </span><span class="nt">Corrected-to-normal</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Corrected-to-normal&quot;</span>
+<span class="w">  </span><span class="nt">Impaired</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Impaired&quot;</span>
+<span class="w">  </span><span class="nt">registration_successful</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Registration</span><span class="nv"> </span><span class="s">successful!&quot;</span>
+<span class="w">  </span><span class="nt">registration_failed</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Registration</span><span class="nv"> </span><span class="s">cancelled.&quot;</span>
+<span class="w">  </span><span class="nt">invalid_input</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Invalid</span><span class="nv"> </span><span class="s">input</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">{field}&quot;</span>
 </pre></div>
 </div>
 </section>
-<section id="collecting-subject-info">
-<h2>2. Collecting Subject Info<a class="headerlink" href="#collecting-subject-info" title="Link to this heading">¶</a></h2>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import yaml
-from your_package import SubInfo
-
-with open(&quot;subinfo.yaml&quot;, &quot;r&quot;) as f:
-    config = yaml.safe_load(f)
-
-collector = SubInfo(config)
-info = collector.collect()
-
-if info is not None:
-    print(&quot;Collected Info:&quot;, info)
-else:
-    print(&quot;Registration was cancelled.&quot;)
+<section id="option-b-using-a-python-dictionary">
+<h4>Option B: Using a Python Dictionary<a class="headerlink" href="#option-b-using-a-python-dictionary" title="Link to this heading">¶</a></h4>
+<p>You can also define the form directly in Python:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;subinfo_fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;subject_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;constraints&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">101</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">999</span><span class="p">,</span> <span class="s2">&quot;digits&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;age&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;constraints&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gender&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;choice&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Male&quot;</span><span class="p">,</span> <span class="s2">&quot;Female&quot;</span><span class="p">,</span> <span class="s2">&quot;Non-binary&quot;</span><span class="p">,</span> <span class="s2">&quot;Prefer not to say&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;handedness&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;choice&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Right&quot;</span><span class="p">,</span> <span class="s2">&quot;Left&quot;</span><span class="p">,</span> <span class="s2">&quot;Ambidextrous&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;subinfo_mapping&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;subject_id&quot;</span><span class="p">:</span> <span class="s2">&quot;Participant ID&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="s2">&quot;Age&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gender&quot;</span><span class="p">:</span> <span class="s2">&quot;Gender&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;handedness&quot;</span><span class="p">:</span> <span class="s2">&quot;Handedness&quot;</span>
+        <span class="c1"># Add more mappings as needed</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 </pre></div>
 </div>
-<p>Example output:</p>
-<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Collected Info: {&#39;subject_id&#39;: &#39;103&#39;, &#39;subject_name&#39;: &#39;Li Hua&#39;, &#39;gender&#39;: &#39;Female&#39;}
+</section>
+</section>
+<section id="field-types-and-constraints">
+<h3>2. Field Types and Constraints<a class="headerlink" href="#field-types-and-constraints" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> supports three field types:</p>
+<section id="string-fields">
+<h4>String Fields<a class="headerlink" href="#string-fields" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subject_name</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
 </pre></div>
 </div>
+<p>String fields accept any text input without validation.</p>
 </section>
-<section id="how-it-works">
-<h2>3. How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">¶</a></h2>
+<section id="integer-fields">
+<h4>Integer Fields<a class="headerlink" href="#integer-fields" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subject_id</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span>
+<span class="w">  </span><span class="nt">constraints</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">101</span><span class="w">      </span><span class="c1"># Minimum allowed value</span>
+<span class="w">    </span><span class="nt">max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">999</span><span class="w">      </span><span class="c1"># Maximum allowed value</span>
+<span class="w">    </span><span class="nt">digits</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">     </span><span class="c1"># Required number of digits</span>
+</pre></div>
+</div>
+<p>Integer fields validate that:</p>
 <ul class="simple">
-<li><p>Uses <code class="docutils literal notranslate"><span class="pre">psychopy.gui.Dlg</span></code> to build the form.</p></li>
-<li><p>Supports text, integer (with min/max/digits), and dropdown fields.</p></li>
-<li><p>Automatically adds <code class="docutils literal notranslate"><span class="pre">subject_id</span></code> and <code class="docutils literal notranslate"><span class="pre">session_name</span></code> if missing.</p></li>
-<li><p>Displays localized labels and messages using <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code>.</p></li>
+<li><p>The input can be converted to an integer</p></li>
+<li><p>The value is within the min/max range (if specified)</p></li>
+<li><p>The number has exactly the specified number of digits (if specified)</p></li>
 </ul>
 </section>
-<section id="validation-behavior">
-<h2>4. Validation Behavior<a class="headerlink" href="#validation-behavior" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p>Integer fields are validated for range and digit length.</p></li>
-<li><p>Any failure will prompt an error dialog and restart the input form.</p></li>
-<li><p>Successful entries return a clean dictionary with English keys.</p></li>
-</ul>
+<section id="choice-fields-dropdowns">
+<h4>Choice Fields (Dropdowns)<a class="headerlink" href="#choice-fields-dropdowns" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">condition</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">choice</span>
+<span class="w">  </span><span class="nt">choices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Control</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Experimental</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>Choice fields present a dropdown menu with the specified options.</p>
 </section>
-<section id="localization-optional">
-<h2>5. Localization (Optional)<a class="headerlink" href="#localization-optional" title="Link to this heading">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code> block maps internal field names and values to display labels in any language. You can also override default system messages like:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;registration_successful&quot;</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;registration_failed&quot;</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;invalid_input&quot;</span></code></p></li>
-</ul>
-<p>This class helps unify your experimental metadata collection pipeline with minimal boilerplate. You can reuse the same config across experiments and localize it for different participant groups.</p>
 </section>
-<section id="realistic-example">
-<h2>6. Realistic Example<a class="headerlink" href="#realistic-example" title="Link to this heading">¶</a></h2>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config/config.yaml&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<section id="collecting-participant-information">
+<h3>3. Collecting Participant Information<a class="headerlink" href="#collecting-participant-information" title="Link to this heading">¶</a></h3>
+<p>Once you’ve defined your configuration, collecting information is straightforward:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+
+<span class="c1"># Load configuration from YAML</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;subinfo_config.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
-<span class="c1"># 2. collect subject info</span>
-<span class="n">subform_config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;subinfo_fields&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;subinfo_fields&#39;</span><span class="p">,</span> <span class="p">[]),</span>
-    <span class="s1">&#39;subinfo_mapping&#39;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;subinfo_mapping&#39;</span><span class="p">,</span> <span class="p">{})</span>
-<span class="p">}</span>
+<span class="c1"># Create SubInfo instance</span>
+<span class="n">subinfo</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
 
-<span class="n">subform</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">subform_config</span><span class="p">)</span>
-<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subform</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+<span class="c1"># Show dialog and collect information</span>
+<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subinfo</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+<span class="c1"># Check if user cancelled</span>
 <span class="k">if</span> <span class="n">subject_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Participant cancelled — aborting experiment.&quot;</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;User cancelled the form&quot;</span><span class="p">)</span>
+    <span class="c1"># Handle cancellation (e.g., exit experiment)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Collected information:&quot;</span><span class="p">,</span> <span class="n">subject_data</span><span class="p">)</span>
+    <span class="c1"># Continue with experiment using the collected data</span>
 </pre></div>
 </div>
+</section>
+<section id="localization">
+<h3>4. Localization<a class="headerlink" href="#localization" title="Link to this heading">¶</a></h3>
+<p>For international studies, you can localize the form by providing translations in the <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code> section:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example for Chinese localization</span>
+<span class="nt">subinfo_mapping</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">subject_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;参与者编号&quot;</span>
+<span class="w">  </span><span class="nt">age</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;年龄&quot;</span>
+<span class="w">  </span><span class="nt">gender</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;性别&quot;</span>
+<span class="w">  </span><span class="nt">Male</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;男&quot;</span>
+<span class="w">  </span><span class="nt">Female</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;女&quot;</span>
+<span class="w">  </span><span class="nt">Non-binary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;非二元性别&quot;</span>
+<span class="w">  </span><span class="nt">Prefer not to say</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;不愿透露&quot;</span>
+<span class="w">  </span><span class="nt">registration_successful</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;注册成功！&quot;</span>
+<span class="w">  </span><span class="nt">registration_failed</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;注册取消。&quot;</span>
+<span class="w">  </span><span class="nt">invalid_input</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;无效的输入：{field}&quot;</span>
+</pre></div>
+</div>
+<p>The form will display these translated labels while still using the English keys internally for consistency.</p>
+</section>
+<section id="integration-with-tasksettings">
+<h3>5. Integration with TaskSettings<a class="headerlink" href="#integration-with-tasksettings" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> works seamlessly with <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> for complete experiment configuration:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span><span class="p">,</span> <span class="n">TaskSettings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+
+<span class="c1"># Load configuration</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># Create SubInfo and collect participant data</span>
+<span class="n">subinfo_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;subinfo_fields&quot;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subinfo_fields&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+    <span class="s2">&quot;subinfo_mapping&quot;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subinfo_mapping&quot;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="p">}</span>
+<span class="n">subinfo</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">subinfo_config</span><span class="p">)</span>
+<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subinfo</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">subject_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Experiment cancelled&quot;</span><span class="p">)</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Create TaskSettings with the collected subject info</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="p">{}))</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subject_data</span><span class="p">)</span>
+
+<span class="c1"># Now you have subject-specific paths and seeds</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data will be saved to: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using block seed: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">block_seed</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="complete-example">
+<h2>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading">¶</a></h2>
+<p>Here’s a complete example showing how to use <code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> in an experiment:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span><span class="p">,</span> <span class="n">core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span><span class="p">,</span> <span class="n">TaskSettings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="c1"># Load configuration</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="c1"># Step 1: Collect participant information</span>
+<span class="n">subinfo_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;subinfo_fields&quot;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subinfo_fields&quot;</span><span class="p">,</span> <span class="p">[]),</span>
+    <span class="s2">&quot;subinfo_mapping&quot;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subinfo_mapping&quot;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="p">}</span>
+<span class="n">subinfo</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">subinfo_config</span><span class="p">)</span>
+<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subinfo</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">subject_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Experiment cancelled&quot;</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Step 2: Configure task settings</span>
+<span class="n">task_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;window&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;task&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+    <span class="o">**</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timing&quot;</span><span class="p">,</span> <span class="p">{})</span>
+<span class="p">}</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">task_config</span><span class="p">)</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subject_data</span><span class="p">)</span>
+
+<span class="c1"># Step 3: Create PsychoPy window</span>
+<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
+    <span class="n">size</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span>
+    <span class="n">fullscr</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">bg_color</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 4: Show welcome message with participant info</span>
+<span class="n">welcome_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Welcome, Participant </span><span class="si">{</span><span class="n">subject_data</span><span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">!</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+<span class="n">welcome_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Age: </span><span class="si">{</span><span class="n">subject_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;age&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="n">welcome_text</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;Gender: </span><span class="si">{</span><span class="n">subject_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;gender&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;N/A&#39;</span><span class="p">)</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+<span class="n">welcome_text</span> <span class="o">+=</span> <span class="s2">&quot;Press any key to begin the experiment.&quot;</span>
+
+<span class="n">welcome</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">welcome_text</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">welcome</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+
+<span class="c1"># Wait for keypress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.event</span><span class="w"> </span><span class="kn">import</span> <span class="n">waitKeys</span>
+<span class="n">waitKeys</span><span class="p">()</span>
+
+<span class="c1"># Continue with experiment...</span>
+<span class="n">win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="n">core</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="advanced-usage">
+<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">¶</a></h2>
+<section id="custom-validation">
+<h3>Custom Validation<a class="headerlink" href="#custom-validation" title="Link to this heading">¶</a></h3>
+<p>You can extend <code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> with custom validation logic:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">CustomSubInfo</span><span class="p">(</span><span class="n">SubInfo</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># First run the standard validation</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">validate</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+            
+        <span class="c1"># Add custom validation logic</span>
+        <span class="k">if</span> <span class="s1">&#39;subject_id&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject_data</span> <span class="ow">and</span> <span class="s1">&#39;group&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject_data</span><span class="p">:</span>
+            <span class="n">subject_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subject_data</span><span class="p">[</span><span class="s1">&#39;subject_id&#39;</span><span class="p">])</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subject_data</span><span class="p">[</span><span class="s1">&#39;group&#39;</span><span class="p">]</span>
+            
+            <span class="c1"># Check if subject_id is valid for the selected group</span>
+            <span class="k">if</span> <span class="n">group</span> <span class="o">==</span> <span class="s1">&#39;Control&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">100</span> <span class="o">&lt;=</span> <span class="n">subject_id</span> <span class="o">&lt;</span> <span class="mi">200</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_show_error</span><span class="p">(</span><span class="s2">&quot;Control group IDs must be between 100-199&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">elif</span> <span class="n">group</span> <span class="o">==</span> <span class="s1">&#39;Experimental&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">200</span> <span class="o">&lt;=</span> <span class="n">subject_id</span> <span class="o">&lt;</span> <span class="mi">300</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_show_error</span><span class="p">(</span><span class="s2">&quot;Experimental group IDs must be between 200-299&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+                
+        <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="programmatic-form-creation">
+<h3>Programmatic Form Creation<a class="headerlink" href="#programmatic-form-creation" title="Link to this heading">¶</a></h3>
+<p>You can also create forms programmatically:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">create_dynamic_form</span><span class="p">(</span><span class="n">experiment_type</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a form based on experiment type.&quot;&quot;&quot;</span>
+    <span class="n">base_fields</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;subject_id&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="s2">&quot;constraints&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">999</span><span class="p">}}</span>
+    <span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">experiment_type</span> <span class="o">==</span> <span class="s2">&quot;behavioral&quot;</span><span class="p">:</span>
+        <span class="n">base_fields</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;age&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gender&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;choice&quot;</span><span class="p">,</span> <span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Male&quot;</span><span class="p">,</span> <span class="s2">&quot;Female&quot;</span><span class="p">,</span> <span class="s2">&quot;Other&quot;</span><span class="p">]}</span>
+        <span class="p">])</span>
+    <span class="k">elif</span> <span class="n">experiment_type</span> <span class="o">==</span> <span class="s2">&quot;eeg&quot;</span><span class="p">:</span>
+        <span class="n">base_fields</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;cap_size&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;choice&quot;</span><span class="p">,</span> <span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Small&quot;</span><span class="p">,</span> <span class="s2">&quot;Medium&quot;</span><span class="p">,</span> <span class="s2">&quot;Large&quot;</span><span class="p">]},</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;impedance_check&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;choice&quot;</span><span class="p">,</span> <span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Pass&quot;</span><span class="p">,</span> <span class="s2">&quot;Fail&quot;</span><span class="p">]}</span>
+        <span class="p">])</span>
+    
+    <span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;subinfo_fields&quot;</span><span class="p">:</span> <span class="n">base_fields</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+<span class="c1"># Usage</span>
+<span class="n">form</span> <span class="o">=</span> <span class="n">create_dynamic_form</span><span class="p">(</span><span class="s2">&quot;eeg&quot;</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">form</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Keep forms concise</strong>: Only collect information that’s necessary for your experiment.</p></li>
+<li><p><strong>Use meaningful field names</strong>: Choose descriptive names that match your data analysis variables.</p></li>
+<li><p><strong>Set appropriate constraints</strong>: Use min/max and digit constraints to prevent data entry errors.</p></li>
+<li><p><strong>Provide clear labels</strong>: Use the mapping dictionary to make field labels clear and understandable.</p></li>
+<li><p><strong>Handle cancellation gracefully</strong>: Always check if <code class="docutils literal notranslate"><span class="pre">collect()</span></code> returns <code class="docutils literal notranslate"><span class="pre">None</span></code> and handle it appropriately.</p></li>
+<li><p><strong>Store configurations externally</strong>: Keep form definitions in YAML files for easy modification without changing code.</p></li>
+<li><p><strong>Test with different languages</strong>: If using localization, test the form with all supported languages.</p></li>
+</ol>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Form doesn’t appear</strong>: Ensure PsychoPy is properly installed and can create GUI elements.</p></li>
+<li><p><strong>Validation errors</strong>: Check that your constraints are reasonable and that field types match expected input.</p></li>
+<li><p><strong>Missing fields</strong>: Verify that your configuration dictionary has the correct structure.</p></li>
+<li><p><strong>Localization issues</strong>: Ensure all keys in <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code> match field names and choice options exactly.</p></li>
+</ul>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
+<p>Now that you understand how to use <code class="docutils literal notranslate"><span class="pre">SubInfo</span></code>, you can:</p>
+<ul class="simple">
+<li><p>Learn about <a class="reference internal" href="task_settings.html"><span class="std std-doc">TaskSettings</span></a> for configuring your experiment</p></li>
+<li><p>Explore <a class="reference internal" href="build_stimulus.html"><span class="std std-doc">StimBank</span></a> for managing stimuli</p></li>
+<li><p>Check out <a class="reference internal" href="build_blocks.html"><span class="std std-doc">BlockUnit</span></a> for organizing trials into blocks</p></li>
+<li><p>See <a class="reference internal" href="build_trialunit.html"><span class="std std-doc">StimUnit</span></a> for creating individual trials</p></li>
+</ul>
 </section>
 </section>
 
@@ -404,7 +713,7 @@ else:
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">⚙️ TaskSettings: Managing Experimental Configuration</div>
+                <div class="title">TaskSettings: Configuring Your Experiment</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -415,7 +724,7 @@ else:
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">🏁 Getting Started with psyflow</div>
+                <div class="title">Getting Started with psyflow</div>
                 
               </div>
             </a>
@@ -449,14 +758,36 @@ else:
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">🧾 SubInfo: Participant Information Collector</a><ul>
-<li><a class="reference internal" href="#summary-of-key-methods">🧵 Summary of Key Methods</a></li>
-<li><a class="reference internal" href="#configuration-format-yaml">1. Configuration Format (YAML)</a></li>
-<li><a class="reference internal" href="#collecting-subject-info">2. Collecting Subject Info</a></li>
-<li><a class="reference internal" href="#how-it-works">3. How It Works</a></li>
-<li><a class="reference internal" href="#validation-behavior">4. Validation Behavior</a></li>
-<li><a class="reference internal" href="#localization-optional">5. Localization (Optional)</a></li>
-<li><a class="reference internal" href="#realistic-example">6. Realistic Example</a></li>
+<li><a class="reference internal" href="#">SubInfo: Collecting Participant Information</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#key-features">Key Features</a></li>
+<li><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
+<li><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a><ul>
+<li><a class="reference internal" href="#configuring-the-form">1. Configuring the Form</a><ul>
+<li><a class="reference internal" href="#option-a-using-a-yaml-configuration">Option A: Using a YAML Configuration</a></li>
+<li><a class="reference internal" href="#option-b-using-a-python-dictionary">Option B: Using a Python Dictionary</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#field-types-and-constraints">2. Field Types and Constraints</a><ul>
+<li><a class="reference internal" href="#string-fields">String Fields</a></li>
+<li><a class="reference internal" href="#integer-fields">Integer Fields</a></li>
+<li><a class="reference internal" href="#choice-fields-dropdowns">Choice Fields (Dropdowns)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#collecting-participant-information">3. Collecting Participant Information</a></li>
+<li><a class="reference internal" href="#localization">4. Localization</a></li>
+<li><a class="reference internal" href="#integration-with-tasksettings">5. Integration with TaskSettings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#complete-example">Complete Example</a></li>
+<li><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
+<li><a class="reference internal" href="#custom-validation">Custom Validation</a></li>
+<li><a class="reference internal" href="#programmatic-form-creation">Programmatic Form Creation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
 </ul>
@@ -468,7 +799,7 @@ else:
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=01f34227"></script>
+</div><script src="../_static/documentation_options.js?v=a58bc63e"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>

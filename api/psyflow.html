@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>psyflow package - psyflow 0.1.0 documentation</title>
+        <title>psyflow package - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">psyflow 0.1.0 documentation</div></a>
+      <a href="../index.html"><div class="brand">psyflow 0.1.1 documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo only-dark" src="../_static/logo_black-removebg.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">psyflow 0.1.0 documentation</span>
+  <span class="sidebar-brand-text">psyflow 0.1.1 documentation</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -205,13 +205,13 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/getting_started.html">🏁 Getting Started with psyflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/get_subinfo.html">🧾 SubInfo: Participant Information Collector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/task_settings.html">⚙️ TaskSettings: Managing Experimental Configuration</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">📦 BlockUnit: Managing Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">🎨 StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">⏱ Trigger System for EEG/MEG: Trigger Dictionary + <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/cli_usage.html">🖥️ CLI Usage and <code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/getting_started.html">Getting Started with psyflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -271,14 +271,124 @@
 <span id="psyflow-blockunit-module"></span><h2>psyflow.BlockUnit module<a class="headerlink" href="#module-psyflow.BlockUnit" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.BlockUnit.</span></span><span class="sig-name descname"><span class="pre">BlockUnit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyboard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.BlockUnit.</span></span><span class="sig-name descname"><span class="pre">BlockUnit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">block_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyboard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/BlockUnit.html#BlockUnit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A container that manages a block of experimental trials.</p>
-<p>BlockUnit is responsible for generating trial conditions, running trials,
-executing lifecycle hooks, and collecting trial-level results.</p>
+<p>Block-level controller for trials.</p>
+<p>This object generates trial conditions, executes each trial, and stores
+metadata. It exposes hooks for custom start/end logic and summary methods.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.block_id">
+<span class="sig-name descname"><span class="pre">block_id</span></span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.block_id" title="Link to this definition">¶</a></dt>
+<dd><p>Identifier for the block.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.block_idx">
+<span class="sig-name descname"><span class="pre">block_idx</span></span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.block_idx" title="Link to this definition">¶</a></dt>
+<dd><p>Index of this block in the experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.n_trials">
+<span class="sig-name descname"><span class="pre">n_trials</span></span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.n_trials" title="Link to this definition">¶</a></dt>
+<dd><p>Number of trials to execute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.settings">
+<span class="sig-name descname"><span class="pre">settings</span></span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.settings" title="Link to this definition">¶</a></dt>
+<dd><p>Experiment settings container.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.win">
+<span class="sig-name descname"><span class="pre">win</span></span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.win" title="Link to this definition">¶</a></dt>
+<dd><p>PsychoPy window used for drawing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.kb">
+<span class="sig-name descname"><span class="pre">kb</span></span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.kb" title="Link to this definition">¶</a></dt>
+<dd><p>PsychoPy keyboard used for responses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Any</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.seed">
+<span class="sig-name descname"><span class="pre">seed</span></span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.seed" title="Link to this definition">¶</a></dt>
+<dd><p>Seed used for randomisation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.conditions">
+<span class="sig-name descname"><span class="pre">conditions</span></span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.conditions" title="Link to this definition">¶</a></dt>
+<dd><p>Ordered list of condition labels for each trial.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of Any or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.results">
+<span class="sig-name descname"><span class="pre">results</span></span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.results" title="Link to this definition">¶</a></dt>
+<dd><p>Accumulated trial results after <a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.run_trial" title="psyflow.BlockUnit.BlockUnit.run_trial"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run_trial()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.meta">
+<span class="sig-name descname"><span class="pre">meta</span></span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.meta" title="Link to this definition">¶</a></dt>
+<dd><p>Additional block metadata such as start time and duration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.add_condition">
-<span class="sig-name descname"><span class="pre">add_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.add_condition" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_condition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">condition_list</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/BlockUnit.html#BlockUnit.add_condition"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.add_condition" title="Link to this definition">¶</a></dt>
 <dd><p>Manually set the condition list.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -295,7 +405,7 @@ executing lifecycle hooks, and collecting trial-level results.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.generate_conditions">
-<span class="sig-name descname"><span class="pre">generate_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'random'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.generate_conditions" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">generate_conditions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_trials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'random'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/BlockUnit.html#BlockUnit.generate_conditions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.generate_conditions" title="Link to this definition">¶</a></dt>
 <dd><p>Generate trial conditions for this block.</p>
 <p>If <cite>func</cite> is provided, delegate generation to it. Otherwise, use the built-in
 weighted, balanced generator with optional sequential vs. random ordering.</p>
@@ -325,7 +435,7 @@ the block’s stored seed.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.get_all_data">
-<span class="sig-name descname"><span class="pre">get_all_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.get_all_data" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_all_data</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/BlockUnit.html#BlockUnit.get_all_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.get_all_data" title="Link to this definition">¶</a></dt>
 <dd><p>Return trial results without modifying anything.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
@@ -339,7 +449,7 @@ the block’s stored seed.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.get_trial_data">
-<span class="sig-name descname"><span class="pre">get_trial_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exact'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.get_trial_data" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_trial_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pattern</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'exact'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/BlockUnit.html#BlockUnit.get_trial_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.get_trial_data" title="Link to this definition">¶</a></dt>
 <dd><p>Filter trial data based on value of a key using matching rules.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -361,13 +471,13 @@ the block’s stored seed.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.logging_block_info">
-<span class="sig-name descname"><span class="pre">logging_block_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.logging_block_info" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">logging_block_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/BlockUnit.html#BlockUnit.logging_block_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.logging_block_info" title="Link to this definition">¶</a></dt>
 <dd><p>Log block metadata including ID, index, seed, trial count, and condition distribution.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.on_end">
-<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.on_end" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/BlockUnit.html#BlockUnit.on_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.on_end" title="Link to this definition">¶</a></dt>
 <dd><p>Register a function to run at the end of the block.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -378,7 +488,7 @@ the block’s stored seed.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.on_start">
-<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.on_start" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/BlockUnit.html#BlockUnit.on_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.on_start" title="Link to this definition">¶</a></dt>
 <dd><p>Register a function to run at the start of the block.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -389,7 +499,7 @@ the block’s stored seed.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.run_trial">
-<span class="sig-name descname"><span class="pre">run_trial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.run_trial" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">run_trial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/BlockUnit.html#BlockUnit.run_trial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.run_trial" title="Link to this definition">¶</a></dt>
 <dd><p>Run all trials using a specified trial function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -403,7 +513,7 @@ the block’s stored seed.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.summarize">
-<span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.summarize" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">summarize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summary_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/BlockUnit.html#BlockUnit.summarize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.summarize" title="Link to this definition">¶</a></dt>
 <dd><p>Summarize trial results.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -420,7 +530,7 @@ the block’s stored seed.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.BlockUnit.BlockUnit.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.to_dict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/BlockUnit.html#BlockUnit.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.BlockUnit.BlockUnit.to_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Append trial results to a target list, or return self for chaining.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -442,7 +552,7 @@ the block’s stored seed.</p></li>
 <span id="psyflow-stimbank-module"></span><h2>psyflow.StimBank module<a class="headerlink" href="#module-psyflow.StimBank" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.StimBank.</span></span><span class="sig-name descname"><span class="pre">StimBank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.StimBank.</span></span><span class="sig-name descname"><span class="pre">StimBank</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A hybrid stimulus management system for PsychoPy experiments.</p>
 <p><cite>StimBank</cite> supports:
@@ -451,7 +561,7 @@ the block’s stored seed.</p></li>
 - Centralized retrieval, lazy instantiation, and batch preview</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.add_from_dict">
-<span class="sig-name descname"><span class="pre">add_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">named_specs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.add_from_dict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">named_specs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.add_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.add_from_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Add stimuli from a dictionary or keyword-based specifications.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -465,7 +575,7 @@ the block’s stored seed.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.add_voice">
-<span class="sig-name descname"><span class="pre">add_voice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stim_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zh-CN-XiaoxiaoNeural'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.add_voice" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_voice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stim_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zh-CN-XiaoxiaoNeural'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.add_voice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.add_voice" title="Link to this definition">¶</a></dt>
 <dd><p>Convert arbitrary text to speech (MP3) and register it as a new Sound stimulus.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -483,7 +593,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.convert_to_voice">
-<span class="sig-name descname"><span class="pre">convert_to_voice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zh-CN-YunyangNeural'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.convert_to_voice" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">convert_to_voice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">voice</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'zh-CN-YunyangNeural'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.convert_to_voice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.convert_to_voice" title="Link to this definition">¶</a></dt>
 <dd><p>Convert specified TextStim/TextBox2 stimuli to speech (MP3) and register them
 as new Sound stimuli in this StimBank.</p>
 <dl class="field-list simple">
@@ -500,7 +610,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.define">
-<span class="sig-name descname"><span class="pre">define</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.define" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">define</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.define"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.define" title="Link to this definition">¶</a></dt>
 <dd><p>Register a stimulus generator function using a decorator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -517,7 +627,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.describe">
-<span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.describe" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.describe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.describe" title="Link to this definition">¶</a></dt>
 <dd><p>Print accepted arguments for a registered stimulus.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -528,7 +638,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.export_to_yaml">
-<span class="sig-name descname"><span class="pre">export_to_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.export_to_yaml" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">export_to_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.export_to_yaml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.export_to_yaml" title="Link to this definition">¶</a></dt>
 <dd><p>Export YAML-defined stimuli (but not decorator-defined) to file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -539,7 +649,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.get" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.get" title="Link to this definition">¶</a></dt>
 <dd><p>Get a stimulus by name, instantiating it if needed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -559,7 +669,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.get_and_format">
-<span class="sig-name descname"><span class="pre">get_and_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">format_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.get_and_format" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_and_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">format_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.get_and_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.get_and_format" title="Link to this definition">¶</a></dt>
 <dd><p>Return a fresh TextStim or TextBox2 with formatted text, keeping other properties unchanged.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -583,7 +693,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.get_group">
-<span class="sig-name descname"><span class="pre">get_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.get_group" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.get_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.get_group" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieve a dictionary of stimuli whose names start with a given prefix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -600,7 +710,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.get_selected">
-<span class="sig-name descname"><span class="pre">get_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.get_selected" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.get_selected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.get_selected" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieve a subset of named stimuli.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -617,7 +727,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.has">
-<span class="sig-name descname"><span class="pre">has</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.has" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">has</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.has"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.has" title="Link to this definition">¶</a></dt>
 <dd><p>Check whether a stimulus is registered.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -631,7 +741,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.keys">
-<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.keys" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">keys</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.keys"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.keys" title="Link to this definition">¶</a></dt>
 <dd><p>List all registered stimulus names.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -642,7 +752,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.make_factory">
-<span class="sig-name descname"><span class="pre">make_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.make_factory" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">make_factory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_kwargs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.make_factory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.make_factory" title="Link to this definition">¶</a></dt>
 <dd><p>Create a factory function for a given stimulus class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -663,13 +773,21 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.preload_all">
-<span class="sig-name descname"><span class="pre">preload_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.preload_all" title="Link to this definition">¶</a></dt>
-<dd><p>Instantiate all registered stimuli and cache them internally.</p>
+<span class="sig-name descname"><span class="pre">preload_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.preload_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.preload_all" title="Link to this definition">¶</a></dt>
+<dd><p>Instantiate all registered stimuli.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The object itself for method chaining.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#psyflow.StimBank.StimBank" title="psyflow.StimBank.StimBank">StimBank</a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.preview_all">
-<span class="sig-name descname"><span class="pre">preview_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.preview_all" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">preview_all</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wait_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.preview_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.preview_all" title="Link to this definition">¶</a></dt>
 <dd><p>Preview all registered stimuli one by one.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -680,7 +798,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.preview_group">
-<span class="sig-name descname"><span class="pre">preview_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.preview_group" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">preview_group</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.preview_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.preview_group" title="Link to this definition">¶</a></dt>
 <dd><p>Preview all stimuli that match a name prefix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -694,7 +812,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.preview_selected">
-<span class="sig-name descname"><span class="pre">preview_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.preview_selected" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">preview_selected</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wait_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.preview_selected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.preview_selected" title="Link to this definition">¶</a></dt>
 <dd><p>Preview selected stimuli by name.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -708,7 +826,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.rebuild">
-<span class="sig-name descname"><span class="pre">rebuild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">overrides</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.rebuild" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">rebuild</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">overrides</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.rebuild"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.rebuild" title="Link to this definition">¶</a></dt>
 <dd><p>Rebuild a stimulus with optional updated parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -729,7 +847,7 @@ edge-tts –list-voices</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimBank.StimBank.validate_dict">
-<span class="sig-name descname"><span class="pre">validate_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimBank.StimBank.validate_dict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">validate_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimBank.html#StimBank.validate_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimBank.StimBank.validate_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Validate a dictionary of stimulus definitions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -748,7 +866,7 @@ edge-tts –list-voices</p></li>
 <span id="psyflow-subinfo-module"></span><h2>psyflow.SubInfo module<a class="headerlink" href="#module-psyflow.SubInfo" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="psyflow.SubInfo.SubInfo">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.SubInfo.</span></span><span class="sig-name descname"><span class="pre">SubInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.SubInfo.SubInfo" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.SubInfo.</span></span><span class="sig-name descname"><span class="pre">SubInfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/SubInfo.html#SubInfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.SubInfo.SubInfo" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>GUI-based participant information collector using a YAML-style config.</p>
 <p>This class generates an input dialog based on a configurable field structure
@@ -770,7 +888,7 @@ and provides basic localization and validation for different field types.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.SubInfo.SubInfo.collect">
-<span class="sig-name descname"><span class="pre">collect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exit_on_cancel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.SubInfo.SubInfo.collect" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">collect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exit_on_cancel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/SubInfo.html#SubInfo.collect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.SubInfo.SubInfo.collect" title="Link to this definition">¶</a></dt>
 <dd><p>Show a dialog to collect participant input. Loops until valid or cancelled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -784,11 +902,17 @@ or None if cancelled and exit_on_cancel is False.</p>
 <dd class="field-odd"><p>dict or None</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;subinfo_fields&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="s1">&#39;age&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;int&#39;</span><span class="p">}]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">info</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">info</span><span class="o">.</span><span class="n">collect</span><span class="p">(</span><span class="n">exit_on_cancel</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.SubInfo.SubInfo.validate">
-<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">responses</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.SubInfo.SubInfo.validate" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">responses</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/SubInfo.html#SubInfo.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.SubInfo.SubInfo.validate" title="Link to this definition">¶</a></dt>
 <dd><p>Validate responses based on type and constraints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -810,7 +934,7 @@ or None if cancelled and exit_on_cancel is False.</p>
 <span id="psyflow-tasksettings-module"></span><h2>psyflow.TaskSettings module<a class="headerlink" href="#module-psyflow.TaskSettings" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="psyflow.TaskSettings.TaskSettings">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.TaskSettings.</span></span><span class="sig-name descname"><span class="pre">TaskSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units='deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_color='gray'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fullscreen=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_blocks=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_trials=10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_list=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_seed=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_mode='same_across_sub'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overall_seed=2025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_file=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res_file=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_file=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path='./data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_name=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.TaskSettings.</span></span><span class="sig-name descname"><span class="pre">TaskSettings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">units='deg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bg_color='gray'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fullscreen=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_blocks=1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_trials=10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key_list=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conditions=&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">block_seed=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed_mode='same_across_sub'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overall_seed=2025</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_file=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res_file=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_file=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_path='./data'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">task_name=None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/TaskSettings.html#TaskSettings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Configuration container for PsychoPy-based tasks.</p>
 <p>This dataclass holds core experimental parameters and provides utility
@@ -827,7 +951,7 @@ extend settings from external config dictionaries.</p>
 </ul>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TaskSettings.TaskSettings.add_subinfo">
-<span class="sig-name descname"><span class="pre">add_subinfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subinfo</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings.add_subinfo" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_subinfo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subinfo</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/TaskSettings.html#TaskSettings.add_subinfo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings.add_subinfo" title="Link to this definition">¶</a></dt>
 <dd><p>Add subject-specific information and set seed/file names accordingly.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -857,7 +981,7 @@ construct per-subject output file names.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TaskSettings.TaskSettings.from_dict">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings.from_dict" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/TaskSettings.html#TaskSettings.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings.from_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Create a TaskSettings instance from a flat dictionary.</p>
 <p>Known fields are applied normally; unknown keys are attached as attributes.</p>
 <dl class="field-list simple">
@@ -871,6 +995,11 @@ construct per-subject output file names.</p>
 <dd class="field-odd"><p><a class="reference internal" href="#psyflow.TaskSettings.TaskSettings" title="psyflow.TaskSettings.TaskSettings">TaskSettings</a></p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;total_blocks&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;total_trials&#39;</span><span class="p">:</span> <span class="mi">20</span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py attribute">
@@ -910,7 +1039,7 @@ construct per-subject output file names.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TaskSettings.TaskSettings.save_to_json">
-<span class="sig-name descname"><span class="pre">save_to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings.save_to_json" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">save_to_json</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/TaskSettings.html#TaskSettings.save_to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings.save_to_json" title="Link to this definition">¶</a></dt>
 <dd><p>Save the current TaskSettings instance to a JSON file.</p>
 </dd></dl>
 
@@ -926,7 +1055,7 @@ construct per-subject output file names.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TaskSettings.TaskSettings.set_block_seed">
-<span class="sig-name descname"><span class="pre">set_block_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed_base</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings.set_block_seed" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_block_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed_base</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/TaskSettings.html#TaskSettings.set_block_seed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.TaskSettings.TaskSettings.set_block_seed" title="Link to this definition">¶</a></dt>
 <dd><p>Generate a list of per-block seeds from a base seed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -973,7 +1102,7 @@ construct per-subject output file names.</p>
 <span id="psyflow-stimunit-module"></span><h2>psyflow.StimUnit module<a class="headerlink" href="#module-psyflow.StimUnit" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.StimUnit.</span></span><span class="sig-name descname"><span class="pre">StimUnit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unit_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triggersender</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.StimUnit.</span></span><span class="sig-name descname"><span class="pre">StimUnit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">unit_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triggersender</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A modular trial unit for PsychoPy-based experiments. Designed to encapsulate
 stimulus presentation, response handling, event triggers, and lifecycle hooks
@@ -1021,7 +1150,7 @@ with flexible timing control.</p>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.add_stim">
-<span class="sig-name descname"><span class="pre">add_stim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">stims</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.add_stim" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">add_stim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">stims</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.add_stim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.add_stim" title="Link to this definition">¶</a></dt>
 <dd><p>Add one or more visual or sound stimuli to the trial.</p>
 <p>Supports calling patterns:
 .add_stim(stimA)
@@ -1042,7 +1171,7 @@ with flexible timing control.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.capture_response">
-<span class="sig-name descname"><span class="pre">capture_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlight_stim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamic_highlight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.capture_response" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">capture_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">response_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">correct_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">highlight_stim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dynamic_highlight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.capture_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.capture_response" title="Link to this definition">¶</a></dt>
 <dd><p>Wait for a keypress or timeout. Supports both time-based and frame-based duration.
 Triggers and onset time synced to visual flip.</p>
 <dl class="field-list simple">
@@ -1067,7 +1196,7 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.clear_stimuli">
-<span class="sig-name descname"><span class="pre">clear_stimuli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.clear_stimuli" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">clear_stimuli</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.clear_stimuli"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.clear_stimuli" title="Link to this definition">¶</a></dt>
 <dd><p>Clear all previously added stimuli from the trial.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -1078,7 +1207,7 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.close_on">
-<span class="sig-name descname"><span class="pre">close_on</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.close_on" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">close_on</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.close_on"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.close_on" title="Link to this definition">¶</a></dt>
 <dd><p>Auto-close the trial on specific key press.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1089,7 +1218,7 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.duration">
-<span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.duration" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.duration" title="Link to this definition">¶</a></dt>
 <dd><p>Auto-close the trial after a fixed or jittered duration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1100,7 +1229,7 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.get_dict">
-<span class="sig-name descname"><span class="pre">get_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.get_dict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.get_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.get_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Return the internal state dictionary, or merge into an external one.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1117,7 +1246,7 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.get_state">
-<span class="sig-name descname"><span class="pre">get_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.get_state" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.get_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.get_state" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieve a value from internal state.</p>
 <p>Lookup order:
 1. Try exact key.
@@ -1143,24 +1272,31 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.log_unit">
-<span class="sig-name descname"><span class="pre">log_unit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.log_unit" title="Link to this definition">¶</a></dt>
-<dd><p>Log the current state using PsychoPy’s logging mechanism.</p>
+<span class="sig-name descname"><span class="pre">log_unit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.log_unit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.log_unit" title="Link to this definition">¶</a></dt>
+<dd><p>Write the current trial state to PsychoPy logs.</p>
+<p>All key-value pairs stored in <code class="xref py py-attr docutils literal notranslate"><span class="pre">state</span></code> are emitted using
+<code class="docutils literal notranslate"><span class="pre">logging.data</span></code> which allows post‑hoc reconstruction of each trial.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="s2">&quot;space&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">unit</span><span class="o">.</span><span class="n">log_unit</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.on_end">
-<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_end" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">on_end</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.on_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_end" title="Link to this definition">¶</a></dt>
 <dd><p>Register or decorate a function to call at the end of the trial.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.on_response">
-<span class="sig-name descname"><span class="pre">on_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_response" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">on_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.on_response"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_response" title="Link to this definition">¶</a></dt>
 <dd><p>Register or decorate a function to call when a valid response key is pressed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1174,13 +1310,13 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.on_start">
-<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_start" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">on_start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.on_start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_start" title="Link to this definition">¶</a></dt>
 <dd><p>Register or decorate a function to call at trial start.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.on_timeout">
-<span class="sig-name descname"><span class="pre">on_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_timeout" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">on_timeout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">timeout</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.on_timeout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.on_timeout" title="Link to this definition">¶</a></dt>
 <dd><p>Register or decorate a function to call on timeout.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1194,26 +1330,31 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.run">
-<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.run" title="Link to this definition">¶</a></dt>
-<dd><p>Full logic loop for displaying stimulus, collecting response, handling timeout,
-and logging with precision timing.</p>
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">terminate_on_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.run" title="Link to this definition">¶</a></dt>
+<dd><p>Execute the full trial lifecycle.</p>
+<p>This method draws all registered stimuli, handles response and timeout
+events, executes registered hooks and logs the final state.</p>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>terminate_on_response</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> the trial ends immediately once a response is
+registered. Defaults to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The instance itself for chaining.</p>
+</dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#psyflow.StimUnit.StimUnit" title="psyflow.StimUnit.StimUnit"><code class="xref py py-class docutils literal notranslate"><span class="pre">StimUnit</span></code></a></span></p>
+<dd class="field-odd"><p><a class="reference internal" href="#psyflow.StimUnit.StimUnit" title="psyflow.StimUnit.StimUnit">StimUnit</a></p>
 </dd>
 </dl>
-<section id="parameters">
-<h4>Parameters:<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h4>
-<dl class="simple">
-<dt>terminate_on_response<span class="classifier">bool</span></dt><dd><p>Whether to terminate the trial upon receiving a response.</p>
-</dd>
-</dl>
-</section>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;trial1&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.send_trigger">
-<span class="sig-name descname"><span class="pre">send_trigger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_code</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.send_trigger" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">send_trigger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.send_trigger"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.send_trigger" title="Link to this definition">¶</a></dt>
 <dd><p>Send a trigger value via the connected trigger object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1227,7 +1368,7 @@ and logging with precision timing.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.set_state">
-<span class="sig-name descname"><span class="pre">set_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.set_state" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">set_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.set_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.set_state" title="Link to this definition">¶</a></dt>
 <dd><p>Update internal state with optional key prefixing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1244,7 +1385,7 @@ and logging with precision timing.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.show">
-<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.show" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">onset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">offset_trigger</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.show"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.show" title="Link to this definition">¶</a></dt>
 <dd><p>Display the stimulus for a specified duration, using frame-based timing
 (recommended for EEG/fMRI). Audio playback is automatically started on stimulus onset.</p>
 <p>If duration is None, the longest duration of any sound stimulus will be used.
@@ -1282,7 +1423,7 @@ If duration is set explicitly, it will be respected even if shorter than any sou
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.to_dict">
-<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.to_dict" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.to_dict" title="Link to this definition">¶</a></dt>
 <dd><p>Return the StimUnit</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1299,7 +1440,7 @@ If duration is set explicitly, it will be respected even if shorter than any sou
 
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.wait_and_continue">
-<span class="sig-name descname"><span class="pre">wait_and_continue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['space']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.StimUnit.StimUnit.wait_and_continue" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">wait_and_continue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['space']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_wait</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log_message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.wait_and_continue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.wait_and_continue" title="Link to this definition">¶</a></dt>
 <dd><p>Display the current stimuli (visual and sound) and wait for a key press to continue or quit.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1325,7 +1466,7 @@ stimuli are present, it is automatically set to the longest sound duration.</p><
 <span id="psyflow-triggersender-module"></span><h2>psyflow.TriggerSender module<a class="headerlink" href="#module-psyflow.TriggerSender" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="psyflow.TriggerSender.TriggerSender">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.TriggerSender.</span></span><span class="sig-name descname"><span class="pre">TriggerSender</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_trigger_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_trigger_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TriggerSender.TriggerSender" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.TriggerSender.</span></span><span class="sig-name descname"><span class="pre">TriggerSender</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trigger_func</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mock</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_trigger_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">on_trigger_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/TriggerSender.html#TriggerSender"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.TriggerSender.TriggerSender" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A wrapper for sending EEG/MEG trigger codes with optional hooks and delays.</p>
 <p>Can be initialized with a real sending function or used in mock mode
@@ -1341,13 +1482,21 @@ for development/testing without hardware.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="psyflow.TriggerSender.TriggerSender.send">
-<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.TriggerSender.TriggerSender.send" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">send</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/TriggerSender.html#TriggerSender.send"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.TriggerSender.TriggerSender.send" title="Link to this definition">¶</a></dt>
 <dd><p>Send a trigger code using the configured function and callbacks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>code</strong> (<em>int</em><em> or </em><em>None</em>) – The code to send. Skips if None and logs a warning.</p>
+<dd class="field-odd"><p><strong>code</strong> (<em>int</em><em> or </em><em>None</em>) – The code to send. If <code class="docutils literal notranslate"><span class="pre">None</span></code> the method does nothing and logs a
+warning.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </dd></dl>
@@ -1357,7 +1506,7 @@ for development/testing without hardware.</p>
 <span id="psyflow-utils-module"></span><h2>psyflow.utils module<a class="headerlink" href="#module-psyflow.utils" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="psyflow.utils.count_down">
-<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">count_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">stim_kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.utils.count_down" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">count_down</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">win</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seconds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">stim_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/utils.html#count_down"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.utils.count_down" title="Link to this definition">¶</a></dt>
 <dd><p>Display a frame-accurate countdown using TextStim.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1367,32 +1516,64 @@ for development/testing without hardware.</p>
 <li><p><strong>**stim_kwargs</strong> (<em>dict</em>) – Additional keyword arguments for TextStim (e.g., font, height, color).</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The countdown is shown on <code class="docutils literal notranslate"><span class="pre">win</span></code> for its side effect.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psyflow.utils.initialize_exp">
-<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">initialize_exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.utils.initialize_exp" title="Link to this definition">¶</a></dt>
-<dd><p>Initialize the experiment environment including window, keyboard, logging, and global quit key.</p>
+<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">initialize_exp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">settings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">screen_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/utils.html#initialize_exp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.utils.initialize_exp" title="Link to this definition">¶</a></dt>
+<dd><p>Set up the PsychoPy window, keyboard and logging.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>settings</strong> – Configuration object with display, logging, and task settings.</p></li>
-<li><p><strong>screen_id</strong> (<em>int</em>) – ID of the screen to display the experiment window on.</p></li>
+<li><p><strong>settings</strong> (<em>Any</em>) – Configuration object with attributes describing window and logging
+settings.</p></li>
+<li><p><strong>screen_id</strong> (<em>int</em><em>, </em><em>optional</em>) – Monitor index to open the window on. Defaults to <code class="docutils literal notranslate"><span class="pre">1</span></code>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The initialized PsychoPy window and keyboard objects.</p>
+<dd class="field-even"><p>The created PsychoPy <code class="docutils literal notranslate"><span class="pre">Window</span></code> and <code class="docutils literal notranslate"><span class="pre">Keyboard</span></code> objects.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Tuple[Window, Keyboard]</p>
+<dd class="field-odd"><p>tuple of (Window, Keyboard)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span> <span class="o">=</span> <span class="n">initialize_exp</span><span class="p">(</span><span class="n">my_settings</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="psyflow.utils.list_supported_voices">
+<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">list_supported_voices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filter_lang</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">human_readable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/utils.html#list_supported_voices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.utils.list_supported_voices" title="Link to this definition">¶</a></dt>
+<dd><p>Query available edge-tts voices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filter_lang</strong> (<em>str</em><em>, </em><em>optional</em>) – Return only voices whose locale starts with this prefix.</p></li>
+<li><p><strong>human_readable</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> print a formatted table; otherwise return the raw list.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The raw voice dictionaries if <code class="docutils literal notranslate"><span class="pre">human_readable</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>,
+otherwise <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of dict or None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psyflow.utils.load_config">
-<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">load_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config/config.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.utils.load_config" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">load_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'config/config.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/utils.html#load_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.utils.load_config" title="Link to this definition">¶</a></dt>
 <dd><p>Load a config.yaml file and return a structured dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1408,18 +1589,55 @@ for development/testing without hardware.</p>
 <dd class="field-odd"><p>dict</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s1">&#39;config/config.yaml&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">][</span><span class="s1">&#39;screen_width&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psyflow.utils.show_ports">
-<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">show_ports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.utils.show_ports" title="Link to this definition">¶</a></dt>
-<dd><p>List all available serial ports with descriptions.</p>
+<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">show_ports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/utils.html#show_ports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.utils.show_ports" title="Link to this definition">¶</a></dt>
+<dd><p>List all available serial ports.</p>
+<p>The function prints a numbered list of connected serial ports with a short
+description. It is mainly intended for quick troubleshooting when choosing
+a port for trigger boxes or external devices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>This function is executed for its side effect of printing to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="psyflow.utils.taps">
-<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">taps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cookiecutter-psyflow'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#psyflow.utils.taps" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">taps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">template</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cookiecutter-psyflow'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/utils.html#taps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.utils.taps" title="Link to this definition">¶</a></dt>
+<dd><p>Generate a task skeleton using the bundled template.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task_name</strong> (<em>str</em>) – Name of the new task directory to create.</p></li>
+<li><p><strong>template</strong> (<em>str</em><em>, </em><em>optional</em>) – Name of the template folder inside the package. Defaults to
+<code class="docutils literal notranslate"><span class="pre">&quot;cookiecutter-psyflow&quot;</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the newly created project directory.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">taps</span><span class="p">(</span><span class="s2">&quot;mytask&quot;</span><span class="p">)</span>
+<span class="go">&quot;mytask&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </section>
 <section id="module-psyflow">
@@ -1469,6 +1687,16 @@ for development/testing without hardware.</p>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
 <li><a class="reference internal" href="#module-psyflow.BlockUnit">psyflow.BlockUnit module</a><ul>
 <li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit"><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code></a><ul>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.block_id"><code class="docutils literal notranslate"><span class="pre">BlockUnit.block_id</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.block_idx"><code class="docutils literal notranslate"><span class="pre">BlockUnit.block_idx</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.n_trials"><code class="docutils literal notranslate"><span class="pre">BlockUnit.n_trials</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.settings"><code class="docutils literal notranslate"><span class="pre">BlockUnit.settings</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.win"><code class="docutils literal notranslate"><span class="pre">BlockUnit.win</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.kb"><code class="docutils literal notranslate"><span class="pre">BlockUnit.kb</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.seed"><code class="docutils literal notranslate"><span class="pre">BlockUnit.seed</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.conditions"><code class="docutils literal notranslate"><span class="pre">BlockUnit.conditions</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.results"><code class="docutils literal notranslate"><span class="pre">BlockUnit.results</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.meta"><code class="docutils literal notranslate"><span class="pre">BlockUnit.meta</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.add_condition"><code class="docutils literal notranslate"><span class="pre">BlockUnit.add_condition()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.generate_conditions"><code class="docutils literal notranslate"><span class="pre">BlockUnit.generate_conditions()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.BlockUnit.BlockUnit.get_all_data"><code class="docutils literal notranslate"><span class="pre">BlockUnit.get_all_data()</span></code></a></li>
@@ -1579,6 +1807,7 @@ for development/testing without hardware.</p>
 <li><a class="reference internal" href="#module-psyflow.utils">psyflow.utils module</a><ul>
 <li><a class="reference internal" href="#psyflow.utils.count_down"><code class="docutils literal notranslate"><span class="pre">count_down()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.utils.initialize_exp"><code class="docutils literal notranslate"><span class="pre">initialize_exp()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.utils.list_supported_voices"><code class="docutils literal notranslate"><span class="pre">list_supported_voices()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.utils.load_config"><code class="docutils literal notranslate"><span class="pre">load_config()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.utils.show_ports"><code class="docutils literal notranslate"><span class="pre">show_ports()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.utils.taps"><code class="docutils literal notranslate"><span class="pre">taps()</span></code></a></li>
@@ -1596,7 +1825,7 @@ for development/testing without hardware.</p>
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=01f34227"></script>
+</div><script src="../_static/documentation_options.js?v=a58bc63e"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
