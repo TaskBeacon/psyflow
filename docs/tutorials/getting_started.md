@@ -27,7 +27,7 @@ pip install psychopy
 You can install psyflow directly from PyPI:
 
 ```bash
-pip install psyflow==0.1.0
+pip install psyflow==0.1.1
 ```
 
 Or if you prefer to work with the source code:
