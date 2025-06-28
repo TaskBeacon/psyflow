@@ -30,7 +30,7 @@ With `StimUnit`, you can create complex trial structures using a clean, chainabl
 
 | Purpose | Method | Example |
 |---------|--------|--------|
-| Initialize | `StimUnit(win, label, trigger)` | `trial = StimUnit(win, "cue", trigger)` |
+| Initialize | `StimUnit(label, win, kb, triggersender=sender)` | `trial = StimUnit("cue", win, kb, triggersender=sender)` |
 | Add stimuli | `.add_stim(stim)` | `trial.add_stim(fixation)` |
 | Register start hook | `.on_start(fn)` | `@trial.on_start()` |
 | Register response hook | `.on_response(keys, fn)` | `@trial.on_response(['left', 'right'])` |
@@ -40,7 +40,7 @@ With `StimUnit`, you can create complex trial structures using a clean, chainabl
 | Set auto-close keys | `.close_on(keys)` | `trial.close_on('space')` |
 | Simple display | `.show(duration)` | `trial.show(1.0)` |
 | Response capture | `.capture_response(keys)` | `trial.capture_response(['left', 'right'])` |
-| Full trial control | `.run()` | `trial.run(frame_based=True)` |
+| Full trial control | `.run()` | `trial.run()` |
 | Pause for input | `.wait_and_continue(keys)` | `trial.wait_and_continue(['space'])` |
 | Update state | `.set_state(**kwargs)` | `trial.set_state(correct=True)` |
 | Get state | `.state` or `.to_dict()` | `data = trial.to_dict()` |
@@ -61,15 +61,10 @@ win = visual.Window(size=[1024, 768], color="black", units="deg")
 kb = Keyboard()
 
 # Create a trigger sender (mock mode for testing)
-trigger = TriggerSender(mock=True)
+sender = TriggerSender(mock=True)
 
 # Initialize a trial unit
-trial = StimUnit(
-    win=win,           # PsychoPy window
-    unit_label="cue",  # Label for this trial (used in state keys)
-    triggersender=trigger,  # Optional trigger sender
-    keyboard=kb        # Optional keyboard (auto-created if None)
-)
+trial = StimUnit("cue", win, kb, triggersender=sender)
 ```
 
 For real EEG/MEG experiments, you would use a real trigger function:
@@ -253,7 +248,6 @@ trial.add_stim(fixation, target) \
 
 # Run the trial
 trial.run(
-    frame_based=True,           # Use frame counting for timing
     terminate_on_response=True   # Stop drawing after response
 )
 
@@ -340,7 +334,7 @@ import random
 # Setup
 win = visual.Window(size=[1024, 768], color="black", units="deg")
 kb = Keyboard()
-trigger = TriggerSender(mock=True)
+sender = TriggerSender(mock=True)
 
 # Create stimuli
 fixation = visual.TextStim(win, text="+", height=1.0, color="white")
@@ -366,7 +360,7 @@ def run_trial(condition):
         target_trigger = 12
     
     # Create trial unit
-    trial = StimUnit(win, "choice", trigger, kb)
+    trial = StimUnit("choice", win, kb, triggersender=sender)
     
     # Register response handler
     @trial.on_response(["left", "right"])
@@ -383,7 +377,7 @@ def run_trial(condition):
             unit.add_stim(feedback_incorrect)
     
     # Show fixation
-    fixation_trial = StimUnit(win, "fixation", trigger, kb)
+    fixation_trial = StimUnit("fixation", win, kb, triggersender=sender)
     fixation_trial.add_stim(fixation).show(
         duration=(0.8, 1.2),  # Jittered duration
         onset_trigger=10
@@ -421,7 +415,7 @@ for i, condition in enumerate(conditions):
     core.wait(0.5)  # Inter-trial interval
 
 # Show completion message
-end_trial = StimUnit(win, "end", trigger, kb)
+end_trial = StimUnit("end", win, kb, triggersender=sender)
 end_text = visual.TextStim(
     win,
     text="Experiment complete. Thank you!",
@@ -493,15 +487,15 @@ You can create complex trial structures by nesting `StimUnit` instances:
 ```python
 def run_complex_trial():
     # Fixation phase
-    fix_unit = StimUnit(win, "fixation", trigger)
+    fix_unit = StimUnit("fixation", win, kb, triggersender=sender)
     fix_unit.add_stim(fixation).show(duration=0.5, onset_trigger=1)
     
     # Cue phase
-    cue_unit = StimUnit(win, "cue", trigger)
+    cue_unit = StimUnit("cue", win, kb, triggersender=sender)
     cue_unit.add_stim(cue).show(duration=0.8, onset_trigger=2)
     
     # Target phase with response
-    target_unit = StimUnit(win, "target", trigger)
+    target_unit = StimUnit("target", win, kb, triggersender=sender)
     target_unit.add_stim(target).capture_response(
         keys=["left", "right"],
         duration=2.0,
@@ -509,7 +503,7 @@ def run_complex_trial():
     )
     
     # Feedback phase
-    feedback_unit = StimUnit(win, "feedback", trigger)
+    feedback_unit = StimUnit("feedback", win, kb, triggersender=sender)
     if target_unit.state.get("correct", False):
         feedback_unit.add_stim(feedback_correct)
     else:
