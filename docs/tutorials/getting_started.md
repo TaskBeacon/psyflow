@@ -243,8 +243,8 @@ trial = StimUnit("trial_1", win, kb, triggersender=sender)
 trial \
     .add_stim(fixation, target) \
     .on_start(lambda unit: unit.send_trigger(triggers["fix_onset"])) \
-    .show_stim(fixation, duration=0.5) \
-    .show_stim(target, duration=1.0, trigger=triggers["target_onset"]) \
+    .show(fixation, duration=0.5) \
+    .show(target, duration=1.0, trigger=triggers["target_onset"]) \
     .capture_response(
         keys=["left", "right"],
         duration=2.0,
@@ -257,7 +257,7 @@ trial \
         correct_keys=["left"],
     ) \
     .on_end(lambda unit: print(f"Response: {unit.state}")) \
-    .run(frame_based=True)
+    .run()
 
 # Access trial results
 print(f"RT: {trial.state.get('rt')}")
@@ -303,8 +303,8 @@ def run_trial(condition, trial_idx, block):
     # Run trial (simplified)
     trial \
         .add_stim(fixation, target) \
-        .show_stim(fixation, duration=0.5) \
-        .show_stim(target, duration=1.0) \
+        .show(fixation, duration=0.5) \
+        .show(target, duration=1.0) \
         .capture_response(keys=settings.key_list, duration=2.0) \
         .run()
     
