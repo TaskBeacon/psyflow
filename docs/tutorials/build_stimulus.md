@@ -195,6 +195,30 @@ feedback:
   pos: [0, -2]
 ```
 
+### Converting Text Stimuli to Voice
+
+`StimBank` can transform text-based stimuli into spoken audio using the
+`edge-tts` package. Two helper methods handle the heavy lifting for you:
+
+- **`convert_to_voice()`** – Take one or more already registered text stimuli and
+  generate an MP3 file for each. The sounds are stored in an `assets/` folder and
+  new `Sound` stimuli with the suffix `_voice` are automatically registered.
+- **`add_voice()`** – Synthesize arbitrary text and register it immediately as a
+  new voice stimulus.
+
+```python
+# Convert existing text stimuli to speech
+stim_bank.convert_to_voice(["instructions", "feedback"], voice="en-US-AriaNeural")
+
+# Create a brand new voice stimulus
+stim_bank.add_voice(
+    "welcome_voice",
+    "Welcome to the experiment. Press space to start.",
+    voice="en-US-AriaNeural",
+)
+```
+
+
 ### 3. Retrieving Stimuli
 
 #### Getting Individual Stimuli
