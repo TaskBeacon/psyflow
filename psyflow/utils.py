@@ -21,6 +21,17 @@ def show_ports():
             print(f"[{i}] {p.device} - {p.description}")
 
 
+def list_serial_ports():
+    """Alias for :func:`show_ports`.
+
+    Returns
+    -------
+    None
+        This function simply calls :func:`show_ports` and prints the ports.
+    """
+    return show_ports()
+
+
 
 
 from cookiecutter.main import cookiecutter

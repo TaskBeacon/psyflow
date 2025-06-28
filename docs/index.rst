@@ -27,6 +27,7 @@ Start with one of the tutorials below or explore the API reference.
    tutorials/build_stimulus
    tutorials/send_trigger
    tutorials/cli_usage
+   tutorials/utilities
    tutorials/llm_client
 
 
