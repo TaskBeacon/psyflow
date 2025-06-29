@@ -2,10 +2,11 @@
 <html class="no-js" lang="en" data-content_root="../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" />
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Using LLMClient for AI-Driven Helpers" href="llm_client.html" /><link rel="prev" title="Command-Line Tools: Quick Project Setup" href="cli_usage.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>Overview: module code - psyflow 0.1.1 documentation</title>
+        <title>Utility Helpers - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -178,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -203,16 +204,16 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/getting_started.html">Getting Started with psyflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/utilities.html">Utility Helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with psyflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Utility Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
 </ul>
 
 </div>
@@ -232,7 +233,13 @@
           <span>Back to top</span>
         </a>
         <div class="content-icon-container">
-          <div class="theme-toggle-container theme-toggle-content">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/tutorials/utilities.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
             <button class="theme-toggle">
               <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
               <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
@@ -241,29 +248,81 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <h1>All modules for which code is available</h1>
-<ul><li><a href="psyflow/BlockUnit.html">psyflow.BlockUnit</a></li>
-<li><a href="psyflow/LLM.html">psyflow.LLM</a></li>
-<li><a href="psyflow/StimBank.html">psyflow.StimBank</a></li>
-<li><a href="psyflow/StimUnit.html">psyflow.StimUnit</a></li>
-<li><a href="psyflow/SubInfo.html">psyflow.SubInfo</a></li>
-<li><a href="psyflow/TaskSettings.html">psyflow.TaskSettings</a></li>
-<li><a href="psyflow/TriggerSender.html">psyflow.TriggerSender</a></li>
-<li><a href="psyflow/utils.html">psyflow.utils</a></li>
-</ul>
+          <section id="utility-helpers">
+<h1>Utility Helpers<a class="headerlink" href="#utility-helpers" title="Link to this heading">¶</a></h1>
+<p>These small helper functions streamline common setup tasks.</p>
+<section id="initialize-exp">
+<h2><code class="docutils literal notranslate"><span class="pre">initialize_exp</span></code><a class="headerlink" href="#initialize-exp" title="Link to this heading">¶</a></h2>
+<p>Initialize the PsychoPy window and keyboard while setting up logging.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">initialize_exp</span><span class="p">,</span> <span class="n">TaskSettings</span>
+
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s2">&quot;fullscreen&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
+<span class="n">win</span><span class="p">,</span> <span class="n">kb</span> <span class="o">=</span> <span class="n">initialize_exp</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="count-down">
+<h2><code class="docutils literal notranslate"><span class="pre">count_down</span></code><a class="headerlink" href="#count-down" title="Link to this heading">¶</a></h2>
+<p>Display a simple countdown before the experiment starts.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">count_down</span>
+
+<span class="n">count_down</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="list-serial-ports">
+<h2><code class="docutils literal notranslate"><span class="pre">list_serial_ports</span></code><a class="headerlink" href="#list-serial-ports" title="Link to this heading">¶</a></h2>
+<p>Quickly list available serial ports (alias of <code class="docutils literal notranslate"><span class="pre">show_ports</span></code>).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_serial_ports</span>
+
+<span class="n">list_serial_ports</span><span class="p">()</span>  <span class="c1"># prints numbered ports to the console</span>
+</pre></div>
+</div>
+</section>
+<section id="list-supported-voices">
+<h2><code class="docutils literal notranslate"><span class="pre">list_supported_voices</span></code><a class="headerlink" href="#list-supported-voices" title="Link to this heading">¶</a></h2>
+<p>Retrieve available voices for speech synthesis via <code class="docutils literal notranslate"><span class="pre">edge-tts</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_supported_voices</span>
+
+<span class="n">voices</span> <span class="o">=</span> <span class="n">list_supported_voices</span><span class="p">(</span><span class="n">filter_lang</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">voices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;ShortName&quot;</span><span class="p">])</span>  <span class="c1"># Inspect voice attributes</span>
+</pre></div>
+</div>
+<p>Use <code class="docutils literal notranslate"><span class="pre">list_supported_voices(human_readable=True)</span></code> to print a formatted table.</p>
+</section>
+</section>
+
         </article>
       </div>
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="llm_client.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="cli_usage.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Command-Line Tools: Quick Project Setup</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -282,8 +341,30 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Utility Helpers</a><ul>
+<li><a class="reference internal" href="#initialize-exp"><code class="docutils literal notranslate"><span class="pre">initialize_exp</span></code></a></li>
+<li><a class="reference internal" href="#count-down"><code class="docutils literal notranslate"><span class="pre">count_down</span></code></a></li>
+<li><a class="reference internal" href="#list-serial-ports"><code class="docutils literal notranslate"><span class="pre">list_serial_ports</span></code></a></li>
+<li><a class="reference internal" href="#list-supported-voices"><code class="docutils literal notranslate"><span class="pre">list_supported_voices</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

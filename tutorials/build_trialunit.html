@@ -212,16 +212,8 @@
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
-<ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../release.html">Release workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
 </ul>
 
 </div>
@@ -327,8 +319,8 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Initialize</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">StimUnit(win,</span> <span class="pre">label,</span> <span class="pre">trigger)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trial</span> <span class="pre">=</span> <span class="pre">StimUnit(win,</span> <span class="pre">&quot;cue&quot;,</span> <span class="pre">trigger)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StimUnit(label,</span> <span class="pre">win,</span> <span class="pre">kb,</span> <span class="pre">triggersender=sender)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial</span> <span class="pre">=</span> <span class="pre">StimUnit(&quot;cue&quot;,</span> <span class="pre">win,</span> <span class="pre">kb,</span> <span class="pre">triggersender=sender)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Add stimuli</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.add_stim(stim)</span></code></p></td>
@@ -368,7 +360,7 @@
 </tr>
 <tr class="row-even"><td><p>Full trial control</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.run()</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trial.run(frame_based=True)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial.run()</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Pause for input</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.wait_and_continue(keys)</span></code></p></td>
@@ -400,15 +392,10 @@
 <span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
 
 <span class="c1"># Create a trigger sender (mock mode for testing)</span>
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Initialize a trial unit</span>
-<span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span>
-    <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>           <span class="c1"># PsychoPy window</span>
-    <span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;cue&quot;</span><span class="p">,</span>  <span class="c1"># Label for this trial (used in state keys)</span>
-    <span class="n">triggersender</span><span class="o">=</span><span class="n">trigger</span><span class="p">,</span>  <span class="c1"># Optional trigger sender</span>
-    <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>        <span class="c1"># Optional keyboard (auto-created if None)</span>
-<span class="p">)</span>
+<span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;cue&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>For real EEG/MEG experiments, you would use a real trigger function:</p>
@@ -582,7 +569,6 @@
 
 <span class="c1"># Run the trial</span>
 <span class="n">trial</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-    <span class="n">frame_based</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>           <span class="c1"># Use frame counting for timing</span>
     <span class="n">terminate_on_response</span><span class="o">=</span><span class="kc">True</span>   <span class="c1"># Stop drawing after response</span>
 <span class="p">)</span>
 
@@ -667,7 +653,7 @@
 <span class="c1"># Setup</span>
 <span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
 <span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Create stimuli</span>
 <span class="n">fixation</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
@@ -693,7 +679,7 @@
         <span class="n">target_trigger</span> <span class="o">=</span> <span class="mi">12</span>
     
     <span class="c1"># Create trial unit</span>
-    <span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;choice&quot;</span><span class="p">,</span> <span class="n">trigger</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
+    <span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;choice&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
     
     <span class="c1"># Register response handler</span>
     <span class="nd">@trial</span><span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">])</span>
@@ -710,7 +696,7 @@
             <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback_incorrect</span><span class="p">)</span>
     
     <span class="c1"># Show fixation</span>
-    <span class="n">fixation_trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;fixation&quot;</span><span class="p">,</span> <span class="n">trigger</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
+    <span class="n">fixation_trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
     <span class="n">fixation_trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
         <span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>  <span class="c1"># Jittered duration</span>
         <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">10</span>
@@ -748,7 +734,7 @@
     <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Inter-trial interval</span>
 
 <span class="c1"># Show completion message</span>
-<span class="n">end_trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="n">trigger</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
+<span class="n">end_trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
 <span class="n">end_text</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
     <span class="n">win</span><span class="p">,</span>
     <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Experiment complete. Thank you!&quot;</span><span class="p">,</span>
@@ -815,15 +801,15 @@
 <p>You can create complex trial structures by nesting <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> instances:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run_complex_trial</span><span class="p">():</span>
     <span class="c1"># Fixation phase</span>
-    <span class="n">fix_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;fixation&quot;</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
+    <span class="n">fix_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
     <span class="n">fix_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     
     <span class="c1"># Cue phase</span>
-    <span class="n">cue_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;cue&quot;</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
+    <span class="n">cue_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;cue&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
     <span class="n">cue_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">cue</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     
     <span class="c1"># Target phase with response</span>
-    <span class="n">target_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
+    <span class="n">target_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
     <span class="n">target_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
         <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">],</span>
         <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
@@ -831,7 +817,7 @@
     <span class="p">)</span>
     
     <span class="c1"># Feedback phase</span>
-    <span class="n">feedback_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;feedback&quot;</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
+    <span class="n">feedback_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;feedback&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">target_unit</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
         <span class="n">feedback_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback_correct</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>

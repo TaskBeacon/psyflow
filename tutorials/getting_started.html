@@ -212,16 +212,8 @@
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
-<ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../release.html">Release workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
 </ul>
 
 </div>
@@ -288,7 +280,7 @@
 <section id="installing-psyflow">
 <h3>Installing psyflow<a class="headerlink" href="#installing-psyflow" title="Link to this heading">¶</a></h3>
 <p>You can install psyflow directly from PyPI:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="nv">psyflow</span><span class="o">==</span><span class="m">0</span>.1.0
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="nv">psyflow</span><span class="o">==</span><span class="m">0</span>.1.1
 </pre></div>
 </div>
 <p>Or if you prefer to work with the source code:</p>
@@ -511,8 +503,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <span class="n">trial</span> \
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">unit</span><span class="p">:</span> <span class="n">unit</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">(</span><span class="n">triggers</span><span class="p">[</span><span class="s2">&quot;fix_onset&quot;</span><span class="p">]))</span> \
-    <span class="o">.</span><span class="n">show_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span> \
-    <span class="o">.</span><span class="n">show_stim</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">trigger</span><span class="o">=</span><span class="n">triggers</span><span class="p">[</span><span class="s2">&quot;target_onset&quot;</span><span class="p">])</span> \
+    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">trigger</span><span class="o">=</span><span class="n">triggers</span><span class="p">[</span><span class="s2">&quot;target_onset&quot;</span><span class="p">])</span> \
     <span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
         <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">],</span>
         <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
@@ -525,7 +517,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
         <span class="n">correct_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">],</span>
     <span class="p">)</span> \
     <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">unit</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span> \
-    <span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">frame_based</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
 <span class="c1"># Access trial results</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RT: </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rt&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -570,8 +562,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
     <span class="c1"># Run trial (simplified)</span>
     <span class="n">trial</span> \
         <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> \
-        <span class="o">.</span><span class="n">show_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span> \
-        <span class="o">.</span><span class="n">show_stim</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span> \
         <span class="o">.</span><span class="n">capture_response</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">key_list</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span> \
         <span class="o">.</span><span class="n">run</span><span class="p">()</span>
     

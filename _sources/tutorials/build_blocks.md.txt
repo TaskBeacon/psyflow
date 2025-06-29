@@ -29,7 +29,7 @@ The `BlockUnit` class is a powerful tool for organizing trials in psychological 
 |---------|--------|--------|
 | Initialize block | `BlockUnit(block_id, block_idx, ...)` | `block = BlockUnit("block1", 0, settings)` |
 | Generate conditions | `.generate_conditions(func, labels)` | `block.generate_conditions(generate_func, ["A", "B"])` |
-| Add trials manually | `.add_trials(trial_list)` | `block.add_trials(["A", "B", "A"])` |
+| Add conditions manually | `.add_condition(condition_list)` | `block.add_condition(["A", "B", "A"])` |
 | Register start hook | `.on_start(func)` | `@block.on_start()` or `block.on_start(func)` |
 | Register end hook | `.on_end(func)` | `@block.on_end()` or `block.on_end(func)` |
 | Run all trials | `.run_trial(trial_func, **kwargs)` | `block.run_trial(run_trial_function)` |
@@ -37,7 +37,6 @@ The `BlockUnit` class is a powerful tool for organizing trials in psychological 
 | Append results | `.to_dict(target_list)` | `block.to_dict(all_results)` |
 | Summarize results | `.summarize()` | `summary = block.summarize()` |
 | Custom summary | `.summarize(func)` | `summary = block.summarize(custom_func)` |
-| Get trial count | `len(block)` | `num_trials = len(block)` |
 | Log block info | `.logging_block_info()` | `block.logging_block_info()` |
 
 ## Detailed Usage Guide
@@ -97,7 +96,7 @@ This populates `block.trials` with a balanced, randomized sequence of conditions
 For full control, you can manually specify the trial sequence:
 
 ```python
-block.add_trials(["congruent", "incongruent", "neutral", "congruent", "incongruent"])
+block.add_condition(["congruent", "incongruent", "neutral", "congruent", "incongruent"])
 ```
 
 ### 3. Registering Block Lifecycle Hooks

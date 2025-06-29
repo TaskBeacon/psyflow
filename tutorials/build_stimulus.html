@@ -212,16 +212,8 @@
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
-<ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../release.html">Release workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
 </ul>
 
 </div>
@@ -513,6 +505,29 @@
 </pre></div>
 </div>
 </section>
+</section>
+<section id="converting-text-stimuli-to-voice">
+<h3>Converting Text Stimuli to Voice<a class="headerlink" href="#converting-text-stimuli-to-voice" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> can transform text-based stimuli into spoken audio using the
+<code class="docutils literal notranslate"><span class="pre">edge-tts</span></code> package. Two helper methods handle the heavy lifting for you:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">convert_to_voice()</span></code></strong> – Take one or more already registered text stimuli and
+generate an MP3 file for each. The sounds are stored in an <code class="docutils literal notranslate"><span class="pre">assets/</span></code> folder and
+new <code class="docutils literal notranslate"><span class="pre">Sound</span></code> stimuli with the suffix <code class="docutils literal notranslate"><span class="pre">_voice</span></code> are automatically registered.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">add_voice()</span></code></strong> – Synthesize arbitrary text and register it immediately as a
+new voice stimulus.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convert existing text stimuli to speech</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">convert_to_voice</span><span class="p">([</span><span class="s2">&quot;instructions&quot;</span><span class="p">,</span> <span class="s2">&quot;feedback&quot;</span><span class="p">],</span> <span class="n">voice</span><span class="o">=</span><span class="s2">&quot;en-US-AriaNeural&quot;</span><span class="p">)</span>
+
+<span class="c1"># Create a brand new voice stimulus</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_voice</span><span class="p">(</span>
+    <span class="s2">&quot;welcome_voice&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Welcome to the experiment. Press space to start.&quot;</span><span class="p">,</span>
+    <span class="n">voice</span><span class="o">=</span><span class="s2">&quot;en-US-AriaNeural&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="retrieving-stimuli">
 <h3>3. Retrieving Stimuli<a class="headerlink" href="#retrieving-stimuli" title="Link to this heading">¶</a></h3>
@@ -879,6 +894,7 @@
 <li><a class="reference internal" href="#method-2-using-dictionaries-or-yaml">Method 2: Using Dictionaries or YAML</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#converting-text-stimuli-to-voice">Converting Text Stimuli to Voice</a></li>
 <li><a class="reference internal" href="#retrieving-stimuli">3. Retrieving Stimuli</a><ul>
 <li><a class="reference internal" href="#getting-individual-stimuli">Getting Individual Stimuli</a></li>
 <li><a class="reference internal" href="#getting-multiple-stimuli">Getting Multiple Stimuli</a></li>

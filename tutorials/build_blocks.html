@@ -212,16 +212,8 @@
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
-<ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../release.html">Release workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
 </ul>
 
 </div>
@@ -327,9 +319,9 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">.generate_conditions(func,</span> <span class="pre">labels)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">block.generate_conditions(generate_func,</span> <span class="pre">[&quot;A&quot;,</span> <span class="pre">&quot;B&quot;])</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Add trials manually</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.add_trials(trial_list)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">block.add_trials([&quot;A&quot;,</span> <span class="pre">&quot;B&quot;,</span> <span class="pre">&quot;A&quot;])</span></code></p></td>
+<tr class="row-even"><td><p>Add conditions manually</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.add_condition(condition_list)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">block.add_condition([&quot;A&quot;,</span> <span class="pre">&quot;B&quot;,</span> <span class="pre">&quot;A&quot;])</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Register start hook</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.on_start(func)</span></code></p></td>
@@ -359,11 +351,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">.summarize(func)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">summary</span> <span class="pre">=</span> <span class="pre">block.summarize(custom_func)</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Get trial count</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">len(block)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">num_trials</span> <span class="pre">=</span> <span class="pre">len(block)</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>Log block info</p></td>
+<tr class="row-even"><td><p>Log block info</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.logging_block_info()</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">block.logging_block_info()</span></code></p></td>
 </tr>
@@ -424,7 +412,7 @@
 <section id="option-b-manually-assigning-trials">
 <h4>Option B: Manually Assigning Trials<a class="headerlink" href="#option-b-manually-assigning-trials" title="Link to this heading">¶</a></h4>
 <p>For full control, you can manually specify the trial sequence:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">add_trials</span><span class="p">([</span><span class="s2">&quot;congruent&quot;</span><span class="p">,</span> <span class="s2">&quot;incongruent&quot;</span><span class="p">,</span> <span class="s2">&quot;neutral&quot;</span><span class="p">,</span> <span class="s2">&quot;congruent&quot;</span><span class="p">,</span> <span class="s2">&quot;incongruent&quot;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">add_condition</span><span class="p">([</span><span class="s2">&quot;congruent&quot;</span><span class="p">,</span> <span class="s2">&quot;incongruent&quot;</span><span class="p">,</span> <span class="s2">&quot;neutral&quot;</span><span class="p">,</span> <span class="s2">&quot;congruent&quot;</span><span class="p">,</span> <span class="s2">&quot;incongruent&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
 </section>
