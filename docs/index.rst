@@ -32,21 +32,9 @@ Start with one of the tutorials below or explore the API reference.
 
 
 .. toctree::
-   :maxdepth: 2
-   :caption: API Reference
-
-   modules
-
-.. toctree::
    :maxdepth: 1
    :caption: Development
-
    release
-
-
-Indices and tables
-==================
-
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
+

@@ -1,0 +1,47 @@
+# Utility Helpers
+
+These small helper functions streamline common setup tasks.
+
+## `initialize_exp`
+
+Initialize the PsychoPy window and keyboard while setting up logging.
+
+```python
+from psyflow import initialize_exp, TaskSettings
+
+settings = TaskSettings.from_dict({"fullscreen": False})
+win, kb = initialize_exp(settings)
+```
+
+## `count_down`
+
+Display a simple countdown before the experiment starts.
+
+```python
+from psyflow import count_down
+
+count_down(win, seconds=3, color="white")
+```
+
+## `list_serial_ports`
+
+Quickly list available serial ports (alias of `show_ports`).
+
+```python
+from psyflow import list_serial_ports
+
+list_serial_ports()  # prints numbered ports to the console
+```
+
+## `list_supported_voices`
+
+Retrieve available voices for speech synthesis via `edge-tts`.
+
+```python
+from psyflow import list_supported_voices
+
+voices = list_supported_voices(filter_lang="en")
+print(voices[0]["ShortName"])  # Inspect voice attributes
+```
+
+Use `list_supported_voices(human_readable=True)` to print a formatted table.

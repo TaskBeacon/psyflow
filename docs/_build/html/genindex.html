@@ -210,16 +210,8 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
-<ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="release.html">Release workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/utilities.html">Utility Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
 </ul>
 
 </div>
@@ -257,8 +249,18 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#J"><strong>J</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#J"><strong>J</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a></div>
 </section>
+<section id="_" class="genindex-section">
+  <h2>_</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient._sdk_client">_sdk_client (psyflow.LLM.LLMClient attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
 <section id="A" class="genindex-section">
   <h2>A</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
@@ -267,6 +269,8 @@
 </li>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.add_from_dict">add_from_dict() (psyflow.StimBank.StimBank method)</a>
 </li>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.add_knowledge">add_knowledge() (psyflow.LLM.LLMClient method)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/psyflow.html#psyflow.StimUnit.StimUnit.add_stim">add_stim() (psyflow.StimUnit.StimUnit method)</a>
@@ -274,6 +278,8 @@
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.add_subinfo">add_subinfo() (psyflow.TaskSettings.TaskSettings method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.add_voice">add_voice() (psyflow.StimBank.StimBank method)</a>
+</li>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.api_key">api_key (psyflow.LLM.LLMClient attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -333,9 +339,11 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.define">define() (psyflow.StimBank.StimBank method)</a>
 </li>
+        <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.describe">describe() (psyflow.StimBank.StimBank method)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.describe">describe() (psyflow.StimBank.StimBank method)</a>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.doc2task">doc2task() (psyflow.LLM.LLMClient method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.StimUnit.StimUnit.duration">duration() (psyflow.StimUnit.StimUnit method)</a>
 </li>
@@ -371,6 +379,8 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.generate">generate() (psyflow.LLM.LLMClient method)</a>
+</li>
         <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit.generate_conditions">generate_conditions() (psyflow.BlockUnit.BlockUnit method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.get">get() (psyflow.StimBank.StimBank method)</a>
@@ -431,11 +441,13 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit.kb">kb (psyflow.BlockUnit.BlockUnit attribute)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.key_list">key_list (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.keys">keys() (psyflow.StimBank.StimBank method)</a>
+</li>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.knowledge_base">knowledge_base (psyflow.LLM.LLMClient attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -445,12 +457,20 @@
   <h2>L</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.list_models">list_models() (psyflow.LLM.LLMClient method)</a>
+</li>
+        <li><a href="api/psyflow.html#psyflow.utils.list_serial_ports">list_serial_ports() (in module psyflow.utils)</a>
+</li>
         <li><a href="api/psyflow.html#psyflow.utils.list_supported_voices">list_supported_voices() (in module psyflow.utils)</a>
 </li>
-        <li><a href="api/psyflow.html#psyflow.utils.load_config">load_config() (in module psyflow.utils)</a>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMAPIError">LLMAPIError</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient">LLMClient (class in psyflow.LLM)</a>
+</li>
+        <li><a href="api/psyflow.html#psyflow.utils.load_config">load_config() (in module psyflow.utils)</a>
+</li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.log_file">log_file (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.StimUnit.StimUnit.log_unit">log_unit() (psyflow.StimUnit.StimUnit method)</a>
@@ -469,6 +489,8 @@
 </li>
         <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit.meta">meta (psyflow.BlockUnit.BlockUnit attribute)</a>
 </li>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.model">model (psyflow.LLM.LLMClient attribute)</a>
+</li>
         <li>
     module
 
@@ -476,6 +498,8 @@
           <li><a href="api/psyflow.html#module-psyflow">psyflow</a>
 </li>
           <li><a href="api/psyflow.html#module-psyflow.BlockUnit">psyflow.BlockUnit</a>
+</li>
+          <li><a href="api/psyflow.html#module-psyflow.LLM">psyflow.LLM</a>
 </li>
           <li><a href="api/psyflow.html#module-psyflow.StimBank">psyflow.StimBank</a>
 </li>
@@ -544,6 +568,8 @@
 </li>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.preview_selected">preview_selected() (psyflow.StimBank.StimBank method)</a>
 </li>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.provider">provider (psyflow.LLM.LLMClient attribute)</a>
+</li>
         <li>
     psyflow
 
@@ -559,14 +585,21 @@
 </li>
         </ul></li>
         <li>
+    psyflow.LLM
+
+        <ul>
+          <li><a href="api/psyflow.html#module-psyflow.LLM">module</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
     psyflow.StimBank
 
         <ul>
           <li><a href="api/psyflow.html#module-psyflow.StimBank">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     psyflow.StimUnit
 
@@ -612,6 +645,8 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/psyflow.html#psyflow.StimBank.StimBank.rebuild">rebuild() (psyflow.StimBank.StimBank method)</a>
 </li>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.register_provider">register_provider() (psyflow.LLM.LLMClient class method)</a>
+</li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.res_file">res_file (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
     </ul></td>
@@ -630,7 +665,11 @@
   <h2>S</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.save_knowledge">save_knowledge() (psyflow.LLM.LLMClient method)</a>
+</li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.save_path">save_path (psyflow.TaskSettings.TaskSettings attribute)</a>
+</li>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.save_readme">save_readme() (psyflow.LLM.LLMClient method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.save_to_json">save_to_json() (psyflow.TaskSettings.TaskSettings method)</a>
 </li>
@@ -646,10 +685,10 @@
 </li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.set_block_seed">set_block_seed() (psyflow.TaskSettings.TaskSettings method)</a>
 </li>
-        <li><a href="api/psyflow.html#psyflow.StimUnit.StimUnit.set_state">set_state() (psyflow.StimUnit.StimUnit method)</a>
-</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api/psyflow.html#psyflow.StimUnit.StimUnit.set_state">set_state() (psyflow.StimUnit.StimUnit method)</a>
+</li>
         <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit.settings">settings (psyflow.BlockUnit.BlockUnit attribute)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.StimUnit.StimUnit.show">show() (psyflow.StimUnit.StimUnit method)</a>
@@ -678,9 +717,13 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api/psyflow.html#psyflow.utils.taps">taps() (in module psyflow.utils)</a>
 </li>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.task2doc">task2doc() (psyflow.LLM.LLMClient method)</a>
+</li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.task_name">task_name (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings">TaskSettings (class in psyflow.TaskSettings)</a>
+</li>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.test">test() (psyflow.LLM.LLMClient method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.BlockUnit.BlockUnit.to_dict">to_dict() (psyflow.BlockUnit.BlockUnit method)</a>
 
@@ -693,6 +736,10 @@
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.total_blocks">total_blocks (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.total_trials">total_trials (psyflow.TaskSettings.TaskSettings attribute)</a>
+</li>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.translate">translate() (psyflow.LLM.LLMClient method)</a>
+</li>
+        <li><a href="api/psyflow.html#psyflow.LLM.LLMClient.translate_config">translate_config() (psyflow.LLM.LLMClient method)</a>
 </li>
         <li><a href="api/psyflow.html#psyflow.TaskSettings.TaskSettings.trials_per_block">trials_per_block (psyflow.TaskSettings.TaskSettings attribute)</a>
 </li>

@@ -212,16 +212,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
-<ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
-</ul>
-</li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Development</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../release.html">Release workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/utilities.html">Utility Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
 </ul>
 
 </div>
@@ -1502,6 +1494,298 @@ warning.</p>
 </dd></dl>
 
 </section>
+<section id="module-psyflow.LLM">
+<span id="psyflow-llm-module"></span><h2>psyflow.LLM module<a class="headerlink" href="#module-psyflow.LLM" title="Link to this heading">¶</a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMAPIError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.LLM.</span></span><span class="sig-name descname"><span class="pre">LLMAPIError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">status_code</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_response</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMAPIError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMAPIError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exception raised for errors returned by LLM providers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>message</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Human-readable description of the error.</p></li>
+<li><p><strong>status_code</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]</span>) – HTTP status code if applicable.</p></li>
+<li><p><strong>api_response</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) – Raw response from the provider or SDK error details.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">psyflow.LLM.</span></span><span class="sig-name descname"><span class="pre">LLMClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">provider</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Unified client for multiple LLM backends, plus utilities for task-document conversion and translation.</p>
+<dl class="simple">
+<dt>Supported providers:</dt><dd><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gemini</span></code>  : Google GenAI SDK</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">openai</span></code>  : Official OpenAI SDK</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deepseek</span></code>: OpenAI SDK with custom base_url</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.provider">
+<span class="sig-name descname"><span class="pre">provider</span></span><a class="headerlink" href="#psyflow.LLM.LLMClient.provider" title="Link to this definition">¶</a></dt>
+<dd><p>Lowercase provider name.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.api_key">
+<span class="sig-name descname"><span class="pre">api_key</span></span><a class="headerlink" href="#psyflow.LLM.LLMClient.api_key" title="Link to this definition">¶</a></dt>
+<dd><p>API key for authentication.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.model">
+<span class="sig-name descname"><span class="pre">model</span></span><a class="headerlink" href="#psyflow.LLM.LLMClient.model" title="Link to this definition">¶</a></dt>
+<dd><p>Model identifier to use.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient._sdk_client">
+<span class="sig-name descname"><span class="pre">_sdk_client</span></span><a class="headerlink" href="#psyflow.LLM.LLMClient._sdk_client" title="Link to this definition">¶</a></dt>
+<dd><p>Underlying SDK client instance.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.knowledge_base">
+<span class="sig-name descname"><span class="pre">knowledge_base</span></span><a class="headerlink" href="#psyflow.LLM.LLMClient.knowledge_base" title="Link to this definition">¶</a></dt>
+<dd><p>Few-shot examples for generation context.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.add_knowledge">
+<span class="sig-name descname"><span class="pre">add_knowledge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient.add_knowledge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient.add_knowledge" title="Link to this definition">¶</a></dt>
+<dd><p>Bulk-load few-shot examples into memory from either:</p>
+<ol class="arabic simple">
+<li><p>A JSON file path containing a list of example-dicts, or</p></li>
+<li><p>A list of example-dicts directly.</p></li>
+</ol>
+<dl class="simple">
+<dt>Each example-dict maps keys to either:</dt><dd><ul class="simple">
+<li><p>List[str] of file paths or URLs → will be parsed via <cite>_parse_entry()</cite></p></li>
+<li><p>Raw text (str)                 → will be stripped and stored as-is</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>source</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]]]]</span>) – <ul class="simple">
+<li><p>If <cite>str</cite>, treated as path to a JSON file containing List[Dict[…]].</p></li>
+<li><p>If <cite>list</cite>, treated as in-memory list of example dicts.</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – on invalid JSON structure or unsupported source type.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.doc2task">
+<span class="sig-name descname"><span class="pre">doc2task</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">doc_text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taps_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_raw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient.doc2task"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient.doc2task" title="Link to this definition">¶</a></dt>
+<dd><p>Reconstruct multiple interdependent source files from a task description,
+with utils.py treated as optional.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>doc_text</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Directory, README path, or raw description string.</p></li>
+<li><p><strong>taps_root</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Root folder to write outputs under <cite>&lt;task_name&gt;/</cite>.</p></li>
+<li><p><strong>prompt</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Custom instruction prompt (defaults shown below).</p></li>
+<li><p><strong>deterministic</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Force deterministic sampling.</p></li>
+<li><p><strong>temperature</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Sampling temperature.</p></li>
+<li><p><strong>max_tokens</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Max tokens to generate.</p></li>
+<li><p><strong>file_names</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – List of filenames to request. Defaults to
+[“run_trial.py”,”utils.py”,”main.py”,”config.yaml”].</p></li>
+<li><p><strong>return_raw</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, return raw LLM markdown; no files written.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p>
+</dd>
+</dl>
+<ul class="simple">
+<li><p>If return_raw: the raw markdown string from the LLM.</p></li>
+<li><p>Otherwise: a dict mapping each filename → its saved path (excluding any empty utils.py).</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if any <strong>required</strong> section is missing (all except utils.py).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.generate">
+<span class="sig-name descname"><span class="pre">generate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient.generate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient.generate" title="Link to this definition">¶</a></dt>
+<dd><p>Generate text completion from the configured model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prompt</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Input prompt for the LLM.</p></li>
+<li><p><strong>deterministic</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, zero out sampling randomness.</p></li>
+<li><p><strong>kwargs</strong> – Additional generation parameters (e.g., temperature, stop).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Generated text response.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#psyflow.LLM.LLMAPIError" title="psyflow.LLM.LLMAPIError"><strong>LLMAPIError</strong></a> – If the provider returns an error.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.list_models">
+<span class="sig-name descname"><span class="pre">list_models</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient.list_models"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient.list_models" title="Link to this definition">¶</a></dt>
+<dd><p>Retrieve a list of available model IDs for the current provider.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of model identifiers.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#psyflow.LLM.LLMAPIError" title="psyflow.LLM.LLMAPIError"><strong>LLMAPIError</strong></a> – If no models are returned or listing fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.register_provider">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">register_provider</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">handler</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient.register_provider"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient.register_provider" title="Link to this definition">¶</a></dt>
+<dd><p>Register a custom provider handler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Identifier for the custom provider.</p></li>
+<li><p><strong>handler</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Callable that takes (prompt, kwargs) and returns response string.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.save_knowledge">
+<span class="sig-name descname"><span class="pre">save_knowledge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient.save_knowledge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient.save_knowledge" title="Link to this definition">¶</a></dt>
+<dd><p>Write current knowledge_base (a list of dicts) to a JSON file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.save_readme">
+<span class="sig-name descname"><span class="pre">save_readme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient.save_readme"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient.save_readme" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Save a README to disk. Call as either:</dt><dd><p>save_readme(output_path)
+save_readme(content, output_path)</p>
+</dd>
+</dl>
+<p>If only output_path is provided, uses self.last_response.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.task2doc">
+<span class="sig-name descname"><span class="pre">task2doc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">logic_paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config_paths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient.task2doc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient.task2doc" title="Link to this definition">¶</a></dt>
+<dd><p>Summarize a task into README.md. If <cite>prompt</cite> is None, loads the
+instruction template from <cite>psyflow/templates/task2doc_prompt.txt</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.test">
+<span class="sig-name descname"><span class="pre">test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ping</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Hello'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient.test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient.test" title="Link to this definition">¶</a></dt>
+<dd><p>Smoke test connection and small completion.</p>
+<ol class="arabic simple">
+<li><p>Ensures the configured model exists.</p></li>
+<li><p>Sends a small ping and returns its response.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ping</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Prompt to send for testing.</p></li>
+<li><p><strong>max_tokens</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Maximum tokens to request.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Ping response string.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#psyflow.LLM.LLMAPIError" title="psyflow.LLM.LLMAPIError"><strong>LLMAPIError</strong></a> – On model not found or generation failure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.translate">
+<span class="sig-name descname"><span class="pre">translate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_language</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">800</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient.translate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient.translate" title="Link to this definition">¶</a></dt>
+<dd><p>Translate arbitrary text into the target language, preserving formatting
+and placeholders. Returns only the translated text—no explanations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="psyflow.LLM.LLMClient.translate_config">
+<span class="sig-name descname"><span class="pre">translate_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_language</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prompt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deterministic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temperature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_tokens</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">500</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/LLM.html#LLMClient.translate_config"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.LLM.LLMClient.translate_config" title="Link to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Translate selected fields of a YAML config:</dt><dd><ul class="simple">
+<li><p>subinfo_mapping values</p></li>
+<li><p>any stimuli entries where type is ‘text’ or ‘textbox’</p></li>
+</ul>
+</dd>
+<dt>If <cite>config</cite> is:</dt><dd><ul class="simple">
+<li><p>a file path (str) → loaded via load_config()</p></li>
+<li><p>a dict returned from load_config()</p></li>
+<li><p>None → defaults to “./config/config.yaml”</p></li>
+</ul>
+</dd>
+<dt>If <cite>output_dir</cite> is provided, writes out a translated YAML:</dt><dd><p>filename is <cite>output_name</cite> if given, else original basename + “.translated.yaml”.</p>
+</dd>
+</dl>
+<p>Returns the updated raw YAML dict.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-psyflow.utils">
 <span id="psyflow-utils-module"></span><h2>psyflow.utils module<a class="headerlink" href="#module-psyflow.utils" title="Link to this heading">¶</a></h2>
 <dl class="py function">
@@ -1548,6 +1832,20 @@ settings.</p></li>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span> <span class="o">=</span> <span class="n">initialize_exp</span><span class="p">(</span><span class="n">my_settings</span><span class="p">)</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="psyflow.utils.list_serial_ports">
+<span class="sig-prename descclassname"><span class="pre">psyflow.utils.</span></span><span class="sig-name descname"><span class="pre">list_serial_ports</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/utils.html#list_serial_ports"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.utils.list_serial_ports" title="Link to this definition">¶</a></dt>
+<dd><p>Alias for <a class="reference internal" href="#psyflow.utils.show_ports" title="psyflow.utils.show_ports"><code class="xref py py-func docutils literal notranslate"><span class="pre">show_ports()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>This function simply calls <a class="reference internal" href="#psyflow.utils.show_ports" title="psyflow.utils.show_ports"><code class="xref py py-func docutils literal notranslate"><span class="pre">show_ports()</span></code></a> and prints the ports.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -1804,9 +2102,33 @@ a port for trigger boxes or external devices.</p>
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#module-psyflow.LLM">psyflow.LLM module</a><ul>
+<li><a class="reference internal" href="#psyflow.LLM.LLMAPIError"><code class="docutils literal notranslate"><span class="pre">LLMAPIError</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient"><code class="docutils literal notranslate"><span class="pre">LLMClient</span></code></a><ul>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.provider"><code class="docutils literal notranslate"><span class="pre">LLMClient.provider</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.api_key"><code class="docutils literal notranslate"><span class="pre">LLMClient.api_key</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.model"><code class="docutils literal notranslate"><span class="pre">LLMClient.model</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient._sdk_client"><code class="docutils literal notranslate"><span class="pre">LLMClient._sdk_client</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.knowledge_base"><code class="docutils literal notranslate"><span class="pre">LLMClient.knowledge_base</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.add_knowledge"><code class="docutils literal notranslate"><span class="pre">LLMClient.add_knowledge()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.doc2task"><code class="docutils literal notranslate"><span class="pre">LLMClient.doc2task()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.generate"><code class="docutils literal notranslate"><span class="pre">LLMClient.generate()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.list_models"><code class="docutils literal notranslate"><span class="pre">LLMClient.list_models()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.register_provider"><code class="docutils literal notranslate"><span class="pre">LLMClient.register_provider()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.save_knowledge"><code class="docutils literal notranslate"><span class="pre">LLMClient.save_knowledge()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.save_readme"><code class="docutils literal notranslate"><span class="pre">LLMClient.save_readme()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.task2doc"><code class="docutils literal notranslate"><span class="pre">LLMClient.task2doc()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.test"><code class="docutils literal notranslate"><span class="pre">LLMClient.test()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.translate"><code class="docutils literal notranslate"><span class="pre">LLMClient.translate()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.LLM.LLMClient.translate_config"><code class="docutils literal notranslate"><span class="pre">LLMClient.translate_config()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-psyflow.utils">psyflow.utils module</a><ul>
 <li><a class="reference internal" href="#psyflow.utils.count_down"><code class="docutils literal notranslate"><span class="pre">count_down()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.utils.initialize_exp"><code class="docutils literal notranslate"><span class="pre">initialize_exp()</span></code></a></li>
+<li><a class="reference internal" href="#psyflow.utils.list_serial_ports"><code class="docutils literal notranslate"><span class="pre">list_serial_ports()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.utils.list_supported_voices"><code class="docutils literal notranslate"><span class="pre">list_supported_voices()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.utils.load_config"><code class="docutils literal notranslate"><span class="pre">load_config()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.utils.show_ports"><code class="docutils literal notranslate"><span class="pre">show_ports()</span></code></a></li>
