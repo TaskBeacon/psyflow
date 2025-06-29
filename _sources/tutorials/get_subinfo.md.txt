@@ -34,7 +34,7 @@ The `SubInfo` class provides a flexible and user-friendly way to collect partici
 
 ## Detailed Usage Guide
 
-### 1. Configuring the Form
+### 1. Configuring the Form and Collecting Information
 
 #### Option A: Using a YAML Configuration
 
@@ -89,6 +89,24 @@ subinfo_mapping:
   registration_failed: "Registration cancelled."
   invalid_input: "Invalid input for {field}"
 ```
+Once you've defined your configuration, collecting information is straightforward:
+
+```python
+from psyflow import SubInfo
+import yaml
+# Load configuration from YAML
+with open("subinfo_config.yaml", "r", encoding='utf-8') as f:
+    config = yaml.safe_load(f)
+# Create SubInfo instance
+subinfo = SubInfo(config)
+# Show dialog and collect information
+subject_data = subinfo.collect()
+```
+![Collecting subinfo using yaml config](_static/tutorial_figures/subinfo_yaml.png)
+
+```{note}
+Make sure you used `encoding='utf-8'` when opening the YAML file to support non-ASCII characters in localization.
+```
 
 #### Option B: Using a Python Dictionary
 
@@ -127,6 +145,21 @@ config = {
     }
 }
 ```
+Once you've defined your configuration, collecting information is straightforward:
+
+```python
+from psyflow import SubInfo
+subinfo = SubInfo(config)
+# Show dialog and collect information
+subject_data = subinfo.collect()
+```
+![Collecting subinfo using python dict](_static/tutorial_figures/subinfo_dict.png)
+
+
+If registration (collection) is failed, the experiment will exit and python enviroment will be closed.
+
+![registration_failed](_static/tutorial_figures/subinfo_failed.png)
+
 
 ### 2. Field Types and Constraints
 
@@ -167,234 +200,77 @@ Integer fields validate that:
 
 Choice fields present a dropdown menu with the specified options.
 
-### 3. Collecting Participant Information
 
-Once you've defined your configuration, collecting information is straightforward:
 
-```python
-from psyflow import SubInfo
-import yaml
 
-# Load configuration from YAML
-with open("subinfo_config.yaml", "r") as f:
-    config = yaml.safe_load(f)
-
-# Create SubInfo instance
-subinfo = SubInfo(config)
-
-# Show dialog and collect information
-subject_data = subinfo.collect()
-
-# Check if user cancelled
-if subject_data is None:
-    print("User cancelled the form")
-    # Handle cancellation (e.g., exit experiment)
-else:
-    print("Collected information:", subject_data)
-    # Continue with experiment using the collected data
-```
-
-### 4. Localization
+### 3. Localization
 
 For international studies, you can localize the form by providing translations in the `subinfo_mapping` section:
 
 ```yaml
-# Example for Chinese localization
+# Example for subinfo_config.yaml localization
 subinfo_mapping:
-  subject_id: "参与者编号"
-  age: "年龄"
-  gender: "性别"
-  Male: "男"
-  Female: "女"
-  Non-binary: "非二元性别"
-  Prefer not to say: "不愿透露"
-  registration_successful: "注册成功！"
-  registration_failed: "注册取消。"
-  invalid_input: "无效的输入：{field}"
+  subject_id: "참가자 ID"
+  age: "나이"
+  gender: "성별"
+  handedness: "주사용 손"
+  vision: "시력"
+  Male: "남성"
+  Female: "여성"
+  Non-binary: "논바이너리"
+  Prefer not to say: "응답하지 않음"
+  Right: "오른손잡이"
+  Left: "왼손잡이"
+  Ambidextrous: "양손잡이"
+  Normal: "정상"
+  Corrected-to-normal: "교정된 정상"
+  Impaired: "손상된"
+  registration_successful: "등록 성공!"
+  registration_failed: "등록이 취소되었습니다."
+  invalid_input: "{field}에 대한 잘못된 입력입니다."
 ```
-
-The form will display these translated labels while still using the English keys internally for consistency.
-
-### 5. Integration with TaskSettings
-
-`SubInfo` works seamlessly with `TaskSettings` for complete experiment configuration:
-
 ```python
-from psyflow import SubInfo, TaskSettings
+from psyflow import SubInfo
 import yaml
-
-# Load configuration
-with open("config.yaml", "r") as f:
+# Load configuration from YAML
+with open("subinfo_config.yaml", "r", encoding='utf-8') as f:
     config = yaml.safe_load(f)
-
-# Create SubInfo and collect participant data
-subinfo_config = {
-    "subinfo_fields": config.get("subinfo_fields", []),
-    "subinfo_mapping": config.get("subinfo_mapping", {})
-}
-subinfo = SubInfo(subinfo_config)
+# Create SubInfo instance
+subinfo = SubInfo(config)
+# Show dialog and collect information
 subject_data = subinfo.collect()
+```
+![Collecting subinfo using yaml config](_static/tutorial_figures/subinfo_yaml_kr.png)
 
-if subject_data is None:
-    print("Experiment cancelled")
-    import sys
-    sys.exit(0)
+Following same approach, you can do localization for any language by providing the appropriate translations in the `subinfo_mapping` section.
 
-# Create TaskSettings with the collected subject info
-settings = TaskSettings.from_dict(config.get("task", {}))
+![Collecting subinfo using yaml config](_static/tutorial_figures/subinfo_yaml_cn.png)
+
+
+```{note}
+Make sure the translations are accurate for your target users.
+```
+
+
+
+### 4. Add subject information to TaskSettings
+
+Once collected, the subject information needs to be passed to TaskSettings to complete the experiment configuration. The information will then be automatically saved together with the other task parameters via TaskSettings.
+
+```python
+from psyflow import SubInfo, TaskSettings, load_config
+
+# 1. Load config
+cfg = load_config()
+
+# 2. Collect subject info
+subform = SubInfo(cfg['subform_config'])
+subject_data = subform.collect()
+
+# 3. Load task settings
+settings = TaskSettings.from_dict(cfg['task_config'])
 settings.add_subinfo(subject_data)
-
-# Now you have subject-specific paths and seeds
-print(f"Data will be saved to: {settings.res_file}")
-print(f"Using block seed: {settings.block_seed}")
 ```
-
-## Complete Example
-
-Here's a complete example showing how to use `SubInfo` in an experiment:
-
-```python
-from psychopy import visual, core
-from psyflow import SubInfo, TaskSettings
-import yaml
-import sys
-
-# Load configuration
-with open("config.yaml", "r") as f:
-    config = yaml.safe_load(f)
-
-# Step 1: Collect participant information
-subinfo_config = {
-    "subinfo_fields": config.get("subinfo_fields", []),
-    "subinfo_mapping": config.get("subinfo_mapping", {})
-}
-subinfo = SubInfo(subinfo_config)
-subject_data = subinfo.collect()
-
-if subject_data is None:
-    print("Experiment cancelled")
-    sys.exit(0)
-
-# Step 2: Configure task settings
-task_config = {
-    **config.get("window", {}),
-    **config.get("task", {}),
-    **config.get("timing", {})
-}
-settings = TaskSettings.from_dict(task_config)
-settings.add_subinfo(subject_data)
-
-# Step 3: Create PsychoPy window
-win = visual.Window(
-    size=settings.window_size,
-    fullscr=settings.fullscreen,
-    color=settings.bg_color,
-    units="deg"
-)
-
-# Step 4: Show welcome message with participant info
-welcome_text = f"Welcome, Participant {subject_data['subject_id']}!\n\n"
-welcome_text += f"Age: {subject_data.get('age', 'N/A')}\n"
-welcome_text += f"Gender: {subject_data.get('gender', 'N/A')}\n\n"
-welcome_text += "Press any key to begin the experiment."
-
-welcome = visual.TextStim(win, text=welcome_text, height=0.8)
-welcome.draw()
-win.flip()
-
-# Wait for keypress
-from psychopy.event import waitKeys
-waitKeys()
-
-# Continue with experiment...
-win.close()
-core.quit()
-```
-
-## Advanced Usage
-
-### Custom Validation
-
-You can extend `SubInfo` with custom validation logic:
-
-```python
-class CustomSubInfo(SubInfo):
-    def validate(self):
-        # First run the standard validation
-        if not super().validate():
-            return False
-            
-        # Add custom validation logic
-        if 'subject_id' in self.subject_data and 'group' in self.subject_data:
-            subject_id = int(self.subject_data['subject_id'])
-            group = self.subject_data['group']
-            
-            # Check if subject_id is valid for the selected group
-            if group == 'Control' and not (100 <= subject_id < 200):
-                self._show_error("Control group IDs must be between 100-199")
-                return False
-            elif group == 'Experimental' and not (200 <= subject_id < 300):
-                self._show_error("Experimental group IDs must be between 200-299")
-                return False
-                
-        return True
-```
-
-### Programmatic Form Creation
-
-You can also create forms programmatically:
-
-```python
-def create_dynamic_form(experiment_type):
-    """Create a form based on experiment type."""
-    base_fields = [
-        {"name": "subject_id", "type": "int", "constraints": {"min": 100, "max": 999}}
-    ]
-    
-    if experiment_type == "behavioral":
-        base_fields.extend([
-            {"name": "age", "type": "int"},
-            {"name": "gender", "type": "choice", "choices": ["Male", "Female", "Other"]}
-        ])
-    elif experiment_type == "eeg":
-        base_fields.extend([
-            {"name": "cap_size", "type": "choice", "choices": ["Small", "Medium", "Large"]},
-            {"name": "impedance_check", "type": "choice", "choices": ["Pass", "Fail"]}
-        ])
-    
-    config = {"subinfo_fields": base_fields}
-    return SubInfo(config)
-
-# Usage
-form = create_dynamic_form("eeg")
-data = form.collect()
-```
-
-## Best Practices
-
-1. **Keep forms concise**: Only collect information that's necessary for your experiment.
-
-2. **Use meaningful field names**: Choose descriptive names that match your data analysis variables.
-
-3. **Set appropriate constraints**: Use min/max and digit constraints to prevent data entry errors.
-
-4. **Provide clear labels**: Use the mapping dictionary to make field labels clear and understandable.
-
-5. **Handle cancellation gracefully**: Always check if `collect()` returns `None` and handle it appropriately.
-
-6. **Store configurations externally**: Keep form definitions in YAML files for easy modification without changing code.
-
-7. **Test with different languages**: If using localization, test the form with all supported languages.
-
-## Troubleshooting
-
-- **Form doesn't appear**: Ensure PsychoPy is properly installed and can create GUI elements.
-
-- **Validation errors**: Check that your constraints are reasonable and that field types match expected input.
-
-- **Missing fields**: Verify that your configuration dictionary has the correct structure.
-
-- **Localization issues**: Ensure all keys in `subinfo_mapping` match field names and choice options exactly.
 
 ## Next Steps
 
