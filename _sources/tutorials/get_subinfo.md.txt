@@ -153,12 +153,12 @@ subinfo = SubInfo(config)
 # Show dialog and collect information
 subject_data = subinfo.collect()
 ```
-![Collecting subinfo using python dict](/figures/subinfo_dict.png)
+![Collecting subinfo using python dict](figures/subinfo_dict.png)
 
 
 If registration (collection) is failed, the experiment will exit and python enviroment will be closed.
 
-![registration_failed](/subinfo_failed.png)
+![registration_failed](figures/subinfo_failed.png)
 
 
 ### 2. Field Types and Constraints
@@ -240,15 +240,15 @@ subinfo = SubInfo(config)
 # Show dialog and collect information
 subject_data = subinfo.collect()
 ```
-![Collecting subinfo using yaml config](/figures/subinfo_yaml_kr.png)
+![Collecting subinfo using yaml config](figures/subinfo_yaml_kr.png)
 
 Following same approach, you can do localization for any language by providing the appropriate translations in the `subinfo_mapping` section.
 
-![Collecting subinfo using yaml config](/figures/subinfo_yaml_cn.png)
+![Collecting subinfo using yaml config](figures/subinfo_yaml_cn.png)
 
 
 ```{note}
-Make sure the translations are accurate for your target users.
+Make sure the translations are accurate if you used LLM to generate them.
 ```
 
 
