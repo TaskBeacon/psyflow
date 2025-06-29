@@ -153,12 +153,12 @@ subinfo = SubInfo(config)
 # Show dialog and collect information
 subject_data = subinfo.collect()
 ```
-![Collecting subinfo using python dict](/figures/subinfo_dict.png)
+![Collecting subinfo using python dict](figures/subinfo_dict.png)
 
 
 If registration (collection) is failed, the experiment will exit and python enviroment will be closed.
 
-![registration_failed](/subinfo_failed.png)
+![registration_failed](figures/subinfo_failed.png)
 
 
 ### 2. Field Types and Constraints
@@ -240,15 +240,17 @@ subinfo = SubInfo(config)
 # Show dialog and collect information
 subject_data = subinfo.collect()
 ```
-![Collecting subinfo using yaml config](/figures/subinfo_yaml_kr.png)
+![Collecting subinfo using yaml config](figures/subinfo_yaml_kr.png)
 
 Following same approach, you can do localization for any language by providing the appropriate translations in the `subinfo_mapping` section.
 
-![Collecting subinfo using yaml config](/figures/subinfo_yaml_cn.png)
+![Collecting subinfo using yaml config](figures/subinfo_yaml_cn.png)
 
 
-```{note}
-Make sure the translations are accurate for your target users.
+```{Tips}
+In addition to using the chatbox from LLM models for translation,  
+psyflow has a built-in function (`translate_config()`) using LLM APIs for translating the subinfo mapping.  
+Make sure the translations are accurate if you use an LLM to generate them. Consult a native speaker if possible.
 ```
 
 
@@ -270,6 +272,9 @@ subject_data = subform.collect()
 # 3. Load task settings
 settings = TaskSettings.from_dict(cfg['task_config'])
 settings.add_subinfo(subject_data)
+```
+```{Tips}
+`load_config()` is a handy function for loading the configuration stored in `config/config.yaml`in the default TAPS format.
 ```
 
 ## Next Steps
