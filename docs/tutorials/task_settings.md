@@ -2,26 +2,27 @@
 
 ## Overview
 
-The `TaskSettings` class provides a centralized way to manage experiment configuration, including paths, timing parameters, window settings, and more. It helps standardize experiment setup and ensures consistent configuration across different parts of your experiment.
+The `TaskSettings` class provides a centralized way to manage experiment configuration, including collected subject information, data paths, timing parameters, window settings, and more. It helps standardize experiment setup and ensures consistent configuration across different parts of the experiment. 
 
-`TaskSettings` solves several common challenges in experiment configuration:
+Under the hood, `TaskSettings` is used throughout your code wherever you need to read or write experiment parameters. For example:  
+- In `run_trial.py`, to retrieve the duration of a specific stimulus  
+- During block creation in `main.py`, to determine the number of blocks and trials and to seed the randomization of conditions  
 
-- **Centralization**: Maintain all experiment parameters in one place
-- **Standardization**: Create consistent configuration across experiments
-- **Path management**: Automatically generate file paths based on subject information
-- **Seed control**: Manage random seeds for reproducible experiments
-- **Integration**: Connect with other psyflow components seamlessly
+
 
 ## Key Features
 
-| Feature | Description |
-|---------|-------------|
-| Dictionary initialization | Create settings from Python dictionaries or YAML files |
-| Subject integration | Incorporate subject information for personalized paths |
-| Path generation | Automatically create data and resource paths |
-| Seed management | Control random seeds for reproducible experiments |
-| Attribute access | Access settings using dot notation for cleaner code |
-| Default values | Provide sensible defaults for common parameters |
+| Feature                | Description                                                                          |
+|------------------------|--------------------------------------------------------------------------------------|
+| Dictionary initialization | Create settings from Python dictionaries or YAML files                             |
+| Subject integration    | Incorporate collected subject info for per-subject seeds, file names, and paths      |
+| Path & directory generation | Automatically create output directories and construct timestamped log/CSV/JSON paths |
+| Seed management        | Flexible seeding strategies (`same_across_sub` or `same_within_sub`) with auto-generated per-block seeds |
+| Dynamic extension      | Load extra, unknown config keys via `from_dict()`                                    |
+| JSON export            | Save the full `TaskSettings` to JSON (`save_to_json()`) for archiving or analysis    |
+| Human-readable repr    | Clean `__repr__()` for easy inspection or logging of all current settings            |
+| Default values         | Sensible built-in defaults for window, timing, blocks/trials, keys, etc.             |
+
 
 ## Quick Reference
 
@@ -37,7 +38,7 @@ The `TaskSettings` class provides a centralized way to manage experiment configu
 ### 1. Creating TaskSettings
 
 #### Option A: From a Dictionary
-
+在实际使用时，我们使用load_config方法从配置文件中加载配置,从而获得相关的设置
 ```python
 from psyflow import TaskSettings
 
@@ -89,7 +90,7 @@ settings = TaskSettings.from_dict(config)
 ```
 
 ### 2. Adding Subject Information
-
+被试信息是必须的，这涉及被试specific的配置，比如被试ID，被试的性别，被试的出生年份等等。这将用于生成相关的存储文件的名称，包括json, log和csv文件的信息
 Integrating subject information allows `TaskSettings` to create subject-specific paths and seeds:
 
 ```python
