@@ -258,14 +258,11 @@
 <h1>TaskSettings: Configuring Your Experiment<a class="headerlink" href="#tasksettings-configuring-your-experiment" title="Link to this heading">¶</a></h1>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> class provides a centralized way to manage experiment configuration, including paths, timing parameters, window settings, and more. It helps standardize experiment setup and ensures consistent configuration across different parts of your experiment.</p>
-<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> solves several common challenges in experiment configuration:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> class provides a centralized way to manage experiment configuration, including collected subject information, data paths, timing parameters, window settings, and more. It helps standardize experiment setup and ensures consistent configuration across different parts of the experiment.</p>
+<p>Under the hood, <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> is used throughout your code wherever you need to read or write experiment parameters. For example:</p>
 <ul class="simple">
-<li><p><strong>Centralization</strong>: Maintain all experiment parameters in one place</p></li>
-<li><p><strong>Standardization</strong>: Create consistent configuration across experiments</p></li>
-<li><p><strong>Path management</strong>: Automatically generate file paths based on subject information</p></li>
-<li><p><strong>Seed control</strong>: Manage random seeds for reproducible experiments</p></li>
-<li><p><strong>Integration</strong>: Connect with other psyflow components seamlessly</p></li>
+<li><p>In <code class="docutils literal notranslate"><span class="pre">run_trial.py</span></code>, to retrieve the duration of a specific stimulus</p></li>
+<li><p>During block creation in <code class="docutils literal notranslate"><span class="pre">main.py</span></code>, to determine the number of blocks and trials and to seed the randomization of conditions</p></li>
 </ul>
 </section>
 <section id="key-features">
@@ -282,19 +279,25 @@
 <td><p>Create settings from Python dictionaries or YAML files</p></td>
 </tr>
 <tr class="row-odd"><td><p>Subject integration</p></td>
-<td><p>Incorporate subject information for personalized paths</p></td>
+<td><p>Incorporate collected subject info for per-subject seeds, file names, and paths</p></td>
 </tr>
-<tr class="row-even"><td><p>Path generation</p></td>
-<td><p>Automatically create data and resource paths</p></td>
+<tr class="row-even"><td><p>Path &amp; directory generation</p></td>
+<td><p>Automatically create output directories and construct timestamped log/CSV/JSON paths</p></td>
 </tr>
 <tr class="row-odd"><td><p>Seed management</p></td>
-<td><p>Control random seeds for reproducible experiments</p></td>
+<td><p>Flexible seeding strategies (<code class="docutils literal notranslate"><span class="pre">same_across_sub</span></code> or <code class="docutils literal notranslate"><span class="pre">same_within_sub</span></code>) with auto-generated per-block seeds</p></td>
 </tr>
-<tr class="row-even"><td><p>Attribute access</p></td>
-<td><p>Access settings using dot notation for cleaner code</p></td>
+<tr class="row-even"><td><p>Dynamic extension</p></td>
+<td><p>Load extra, unknown config keys via <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>JSON export</p></td>
+<td><p>Save the full <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> to JSON (<code class="docutils literal notranslate"><span class="pre">save_to_json()</span></code>) for archiving or analysis</p></td>
+</tr>
+<tr class="row-even"><td><p>Human-readable repr</p></td>
+<td><p>Clean <code class="docutils literal notranslate"><span class="pre">__repr__()</span></code> for easy inspection or logging of all current settings</p></td>
 </tr>
 <tr class="row-odd"><td><p>Default values</p></td>
-<td><p>Provide sensible defaults for common parameters</p></td>
+<td><p>Sensible built-in defaults for window, timing, blocks/trials, keys, etc.</p></td>
 </tr>
 </tbody>
 </table>
@@ -321,7 +324,7 @@
 </tr>
 <tr class="row-even"><td><p>Access setting</p></td>
 <td><p>Dot notation</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">settings.window_size</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">settings.size</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Get all settings</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code></p></td>
@@ -335,349 +338,371 @@
 <h2>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h2>
 <section id="creating-tasksettings">
 <h3>1. Creating TaskSettings<a class="headerlink" href="#creating-tasksettings" title="Link to this heading">¶</a></h3>
-<section id="option-a-from-a-dictionary">
-<h4>Option A: From a Dictionary<a class="headerlink" href="#option-a-from-a-dictionary" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
+<section id="option-a-from-a-yaml-file">
+<h4>Option A: From a YAML File<a class="headerlink" href="#option-a-from-a-yaml-file" title="Link to this heading">¶</a></h4>
+<ol class="arabic">
+<li><p><strong>Define</strong> separate sections in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">window</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1920</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1080</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">fullscreen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">units</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deg&quot;</span>
+<span class="w">  </span><span class="nt">bg_color</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gray&quot;</span>
 
-<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;stroop&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;window_size&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">],</span>
-    <span class="s2">&quot;fullscreen&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s2">&quot;bg_color&quot;</span><span class="p">:</span> <span class="s2">&quot;black&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;data_dir&quot;</span><span class="p">:</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;block_seed&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>
-    <span class="s2">&quot;trial_seed&quot;</span><span class="p">:</span> <span class="mi">43</span><span class="p">,</span>
-    <span class="s2">&quot;timing&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;fixation_duration&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-        <span class="s2">&quot;stimulus_duration&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
-        <span class="s2">&quot;feedback_duration&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="s2">&quot;iti&quot;</span><span class="p">:</span> <span class="mf">0.8</span>
-    <span class="p">}</span>
-<span class="p">}</span>
+<span class="nt">task</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">task_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;stroop&quot;</span>
+<span class="w">  </span><span class="nt">total_blocks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">total_trials</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40</span>
+<span class="w">  </span><span class="nt">conditions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;congruent&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;incongruent&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">key_list</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;space&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">seed_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;same_across_sub&quot;</span>
 
-<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="option-b-from-a-yaml-file">
-<h4>Option B: From a YAML File<a class="headerlink" href="#option-b-from-a-yaml-file" title="Link to this heading">¶</a></h4>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config.yaml</span>
-<span class="nt">task_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stroop</span>
-<span class="nt">window_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1024</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">768</span><span class="p p-Indicator">]</span>
-<span class="nt">fullscreen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="nt">bg_color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
-<span class="nt">data_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
-<span class="nt">block_seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
-<span class="nt">trial_seed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">43</span>
 <span class="nt">timing</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">fixation_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
-<span class="w">  </span><span class="nt">stimulus_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span>
-<span class="w">  </span><span class="nt">feedback_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
-<span class="w">  </span><span class="nt">iti</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
+<span class="w">  </span><span class="nt">fixation_duration</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.7</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">cue_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.3</span>
+<span class="w">  </span><span class="nt">stimulus_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+<span class="w">  </span><span class="nt">feedback_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
 </pre></div>
 </div>
+</li>
+<li><p><strong>Load</strong> and <strong>flatten</strong>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
-<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="n">merged</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="p">{}),</span> <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;task&#39;</span><span class="p">,</span> <span class="p">{}),</span> <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;timing&#39;</span><span class="p">,</span> <span class="p">{})}</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span>
 </pre></div>
 </div>
+</li>
+</ol>
+<blockquote>
+<div><p><strong>Note:</strong> <code class="docutils literal notranslate"><span class="pre">window</span></code>, <code class="docutils literal notranslate"><span class="pre">task</span></code>, and <code class="docutils literal notranslate"><span class="pre">timing</span></code> are the primary sections for <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code>. They must be flattened into a single dict passed to <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code>. Other configurations (e.g., <code class="docutils literal notranslate"><span class="pre">triggers</span></code>, <code class="docutils literal notranslate"><span class="pre">controllers</span></code>) can be added as nested attributes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;trigger_config&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">load_config()</span></code> utility often auto-flattens <code class="docutils literal notranslate"><span class="pre">window</span></code>, <code class="docutils literal notranslate"><span class="pre">task</span></code>, and <code class="docutils literal notranslate"><span class="pre">timing</span></code> into <code class="docutils literal notranslate"><span class="pre">cfg['task_config']</span></code>, so you can initialize directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s1">&#39;config.yaml&#39;</span><span class="p">)</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">])</span>
+<span class="err">```</span><span class="n">python</span>
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s1">&#39;config.yaml&#39;</span><span class="p">)</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="option-b-from-a-dictionary">
+<h4>Option B: From a Dictionary<a class="headerlink" href="#option-b-from-a-dictionary" title="Link to this heading">¶</a></h4>
+<p>You can initialize <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> directly from Python dictionaries in two ways:</p>
+<ol class="arabic simple">
+<li><p><strong>Flat dictionary</strong>: merge all parameters (including custom fields) into a single dict.</p></li>
+<li><p><strong>Nested sections</strong>: keep logical subsections (e.g., <code class="docutils literal notranslate"><span class="pre">window</span></code>, <code class="docutils literal notranslate"><span class="pre">task</span></code>, <code class="docutils literal notranslate"><span class="pre">timing</span></code>) as nested dicts, then flatten at call time.</p></li>
+</ol>
+<p><strong>Example YAML sections</strong> (as reference):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">window</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1920</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1080</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">fullscreen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">units</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deg&quot;</span>
+<span class="w">  </span><span class="nt">bg_color</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gray&quot;</span>
+
+<span class="nt">task</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">task_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;stroop&quot;</span>
+<span class="w">  </span><span class="nt">total_blocks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">total_trials</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40</span>
+<span class="w">  </span><span class="nt">conditions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;congruent&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;incongruent&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">key_list</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;space&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">seed_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;same_across_sub&quot;</span>
+
+<span class="nt">timing</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">fixation_duration</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.7</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">cue_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.3</span>
+<span class="w">  </span><span class="nt">stimulus_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+<span class="w">  </span><span class="nt">feedback_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
+</pre></div>
+</div>
+<section id="flat-dict-approach">
+<h5>1. Flat dict approach<a class="headerlink" href="#flat-dict-approach" title="Link to this heading">¶</a></h5>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
+
+<span class="c1"># Merge all settings into one dict</span>
+<span class="n">config_flat</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># window settings</span>
+    <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
+    <span class="s1">&#39;fullscreen&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;deg&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bg_color&#39;</span><span class="p">:</span> <span class="s1">&#39;gray&#39;</span><span class="p">,</span>
+
+    <span class="c1"># task settings</span>
+    <span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="s1">&#39;stroop&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;total_blocks&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;total_trials&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+    <span class="s1">&#39;conditions&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;congruent&#39;</span><span class="p">,</span> <span class="s1">&#39;incongruent&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;key_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;seed_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;same_across_sub&#39;</span><span class="p">,</span>
+
+    <span class="c1"># timing settings</span>
+    <span class="s1">&#39;fixation_duration&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+    <span class="s1">&#39;cue_duration&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s1">&#39;stimulus_duration&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s1">&#39;feedback_duration&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+
+    <span class="c1"># custom nested field</span>
+    <span class="s1">&#39;trigger_config&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;onset&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config_flat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Trigger:&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">trigger_config</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="nested-dict-approach">
+<h5>2. Nested dict approach<a class="headerlink" href="#nested-dict-approach" title="Link to this heading">¶</a></h5>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
+
+<span class="c1"># Keep sections nested for readability</span>
+<span class="n">config_nested</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;window&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
+        <span class="s1">&#39;fullscreen&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;deg&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;bg_color&#39;</span><span class="p">:</span> <span class="s1">&#39;gray&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;task&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="s1">&#39;stroop&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;total_blocks&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;total_trials&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+        <span class="s1">&#39;conditions&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;congruent&#39;</span><span class="p">,</span> <span class="s1">&#39;incongruent&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;key_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;seed_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;same_across_sub&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;timing&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;fixation_duration&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+        <span class="s1">&#39;cue_duration&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+        <span class="s1">&#39;stimulus_duration&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s1">&#39;feedback_duration&#39;</span><span class="p">:</span> <span class="mf">0.5</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;trigger_config&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;onset&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="mi">6</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># Flatten nested sections when initializing</span>
+<span class="n">config_flat</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="o">**</span><span class="n">config_nested</span><span class="p">[</span><span class="s1">&#39;window&#39;</span><span class="p">],</span>
+    <span class="o">**</span><span class="n">config_nested</span><span class="p">[</span><span class="s1">&#39;task&#39;</span><span class="p">],</span>
+    <span class="o">**</span><span class="n">config_nested</span><span class="p">[</span><span class="s1">&#39;timing&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;trigger_config&#39;</span><span class="p">:</span> <span class="n">config_nested</span><span class="p">[</span><span class="s1">&#39;trigger_config&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config_flat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">conditions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">fixation_duration</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">trigger_config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In both cases, <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> will apply known fields and attach unknown keys (like <code class="docutils literal notranslate"><span class="pre">trigger_config</span></code>) as attributes on the <code class="docutils literal notranslate"><span class="pre">settings</span></code> object.</p>
+</section>
 </section>
 </section>
 <section id="adding-subject-information">
 <h3>2. Adding Subject Information<a class="headerlink" href="#adding-subject-information" title="Link to this heading">¶</a></h3>
-<p>Integrating subject information allows <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> to create subject-specific paths and seeds:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span><span class="p">,</span> <span class="n">TaskSettings</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-
-<span class="c1"># Load configuration</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-<span class="c1"># Collect subject information</span>
-<span class="n">subinfo</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">({</span>
-    <span class="s2">&quot;subinfo_fields&quot;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subinfo_fields&quot;</span><span class="p">,</span> <span class="p">[])</span>
-<span class="p">})</span>
-<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subinfo</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-
-<span class="k">if</span> <span class="n">subject_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Experiment cancelled&quot;</span><span class="p">)</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="c1"># Create TaskSettings with subject info</span>
-<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-<span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subject_data</span><span class="p">)</span>
-
-<span class="c1"># Now you have subject-specific paths</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data will be saved to: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<p>Provide a dict with at least <code class="docutils literal notranslate"><span class="pre">subject_id</span></code> (others optional) to:</p>
+<ul class="simple">
+<li><p>Validate inputs</p></li>
+<li><p>Derive subject‑specific seed (in <code class="docutils literal notranslate"><span class="pre">same_within_sub</span></code> mode)</p></li>
+<li><p>Create output directory</p></li>
+<li><p>Construct timestamped file names</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">subinfo</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;subject_id&#39;</span><span class="p">:</span> <span class="s1">&#39;S01&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">}</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subinfo</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="accessing-settings">
-<h3>3. Accessing Settings<a class="headerlink" href="#accessing-settings" title="Link to this heading">¶</a></h3>
-<p>You can access settings using dot notation, which is cleaner and more intuitive than dictionary access:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access window settings</span>
-<span class="n">win_size</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">window_size</span>
-<span class="n">fullscreen</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span>
-<span class="n">bg_color</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">bg_color</span>
+<section id="path-management-path-management">
+<h3>3. Path Management Path Management<a class="headerlink" href="#path-management-path-management" title="Link to this heading">¶</a></h3>
+<p>After <code class="docutils literal notranslate"><span class="pre">add_subinfo()</span></code>, these attributes are set:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">save_path</span></code></p></td>
+<td><p>Base directory (default <code class="docutils literal notranslate"><span class="pre">./data</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">log_file</span></code></p></td>
+<td><p>Full path to <code class="docutils literal notranslate"><span class="pre">.log</span></code> for PsychoPy logs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">res_file</span></code></p></td>
+<td><p>Full path to <code class="docutils literal notranslate"><span class="pre">.csv</span></code> with trial‐level results</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">json_file</span></code></p></td>
+<td><p>Full path to <code class="docutils literal notranslate"><span class="pre">.json</span></code> dumping all settings</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>After calling <code class="docutils literal notranslate"><span class="pre">settings.add_subinfo(subinfo)</span></code>, you’ll see console output and the generated file paths:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subinfo</span><span class="p">)</span>
+<span class="c1"># [INFO] Created output directory: ./data</span>
 
-<span class="c1"># Access timing parameters</span>
-<span class="n">fixation_time</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">timing</span><span class="o">.</span><span class="n">fixation_duration</span>
-<span class="n">stimulus_time</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">timing</span><span class="o">.</span><span class="n">stimulus_duration</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Log file:&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">log_file</span><span class="p">)</span>
+<span class="c1"># Log file: ./data/sub-S01_task_flanker_20250706_094730.log</span>
 
-<span class="c1"># Access paths</span>
-<span class="n">data_dir</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">data_dir</span>
-<span class="n">res_file</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">res_file</span>  <span class="c1"># Only available after add_subinfo()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Results file:&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="p">)</span>
+<span class="c1"># Results file: ./data/sub-S01_task_flanker_20250706_094730.csv</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config JSON file:&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">json_file</span><span class="p">)</span>
+<span class="c1"># Config JSON file: ./data/sub-S01_task_flanker_20250706_094730.json</span>
 </pre></div>
 </div>
-</section>
-<section id="path-management">
-<h3>4. Path Management<a class="headerlink" href="#path-management" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> automatically generates several useful paths based on your configuration and subject information:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic paths (available immediately)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data directory: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">data_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="c1"># Subject-specific paths (available after add_subinfo())</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject directory: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">subject_dir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Results file: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Log file: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">log_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>By default, paths follow this structure:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>data_dir/
-  └── subject_id/
-      ├── subject_id_results.csv  (res_file)
-      └── subject_id_log.txt      (log_file)
+<p><strong>Example directory layout</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>./data/
+└─ S01/
+   ├─ sub-S01_task-stroop_20250706_091500.log
+   ├─ sub-S01_task-stroop_20250706_091500.csv
+   └─ sub-S01_task-stroop_20250706_091500.json
 </pre></div>
 </div>
 </section>
 <section id="seed-management">
-<h3>5. Seed Management<a class="headerlink" href="#seed-management" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> helps manage random seeds for reproducible experiments:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set seeds in configuration</span>
-<span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;stroop&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;block_seed&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">,</span>  <span class="c1"># For block-level randomization</span>
-    <span class="s2">&quot;trial_seed&quot;</span><span class="p">:</span> <span class="mi">43</span>   <span class="c1"># For trial-level randomization</span>
-<span class="p">}</span>
-
-<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-
-<span class="c1"># Access seeds for use in your experiment</span>
-<span class="n">block_seed</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">block_seed</span>
-<span class="n">trial_seed</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">trial_seed</span>
-
-<span class="c1"># Use seeds with random number generators</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-
-<span class="c1"># For block randomization</span>
-<span class="n">block_rng</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">(</span><span class="n">block_seed</span><span class="p">)</span>
-<span class="n">block_conditions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;condition_a&quot;</span><span class="p">,</span> <span class="s2">&quot;condition_b&quot;</span><span class="p">,</span> <span class="s2">&quot;condition_c&quot;</span><span class="p">]</span>
-<span class="n">block_rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">block_conditions</span><span class="p">)</span>
-
-<span class="c1"># For trial randomization</span>
-<span class="n">trial_rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">RandomState</span><span class="p">(</span><span class="n">trial_seed</span><span class="p">)</span>
-<span class="n">trial_jitter</span> <span class="o">=</span> <span class="n">trial_rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>  <span class="c1"># 100 jittered values</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="complete-example">
-<h2>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading">¶</a></h2>
-<p>Here’s a complete example showing how to use <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> in an experiment:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span><span class="p">,</span> <span class="n">core</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span><span class="p">,</span> <span class="n">TaskSettings</span><span class="p">,</span> <span class="n">StimBank</span><span class="p">,</span> <span class="n">StimUnit</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-
-<span class="c1"># Load configuration</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-<span class="c1"># Step 1: Collect subject information</span>
-<span class="n">subinfo</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">({</span>
-    <span class="s2">&quot;subinfo_fields&quot;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subinfo_fields&quot;</span><span class="p">,</span> <span class="p">[])</span>
-<span class="p">})</span>
-<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subinfo</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-
-<span class="k">if</span> <span class="n">subject_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Experiment cancelled&quot;</span><span class="p">)</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="c1"># Step 2: Configure task settings</span>
-<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-<span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subject_data</span><span class="p">)</span>
-
-<span class="c1"># Create subject directory if it doesn&#39;t exist</span>
-<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">subject_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Step 3: Create PsychoPy window</span>
-<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
-    <span class="n">size</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span>
-    <span class="n">fullscr</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">bg_color</span><span class="p">,</span>
-    <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span>
-<span class="p">)</span>
-
-<span class="c1"># Step 4: Create stimulus bank</span>
-<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">()</span>
-
-<span class="c1"># Register stimuli</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">register</span><span class="p">({</span>
-    <span class="s2">&quot;fixation&quot;</span><span class="p">:</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">),</span>
-    <span class="s2">&quot;instructions&quot;</span><span class="p">:</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Press any key to begin&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">),</span>
-    <span class="s2">&quot;feedback_correct&quot;</span><span class="p">:</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Correct!&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">),</span>
-    <span class="s2">&quot;feedback_incorrect&quot;</span><span class="p">:</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Incorrect&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-<span class="p">})</span>
-
-<span class="c1"># Step 5: Run a simple trial</span>
-<span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;instructions&quot;</span><span class="p">))</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-<span class="c1"># Wait for keypress</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.event</span><span class="w"> </span><span class="kn">import</span> <span class="n">waitKeys</span>
-<span class="n">waitKeys</span><span class="p">()</span>
-
-<span class="c1"># Run a trial with timing from settings</span>
-<span class="n">fixation_trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
-<span class="n">fixation_trial</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">))</span>
-<span class="n">fixation_trial</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">timing</span><span class="o">.</span><span class="n">fixation_duration</span><span class="p">)</span>
-
-<span class="c1"># Clean up</span>
-<span class="n">win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="n">core</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-<section id="advanced-usage">
-<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">¶</a></h2>
-<section id="nested-configuration">
-<h3>Nested Configuration<a class="headerlink" href="#nested-configuration" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> supports nested configuration structures, which helps organize related settings:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;task_name&quot;</span><span class="p">:</span> <span class="s2">&quot;flanker&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;window&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">],</span>
-        <span class="s2">&quot;fullscreen&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;gray&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;deg&quot;</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;timing&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;fixation&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
-        <span class="s2">&quot;stimulus&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
-        <span class="s2">&quot;response_window&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
-        <span class="s2">&quot;feedback&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="s2">&quot;iti&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span>  <span class="c1"># Range for jittered ITI</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;stimuli&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;sizes&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;fixation&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="mf">2.0</span><span class="p">,</span>
-            <span class="s2">&quot;feedback&quot;</span><span class="p">:</span> <span class="mf">1.5</span>
-        <span class="p">},</span>
-        <span class="s2">&quot;colors&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;correct&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;neutral&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-
-<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-
-<span class="c1"># Access nested settings</span>
-<span class="n">win_size</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">size</span>
-<span class="n">fixation_size</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">stimuli</span><span class="o">.</span><span class="n">sizes</span><span class="o">.</span><span class="n">fixation</span>
-<span class="n">correct_color</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">stimuli</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">correct</span>
-</pre></div>
-</div>
-</section>
-<section id="custom-path-generation">
-<h3>Custom Path Generation<a class="headerlink" href="#custom-path-generation" title="Link to this heading">¶</a></h3>
-<p>You can customize how paths are generated by subclassing <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">CustomTaskSettings</span><span class="p">(</span><span class="n">TaskSettings</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># Call the parent method first</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_generate_paths</span><span class="p">()</span>
-        
-        <span class="c1"># Add custom paths</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;subject_id&quot;</span><span class="p">):</span>
-            <span class="c1"># Create a path for eye-tracking data</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">eyetrack_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">subject_dir</span><span class="p">,</span> 
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">subject_id</span><span class="si">}</span><span class="s2">_eyetracking.csv&quot;</span>
-            <span class="p">)</span>
-            
-            <span class="c1"># Create a path for physiological data</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">physio_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">subject_dir</span><span class="p">,</span> 
-                <span class="s2">&quot;physio&quot;</span>
-            <span class="p">)</span>
-            
-            <span class="c1"># Create a path for stimuli presented to this subject</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stim_log</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">subject_dir</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">subject_id</span><span class="si">}</span><span class="s2">_stimuli.json&quot;</span>
-            <span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="dynamic-settings-updates">
-<h3>Dynamic Settings Updates<a class="headerlink" href="#dynamic-settings-updates" title="Link to this heading">¶</a></h3>
-<p>You can update settings dynamically during an experiment:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Start with default settings</span>
-<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-
-<span class="c1"># Update based on subject performance</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">adjust_difficulty</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Adjust task difficulty based on accuracy.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">accuracy</span> <span class="o">&gt;</span> <span class="mf">0.85</span><span class="p">:</span>  <span class="c1"># Too easy</span>
-        <span class="n">settings</span><span class="o">.</span><span class="n">timing</span><span class="o">.</span><span class="n">stimulus_duration</span> <span class="o">*=</span> <span class="mf">0.8</span>  <span class="c1"># Reduce stimulus time</span>
-        <span class="n">settings</span><span class="o">.</span><span class="n">difficulty_level</span> <span class="o">=</span> <span class="s2">&quot;hard&quot;</span>
-    <span class="k">elif</span> <span class="n">accuracy</span> <span class="o">&lt;</span> <span class="mf">0.65</span><span class="p">:</span>  <span class="c1"># Too hard</span>
-        <span class="n">settings</span><span class="o">.</span><span class="n">timing</span><span class="o">.</span><span class="n">stimulus_duration</span> <span class="o">*=</span> <span class="mf">1.2</span>  <span class="c1"># Increase stimulus time</span>
-        <span class="n">settings</span><span class="o">.</span><span class="n">difficulty_level</span> <span class="o">=</span> <span class="s2">&quot;easy&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">settings</span><span class="o">.</span><span class="n">difficulty_level</span> <span class="o">=</span> <span class="s2">&quot;medium&quot;</span>
-    
-    <span class="k">return</span> <span class="n">settings</span>
-
-<span class="c1"># Use in experiment</span>
-<span class="n">block_accuracy</span> <span class="o">=</span> <span class="mf">0.90</span>  <span class="c1"># Example accuracy from a block</span>
-<span class="n">settings</span> <span class="o">=</span> <span class="n">adjust_difficulty</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">block_accuracy</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;New difficulty: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">difficulty_level</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;New stimulus duration: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">timing</span><span class="o">.</span><span class="n">stimulus_duration</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="best-practices">
-<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Use YAML for configuration</strong>: Store settings in YAML files for easy editing without changing code.</p></li>
-<li><p><strong>Group related settings</strong>: Use nested structures to organize related settings (e.g., <code class="docutils literal notranslate"><span class="pre">window</span></code>, <code class="docutils literal notranslate"><span class="pre">timing</span></code>, <code class="docutils literal notranslate"><span class="pre">stimuli</span></code>).</p></li>
-<li><p><strong>Set reasonable defaults</strong>: Provide sensible default values for common parameters.</p></li>
-<li><p><strong>Document your settings</strong>: Include comments in YAML files to explain what each setting does.</p></li>
-<li><p><strong>Use consistent naming</strong>: Follow a consistent naming convention for settings.</p></li>
-<li><p><strong>Validate critical settings</strong>: Check that essential settings are present and valid.</p></li>
-<li><p><strong>Keep settings separate from code</strong>: Avoid hardcoding values that might need to change.</p></li>
-</ol>
-</section>
-<section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<h3>4. Seed Management<a class="headerlink" href="#seed-management" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> uses three related fields to control randomization and reproducibility:</p>
 <ul class="simple">
-<li><p><strong>AttributeError</strong>: If you get an <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code> when accessing a setting, check that the setting exists in your configuration dictionary.</p></li>
-<li><p><strong>Path issues</strong>: Ensure that <code class="docutils literal notranslate"><span class="pre">data_dir</span></code> is set correctly and that you have write permissions for that directory.</p></li>
-<li><p><strong>Subject-specific paths</strong>: Remember that <code class="docutils literal notranslate"><span class="pre">res_file</span></code>, <code class="docutils literal notranslate"><span class="pre">log_file</span></code>, and other subject-specific paths are only available after calling <code class="docutils literal notranslate"><span class="pre">add_subinfo()</span></code>.</p></li>
-<li><p><strong>Type errors</strong>: Ensure that settings have the expected types (e.g., <code class="docutils literal notranslate"><span class="pre">window_size</span></code> should be a list of two integers).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(integer,</span> <span class="pre">default</span> <span class="pre">2025)</span></code>: the base seed for generating block-specific seeds. Change this value in your config or at runtime to alter the overall randomization pattern.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(list</span> <span class="pre">of</span> <span class="pre">ints</span> <span class="pre">or</span> <span class="pre">`None`)</span></code>: one seed per block, used to initialize block-level randomization (e.g., shuffling condition order). If unset, seeds are generated automatically based on <code class="docutils literal notranslate"><span class="pre">overall_seed</span></code> and <code class="docutils literal notranslate"><span class="pre">seed_mode</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">(`&quot;same_across_sub&quot;`</span> <span class="pre">or</span> <span class="pre">`&quot;same_within_sub&quot;`)</span></code>: determines whether block seeds are shared across participants or personalized per subject.</p></li>
 </ul>
+<section id="controlling-condition-order-per-block">
+<h4>Controlling condition order per block<a class="headerlink" href="#controlling-condition-order-per-block" title="Link to this heading">¶</a></h4>
+<p>Each entry in <code class="docutils literal notranslate"><span class="pre">block_seed</span></code> seeds the random number generator (RNG) for that block. By assigning a specific seed to each block, you ensure that:</p>
+<ol class="arabic simple">
+<li><p><strong>Deterministic shuffle:</strong> The order in which <code class="docutils literal notranslate"><span class="pre">settings.conditions</span></code> are shuffled in block <em>n</em> is fully determined by <code class="docutils literal notranslate"><span class="pre">block_seed[n]</span></code>.</p></li>
+<li><p><strong>Reproducible blocks:</strong> Re-running the experiment with the same seeds will recreate identical block-level condition orders.</p></li>
+</ol>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">seed</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">block_seed</span><span class="p">):</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">block_order</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">conditions</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">block_order</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Block </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> order:&quot;</span><span class="p">,</span> <span class="n">block_order</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="how-to-override-seeds">
+<h4>How to override seeds<a class="headerlink" href="#how-to-override-seeds" title="Link to this heading">¶</a></h4>
+<ul>
+<li><p><strong>Via config</strong>: set <code class="docutils literal notranslate"><span class="pre">overall_seed</span></code> in your dict or YAML before initializing:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;overall_seed&#39;</span><span class="p">:</span> <span class="mi">9999</span><span class="p">,</span> <span class="s1">&#39;seed_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;same_across_sub&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">}</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>At runtime</strong>: regenerate block seeds from a new base:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">settings</span><span class="o">.</span><span class="n">set_block_seed</span><span class="p">(</span><span class="mi">123456</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;New block seeds:&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">block_seed</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="choosing-a-seed-mode">
+<h4>Choosing a seed mode<a class="headerlink" href="#choosing-a-seed-mode" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p>`` (default)<br />
+All participants share the same <code class="docutils literal notranslate"><span class="pre">block_seed</span></code> list generated from <code class="docutils literal notranslate"><span class="pre">overall_seed</span></code>. Use this when you need identical block randomization across the group (e.g., counterbalancing at the cohort level).</p></li>
+<li><p>``<br />
+Each subject receives a unique set of block seeds derived from their <code class="docutils literal notranslate"><span class="pre">subject_id</span></code>, ensuring reproducible yet individualized randomization. This approach:</p>
+<ul>
+<li><p><strong>Reproducibility:</strong> Allows precise reconstruction of any subject’s experimental sequence from their ID.</p></li>
+<li><p><strong>Distributed order effects:</strong> Varies block order across participants when group-level consistency isn’t required.</p></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<div><p><strong>Note:</strong> The final <code class="docutils literal notranslate"><span class="pre">block_seed</span></code> list is stored in the <code class="docutils literal notranslate"><span class="pre">settings</span></code> object and included in the JSON file produced by <code class="docutils literal notranslate"><span class="pre">save_to_json()</span></code>. This makes debugging and post-hoc analyses transparent, as you can see exactly which seeds were used for each block.</p>
+</div></blockquote>
+</section>
+</section>
+<section id="accessing-settings">
+<h3>5. Accessing Settings<a class="headerlink" href="#accessing-settings" title="Link to this heading">¶</a></h3>
+<p>Many psyflow utilities and your custom trial functions will read values directly from the <code class="docutils literal notranslate"><span class="pre">settings</span></code> object. Use Python’s attribute access (or <code class="docutils literal notranslate"><span class="pre">getattr</span></code>) to pull in display parameters, timing values, and custom triggers without boilerplate.</p>
+<section id="window-monitor-setup">
+<h4>Window &amp; Monitor Setup<a class="headerlink" href="#window-monitor-setup" title="Link to this heading">¶</a></h4>
+<p>Many experiments use the same monitor and window settings. Below are two ways to apply those values from <code class="docutils literal notranslate"><span class="pre">settings</span></code>:</p>
+<p><strong>Example 1: Direct dot‐attribute access</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">monitors</span><span class="p">,</span> <span class="n">visual</span>
+
+<span class="c1"># Dot access assumes the attribute exists</span>
+<span class="n">mon</span> <span class="o">=</span> <span class="n">monitors</span><span class="o">.</span><span class="n">Monitor</span><span class="p">(</span><span class="s1">&#39;tempMonitor&#39;</span><span class="p">)</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">monitor_width_cm</span><span class="p">)</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setDistance</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">monitor_distance_cm</span><span class="p">)</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setSizePix</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
+    <span class="n">size</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+    <span class="n">fullscr</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span><span class="p">,</span>
+    <span class="n">screen</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">screen</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="n">mon</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">bg_color</span><span class="p">,</span>
+    <span class="n">gammaErrorPolicy</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example 2: Safe access with</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">monitors</span><span class="p">,</span> <span class="n">visual</span>
+
+<span class="c1"># getattr provides a fallback in case a field is missing</span>
+<span class="n">mon</span> <span class="o">=</span> <span class="n">monitors</span><span class="o">.</span><span class="n">Monitor</span><span class="p">(</span><span class="s1">&#39;tempMonitor&#39;</span><span class="p">)</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;monitor_width_cm&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">))</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setDistance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;monitor_distance_cm&#39;</span><span class="p">,</span> <span class="mi">65</span><span class="p">))</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setSizePix</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">]))</span>
+
+<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
+    <span class="n">size</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">]),</span>
+    <span class="n">fullscr</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;fullscreen&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">screen</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;screen&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="n">mon</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="s1">&#39;pix&#39;</span><span class="p">),</span>
+    <span class="n">color</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;bg_color&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+    <span class="n">gammaErrorPolicy</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Tip:</strong> Using <code class="docutils literal notranslate"><span class="pre">getattr(settings,</span> <span class="pre">'attr',</span> <span class="pre">default)</span></code> lets you specify a fallback when a setting may not exist.: <strong>Using <code class="docutils literal notranslate"><span class="pre">getattr(settings,</span> <span class="pre">'attr',</span> <span class="pre">default)</span></code></strong> lets you specify a fallback when a setting may not exist.</p>
+</div></blockquote>
+</section>
+<section id="accessing-timing-triggers-in-run-trial-py">
+<h4>Accessing Timing &amp; Triggers in <code class="docutils literal notranslate"><span class="pre">run_trial.py</span></code><a class="headerlink" href="#accessing-timing-triggers-in-run-trial-py" title="Link to this heading">¶</a></h4>
+<p>Below is a concise snippet showing how to pull timing values and onset triggers from <code class="docutils literal notranslate"><span class="pre">settings</span></code> in your trial code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># run_trial.py (concise)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>
+    <span class="c1"># Retrieve cue duration and onset trigger</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">cue_duration</span>
+    <span class="n">trigger</span>  <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_cue_onset&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Present the cue stimulus</span>
+    <span class="n">cue_stim</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_cue&quot;</span><span class="p">)</span>
+    <span class="n">cue_stim</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="o">=</span><span class="n">trigger</span><span class="p">)</span>
+
+    <span class="c1"># ... other trial units follow similarly ...</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="design-considerations-for-this-class">
+<h2>Design considerations for this class<a class="headerlink" href="#design-considerations-for-this-class" title="Link to this heading">¶</a></h2>
+<p>TaskSettings groups the most essential experiment parameters—display (<code class="docutils literal notranslate"><span class="pre">window</span></code>), structure (<code class="docutils literal notranslate"><span class="pre">task</span></code>), and timing—into top-level attributes for direct, predictable access and sensible defaults. Parameters that are used less frequently (such as <code class="docutils literal notranslate"><span class="pre">triggers</span></code> or controller settings) can be supplied as nested dictionaries and retrieved only when needed, keeping the core settings clean. Stimulus-specific configurations (e.g., images, sounds) are managed separately by the <code class="docutils literal notranslate"><span class="pre">StimBank</span></code>, allowing the settings class to focus on overall experiment flow rather than individual asset details.</p>
+<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> is designed for extensibility and reproducibility. Unknown keys passed to <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> become dynamic attributes, so you can tailor settings without modifying the class source. Dual seeding modes (<code class="docutils literal notranslate"><span class="pre">same_across_sub</span></code>, <code class="docutils literal notranslate"><span class="pre">same_within_sub</span></code>) let you choose between group‐level consistency or subject‐specific randomness. Finally, the combination of a concise <code class="docutils literal notranslate"><span class="pre">__repr__()</span></code>, JSON export of all settings, and built‑in directory/file management ensures that your experiment’s configuration is transparent, easy to log, and straightforward to debug.</p>
 </section>
 <section id="next-steps">
 <h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
@@ -752,25 +777,30 @@
 <li><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
 <li><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a><ul>
 <li><a class="reference internal" href="#creating-tasksettings">1. Creating TaskSettings</a><ul>
-<li><a class="reference internal" href="#option-a-from-a-dictionary">Option A: From a Dictionary</a></li>
-<li><a class="reference internal" href="#option-b-from-a-yaml-file">Option B: From a YAML File</a></li>
+<li><a class="reference internal" href="#option-a-from-a-yaml-file">Option A: From a YAML File</a></li>
+<li><a class="reference internal" href="#option-b-from-a-dictionary">Option B: From a Dictionary</a><ul>
+<li><a class="reference internal" href="#flat-dict-approach">1. Flat dict approach</a></li>
+<li><a class="reference internal" href="#nested-dict-approach">2. Nested dict approach</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#adding-subject-information">2. Adding Subject Information</a></li>
-<li><a class="reference internal" href="#accessing-settings">3. Accessing Settings</a></li>
-<li><a class="reference internal" href="#path-management">4. Path Management</a></li>
-<li><a class="reference internal" href="#seed-management">5. Seed Management</a></li>
+<li><a class="reference internal" href="#path-management-path-management">3. Path Management Path Management</a></li>
+<li><a class="reference internal" href="#seed-management">4. Seed Management</a><ul>
+<li><a class="reference internal" href="#controlling-condition-order-per-block">Controlling condition order per block</a></li>
+<li><a class="reference internal" href="#how-to-override-seeds">How to override seeds</a></li>
+<li><a class="reference internal" href="#choosing-a-seed-mode">Choosing a seed mode</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#complete-example">Complete Example</a></li>
-<li><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
-<li><a class="reference internal" href="#nested-configuration">Nested Configuration</a></li>
-<li><a class="reference internal" href="#custom-path-generation">Custom Path Generation</a></li>
-<li><a class="reference internal" href="#dynamic-settings-updates">Dynamic Settings Updates</a></li>
+<li><a class="reference internal" href="#accessing-settings">5. Accessing Settings</a><ul>
+<li><a class="reference internal" href="#window-monitor-setup">Window &amp; Monitor Setup</a></li>
+<li><a class="reference internal" href="#accessing-timing-triggers-in-run-trial-py">Accessing Timing &amp; Triggers in <code class="docutils literal notranslate"><span class="pre">run_trial.py</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
-<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#design-considerations-for-this-class">Design considerations for this class</a></li>
 <li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>

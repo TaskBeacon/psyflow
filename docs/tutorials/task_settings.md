@@ -30,369 +30,362 @@ Under the hood, `TaskSettings` is used throughout your code wherever you need to
 |---------|--------|--------|
 | Initialize from dict | `TaskSettings.from_dict(config)` | `settings = TaskSettings.from_dict(config)` |
 | Add subject info | `.add_subinfo(subject_data)` | `settings.add_subinfo(subject_data)` |
-| Access setting | Dot notation | `settings.window_size` |
+| Access setting | Dot notation | `settings.size` |
 | Get all settings | `.to_dict()` | `all_settings = settings.to_dict()` |
+
 
 ## Detailed Usage Guide
 
 ### 1. Creating TaskSettings
 
-#### Option A: From a Dictionary
-在实际使用时，我们使用load_config方法从配置文件中加载配置,从而获得相关的设置
-```python
-from psyflow import TaskSettings
+#### Option A: From a YAML File
 
-config = {
-    "task_name": "stroop",
-    "window_size": [1024, 768],
-    "fullscreen": False,
-    "bg_color": "black",
-    "data_dir": "data",
-    "block_seed": 42,
-    "trial_seed": 43,
-    "timing": {
-        "fixation_duration": 0.5,
-        "stimulus_duration": 2.0,
-        "feedback_duration": 1.0,
-        "iti": 0.8
-    }
-}
+1. **Define** separate sections in `config.yaml`:
+   ```yaml
+   window:
+     size: [1920, 1080]
+     fullscreen: true
+     units: "deg"
+     bg_color: "gray"
 
-settings = TaskSettings.from_dict(config)
-```
+   task:
+     task_name: "stroop"
+     total_blocks: 2
+     total_trials: 40
+     conditions: ["congruent","incongruent"]
+     key_list: ["space"]
+     seed_mode: "same_across_sub"
 
-#### Option B: From a YAML File
+   timing:
+     fixation_duration: [0.5, 0.7]
+     cue_duration: 0.3
+     stimulus_duration: 1.0
+     feedback_duration: 0.5
+   ```
+2. **Load** and **flatten**:
+   ```python
+   import yaml
+   from psyflow import TaskSettings
+
+   with open('config.yaml', 'r') as f:
+       cfg = yaml.safe_load(f)
+
+   merged = {**cfg.get('window', {}), **cfg.get('task', {}), **cfg.get('timing', {})}
+   settings = TaskSettings.from_dict(merged)
+   ```
+
+> **Note:** `window`, `task`, and `timing` are the primary sections for `TaskSettings`. They must be flattened into a single dict passed to `from_dict()`. Other configurations (e.g., `triggers`, `controllers`) can be added as nested attributes:
+>
+> ```python
+> settings.triggers = cfg['trigger_config']
+> ```
+>
+> The `load_config()` utility often auto-flattens `window`, `task`, and `timing` into `cfg['task_config']`, so you can initialize directly:
+>
+> ````python
+> cfg = load_config('config.yaml')
+> settings = TaskSettings.from_dict(cfg['task_config'])
+> ```python
+> cfg = load_config('config.yaml')
+> settings = TaskSettings.from_dict(cfg['task_config'])
+> ````
+
+#### Option B: From a Dictionary
+
+You can initialize `TaskSettings` directly from Python dictionaries in two ways:
+
+1. **Flat dictionary**: merge all parameters (including custom fields) into a single dict.
+2. **Nested sections**: keep logical subsections (e.g., `window`, `task`, `timing`) as nested dicts, then flatten at call time.
+
+**Example YAML sections** (as reference):
 
 ```yaml
-# config.yaml
-task_name: stroop
-window_size: [1024, 768]
-fullscreen: false
-bg_color: black
-data_dir: data
-block_seed: 42
-trial_seed: 43
+window:
+  size: [1920, 1080]
+  fullscreen: true
+  units: "deg"
+  bg_color: "gray"
+
+task:
+  task_name: "stroop"
+  total_blocks: 2
+  total_trials: 40
+  conditions: ["congruent", "incongruent"]
+  key_list: ["space"]
+  seed_mode: "same_across_sub"
+
 timing:
-  fixation_duration: 0.5
-  stimulus_duration: 2.0
-  feedback_duration: 1.0
-  iti: 0.8
+  fixation_duration: [0.5, 0.7]
+  cue_duration: 0.3
+  stimulus_duration: 1.0
+  feedback_duration: 0.5
 ```
 
+##### 1. Flat dict approach
+
 ```python
-import yaml
 from psyflow import TaskSettings
 
-with open("config.yaml", "r") as f:
-    config = yaml.safe_load(f)
+# Merge all settings into one dict
+config_flat = {
+    # window settings
+    'size': [1920, 1080],
+    'fullscreen': True,
+    'units': 'deg',
+    'bg_color': 'gray',
 
-settings = TaskSettings.from_dict(config)
-```
+    # task settings
+    'task_name': 'stroop',
+    'total_blocks': 2,
+    'total_trials': 40,
+    'conditions': ['congruent', 'incongruent'],
+    'key_list': ['space'],
+    'seed_mode': 'same_across_sub',
 
-### 2. Adding Subject Information
-被试信息是必须的，这涉及被试specific的配置，比如被试ID，被试的性别，被试的出生年份等等。这将用于生成相关的存储文件的名称，包括json, log和csv文件的信息
-Integrating subject information allows `TaskSettings` to create subject-specific paths and seeds:
+    # timing settings
+    'fixation_duration': [0.5, 0.7],
+    'cue_duration': 0.3,
+    'stimulus_duration': 1.0,
+    'feedback_duration': 0.5,
 
-```python
-from psyflow import SubInfo, TaskSettings
-import yaml
-
-# Load configuration
-with open("config.yaml", "r") as f:
-    config = yaml.safe_load(f)
-
-# Collect subject information
-subinfo = SubInfo({
-    "subinfo_fields": config.get("subinfo_fields", [])
-})
-subject_data = subinfo.collect()
-
-if subject_data is None:
-    print("Experiment cancelled")
-    import sys
-    sys.exit(0)
-
-# Create TaskSettings with subject info
-settings = TaskSettings.from_dict(config)
-settings.add_subinfo(subject_data)
-
-# Now you have subject-specific paths
-print(f"Data will be saved to: {settings.res_file}")
-```
-
-### 3. Accessing Settings
-
-You can access settings using dot notation, which is cleaner and more intuitive than dictionary access:
-
-```python
-# Access window settings
-win_size = settings.window_size
-fullscreen = settings.fullscreen
-bg_color = settings.bg_color
-
-# Access timing parameters
-fixation_time = settings.timing.fixation_duration
-stimulus_time = settings.timing.stimulus_duration
-
-# Access paths
-data_dir = settings.data_dir
-res_file = settings.res_file  # Only available after add_subinfo()
-```
-
-### 4. Path Management
-
-`TaskSettings` automatically generates several useful paths based on your configuration and subject information:
-
-```python
-# Basic paths (available immediately)
-print(f"Data directory: {settings.data_dir}")
-
-# Subject-specific paths (available after add_subinfo())
-print(f"Subject directory: {settings.subject_dir}")
-print(f"Results file: {settings.res_file}")
-print(f"Log file: {settings.log_file}")
-```
-
-By default, paths follow this structure:
-
-```
-data_dir/
-  └── subject_id/
-      ├── subject_id_results.csv  (res_file)
-      └── subject_id_log.txt      (log_file)
-```
-
-### 5. Seed Management
-
-`TaskSettings` helps manage random seeds for reproducible experiments:
-
-```python
-# Set seeds in configuration
-config = {
-    "task_name": "stroop",
-    "block_seed": 42,  # For block-level randomization
-    "trial_seed": 43   # For trial-level randomization
+    # custom nested field
+    'trigger_config': {'onset': 5, 'offset': 6}
 }
 
-settings = TaskSettings.from_dict(config)
-
-# Access seeds for use in your experiment
-block_seed = settings.block_seed
-trial_seed = settings.trial_seed
-
-# Use seeds with random number generators
-import random
-import numpy as np
-
-# For block randomization
-block_rng = random.Random(block_seed)
-block_conditions = ["condition_a", "condition_b", "condition_c"]
-block_rng.shuffle(block_conditions)
-
-# For trial randomization
-trial_rng = np.random.RandomState(trial_seed)
-trial_jitter = trial_rng.uniform(-0.1, 0.1, 100)  # 100 jittered values
+settings = TaskSettings.from_dict(config_flat)
+print(settings)
+print('Trigger:', settings.trigger_config)
 ```
 
-## Complete Example
-
-Here's a complete example showing how to use `TaskSettings` in an experiment:
+##### 2. Nested dict approach
 
 ```python
-from psychopy import visual, core
-from psyflow import SubInfo, TaskSettings, StimBank, StimUnit
-import yaml
-import sys
-import os
+from psyflow import TaskSettings
 
-# Load configuration
-with open("config.yaml", "r") as f:
-    config = yaml.safe_load(f)
-
-# Step 1: Collect subject information
-subinfo = SubInfo({
-    "subinfo_fields": config.get("subinfo_fields", [])
-})
-subject_data = subinfo.collect()
-
-if subject_data is None:
-    print("Experiment cancelled")
-    sys.exit(0)
-
-# Step 2: Configure task settings
-settings = TaskSettings.from_dict(config)
-settings.add_subinfo(subject_data)
-
-# Create subject directory if it doesn't exist
-os.makedirs(settings.subject_dir, exist_ok=True)
-
-# Step 3: Create PsychoPy window
-win = visual.Window(
-    size=settings.window_size,
-    fullscr=settings.fullscreen,
-    color=settings.bg_color,
-    units="deg"
-)
-
-# Step 4: Create stimulus bank
-stim_bank = StimBank()
-
-# Register stimuli
-stim_bank.register({
-    "fixation": visual.TextStim(win, text="+", height=1.0),
-    "instructions": visual.TextStim(win, text="Press any key to begin", height=0.8),
-    "feedback_correct": visual.TextStim(win, text="Correct!", height=0.8, color="green"),
-    "feedback_incorrect": visual.TextStim(win, text="Incorrect", height=0.8, color="red")
-})
-
-# Step 5: Run a simple trial
-trial = StimUnit(win)
-trial.add(stim_bank.get("instructions"))
-trial.show()
-
-# Wait for keypress
-from psychopy.event import waitKeys
-waitKeys()
-
-# Run a trial with timing from settings
-fixation_trial = StimUnit(win)
-fixation_trial.add(stim_bank.get("fixation"))
-fixation_trial.show(duration=settings.timing.fixation_duration)
-
-# Clean up
-win.close()
-core.quit()
-```
-
-## Advanced Usage
-
-### Nested Configuration
-
-`TaskSettings` supports nested configuration structures, which helps organize related settings:
-
-```python
-config = {
-    "task_name": "flanker",
-    "window": {
-        "size": [1024, 768],
-        "fullscreen": False,
-        "color": "gray",
-        "units": "deg"
+# Keep sections nested for readability
+config_nested = {
+    'window': {
+        'size': [1920, 1080],
+        'fullscreen': True,
+        'units': 'deg',
+        'bg_color': 'gray'
     },
-    "timing": {
-        "fixation": 0.5,
-        "stimulus": 1.5,
-        "response_window": 2.0,
-        "feedback": 1.0,
-        "iti": [0.8, 1.2]  # Range for jittered ITI
+    'task': {
+        'task_name': 'stroop',
+        'total_blocks': 2,
+        'total_trials': 40,
+        'conditions': ['congruent', 'incongruent'],
+        'key_list': ['space'],
+        'seed_mode': 'same_across_sub'
     },
-    "stimuli": {
-        "sizes": {
-            "fixation": 1.0,
-            "target": 2.0,
-            "feedback": 1.5
-        },
-        "colors": {
-            "correct": "green",
-            "error": "red",
-            "neutral": "white"
-        }
+    'timing': {
+        'fixation_duration': [0.5, 0.7],
+        'cue_duration': 0.3,
+        'stimulus_duration': 1.0,
+        'feedback_duration': 0.5
+    },
+    'trigger_config': {
+        'onset': 5,
+        'offset': 6
     }
 }
 
-settings = TaskSettings.from_dict(config)
+# Flatten nested sections when initializing
+config_flat = {
+    **config_nested['window'],
+    **config_nested['task'],
+    **config_nested['timing'],
+    'trigger_config': config_nested['trigger_config']
+}
 
-# Access nested settings
-win_size = settings.window.size
-fixation_size = settings.stimuli.sizes.fixation
-correct_color = settings.stimuli.colors.correct
+settings = TaskSettings.from_dict(config_flat)
+print(settings.conditions)
+print(settings.fixation_duration)
+print(settings.trigger_config)
 ```
 
-### Custom Path Generation
+In both cases, `from_dict()` will apply known fields and attach unknown keys (like `trigger_config`) as attributes on the `settings` object.
 
-You can customize how paths are generated by subclassing `TaskSettings`:
+### 2. Adding Subject Information
+
+Provide a dict with at least `subject_id` (others optional) to:
+
+- Validate inputs
+- Derive subject‑specific seed (in `same_within_sub` mode)
+- Create output directory
+- Construct timestamped file names
 
 ```python
-class CustomTaskSettings(TaskSettings):
-    def _generate_paths(self):
-        # Call the parent method first
-        super()._generate_paths()
-        
-        # Add custom paths
-        if hasattr(self, "subject_id"):
-            # Create a path for eye-tracking data
-            self.eyetrack_file = os.path.join(
-                self.subject_dir, 
-                f"{self.subject_id}_eyetracking.csv"
-            )
-            
-            # Create a path for physiological data
-            self.physio_dir = os.path.join(
-                self.subject_dir, 
-                "physio"
-            )
-            
-            # Create a path for stimuli presented to this subject
-            self.stim_log = os.path.join(
-                self.subject_dir,
-                f"{self.subject_id}_stimuli.json"
-            )
+subinfo = {'subject_id': 'S01', 'age': 24, 'gender': 'F'}
+settings.add_subinfo(subinfo)
 ```
 
-### Dynamic Settings Updates
+### 3. Path Management Path Management
 
-You can update settings dynamically during an experiment:
+After `add_subinfo()`, these attributes are set:
+
+| Attribute   | Description                                  |
+| ----------- | -------------------------------------------- |
+| `save_path` | Base directory (default `./data`)            |
+| `log_file`  | Full path to `.log` for PsychoPy logs        |
+| `res_file`  | Full path to `.csv` with trial‐level results |
+| `json_file` | Full path to `.json` dumping all settings    |
+
+After calling `settings.add_subinfo(subinfo)`, you’ll see console output and the generated file paths:
 
 ```python
-# Start with default settings
-settings = TaskSettings.from_dict(config)
+settings.add_subinfo(subinfo)
+# [INFO] Created output directory: ./data
 
-# Update based on subject performance
-def adjust_difficulty(settings, accuracy):
-    """Adjust task difficulty based on accuracy."""
-    if accuracy > 0.85:  # Too easy
-        settings.timing.stimulus_duration *= 0.8  # Reduce stimulus time
-        settings.difficulty_level = "hard"
-    elif accuracy < 0.65:  # Too hard
-        settings.timing.stimulus_duration *= 1.2  # Increase stimulus time
-        settings.difficulty_level = "easy"
-    else:
-        settings.difficulty_level = "medium"
-    
-    return settings
+print('Log file:', settings.log_file)
+# Log file: ./data/sub-S01_task_flanker_20250706_094730.log
 
-# Use in experiment
-block_accuracy = 0.90  # Example accuracy from a block
-settings = adjust_difficulty(settings, block_accuracy)
-print(f"New difficulty: {settings.difficulty_level}")
-print(f"New stimulus duration: {settings.timing.stimulus_duration}")
+print('Results file:', settings.res_file)
+# Results file: ./data/sub-S01_task_flanker_20250706_094730.csv
+
+print('Config JSON file:', settings.json_file)
+# Config JSON file: ./data/sub-S01_task_flanker_20250706_094730.json
 ```
 
-## Best Practices
+**Example directory layout**:
 
-1. **Use YAML for configuration**: Store settings in YAML files for easy editing without changing code.
+```
+./data/
+└─ S01/
+   ├─ sub-S01_task-stroop_20250706_091500.log
+   ├─ sub-S01_task-stroop_20250706_091500.csv
+   └─ sub-S01_task-stroop_20250706_091500.json
+```
 
-2. **Group related settings**: Use nested structures to organize related settings (e.g., `window`, `timing`, `stimuli`).
+### 4. Seed Management
 
-3. **Set reasonable defaults**: Provide sensible default values for common parameters.
+`TaskSettings` uses three related fields to control randomization and reproducibility:
 
-4. **Document your settings**: Include comments in YAML files to explain what each setting does.
+- ``(integer, default 2025)``: the base seed for generating block-specific seeds. Change this value in your config or at runtime to alter the overall randomization pattern.
+- ``(list of ints or `None`)``: one seed per block, used to initialize block-level randomization (e.g., shuffling condition order). If unset, seeds are generated automatically based on `overall_seed` and `seed_mode`.
+- ``(`"same_across_sub"` or `"same_within_sub"`)``: determines whether block seeds are shared across participants or personalized per subject.
 
-5. **Use consistent naming**: Follow a consistent naming convention for settings.
+#### Controlling condition order per block
 
-6. **Validate critical settings**: Check that essential settings are present and valid.
+Each entry in `block_seed` seeds the random number generator (RNG) for that block. By assigning a specific seed to each block, you ensure that:
 
-7. **Keep settings separate from code**: Avoid hardcoding values that might need to change.
+1. **Deterministic shuffle:** The order in which `settings.conditions` are shuffled in block *n* is fully determined by `block_seed[n]`.
+2. **Reproducible blocks:** Re-running the experiment with the same seeds will recreate identical block-level condition orders.
 
-## Troubleshooting
+Example:
 
-- **AttributeError**: If you get an `AttributeError` when accessing a setting, check that the setting exists in your configuration dictionary.
+```python
+import random
+for i, seed in enumerate(settings.block_seed):
+    rng = random.Random(seed)
+    block_order = settings.conditions.copy()
+    rng.shuffle(block_order)
+    print(f"Block {i+1} order:", block_order)
+```
 
-- **Path issues**: Ensure that `data_dir` is set correctly and that you have write permissions for that directory.
+#### How to override seeds
 
-- **Subject-specific paths**: Remember that `res_file`, `log_file`, and other subject-specific paths are only available after calling `add_subinfo()`.
+- **Via config**: set `overall_seed` in your dict or YAML before initializing:
+  ```python
+  config = {'overall_seed': 9999, 'seed_mode': 'same_across_sub', ...}
+  settings = TaskSettings.from_dict(config)
+  ```
+- **At runtime**: regenerate block seeds from a new base:
+  ```python
+  settings.set_block_seed(123456)
+  print('New block seeds:', settings.block_seed)
+  ```
 
-- **Type errors**: Ensure that settings have the expected types (e.g., `window_size` should be a list of two integers).
+#### Choosing a seed mode
+
+- `` (default)\
+  All participants share the same `block_seed` list generated from `overall_seed`. Use this when you need identical block randomization across the group (e.g., counterbalancing at the cohort level).
+
+- ``\
+  Each subject receives a unique set of block seeds derived from their `subject_id`, ensuring reproducible yet individualized randomization. This approach:
+
+  - **Reproducibility:** Allows precise reconstruction of any subject’s experimental sequence from their ID.
+  - **Distributed order effects:** Varies block order across participants when group-level consistency isn’t required.
+
+> **Note:** The final `block_seed` list is stored in the `settings` object and included in the JSON file produced by `save_to_json()`. This makes debugging and post-hoc analyses transparent, as you can see exactly which seeds were used for each block.
+
+### 5. Accessing Settings
+
+Many psyflow utilities and your custom trial functions will read values directly from the `settings` object. Use Python’s attribute access (or `getattr`) to pull in display parameters, timing values, and custom triggers without boilerplate.
+
+#### Window & Monitor Setup
+
+Many experiments use the same monitor and window settings. Below are two ways to apply those values from `settings`:
+
+**Example 1: Direct dot‐attribute access**
+
+```python
+from psychopy import monitors, visual
+
+# Dot access assumes the attribute exists
+mon = monitors.Monitor('tempMonitor')
+mon.setWidth(settings.monitor_width_cm)
+mon.setDistance(settings.monitor_distance_cm)
+mon.setSizePix(settings.size)
+
+win = visual.Window(
+    size=settings.size,
+    fullscr=settings.fullscreen,
+    screen=settings.screen,
+    monitor=mon,
+    units=settings.units,
+    color=settings.bg_color,
+    gammaErrorPolicy='ignore'
+)
+```
+
+**Example 2: Safe access with**
+
+```python
+from psychopy import monitors, visual
+
+# getattr provides a fallback in case a field is missing
+mon = monitors.Monitor('tempMonitor')
+mon.setWidth(getattr(settings, 'monitor_width_cm', 60))
+mon.setDistance(getattr(settings, 'monitor_distance_cm', 65))
+mon.setSizePix(getattr(settings, 'size', [1024, 768]))
+
+win = visual.Window(
+    size=getattr(settings, 'size', [1024, 768]),
+    fullscr=getattr(settings, 'fullscreen', False),
+    screen=getattr(settings, 'screen', 0),
+    monitor=mon,
+    units=getattr(settings, 'units', 'pix'),
+    color=getattr(settings, 'bg_color', [0, 0, 0]),
+    gammaErrorPolicy='ignore'
+)
+```
+
+> **Tip:** Using `getattr(settings, 'attr', default)` lets you specify a fallback when a setting may not exist.: **Using `getattr(settings, 'attr', default)`** lets you specify a fallback when a setting may not exist.
+
+#### Accessing Timing & Triggers in `run_trial.py`
+
+Below is a concise snippet showing how to pull timing values and onset triggers from `settings` in your trial code:
+
+```python
+# run_trial.py (concise)
+def run_trial(settings, stim_bank, condition):
+    # Retrieve cue duration and onset trigger
+    duration = settings.cue_duration
+    trigger  = settings.triggers.get(f"{condition}_cue_onset")
+
+    # Present the cue stimulus
+    cue_stim = stim_bank.get(f"{condition}_cue")
+    cue_stim.show(duration=duration, onset_trigger=trigger)
+
+    # ... other trial units follow similarly ...
+```
+
+## Design considerations for this class
+
+TaskSettings groups the most essential experiment parameters—display (`window`), structure (`task`), and timing—into top-level attributes for direct, predictable access and sensible defaults. Parameters that are used less frequently (such as `triggers` or controller settings) can be supplied as nested dictionaries and retrieved only when needed, keeping the core settings clean. Stimulus-specific configurations (e.g., images, sounds) are managed separately by the `StimBank`, allowing the settings class to focus on overall experiment flow rather than individual asset details.
+
+ `TaskSettings` is designed for extensibility and reproducibility. Unknown keys passed to `from_dict()` become dynamic attributes, so you can tailor settings without modifying the class source. Dual seeding modes (`same_across_sub`, `same_within_sub`) let you choose between group‐level consistency or subject‐specific randomness. Finally, the combination of a concise `__repr__()`, JSON export of all settings, and built‑in directory/file management ensures that your experiment’s configuration is transparent, easy to log, and straightforward to debug.
 
 ## Next Steps
 
