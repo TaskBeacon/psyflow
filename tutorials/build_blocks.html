@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="StimBank: Flexible Stimulus Management for PsychoPy" href="build_stimulus.html" /><link rel="prev" title="TaskSettings: Configuring Your Experiment" href="task_settings.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>BlockUnit: Organizing Trials into Experimental Blocks - psyflow 0.1.1 documentation</title>
+        <title>BlockUnit: Managing Trials - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -208,7 +208,7 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with psyflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">BlockUnit: Managing Trials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
@@ -254,18 +254,18 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="blockunit-organizing-trials-into-experimental-blocks">
-<h1>BlockUnit: Organizing Trials into Experimental Blocks<a class="headerlink" href="#blockunit-organizing-trials-into-experimental-blocks" title="Link to this heading">¶</a></h1>
+          <section id="blockunit-managing-trials">
+<h1>BlockUnit: Managing Trials<a class="headerlink" href="#blockunit-managing-trials" title="Link to this heading">¶</a></h1>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> class is a powerful tool for organizing trials in psychological experiments. It provides a structured way to manage trial sequences, generate balanced conditions, track results, and summarize performance metrics. This tutorial will guide you through using <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> to create well-structured experimental blocks.</p>
 <p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> solves several common challenges in experimental design:</p>
 <ul class="simple">
-<li><p><strong>Condition balancing</strong>: Generate trial conditions with proper randomization and counterbalancing</p></li>
-<li><p><strong>Trial sequencing</strong>: Manage the flow of trials within a block</p></li>
-<li><p><strong>Data organization</strong>: Automatically track trial-level data and block metadata</p></li>
-<li><p><strong>Block lifecycle</strong>: Execute setup and cleanup operations at block boundaries</p></li>
-<li><p><strong>Result summarization</strong>: Calculate performance metrics across trials and conditions</p></li>
+<li><p><strong>Condition balancing:</strong> Generate trial conditions with proper randomization and counterbalancing</p></li>
+<li><p><strong>Trial sequencing:</strong> Manage the flow of trials within a block</p></li>
+<li><p><strong>Data organization:</strong> Automatically track trial-level data and block metadata</p></li>
+<li><p><strong>Block lifecycle:</strong> Execute setup and cleanup operations at block boundaries</p></li>
+<li><p><strong>Result summarization:</strong> Calculate performance metrics across trials and conditions</p></li>
 </ul>
 </section>
 <section id="key-features">
@@ -317,11 +317,11 @@
 </tr>
 <tr class="row-odd"><td><p>Generate conditions</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.generate_conditions(func,</span> <span class="pre">labels)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">block.generate_conditions(generate_func,</span> <span class="pre">[&quot;A&quot;,</span> <span class="pre">&quot;B&quot;])</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">block.generate_conditions(generate_func,</span> <span class="pre">[&quot;A&quot;,&quot;B&quot;])</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Add conditions manually</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.add_condition(condition_list)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">block.add_condition([&quot;A&quot;,</span> <span class="pre">&quot;B&quot;,</span> <span class="pre">&quot;A&quot;])</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">block.add_condition([&quot;A&quot;,&quot;B&quot;,&quot;A&quot;])</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Register start hook</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.on_start(func)</span></code></p></td>
@@ -361,548 +361,507 @@
 </section>
 <section id="detailed-usage-guide">
 <h2>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h2>
-<section id="initializing-a-block">
-<h3>1. Initializing a Block<a class="headerlink" href="#initializing-a-block" title="Link to this heading">¶</a></h3>
-<p>To create a <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>, you need to provide basic information about the block and the experiment settings:</p>
+<section id="initialization">
+<h3>1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h3>
+<p>To create a <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>, you need to provide basic information about the block and the experiment settings:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockUnit</span>
 
 <span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
-    <span class="n">block_id</span><span class="o">=</span><span class="s2">&quot;practice_block&quot;</span><span class="p">,</span>  <span class="c1"># Unique identifier string</span>
-    <span class="n">block_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>               <span class="c1"># Index of this block in the experiment</span>
-    <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>         <span class="c1"># TaskSettings object with experiment configuration</span>
-    <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>                <span class="c1"># PsychoPy window (optional but recommended)</span>
-    <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>                <span class="c1"># PsychoPy keyboard (optional but recommended)</span>
+    <span class="n">block_id</span><span class="o">=</span><span class="s1">&#39;block1&#39;</span><span class="p">,</span>      <span class="c1"># unique identifier</span>
+    <span class="n">block_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>            <span class="c1"># block index (0-based)</span>
+    <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>      <span class="c1"># TaskSettings instance</span>
+    <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>             <span class="c1"># PsychoPy Window</span>
+    <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>             <span class="c1"># PsychoPy Keyboard</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">settings</span></code> parameter should be a <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> object or similar that includes:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">settings</span></code> parameter should be a <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> object or similar that includes:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">trials_per_block</span></code>: Number of trials in each block</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">block_seed</span></code>: Seed for random number generation (for reproducibility)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">condition_list</span></code>: List of conditions</p></li>
 </ul>
 </section>
-<section id="generating-trial-conditions">
-<h3>2. Generating Trial Conditions<a class="headerlink" href="#generating-trial-conditions" title="Link to this heading">¶</a></h3>
-<section id="option-a-using-a-condition-generation-function">
-<h4>Option A: Using a Condition Generation Function<a class="headerlink" href="#option-a-using-a-condition-generation-function" title="Link to this heading">¶</a></h4>
-<p>The most flexible way to create trial conditions is with a custom generation function:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_balanced_conditions</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a balanced, randomized sequence of conditions.&quot;&quot;&quot;</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-    
-    <span class="c1"># Calculate repetitions needed to reach n trials</span>
-    <span class="n">reps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)))</span>
-    
-    <span class="c1"># Create sequence and shuffle</span>
-    <span class="n">conditions</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">*</span> <span class="n">reps</span>  <span class="c1"># Repeat labels as needed</span>
-    <span class="n">shuffled</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">conditions</span><span class="p">)[:</span><span class="n">n</span><span class="p">]</span>  <span class="c1"># Shuffle and trim</span>
-    
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">shuffled</span><span class="p">)</span>
-
-<span class="c1"># Generate conditions for the block</span>
+<section id="generating-conditions">
+<h3>2. Generating Conditions<a class="headerlink" href="#generating-conditions" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">generate_conditions()</span></code> method provides a built-in, balanced (or weighted) generator to create a sequence of condition labels of length <code class="docutils literal notranslate"><span class="pre">n_trials</span></code>. Key parameters:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">condition_labels</span></code>: List of labels to use for this block (defaults to <code class="docutils literal notranslate"><span class="pre">settings.conditions</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weights</span></code>: Relative weights for each label (defaults to equal weights).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">order</span></code>: <code class="docutils literal notranslate"><span class="pre">'random'</span></code> or <code class="docutils literal notranslate"><span class="pre">'sequential'</span></code>—controls final sequence arrangement.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seed</span></code>: Random seed override for reproducible shuffling.</p></li>
+</ul>
+<p><strong>Weighted Generation Algorithm</strong></p>
+<p>This method first computes each label’s base count as <code class="docutils literal notranslate"><span class="pre">floor(n_trials</span> <span class="pre">*</span> <span class="pre">weight</span> <span class="pre">/</span> <span class="pre">total_weight)</span></code>, then distributes any leftover trials randomly according to the given weights. Finally, it constructs the full sequence by either interleaving labels in their specified order or shuffling the complete list, based on the <code class="docutils literal notranslate"><span class="pre">order</span></code> parameter.</p>
+<p><strong>Setting Weights</strong>::</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Make &#39;A&#39; twice as likely as &#39;B&#39;</span>
 <span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span>
-    <span class="n">func</span><span class="o">=</span><span class="n">generate_balanced_conditions</span><span class="p">,</span>
-    <span class="n">condition_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;congruent&quot;</span><span class="p">,</span> <span class="s2">&quot;incongruent&quot;</span><span class="p">,</span> <span class="s2">&quot;neutral&quot;</span><span class="p">]</span>
+    <span class="n">condition_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">],</span>
+    <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">order</span><span class="o">=</span><span class="s1">&#39;random&#39;</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>This populates <code class="docutils literal notranslate"><span class="pre">block.trials</span></code> with a balanced, randomized sequence of conditions.</p>
-</section>
-<section id="option-b-manually-assigning-trials">
-<h4>Option B: Manually Assigning Trials<a class="headerlink" href="#option-b-manually-assigning-trials" title="Link to this heading">¶</a></h4>
-<p>For full control, you can manually specify the trial sequence:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">add_condition</span><span class="p">([</span><span class="s2">&quot;congruent&quot;</span><span class="p">,</span> <span class="s2">&quot;incongruent&quot;</span><span class="p">,</span> <span class="s2">&quot;neutral&quot;</span><span class="p">,</span> <span class="s2">&quot;congruent&quot;</span><span class="p">,</span> <span class="s2">&quot;incongruent&quot;</span><span class="p">])</span>
+<p>Expected ratio A:B ≈ 2:1, subject to rounding and random distribution of remainder.</p>
+<p><strong>Order Modes</strong>:</p>
+<ul class="simple">
+<li><p><strong>Sequential</strong>: Ensures interleaved, cyclic presentation of conditions in the original label order.<br />
+<em>Example</em>: In a resting-state experiment with two conditions—<code class="docutils literal notranslate"><span class="pre">ec</span></code> (eyes closed) and <code class="docutils literal notranslate"><span class="pre">eo</span></code> (eyes open)—using <code class="docutils literal notranslate"><span class="pre">order='sequential'</span></code> produces <code class="docutils literal notranslate"><span class="pre">['ec','eo','ec','eo']</span></code>, alternating blocks predictably.</p></li>
+<li><p><strong>Random</strong>: Provides a fully shuffled sequence, respecting label weights.<br />
+<em>Example</em>: With the same <code class="docutils literal notranslate"><span class="pre">ec</span></code>/<code class="docutils literal notranslate"><span class="pre">eo</span></code> settings and <code class="docutils literal notranslate"><span class="pre">order='random'</span></code>, the sequence might be <code class="docutils literal notranslate"><span class="pre">['ec','ec','eo','eo']</span></code> or any other random arrangement.</p></li>
+</ul>
+<p><strong>Examples</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Default: use settings.conditions, equal weights, random order</span>
+<span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">()</span>
+
+<span class="c1"># Custom labels and sequential order</span>
+<span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span>
+    <span class="n">condition_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">],</span>
+    <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="n">order</span><span class="o">=</span><span class="s1">&#39;sequential&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Custom Condition Generator</strong></p>
+<p>For specialized block designs—such as a Stop-Signal Task (SST) where you need specific constraints on stop/go ratios, run lengths, and starting trials—you can supply your own generator function. Your function must have the signature:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">gen_func</span><span class="p">(</span><span class="n">n_trials</span><span class="p">,</span> <span class="n">condition_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p><strong>Example: SST condition generator</strong></p>
+<p>This custom function generates condition sequences for a Stop-Signal Task (SST), enforcing:</p>
+<ul class="simple">
+<li><p>A fixed stop-to-go trial ratio (<code class="docutils literal notranslate"><span class="pre">stop_ratio</span></code>).</p></li>
+<li><p>A maximum run length of consecutive stop trials (<code class="docutils literal notranslate"><span class="pre">max_stop_run</span></code>).</p></li>
+<li><p>A minimum number of initial go trials (<code class="docutils literal notranslate"><span class="pre">min_go_start</span></code>).</p></li>
+<li><p>Preservation of the global random state via a local RNG.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_sst_conditions</span><span class="p">(</span>
+    <span class="n">n_trials</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">condition_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">stop_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
+    <span class="n">max_stop_run</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">min_go_start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates an SST sequence while preserving global RNG state.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 1) Default labels if none provided</span>
+    <span class="k">if</span> <span class="n">condition_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">condition_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;go_left&#39;</span><span class="p">,</span> <span class="s1">&#39;go_right&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_left&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_right&#39;</span><span class="p">]</span>
+    <span class="n">go_labels</span>   <span class="o">=</span> <span class="p">[</span><span class="n">lbl</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">condition_labels</span> <span class="k">if</span> <span class="n">lbl</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;go&#39;</span><span class="p">)]</span>
+    <span class="n">stop_labels</span><span class="o">=</span> <span class="p">[</span><span class="n">lbl</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">condition_labels</span> <span class="k">if</span> <span class="n">lbl</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;stop&#39;</span><span class="p">)]</span>
+
+    <span class="c1"># 2) Compute trial counts</span>
+    <span class="n">n_stop</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">n_trials</span> <span class="o">*</span> <span class="n">stop_ratio</span><span class="p">))</span>
+    <span class="n">n_go</span>   <span class="o">=</span> <span class="n">n_trials</span> <span class="o">-</span> <span class="n">n_stop</span>
+    <span class="n">base_go</span><span class="p">,</span> <span class="n">rem_go</span>   <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">n_go</span><span class="p">,</span>   <span class="nb">len</span><span class="p">(</span><span class="n">go_labels</span><span class="p">))</span>
+    <span class="n">base_st</span><span class="p">,</span> <span class="n">rem_st</span>   <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">n_stop</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stop_labels</span><span class="p">))</span>
+
+    <span class="n">counts</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">go_labels</span><span class="p">):</span>
+        <span class="n">counts</span><span class="p">[</span><span class="n">lbl</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_go</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">rem_go</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stop_labels</span><span class="p">):</span>
+        <span class="n">counts</span><span class="p">[</span><span class="n">lbl</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_st</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">rem_st</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># 3) Build and shuffle with constraints</span>
+    <span class="n">trial_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">lbl</span> <span class="k">for</span> <span class="n">lbl</span><span class="p">,</span> <span class="n">cnt</span> <span class="ow">in</span> <span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cnt</span><span class="p">)]</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">trial_list</span><span class="p">)</span>
+        <span class="c1"># a) First min_go_start trials must be &#39;go&#39;</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">lbl</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;stop&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">trial_list</span><span class="p">[:</span><span class="n">min_go_start</span><span class="p">]):</span>
+            <span class="k">continue</span>
+        <span class="c1"># b) No more than max_stop_run stops in any 5-trial window</span>
+        <span class="n">violation</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_trials</span> <span class="o">-</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="n">trial_list</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">5</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lbl</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;stop&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">window</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_stop_run</span><span class="p">:</span>
+                <span class="n">violation</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">violation</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">trial_list</span>
+
+<span class="c1"># Use it in BlockUnit:</span>
+<span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">generate_sst_conditions</span><span class="p">,</span>
+    <span class="n">condition_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;go_left&#39;</span><span class="p">,</span><span class="s1">&#39;go_right&#39;</span><span class="p">,</span><span class="s1">&#39;stop_left&#39;</span><span class="p">,</span><span class="s1">&#39;stop_right&#39;</span><span class="p">],</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">123</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">conditions</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The custom generator is applied by passing it as the <code class="docutils literal notranslate"><span class="pre">func</span></code> argument to <code class="docutils literal notranslate"><span class="pre">generate_conditions()</span></code>.</p>
+<p>For example, to use <code class="docutils literal notranslate"><span class="pre">generate_sst_conditions</span></code> when constructing a block:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
+    <span class="n">block_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;block_</span><span class="si">{</span><span class="n">block_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">block_idx</span><span class="o">=</span><span class="n">block_i</span><span class="p">,</span>
+    <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
+    <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>
+    <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>
+<span class="p">)</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">generate_sst_conditions</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This single call both creates the block and generates its trial conditions according to the SST constraints, storing the resulting sequence in <code class="docutils literal notranslate"><span class="pre">block.conditions</span></code>.</p>
+<p><strong>Manual Condition Assignment</strong></p>
+<p>If the exact sequence of conditions is predetermined, bypass the generator entirely:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Predefined block sequence for alternating ec/eo</span>
+<span class="n">manual_seq</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ec&#39;</span><span class="p">,</span><span class="s1">&#39;eo&#39;</span><span class="p">,</span><span class="s1">&#39;ec&#39;</span><span class="p">,</span><span class="s1">&#39;eo&#39;</span><span class="p">]</span>
+<span class="n">block</span><span class="o">.</span><span class="n">add_condition</span><span class="p">(</span><span class="n">manual_seq</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">conditions</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-</section>
-<section id="registering-block-lifecycle-hooks">
-<h3>3. Registering Block Lifecycle Hooks<a class="headerlink" href="#registering-block-lifecycle-hooks" title="Link to this heading">¶</a></h3>
-<p>You can register functions to be called automatically at the start and end of a block. This is useful for:</p>
+<section id="hooks-on-start-and-on-end">
+<h3>3. Hooks: on_start and on_end<a class="headerlink" href="#hooks-on-start-and-on-end" title="Link to this heading">¶</a></h3>
+<p>Hooks allow injection of custom logic at the beginning or end of each block, without modifying the core trial loop. Common uses include:</p>
 <ul class="simple">
-<li><p>Displaying instructions or break screens</p></li>
-<li><p>Sending block-level triggers to recording equipment</p></li>
-<li><p>Logging block information</p></li>
-<li><p>Calculating block-level metrics</p></li>
+<li><p><strong>Triggering hardware events</strong> (e.g., sending EEG or MRI triggers)</p></li>
+<li><p><strong>Updating GUI elements</strong> (e.g., showing block progress or instructions)</p></li>
+<li><p><strong>Logging or analytics</strong> (e.g., timestamping additional metrics)</p></li>
 </ul>
-<section id="using-decorator-syntax">
-<h4>Using Decorator Syntax<a class="headerlink" href="#using-decorator-syntax" title="Link to this heading">¶</a></h4>
+<p>Hooks can be registered in two ways:</p>
+<ol class="arabic">
+<li><p><strong>Decorator style</strong>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@block</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">show_instructions</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
-    <span class="c1"># The block object is passed as the first argument</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting block </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">block_id</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="si">}</span><span class="s2"> trials)&quot;</span><span class="p">)</span>
-    
-    <span class="c1"># Show instructions</span>
-    <span class="n">instructions</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">window</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Press left or right arrow&quot;</span><span class="p">)</span>
-    <span class="n">instructions</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-    <span class="n">b</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-    <span class="n">b</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">waitForPresses</span><span class="p">(</span><span class="n">maxWait</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>  <span class="c1"># Wait max 5 seconds</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">before_block</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+    <span class="c1"># Custom setup</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting block </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">block_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="nd">@block</span><span class="o">.</span><span class="n">on_end</span><span class="p">()</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">show_block_summary</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Block </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">block_id</span><span class="si">}</span><span class="s2"> completed in </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
-    
-    <span class="c1"># Calculate and display accuracy</span>
-    <span class="n">correct_trials</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
-    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct_trials</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
-    
-    <span class="c1"># Show feedback</span>
-    <span class="n">feedback</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
-        <span class="n">b</span><span class="o">.</span><span class="n">window</span><span class="p">,</span> 
-        <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Accuracy: </span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%</span><span class="se">\n</span><span class="s2">Press any key to continue&quot;</span>
-    <span class="p">)</span>
-    <span class="n">feedback</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-    <span class="n">b</span><span class="o">.</span><span class="n">window</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-    <span class="n">b</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">waitForPresses</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">after_block</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+    <span class="c1"># Custom cleanup</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ending block </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">block_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-<section id="using-functional-syntax">
-<h4>Using Functional Syntax<a class="headerlink" href="#using-functional-syntax" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Alternative approach without decorators</span>
-<span class="n">block</span><span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Block </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">block_id</span><span class="si">}</span><span class="s2"> starting&quot;</span><span class="p">))</span>
-<span class="n">block</span><span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Block </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">block_id</span><span class="si">}</span><span class="s2"> completed&quot;</span><span class="p">))</span>
+</li>
+<li><p><strong>Chaining style</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">block</span><span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_onset&quot;</span><span class="p">)))</span>
+     <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_end&quot;</span><span class="p">)))</span>
 </pre></div>
 </div>
-</section>
-</section>
-<section id="defining-the-trial-function">
-<h3>4. Defining the Trial Function<a class="headerlink" href="#defining-the-trial-function" title="Link to this heading">¶</a></h3>
-<p>The trial function defines what happens on each trial. It receives the block’s window, keyboard, settings, and the current trial’s condition:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run a single trial and return results.&quot;&quot;&quot;</span>
-    <span class="c1"># Create stimuli based on condition</span>
-    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;congruent&quot;</span><span class="p">:</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;RED&quot;</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
-    <span class="k">elif</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;incongruent&quot;</span><span class="p">:</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;RED&quot;</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># neutral</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;XXX&quot;</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;green&quot;</span>
-    
-    <span class="c1"># Create and display stimulus</span>
-    <span class="n">stimulus</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
-    <span class="n">stimulus</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-    <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-    
-    <span class="c1"># Record onset time</span>
-    <span class="n">onset_time</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">getTime</span><span class="p">()</span>
-    
-    <span class="c1"># Wait for response (max 2 seconds)</span>
-    <span class="n">keys</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">waitForPresses</span><span class="p">(</span><span class="n">maxWait</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
-    
-    <span class="c1"># Calculate response time</span>
-    <span class="k">if</span> <span class="n">keys</span><span class="p">:</span>
-        <span class="n">rt</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rt</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
-        <span class="c1"># Determine if response was correct</span>
-        <span class="n">correct</span> <span class="o">=</span> <span class="p">(</span><span class="n">color</span> <span class="o">==</span> <span class="s2">&quot;red&quot;</span> <span class="ow">and</span> <span class="n">response</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">)</span> <span class="ow">or</span> \
-                  <span class="p">(</span><span class="n">color</span> <span class="o">==</span> <span class="s2">&quot;blue&quot;</span> <span class="ow">and</span> <span class="n">response</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">rt</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">correct</span> <span class="o">=</span> <span class="kc">False</span>
-    
-    <span class="c1"># Return trial results as a dictionary</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="n">condition</span><span class="p">,</span>
-        <span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
-        <span class="s2">&quot;rt&quot;</span><span class="p">:</span> <span class="n">rt</span><span class="p">,</span>
-        <span class="s2">&quot;correct&quot;</span><span class="p">:</span> <span class="n">correct</span><span class="p">,</span>
-        <span class="s2">&quot;onset_time&quot;</span><span class="p">:</span> <span class="n">onset_time</span>
-    <span class="p">}</span>
-</pre></div>
-</div>
-</section>
-<section id="running-the-block">
-<h3>5. Running the Block<a class="headerlink" href="#running-the-block" title="Link to this heading">¶</a></h3>
-<p>Once you’ve set up the block, you can run all trials with a single call:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Run all trials in the block</span>
-<span class="n">block</span><span class="o">.</span><span class="n">run_trial</span><span class="p">(</span><span class="n">run_trial</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This will:</p>
-<ol class="arabic simple">
-<li><p>Call your <code class="docutils literal notranslate"><span class="pre">on_start</span></code> hook(s)</p></li>
-<li><p>Run each trial in sequence, passing the appropriate condition</p></li>
-<li><p>Store each trial’s results</p></li>
-<li><p>Call your <code class="docutils literal notranslate"><span class="pre">on_end</span></code> hook(s)</p></li>
+</li>
 </ol>
+<p><strong>Example: sending triggers at block boundaries</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
+    <span class="n">block_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;block_</span><span class="si">{</span><span class="n">block_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">block_idx</span><span class="o">=</span><span class="n">block_i</span><span class="p">,</span>
+    <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
+    <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>
+    <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>
+<span class="p">)</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">generate_sst_conditions</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_onset&quot;</span><span class="p">)))</span>
+  <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_end&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>This setup ensures that a trigger or an external event is sent precisely when the block begins and ends, integrated seamlessly into the block execution flow.</p>
 </section>
-<section id="accessing-and-summarizing-results">
-<h3>6. Accessing and Summarizing Results<a class="headerlink" href="#accessing-and-summarizing-results" title="Link to this heading">¶</a></h3>
-<section id="getting-raw-results">
-<h4>Getting Raw Results<a class="headerlink" href="#getting-raw-results" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all trial results as a list of dictionaries</span>
-<span class="n">results</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<section id="running-trials">
+<h3>4. Running Trials<a class="headerlink" href="#running-trials" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">.run_trials()</span></code> method drives the execution of every trial in the block by repeatedly calling a user‑defined trial function. The function is typically implemented in the TAPS codebase under <code class="docutils literal notranslate"><span class="pre">src/run_trial.py</span></code> and encapsulates all trial‑level logic (e.g., stimulus presentation, response capture, triggers).</p>
+<p><strong>Signature:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">run_trials</span><span class="p">(</span>
+    <span class="n">trial_func</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">trial_func</span></code> (callable, required): the trial‑level function. Must accept four mandatory arguments:</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">win</span></code> (PsychoPy Window)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kb</span></code> (PsychoPy Keyboard)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">settings</span></code> (TaskSettings)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">condition</span></code> (str or label) Additional parameters (e.g., <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code>, <code class="docutils literal notranslate"><span class="pre">controller</span></code>, <code class="docutils literal notranslate"><span class="pre">trigger_sender</span></code>) can be passed via <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> and are optional—include them only if your <code class="docutils literal notranslate"><span class="pre">trial_func</span></code> uses them.</p></li>
+</ol>
+</li>
+</ul>
+<blockquote>
+<div><p><strong>Note:</strong> Register all <code class="docutils literal notranslate"><span class="pre">on_start</span></code> and <code class="docutils literal notranslate"><span class="pre">on_end</span></code> hooks <strong>before</strong> calling <code class="docutils literal notranslate"><span class="pre">.run_trials()</span></code>, as they are invoked inside this method.</p>
+</div></blockquote>
+<p><strong>Execution flow:</strong></p>
+<ol class="arabic">
+<li><p><strong>Start timestamp</strong>: saves <code class="docutils literal notranslate"><span class="pre">meta['block_start_time']</span></code>.</p></li>
+<li><p><strong>hooks</strong>: runs block‑start callbacks (e.g., triggers).</p></li>
+<li><p><strong>Per‑trial loop</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">trial_func</span><span class="p">(</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">win</span><span class="p">,</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">kb</span><span class="p">,</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">settings</span><span class="p">,</span>
+    <span class="n">condition</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>hooks</strong>: runs block‑end callbacks.</p></li>
+<li><p><strong>End timestamp &amp; duration</strong>: sets <code class="docutils literal notranslate"><span class="pre">meta['block_end_time']</span></code> and <code class="docutils literal notranslate"><span class="pre">meta['duration']</span></code>.</p></li>
+</ol>
+<section id="restingstate-example">
+<h4><strong>Resting‑state example</strong><a class="headerlink" href="#restingstate-example" title="Link to this heading">¶</a></h4>
+<p>This trial function displays an instruction screen followed by a simple stimulus, without response collection.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 
-<span class="c1"># First trial result</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="c1"># Example output: {&#39;block_id&#39;: &#39;practice_block&#39;, &#39;trial_idx&#39;: 0, &#39;condition&#39;: &#39;congruent&#39;, &#39;response&#39;: &#39;left&#39;, &#39;rt&#39;: 0.543, &#39;correct&#39;: True, &#39;onset_time&#39;: 1234.567}</span>
-</pre></div>
-</div>
-</section>
-<section id="appending-to-an-external-list">
-<h4>Appending to an External List<a class="headerlink" href="#appending-to-an-external-list" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Useful for collecting results across multiple blocks</span>
-<span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">block</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>  <span class="c1"># Appends to all_results</span>
-</pre></div>
-</div>
-</section>
-<section id="summarizing-results">
-<h4>Summarizing Results<a class="headerlink" href="#summarizing-results" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get default summary (hit_rate and avg_rt by condition)</span>
-<span class="n">summary</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">summarize</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">summary</span><span class="p">)</span>
-<span class="c1"># Example output: {&#39;congruent&#39;: {&#39;hit_rate&#39;: 0.8, &#39;avg_rt&#39;: 0.523}, &#39;incongruent&#39;: {&#39;hit_rate&#39;: 0.6, &#39;avg_rt&#39;: 0.678}, &#39;neutral&#39;: {&#39;hit_rate&#39;: 0.7, &#39;avg_rt&#39;: 0.601}}</span>
-</pre></div>
-</div>
-</section>
-<section id="custom-summarization">
-<h4>Custom Summarization<a class="headerlink" href="#custom-summarization" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">custom_summary</span><span class="p">(</span><span class="n">block</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate custom performance metrics.&quot;&quot;&quot;</span>
-    <span class="c1"># Group results by condition</span>
-    <span class="n">by_condition</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">cond</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;condition&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">results</span><span class="p">):</span>
-        <span class="n">cond_results</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;condition&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="n">cond</span><span class="p">]</span>
-        
-        <span class="c1"># Calculate metrics</span>
-        <span class="n">accuracy</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">cond_results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">cond_results</span><span class="p">)</span>
-        <span class="n">mean_rt</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">cond_results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">/</span> \
-                  <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">cond_results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span>
-        
-        <span class="n">by_condition</span><span class="p">[</span><span class="n">cond</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">accuracy</span><span class="p">,</span>
-            <span class="s2">&quot;mean_rt&quot;</span><span class="p">:</span> <span class="n">mean_rt</span><span class="p">,</span>
-            <span class="s2">&quot;trial_count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">cond_results</span><span class="p">)</span>
-        <span class="p">}</span>
-    
-    <span class="c1"># Add overall metrics</span>
-    <span class="n">by_condition</span><span class="p">[</span><span class="s2">&quot;overall&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">results</span><span class="p">),</span>
-        <span class="s2">&quot;mean_rt&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rt&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">/</span> \
-                   <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">block</span><span class="o">.</span><span class="n">results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rt&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span>
-        <span class="s2">&quot;trial_count&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">results</span><span class="p">)</span>
-    <span class="p">}</span>
-    
-    <span class="k">return</span> <span class="n">by_condition</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_trials</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;condition&#39;</span><span class="p">:</span> <span class="n">condition</span><span class="p">}</span>
+    <span class="n">make_unit</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">StimUnit</span><span class="p">,</span> <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span>
 
-<span class="c1"># Use custom summary function</span>
-<span class="n">detailed_summary</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">custom_summary</span><span class="p">)</span>
+    <span class="c1"># Instruction only</span>
+    <span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;inst&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_instruction&quot;</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">show</span><span class="p">()</span> \
+        <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># Stimulus only</span>
+    <span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;stim&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_stim&quot;</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">rest_duration</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="n">block</span><span class="o">.</span><span class="n">run_trials</span><span class="p">(</span><span class="n">run_trials</span><span class="p">,</span> <span class="n">stim_bank</span><span class="o">=</span><span class="n">stim_bank</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="mid-task-example">
+<h4><strong>MID task example</strong><a class="headerlink" href="#mid-task-example" title="Link to this heading">¶</a></h4>
+<p>Implements a multi‑phase trial (cue → anticipation → target → feedback), using the <code class="docutils literal notranslate"><span class="pre">controller</span></code> to adapt durations and recording responses.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_trials</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">,</span> <span class="n">controller</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;condition&#39;</span><span class="p">:</span> <span class="n">condition</span><span class="p">}</span>
+    <span class="n">make_unit</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">StimUnit</span><span class="p">,</span> <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span>
+
+    <span class="c1"># Cue phase</span>
+    <span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;cue&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_cue&quot;</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">cue_duration</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># (anticipation, target, feedback phases follow similar patterns)</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="n">block</span><span class="o">.</span><span class="n">run_trials</span><span class="p">(</span><span class="n">run_trials</span><span class="p">,</span> <span class="n">stim_bank</span><span class="o">=</span><span class="n">stim_bank</span><span class="p">,</span> <span class="n">controller</span><span class="o">=</span><span class="n">controller</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 </section>
-</section>
-<section id="complete-example-stroop-task">
-<h2>Complete Example: Stroop Task<a class="headerlink" href="#complete-example-stroop-task" title="Link to this heading">¶</a></h2>
-<p>Here’s a complete example implementing a simple Stroop task with two blocks:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span><span class="p">,</span> <span class="n">core</span><span class="p">,</span> <span class="n">event</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.hardware.keyboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Keyboard</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockUnit</span><span class="p">,</span> <span class="n">TaskSettings</span><span class="p">,</span> <span class="n">StimUnit</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<section id="accessing-filtering-data">
+<h3>5. Accessing &amp; Filtering Data<a class="headerlink" href="#accessing-filtering-data" title="Link to this heading">¶</a></h3>
+<p>To extract and analyze block-level outcomes, use two core methods:</p>
+<ol class="arabic simple">
+<li><p><strong>Retrieve all trials</strong> with <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code>, which returns an ordered list of all trial dictionaries in the block.</p></li>
+<li><p><strong>Filter specific trials</strong> with <code class="docutils literal notranslate"><span class="pre">.get_trial_data(key,</span> <span class="pre">pattern,</span> <span class="pre">match_type,</span> <span class="pre">negate)</span></code>, selecting subsets that match given criteria.</p></li>
+</ol>
+<section id="example-mid-block-summary-using-get-all-data">
+<h4>Example: MID block summary using <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code><a class="headerlink" href="#example-mid-block-summary-using-get-all-data" title="Link to this heading">¶</a></h4>
+<p>In a Monetary Incentive Delay (MID) task, you typically calculate overall performance metrics across all trials of a block:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Retrieve every trial in order</span>
+<span class="n">block_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span>
 
-<span class="c1"># Setup experiment</span>
-<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="p">(</span>
-    <span class="n">exp_name</span><span class="o">=</span><span class="s2">&quot;stroop&quot;</span><span class="p">,</span>
-    <span class="n">trials_per_block</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
-    <span class="n">total_blocks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">block_seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
-    <span class="n">resp_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">]</span>
+<span class="c1"># Compute hit rate: proportion of trials where &#39;target_hit&#39; is True</span>
+<span class="n">total_trials</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_trials</span><span class="p">)</span>
+<span class="n">hit_trials</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target_hit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">block_trials</span><span class="p">)</span>
+<span class="n">hit_rate</span> <span class="o">=</span> <span class="n">hit_trials</span> <span class="o">/</span> <span class="n">total_trials</span>
+
+<span class="c1"># Compute total feedback score across trials</span>
+<span class="n">total_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback_delta&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">block_trials</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code> provides the full trial dataset, and simple list comprehensions produce summary statistics for the block.</p>
+</section>
+<section id="example-sst-block-analysis-using-get-trial-data">
+<h4>Example: SST block analysis using <code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code><a class="headerlink" href="#example-sst-block-analysis-using-get-trial-data" title="Link to this heading">¶</a></h4>
+<p>In a Stop-Signal Task (SST), separate go and stop trials for distinct performance metrics:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Filter trials by condition prefix</span>
+<span class="n">go_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span>
+    <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;go&#39;</span><span class="p">,</span>
+    <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span>
+<span class="p">)</span>
+<span class="n">stop_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span>
+    <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span>
+    <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span>
 <span class="p">)</span>
 
-<span class="c1"># Create PsychoPy window and keyboard</span>
-<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;norm&quot;</span><span class="p">)</span>
-<span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
+<span class="c1"># Go-trial hit rate</span>
+<span class="n">total_go</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">go_trials</span><span class="p">)</span>
+<span class="n">go_hits</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_hit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">go_trials</span><span class="p">)</span>
+<span class="n">go_hit_rate</span> <span class="o">=</span> <span class="n">go_hits</span> <span class="o">/</span> <span class="n">total_go</span> <span class="k">if</span> <span class="n">total_go</span> <span class="k">else</span> <span class="mi">0</span>
 
-<span class="c1"># Condition generation function</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">generate_conditions</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-    <span class="n">reps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)))</span>
-    <span class="n">conditions</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">*</span> <span class="n">reps</span>
-    <span class="k">return</span> <span class="n">rng</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">conditions</span><span class="p">)[:</span><span class="n">n</span><span class="p">]</span>
+<span class="c1"># Stop-trial success rate (no key presses)</span>
+<span class="n">total_stop</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stop_trials</span><span class="p">)</span>
+<span class="n">stops_success</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+    <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_ssd_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stop_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">stop_trials</span>
+<span class="p">)</span>
+<span class="n">stop_success_rate</span> <span class="o">=</span> <span class="n">stops_success</span> <span class="o">/</span> <span class="n">total_stop</span> <span class="k">if</span> <span class="n">total_stop</span> <span class="k">else</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code> filters by matching the <code class="docutils literal notranslate"><span class="pre">'condition'</span></code> field against a pattern, allowing downstream calculations on each trial subset.</p>
+</section>
+</section>
+<section id="summarizing-block-results">
+<h3>6. Summarizing Block Results<a class="headerlink" href="#summarizing-block-results" title="Link to this heading">¶</a></h3>
+<p>For full flexibility, it is often preferable to compute block‑level summaries manually using the data retrieval methods covered above. This ensures that the statistics match exactly the fields produced by your trial logic. Two common patterns are:</p>
+<section id="manual-summarization-using-get-all-data-e-g-mid-task">
+<h4>Manual summarization using <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code> (e.g., MID task)<a class="headerlink" href="#manual-summarization-using-get-all-data-e-g-mid-task" title="Link to this heading">¶</a></h4>
+<p>Use <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code> to obtain every trial’s result dict in order, then apply simple Python expressions to compute block metrics. In a Monetary Incentive Delay (MID) experiment, you might calculate overall hit rate and total score as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fetch all trial data</span>
+<span class="n">block_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span>
 
-<span class="c1"># Trial function</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">run_stroop_trial</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="c1"># Set up stimuli based on condition</span>
-    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;congruent&quot;</span><span class="p">:</span>
-        <span class="n">word</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;RED&quot;</span><span class="p">,</span> <span class="s2">&quot;BLUE&quot;</span><span class="p">])</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="n">word</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;incongruent&quot;</span><span class="p">:</span>
-        <span class="n">word</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;RED&quot;</span><span class="p">,</span> <span class="s2">&quot;BLUE&quot;</span><span class="p">])</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span> <span class="k">if</span> <span class="n">word</span> <span class="o">==</span> <span class="s2">&quot;BLUE&quot;</span> <span class="k">else</span> <span class="s2">&quot;blue&quot;</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># neutral</span>
-        <span class="n">word</span> <span class="o">=</span> <span class="s2">&quot;XXXX&quot;</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">([</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="s2">&quot;blue&quot;</span><span class="p">])</span>
-    
-    <span class="c1"># Create stimulus</span>
-    <span class="n">stim</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">word</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-    
-    <span class="c1"># Show stimulus and wait for response</span>
-    <span class="n">stim</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-    <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-    <span class="n">onset_time</span> <span class="o">=</span> <span class="n">core</span><span class="o">.</span><span class="n">getTime</span><span class="p">()</span>
-    
-    <span class="c1"># Wait for response with timeout</span>
-    <span class="n">keys</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">waitForPresses</span><span class="p">(</span><span class="n">maxWait</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
-    
-    <span class="c1"># Process response</span>
-    <span class="k">if</span> <span class="n">keys</span><span class="p">:</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">rt</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rt</span>
-        <span class="c1"># Check if correct (left for red, right for blue)</span>
-        <span class="n">correct</span> <span class="o">=</span> <span class="p">(</span><span class="n">color</span> <span class="o">==</span> <span class="s2">&quot;red&quot;</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">)</span> <span class="ow">or</span> \
-                  <span class="p">(</span><span class="n">color</span> <span class="o">==</span> <span class="s2">&quot;blue&quot;</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">key</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">rt</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">correct</span> <span class="o">=</span> <span class="kc">False</span>
-    
-    <span class="c1"># Clear screen</span>
-    <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Inter-trial interval</span>
-    
-    <span class="c1"># Return trial data</span>
+<span class="c1"># Hit rate: proportion of trials where the target was hit</span>
+<span class="n">total_trials</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_trials</span><span class="p">)</span>
+<span class="n">hit_count</span>    <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target_hit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">block_trials</span><span class="p">)</span>
+<span class="n">hit_rate</span>     <span class="o">=</span> <span class="n">hit_count</span> <span class="o">/</span> <span class="n">total_trials</span>
+
+<span class="c1"># Total feedback score (delta) across the block</span>
+<span class="n">total_score</span>  <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback_delta&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">block_trials</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This approach works for any field your <code class="docutils literal notranslate"><span class="pre">run_trials</span></code> function stores. Simply adjust the comprehensions to target the relevant keys.</p>
+</section>
+<section id="manual-summarization-using-get-trial-data-e-g-sst-task">
+<h4>Manual summarization using <code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code> (e.g., SST task)<a class="headerlink" href="#manual-summarization-using-get-trial-data-e-g-sst-task" title="Link to this heading">¶</a></h4>
+<p>When different trial types require separate metrics—as in a Stop‑Signal Task (SST) with go vs. stop trials—use <code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code> to filter the block’s trials, then summarize each subset:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Separate go and stop trials by condition prefix</span>
+<span class="n">go_trials</span>   <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;go&#39;</span><span class="p">,</span> <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span>
+<span class="p">)</span>
+<span class="n">stop_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Go-trial hit rate</span>
+<span class="n">total_go</span>     <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">go_trials</span><span class="p">)</span>
+<span class="n">go_hits</span>      <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_hit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">go_trials</span><span class="p">)</span>
+<span class="n">go_hit_rate</span>  <span class="o">=</span> <span class="n">go_hits</span> <span class="o">/</span> <span class="n">total_go</span> <span class="k">if</span> <span class="n">total_go</span> <span class="k">else</span> <span class="mi">0</span>
+
+<span class="c1"># Stop-trial success rate (no responses on stop trials)</span>
+<span class="n">total_stop</span>        <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stop_trials</span><span class="p">)</span>
+<span class="n">stop_success_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+    <span class="ow">not</span> <span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_ssd_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stop_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">stop_trials</span>
+<span class="p">)</span>
+<span class="n">stop_success_rate</span> <span class="o">=</span> <span class="n">stop_success_count</span> <span class="o">/</span> <span class="n">total_stop</span> <span class="k">if</span> <span class="n">total_stop</span> <span class="k">else</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+<section id="builtin-summarize-utility">
+<h4>Built‑in <code class="docutils literal notranslate"><span class="pre">.summarize()</span></code> utility<a class="headerlink" href="#builtin-summarize-utility" title="Link to this heading">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> also provides a default summarizer that computes hit rate and average reaction time per condition:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">summarize</span><span class="p">()</span>
+<span class="c1"># Example output:</span>
+<span class="c1"># {</span>
+<span class="c1">#   &#39;A&#39;: {&#39;hit_rate&#39;: 0.75, &#39;avg_rt&#39;: 0.48},</span>
+<span class="c1">#   &#39;B&#39;: {&#39;hit_rate&#39;: 0.62, &#39;avg_rt&#39;: 0.55}</span>
+<span class="c1"># }</span>
+</pre></div>
+</div>
+<p>To override this behavior, supply a custom function that accepts the <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> and returns a dictionary of summary metrics. Below is an example tailored for an SST block:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sst_summary</span><span class="p">(</span><span class="n">bu</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute go hit rate and stop success rate for SST blocks.&quot;&quot;&quot;</span>
+    <span class="c1"># Retrieve all trials</span>
+    <span class="n">trials</span> <span class="o">=</span> <span class="n">bu</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span>
+    <span class="c1"># Separate go and stop trials</span>
+    <span class="n">go_trials</span> <span class="o">=</span> <span class="n">bu</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="s1">&#39;go&#39;</span><span class="p">,</span> <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span><span class="p">)</span>
+    <span class="n">stop_trials</span> <span class="o">=</span> <span class="n">bu</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Go-trial hit rate</span>
+    <span class="n">total_go</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">go_trials</span><span class="p">)</span>
+    <span class="n">go_hits</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_hit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">go_trials</span><span class="p">)</span>
+    <span class="n">go_hit_rate</span> <span class="o">=</span> <span class="n">go_hits</span> <span class="o">/</span> <span class="n">total_go</span> <span class="k">if</span> <span class="n">total_go</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="c1"># Stop-trial success rate (no responses)</span>
+    <span class="n">total_stop</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stop_trials</span><span class="p">)</span>
+    <span class="n">stop_success</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+        <span class="p">(</span><span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_ssd_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stop_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">stop_trials</span>
+    <span class="p">)</span>
+    <span class="n">stop_success_rate</span> <span class="o">=</span> <span class="n">stop_success</span> <span class="o">/</span> <span class="n">total_stop</span> <span class="k">if</span> <span class="n">total_stop</span> <span class="k">else</span> <span class="mi">0</span>
+
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;word&quot;</span><span class="p">:</span> <span class="n">word</span><span class="p">,</span>
-        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="n">color</span><span class="p">,</span>
-        <span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">,</span>
-        <span class="s2">&quot;rt&quot;</span><span class="p">:</span> <span class="n">rt</span><span class="p">,</span>
-        <span class="s2">&quot;correct&quot;</span><span class="p">:</span> <span class="n">correct</span><span class="p">,</span>
-        <span class="s2">&quot;onset_time&quot;</span><span class="p">:</span> <span class="n">onset_time</span>
+        <span class="s1">&#39;go_hit_rate&#39;</span><span class="p">:</span> <span class="n">go_hit_rate</span><span class="p">,</span>
+        <span class="s1">&#39;stop_success_rate&#39;</span><span class="p">:</span> <span class="n">stop_success_rate</span>
     <span class="p">}</span>
 
-<span class="c1"># Run experiment</span>
-<span class="n">all_results</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># Use the custom summarizer</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">summary_func</span><span class="o">=</span><span class="n">sst_summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="storing-block-level-data">
+<h3>7. Storing Block-Level Data<a class="headerlink" href="#storing-block-level-data" title="Link to this heading">¶</a></h3>
+<p>After each block finishes, its trial results (stored in <code class="docutils literal notranslate"><span class="pre">block.results</span></code>) can be merged into a master list for the entire experiment using the <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code> method. This method supports two modes:</p>
+<ul class="simple">
+<li><p><strong>Chaining mode</strong>: Calling <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code> with no argument simply returns the <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> instance, allowing you to chain other calls.</p></li>
+<li><p><strong>Append mode</strong>: Passing a list to <code class="docutils literal notranslate"><span class="pre">.to_dict(target_list)</span></code> extends that list with the block’s trial dictionaries.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Initialize an empty list to collect all trials</span>
+<span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
 
-<span class="c1"># Show welcome screen</span>
-<span class="n">welcome</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
-    <span class="n">win</span><span class="p">,</span> 
-    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Welcome to the Stroop Task</span><span class="se">\n\n</span><span class="s2">Press any key to begin&quot;</span><span class="p">,</span> 
-    <span class="n">height</span><span class="o">=</span><span class="mf">0.1</span>
-<span class="p">)</span>
-<span class="n">welcome</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-<span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-<span class="n">kb</span><span class="o">.</span><span class="n">waitForPresses</span><span class="p">()</span>
-
-<span class="c1"># Run blocks</span>
-<span class="k">for</span> <span class="n">block_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">):</span>
-    <span class="c1"># Create block</span>
-    <span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
-        <span class="n">block_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;block_</span><span class="si">{</span><span class="n">block_idx</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-        <span class="n">block_idx</span><span class="o">=</span><span class="n">block_idx</span><span class="p">,</span>
+<span class="k">for</span> <span class="n">block_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">):</span>
+    <span class="c1"># Prepare and run block, then append its results</span>
+    <span class="n">BlockUnit</span><span class="p">(</span>
+        <span class="n">block_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;block_</span><span class="si">{</span><span class="n">block_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">block_idx</span><span class="o">=</span><span class="n">block_i</span><span class="p">,</span>
         <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
         <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>
         <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>
-    <span class="p">)</span>
-    
-    <span class="c1"># Generate conditions</span>
-    <span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span>
-        <span class="n">func</span><span class="o">=</span><span class="n">generate_conditions</span><span class="p">,</span>
-        <span class="n">condition_labels</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;congruent&quot;</span><span class="p">,</span> <span class="s2">&quot;incongruent&quot;</span><span class="p">,</span> <span class="s2">&quot;neutral&quot;</span><span class="p">]</span>
-    <span class="p">)</span>
-    
-    <span class="c1"># Register block hooks</span>
-    <span class="nd">@block</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">show_block_instructions</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
-        <span class="n">instructions</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
-            <span class="n">win</span><span class="p">,</span>
-            <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Block </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">block_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                 <span class="s2">&quot;Press LEFT for RED words</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                 <span class="s2">&quot;Press RIGHT for BLUE words</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                 <span class="s2">&quot;Ignore the word, respond to the color!</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                 <span class="s2">&quot;Press any key to start&quot;</span><span class="p">,</span>
-            <span class="n">height</span><span class="o">=</span><span class="mf">0.08</span>
-        <span class="p">)</span>
-        <span class="n">instructions</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-        <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-        <span class="n">kb</span><span class="o">.</span><span class="n">waitForPresses</span><span class="p">()</span>
-    
-    <span class="nd">@block</span><span class="o">.</span><span class="n">on_end</span><span class="p">()</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">show_block_feedback</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
-        <span class="c1"># Calculate accuracy</span>
-        <span class="n">correct_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">b</span><span class="o">.</span><span class="n">results</span> <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
-        <span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct_count</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">results</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
-        
-        <span class="c1"># Show feedback</span>
-        <span class="n">feedback</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
-            <span class="n">win</span><span class="p">,</span>
-            <span class="n">text</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Block complete!</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                 <span class="sa">f</span><span class="s2">&quot;Accuracy: </span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                 <span class="s2">&quot;Press any key to continue&quot;</span><span class="p">,</span>
-            <span class="n">height</span><span class="o">=</span><span class="mf">0.08</span>
-        <span class="p">)</span>
-        <span class="n">feedback</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-        <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-        <span class="n">kb</span><span class="o">.</span><span class="n">waitForPresses</span><span class="p">()</span>
-    
-    <span class="c1"># Run all trials in the block</span>
-    <span class="n">block</span><span class="o">.</span><span class="n">run_trial</span><span class="p">(</span><span class="n">run_stroop_trial</span><span class="p">)</span>
-    
-    <span class="c1"># Add results to overall results list</span>
-    <span class="n">block</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">()</span> \
+     <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_onset&quot;</span><span class="p">)))</span> \
+     <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_end&quot;</span><span class="p">)))</span> \
+     <span class="o">.</span><span class="n">run_trials</span><span class="p">(</span><span class="n">run_trial</span><span class="p">,</span> <span class="n">stim_bank</span><span class="o">=</span><span class="n">stim_bank</span><span class="p">,</span> <span class="n">controller</span><span class="o">=</span><span class="n">controller</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span> \
+     <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
 
-<span class="c1"># Show goodbye screen</span>
-<span class="n">goodbye</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
-    <span class="n">win</span><span class="p">,</span>
-    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Experiment complete!</span><span class="se">\n\n</span><span class="s2">Thank you for participating.&quot;</span><span class="p">,</span>
-    <span class="n">height</span><span class="o">=</span><span class="mf">0.1</span>
-<span class="p">)</span>
-<span class="n">goodbye</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-<span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-<span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+<span class="c1"># At this point, all_data contains every trial dict from all blocks</span>
 
-<span class="c1"># Save results</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_results</span><span class="p">)</span>
+<span class="c1"># Convert to DataFrame and save to CSV</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="c1"># Clean up</span>
-<span class="n">win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="n">core</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>Alternative:</strong> you can call <code class="docutils literal notranslate"><span class="pre">block.get_all_data()</span></code> after running a block and extend your list manually:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">run_trials</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">block_data</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span>
+<span class="n">all_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">block_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="logging-block-info">
+<h3>8. Logging Block Info<a class="headerlink" href="#logging-block-info" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> logs metadata at start and end automatically:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blockid</span><span class="p">:</span> <span class="n">block1</span>
+<span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blockidx</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blockseed</span><span class="p">:</span> <span class="mi">12345</span>
+<span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blocktrial</span><span class="o">-</span><span class="n">N</span><span class="p">:</span> <span class="mi">40</span>
+<span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blockdist</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">}</span>
+<span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blockconditions</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
 </pre></div>
 </div>
 </section>
-<section id="advanced-usage">
-<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">¶</a></h2>
-<section id="multiple-blocks-with-different-conditions">
-<h3>Multiple Blocks with Different Conditions<a class="headerlink" href="#multiple-blocks-with-different-conditions" title="Link to this heading">¶</a></h3>
-<p>You can create multiple blocks with different condition sets:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Block 1: Standard Stroop</span>
-<span class="n">block1</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span><span class="s2">&quot;standard&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
-<span class="n">block1</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span><span class="n">generate_func</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;congruent&quot;</span><span class="p">,</span> <span class="s2">&quot;incongruent&quot;</span><span class="p">])</span>
-<span class="n">block1</span><span class="o">.</span><span class="n">run_trial</span><span class="p">(</span><span class="n">run_trial</span><span class="p">)</span>
-
-<span class="c1"># Block 2: Emotional Stroop</span>
-<span class="n">block2</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span><span class="s2">&quot;emotional&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
-<span class="n">block2</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span><span class="n">generate_func</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;neutral&quot;</span><span class="p">,</span> <span class="s2">&quot;negative&quot;</span><span class="p">,</span> <span class="s2">&quot;positive&quot;</span><span class="p">])</span>
-<span class="n">block2</span><span class="o">.</span><span class="n">run_trial</span><span class="p">(</span><span class="n">run_emotional_trial</span><span class="p">)</span>  <span class="c1"># Different trial function</span>
-</pre></div>
-</div>
-</section>
-<section id="integration-with-stimbank-and-triggersender">
-<h3>Integration with StimBank and TriggerSender<a class="headerlink" href="#integration-with-stimbank-and-triggersender" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> works seamlessly with other psyflow components:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimBank</span><span class="p">,</span> <span class="n">TriggerSender</span><span class="p">,</span> <span class="n">BlockUnit</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
-
-<span class="c1"># Create components</span>
-<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">({</span>
-    <span class="s2">&quot;fixation&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TextStim&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;+&quot;</span><span class="p">},</span>
-    <span class="s2">&quot;target_a&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TextStim&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;A&quot;</span><span class="p">},</span>
-    <span class="s2">&quot;target_b&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TextStim&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;B&quot;</span><span class="p">},</span>
-    <span class="s2">&quot;feedback&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;TextStim&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{score}</span><span class="s2"> points&quot;</span><span class="p">}</span>
-<span class="p">})</span>
-
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Define trial function using components</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">run_trial_with_components</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">,</span> <span class="n">trigger</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="c1"># Send block start trigger</span>
-    <span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    
-    <span class="c1"># Show fixation</span>
-    <span class="n">fixation</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
-    <span class="n">fixation</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-    <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-    
-    <span class="c1"># Show target based on condition</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;target_</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">target</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-    <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-    <span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># Target onset trigger</span>
-    
-    <span class="c1"># Wait for response</span>
-    <span class="n">keys</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">waitForPresses</span><span class="p">(</span><span class="n">maxWait</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-    
-    <span class="c1"># Process response</span>
-    <span class="k">if</span> <span class="n">keys</span><span class="p">:</span>
-        <span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c1"># Response trigger</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span>
-        <span class="n">rt</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rt</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">rt</span> <span class="o">=</span> <span class="kc">None</span>
-    
-    <span class="c1"># Return results</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="n">condition</span><span class="p">,</span> <span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">:</span> <span class="n">rt</span><span class="p">}</span>
-
-<span class="c1"># Create and run block with components</span>
-<span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span><span class="s2">&quot;block1&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
-<span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span><span class="n">generate_func</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">])</span>
-
-<span class="c1"># Use partial to include additional components</span>
-<span class="n">block</span><span class="o">.</span><span class="n">run_trial</span><span class="p">(</span>
-    <span class="n">partial</span><span class="p">(</span><span class="n">run_trial_with_components</span><span class="p">,</span> <span class="n">stim_bank</span><span class="o">=</span><span class="n">stim_bank</span><span class="p">,</span> <span class="n">trigger</span><span class="o">=</span><span class="n">trigger</span><span class="p">)</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="dynamic-trial-generation">
-<h3>Dynamic Trial Generation<a class="headerlink" href="#dynamic-trial-generation" title="Link to this heading">¶</a></h3>
-<p>You can implement adaptive procedures by generating trials dynamically:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Staircase procedure example</span>
-<span class="n">difficulty</span> <span class="o">=</span> <span class="mi">5</span>  <span class="c1"># Starting difficulty (1-10)</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">adaptive_trial_generator</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate trials that adapt based on performance.&quot;&quot;&quot;</span>
-    <span class="n">trials</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
-        <span class="n">trials</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;difficulty&quot;</span><span class="p">:</span> <span class="n">difficulty</span><span class="p">})</span>
-    <span class="k">return</span> <span class="n">trials</span>
-
-<span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span><span class="s2">&quot;adaptive&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
-<span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span><span class="n">adaptive_trial_generator</span><span class="p">)</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">run_adaptive_trial</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">nonlocal</span> <span class="n">difficulty</span>
-    
-    <span class="c1"># Get current difficulty</span>
-    <span class="n">current_difficulty</span> <span class="o">=</span> <span class="n">condition</span><span class="p">[</span><span class="s2">&quot;difficulty&quot;</span><span class="p">]</span>
-    
-    <span class="c1"># Run trial with current difficulty</span>
-    <span class="c1"># ...</span>
-    
-    <span class="c1"># Adjust difficulty based on performance</span>
-    <span class="k">if</span> <span class="n">correct</span><span class="p">:</span>
-        <span class="n">difficulty</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="n">difficulty</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Make harder</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">difficulty</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">difficulty</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Make easier</span>
-    
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;difficulty&quot;</span><span class="p">:</span> <span class="n">current_difficulty</span><span class="p">,</span> <span class="s2">&quot;correct&quot;</span><span class="p">:</span> <span class="n">correct</span><span class="p">}</span>
-
-<span class="n">block</span><span class="o">.</span><span class="n">run_trial</span><span class="p">(</span><span class="n">run_adaptive_trial</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="best-practices">
-<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Use meaningful block IDs</strong>: Choose descriptive names that reflect the block’s purpose (e.g., “practice”, “main_task”, “memory_test”).</p></li>
-<li><p><strong>Separate condition generation from trial execution</strong>: Keep your condition generation function reusable and independent of the trial function.</p></li>
-<li><p><strong>Use block hooks for setup/cleanup</strong>: Put instructions, breaks, and other non-trial content in block hooks rather than in the trial function.</p></li>
-<li><p><strong>Return comprehensive trial data</strong>: Include all relevant information in your trial function’s return dictionary.</p></li>
-<li><p><strong>Use custom summarization for complex metrics</strong>: Implement custom summary functions for specialized analyses.</p></li>
-<li><p><strong>Save raw trial data</strong>: Always save the complete trial-level data, not just summaries.</p></li>
-<li><p><strong>Set appropriate seeds</strong>: Use consistent seeds for reproducibility in experiments.</p></li>
-</ol>
-</section>
-<section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p><strong>Trial conditions not balanced</strong>: Check your condition generation function and ensure it properly handles the requested number of trials.</p></li>
-<li><p><strong>Missing trial data</strong>: Verify that your trial function returns a dictionary for every trial.</p></li>
-<li><p><strong>Block hooks not executing</strong>: Ensure hooks are registered before calling <code class="docutils literal notranslate"><span class="pre">run_trial()</span></code>.</p></li>
-<li><p><strong>Performance issues</strong>: If trials run slowly, optimize your trial function and avoid creating new stimuli on each trial.</p></li>
-</ul>
 </section>
 <section id="next-steps">
 <h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
@@ -971,42 +930,34 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">BlockUnit: Organizing Trials into Experimental Blocks</a><ul>
+<li><a class="reference internal" href="#">BlockUnit: Managing Trials</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#key-features">Key Features</a></li>
 <li><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
 <li><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a><ul>
-<li><a class="reference internal" href="#initializing-a-block">1. Initializing a Block</a></li>
-<li><a class="reference internal" href="#generating-trial-conditions">2. Generating Trial Conditions</a><ul>
-<li><a class="reference internal" href="#option-a-using-a-condition-generation-function">Option A: Using a Condition Generation Function</a></li>
-<li><a class="reference internal" href="#option-b-manually-assigning-trials">Option B: Manually Assigning Trials</a></li>
+<li><a class="reference internal" href="#initialization">1. Initialization</a></li>
+<li><a class="reference internal" href="#generating-conditions">2. Generating Conditions</a></li>
+<li><a class="reference internal" href="#hooks-on-start-and-on-end">3. Hooks: on_start and on_end</a></li>
+<li><a class="reference internal" href="#running-trials">4. Running Trials</a><ul>
+<li><a class="reference internal" href="#restingstate-example"><strong>Resting‑state example</strong></a></li>
+<li><a class="reference internal" href="#mid-task-example"><strong>MID task example</strong></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#registering-block-lifecycle-hooks">3. Registering Block Lifecycle Hooks</a><ul>
-<li><a class="reference internal" href="#using-decorator-syntax">Using Decorator Syntax</a></li>
-<li><a class="reference internal" href="#using-functional-syntax">Using Functional Syntax</a></li>
+<li><a class="reference internal" href="#accessing-filtering-data">5. Accessing &amp; Filtering Data</a><ul>
+<li><a class="reference internal" href="#example-mid-block-summary-using-get-all-data">Example: MID block summary using <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code></a></li>
+<li><a class="reference internal" href="#example-sst-block-analysis-using-get-trial-data">Example: SST block analysis using <code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#defining-the-trial-function">4. Defining the Trial Function</a></li>
-<li><a class="reference internal" href="#running-the-block">5. Running the Block</a></li>
-<li><a class="reference internal" href="#accessing-and-summarizing-results">6. Accessing and Summarizing Results</a><ul>
-<li><a class="reference internal" href="#getting-raw-results">Getting Raw Results</a></li>
-<li><a class="reference internal" href="#appending-to-an-external-list">Appending to an External List</a></li>
-<li><a class="reference internal" href="#summarizing-results">Summarizing Results</a></li>
-<li><a class="reference internal" href="#custom-summarization">Custom Summarization</a></li>
+<li><a class="reference internal" href="#summarizing-block-results">6. Summarizing Block Results</a><ul>
+<li><a class="reference internal" href="#manual-summarization-using-get-all-data-e-g-mid-task">Manual summarization using <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code> (e.g., MID task)</a></li>
+<li><a class="reference internal" href="#manual-summarization-using-get-trial-data-e-g-sst-task">Manual summarization using <code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code> (e.g., SST task)</a></li>
+<li><a class="reference internal" href="#builtin-summarize-utility">Built‑in <code class="docutils literal notranslate"><span class="pre">.summarize()</span></code> utility</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#storing-block-level-data">7. Storing Block-Level Data</a></li>
+<li><a class="reference internal" href="#logging-block-info">8. Logging Block Info</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#complete-example-stroop-task">Complete Example: Stroop Task</a></li>
-<li><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
-<li><a class="reference internal" href="#multiple-blocks-with-different-conditions">Multiple Blocks with Different Conditions</a></li>
-<li><a class="reference internal" href="#integration-with-stimbank-and-triggersender">Integration with StimBank and TriggerSender</a></li>
-<li><a class="reference internal" href="#dynamic-trial-generation">Dynamic Trial Generation</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
-<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
 <li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
