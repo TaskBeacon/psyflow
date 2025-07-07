@@ -261,9 +261,9 @@ print('Config JSON file:', settings.json_file)
 
 `TaskSettings` uses three related fields to control randomization and reproducibility:
 
-- ``(integer, default 2025)``: the base seed for generating block-specific seeds. Change this value in your config or at runtime to alter the overall randomization pattern.
-- ``(list of ints or `None`)``: one seed per block, used to initialize block-level randomization (e.g., shuffling condition order). If unset, seeds are generated automatically based on `overall_seed` and `seed_mode`.
-- ``(`"same_across_sub"` or `"same_within_sub"`)``: determines whether block seeds are shared across participants or personalized per subject.
+- `overall_seed`(integer, default 2025): the base seed for generating block-specific seeds. Change this value in your config or at runtime to alter the overall randomization pattern.
+- `block_seed`(list of ints or `None`): one seed per block, used to initialize block-level randomization (e.g., shuffling condition order). If unset, seeds are generated automatically based on `overall_seed` and `seed_mode`.
+- `seed_mode`(`"same_across_sub"` or `"same_within_sub"`)``: determines whether block seeds are shared across participants or personalized per subject.
 
 #### Controlling condition order per block
 
@@ -298,10 +298,10 @@ for i, seed in enumerate(settings.block_seed):
 
 #### Choosing a seed mode
 
-- `` (default)\
+- `same_across_sub` (default)\
   All participants share the same `block_seed` list generated from `overall_seed`. Use this when you need identical block randomization across the group (e.g., counterbalancing at the cohort level).
 
-- ``\
+- `same_within_sub`\
   Each subject receives a unique set of block seeds derived from their `subject_id`, ensuring reproducible yet individualized randomization. This approach:
 
   - **Reproducibility:** Allows precise reconstruction of any subject’s experimental sequence from their ID.

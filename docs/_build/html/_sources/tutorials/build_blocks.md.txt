@@ -1,4 +1,4 @@
-# BlockUnit: Organizing Trials into Experimental Blocks
+# BlockUnit: Managing Trials
 
 ## Overview
 
@@ -6,591 +6,566 @@ The `BlockUnit` class is a powerful tool for organizing trials in psychological 
 
 `BlockUnit` solves several common challenges in experimental design:
 
-- **Condition balancing**: Generate trial conditions with proper randomization and counterbalancing
-- **Trial sequencing**: Manage the flow of trials within a block
-- **Data organization**: Automatically track trial-level data and block metadata
-- **Block lifecycle**: Execute setup and cleanup operations at block boundaries
-- **Result summarization**: Calculate performance metrics across trials and conditions
+- **Condition balancing:** Generate trial conditions with proper randomization and counterbalancing
+- **Trial sequencing:** Manage the flow of trials within a block
+- **Data organization:** Automatically track trial-level data and block metadata
+- **Block lifecycle:** Execute setup and cleanup operations at block boundaries
+- **Result summarization:** Calculate performance metrics across trials and conditions
 
 ## Key Features
 
-| Feature | Description |
-|---------|-------------|
-| Condition generation | Create balanced, randomized trial sequences |
-| Block lifecycle hooks | Execute code before/after block execution |
-| Result tracking | Automatically collect and organize trial data |
-| Summarization | Calculate performance metrics by condition |
-| Metadata | Track timing, trial counts, and block information |
-| Integration | Works seamlessly with other psyflow components |
+| Feature               | Description                                       |
+| --------------------- | ------------------------------------------------- |
+| Condition generation  | Create balanced, randomized trial sequences       |
+| Block lifecycle hooks | Execute code before/after block execution         |
+| Result tracking       | Automatically collect and organize trial data     |
+| Summarization         | Calculate performance metrics by condition        |
+| Metadata              | Track timing, trial counts, and block information |
+| Integration           | Works seamlessly with other psyflow components    |
 
 ## Quick Reference
 
-| Purpose | Method | Example |
-|---------|--------|--------|
-| Initialize block | `BlockUnit(block_id, block_idx, ...)` | `block = BlockUnit("block1", 0, settings)` |
-| Generate conditions | `.generate_conditions(func, labels)` | `block.generate_conditions(generate_func, ["A", "B"])` |
-| Add conditions manually | `.add_condition(condition_list)` | `block.add_condition(["A", "B", "A"])` |
-| Register start hook | `.on_start(func)` | `@block.on_start()` or `block.on_start(func)` |
-| Register end hook | `.on_end(func)` | `@block.on_end()` or `block.on_end(func)` |
-| Run all trials | `.run_trial(trial_func, **kwargs)` | `block.run_trial(run_trial_function)` |
-| Get results | `.to_dict()` | `results = block.to_dict()` |
-| Append results | `.to_dict(target_list)` | `block.to_dict(all_results)` |
-| Summarize results | `.summarize()` | `summary = block.summarize()` |
-| Custom summary | `.summarize(func)` | `summary = block.summarize(custom_func)` |
-| Log block info | `.logging_block_info()` | `block.logging_block_info()` |
+| Purpose                 | Method                                | Example                                               |
+| ----------------------- | ------------------------------------- | ----------------------------------------------------- |
+| Initialize block        | `BlockUnit(block_id, block_idx, ...)` | `block = BlockUnit("block1", 0, settings)`            |
+| Generate conditions     | `.generate_conditions(func, labels)`  | `block.generate_conditions(generate_func, ["A","B"])` |
+| Add conditions manually | `.add_condition(condition_list)`      | `block.add_condition(["A","B","A"])`                  |
+| Register start hook     | `.on_start(func)`                     | `@block.on_start()` or `block.on_start(func)`         |
+| Register end hook       | `.on_end(func)`                       | `@block.on_end()` or `block.on_end(func)`             |
+| Run all trials          | `.run_trial(trial_func, **kwargs)`    | `block.run_trial(run_trial_function)`                 |
+| Get results             | `.to_dict()`                          | `results = block.to_dict()`                           |
+| Append results          | `.to_dict(target_list)`               | `block.to_dict(all_results)`                          |
+| Summarize results       | `.summarize()`                        | `summary = block.summarize()`                         |
+| Custom summary          | `.summarize(func)`                    | `summary = block.summarize(custom_func)`              |
+| Log block info          | `.logging_block_info()`               | `block.logging_block_info()`                          |
 
 ## Detailed Usage Guide
 
-### 1. Initializing a Block
+### 1. Initialization
 
-To create a `BlockUnit`, you need to provide basic information about the block and the experiment settings:
+To create a `BlockUnit`, you need to provide basic information about the block and the experiment settings:
 
 ```python
 from psyflow import BlockUnit
 
 block = BlockUnit(
-    block_id="practice_block",  # Unique identifier string
-    block_idx=0,               # Index of this block in the experiment
-    settings=settings,         # TaskSettings object with experiment configuration
-    window=win,                # PsychoPy window (optional but recommended)
-    keyboard=kb                # PsychoPy keyboard (optional but recommended)
+    block_id='block1',      # unique identifier
+    block_idx=0,            # block index (0-based)
+    settings=settings,      # TaskSettings instance
+    window=win,             # PsychoPy Window
+    keyboard=kb             # PsychoPy Keyboard
 )
 ```
 
-The `settings` parameter should be a `TaskSettings` object or similar that includes:
+The `settings` parameter should be a `TaskSettings` object or similar that includes:
+
 - `trials_per_block`: Number of trials in each block
 - `block_seed`: Seed for random number generation (for reproducibility)
+- `condition_list`: List of conditions
 
-### 2. Generating Trial Conditions
+### 2. Generating Conditions
 
-#### Option A: Using a Condition Generation Function
+The `generate_conditions()` method provides a built-in, balanced (or weighted) generator to create a sequence of condition labels of length `n_trials`. Key parameters:
 
-The most flexible way to create trial conditions is with a custom generation function:
+- `condition_labels`: List of labels to use for this block (defaults to `settings.conditions`).
+- `weights`: Relative weights for each label (defaults to equal weights).
+- `order`: `'random'` or `'sequential'`—controls final sequence arrangement.
+- `seed`: Random seed override for reproducible shuffling.
 
-```python
-def generate_balanced_conditions(n, labels, seed=None):
-    """Generate a balanced, randomized sequence of conditions."""
-    import numpy as np
-    rng = np.random.default_rng(seed)
-    
-    # Calculate repetitions needed to reach n trials
-    reps = int(np.ceil(n / len(labels)))
-    
-    # Create sequence and shuffle
-    conditions = labels * reps  # Repeat labels as needed
-    shuffled = rng.permutation(conditions)[:n]  # Shuffle and trim
-    
-    return np.array(shuffled)
+**Weighted Generation Algorithm**
 
-# Generate conditions for the block
+This method first computes each label’s base count as `floor(n_trials * weight / total_weight)`, then distributes any leftover trials randomly according to the given weights. Finally, it constructs the full sequence by either interleaving labels in their specified order or shuffling the complete list, based on the `order` parameter.
+
+**Setting Weights**::
+
+```
+# Make 'A' twice as likely as 'B'
 block.generate_conditions(
-    func=generate_balanced_conditions,
-    condition_labels=["congruent", "incongruent", "neutral"]
+    condition_labels=['A', 'B'],
+    weights=[2, 1],
+    order='random',
+    seed=42
 )
 ```
 
-This populates `block.trials` with a balanced, randomized sequence of conditions.
+Expected ratio A\:B ≈ 2:1, subject to rounding and random distribution of remainder.
 
-#### Option B: Manually Assigning Trials
+**Order Modes**:
 
-For full control, you can manually specify the trial sequence:
+- **Sequential**: Ensures interleaved, cyclic presentation of conditions in the original label order.\
+  *Example*: In a resting-state experiment with two conditions—`ec` (eyes closed) and `eo` (eyes open)—using `order='sequential'` produces `['ec','eo','ec','eo']`, alternating blocks predictably.
+- **Random**: Provides a fully shuffled sequence, respecting label weights.\
+  *Example*: With the same `ec`/`eo` settings and `order='random'`, the sequence might be `['ec','ec','eo','eo']` or any other random arrangement.
+
+**Examples**:
 
 ```python
-block.add_condition(["congruent", "incongruent", "neutral", "congruent", "incongruent"])
+# Default: use settings.conditions, equal weights, random order
+block.generate_conditions()
+
+# Custom labels and sequential order
+block.generate_conditions(
+    condition_labels=['X', 'Y', 'Z'],
+    weights=[1, 1, 2],
+    order='sequential'
+)
 ```
 
-### 3. Registering Block Lifecycle Hooks
+**Custom Condition Generator**
 
-You can register functions to be called automatically at the start and end of a block. This is useful for:
-
-- Displaying instructions or break screens
-- Sending block-level triggers to recording equipment
-- Logging block information
-- Calculating block-level metrics
-
-#### Using Decorator Syntax
+For specialized block designs—such as a Stop-Signal Task (SST) where you need specific constraints on stop/go ratios, run lengths, and starting trials—you can supply your own generator function. Your function must have the signature:
 
 ```python
-@block.on_start()
-def show_instructions(b):
-    # The block object is passed as the first argument
-    print(f"Starting block {b.block_id} ({len(b)} trials)")
-    
-    # Show instructions
-    instructions = visual.TextStim(b.window, text="Press left or right arrow")
-    instructions.draw()
-    b.window.flip()
-    b.keyboard.waitForPresses(maxWait=5.0)  # Wait max 5 seconds
-
-@block.on_end()
-def show_block_summary(b):
-    print(f"Block {b.block_id} completed in {b.meta['duration']:.2f} seconds")
-    
-    # Calculate and display accuracy
-    correct_trials = sum(1 for r in b.results if r.get("correct", False))
-    accuracy = correct_trials / len(b) * 100
-    
-    # Show feedback
-    feedback = visual.TextStim(
-        b.window, 
-        text=f"Accuracy: {accuracy:.1f}%\nPress any key to continue"
-    )
-    feedback.draw()
-    b.window.flip()
-    b.keyboard.waitForPresses()
+def gen_func(n_trials, condition_labels=None, seed=None, **kwargs) -> List[str]:
+    ...
 ```
 
-#### Using Functional Syntax
+**Example: SST condition generator**
+
+This custom function generates condition sequences for a Stop-Signal Task (SST), enforcing:
+
+- A fixed stop-to-go trial ratio (`stop_ratio`).
+- A maximum run length of consecutive stop trials (`max_stop_run`).
+- A minimum number of initial go trials (`min_go_start`).
+- Preservation of the global random state via a local RNG.
 
 ```python
-# Alternative approach without decorators
-block.on_start(lambda b: print(f"Block {b.block_id} starting"))
-block.on_end(lambda b: print(f"Block {b.block_id} completed"))
+import random
+from typing import List, Optional
+
+def generate_sst_conditions(
+    n_trials: int,
+    condition_labels: Optional[List[str]] = None,
+    stop_ratio: float = 0.25,
+    max_stop_run: int = 4,
+    min_go_start: int = 3,
+    seed: Optional[int] = None
+) -> List[str]:
+    """
+    Generates an SST sequence while preserving global RNG state.
+    """
+    # 1) Default labels if none provided
+    if condition_labels is None:
+        condition_labels = ['go_left', 'go_right', 'stop_left', 'stop_right']
+    go_labels   = [lbl for lbl in condition_labels if lbl.startswith('go')]
+    stop_labels= [lbl for lbl in condition_labels if lbl.startswith('stop')]
+
+    # 2) Compute trial counts
+    n_stop = int(round(n_trials * stop_ratio))
+    n_go   = n_trials - n_stop
+    base_go, rem_go   = divmod(n_go,   len(go_labels))
+    base_st, rem_st   = divmod(n_stop, len(stop_labels))
+
+    counts = {}
+    for i, lbl in enumerate(go_labels):
+        counts[lbl] = base_go + (1 if i < rem_go else 0)
+    for i, lbl in enumerate(stop_labels):
+        counts[lbl] = base_st + (1 if i < rem_st else 0)
+
+    # 3) Build and shuffle with constraints
+    trial_list = [lbl for lbl, cnt in counts.items() for _ in range(cnt)]
+    rng = random.Random(seed)
+
+    while True:
+        rng.shuffle(trial_list)
+        # a) First min_go_start trials must be 'go'
+        if any(lbl.startswith('stop') for lbl in trial_list[:min_go_start]):
+            continue
+        # b) No more than max_stop_run stops in any 5-trial window
+        violation = False
+        for i in range(n_trials - 4):
+            window = trial_list[i:i+5]
+            if sum(lbl.startswith('stop') for lbl in window) > max_stop_run:
+                violation = True
+                break
+        if not violation:
+            break
+
+    return trial_list
+
+# Use it in BlockUnit:
+block.generate_conditions(
+    func=generate_sst_conditions,
+    condition_labels=['go_left','go_right','stop_left','stop_right'],
+    seed=123
+)
+print(block.conditions)
 ```
 
-### 4. Defining the Trial Function
+The custom generator is applied by passing it as the `func` argument to `generate_conditions()`. 
 
-The trial function defines what happens on each trial. It receives the block's window, keyboard, settings, and the current trial's condition:
+For example, to use `generate_sst_conditions` when constructing a block:
 
 ```python
-def run_trial(win, kb, settings, condition, **kwargs):
-    """Run a single trial and return results."""
-    # Create stimuli based on condition
-    if condition == "congruent":
-        text = "RED"
-        color = "red"
-    elif condition == "incongruent":
-        text = "RED"
-        color = "blue"
-    else:  # neutral
-        text = "XXX"
-        color = "green"
-    
-    # Create and display stimulus
-    stimulus = visual.TextStim(win, text=text, color=color)
-    stimulus.draw()
-    win.flip()
-    
-    # Record onset time
-    onset_time = core.getTime()
-    
-    # Wait for response (max 2 seconds)
-    keys = kb.waitForPresses(maxWait=2.0)
-    
-    # Calculate response time
-    if keys:
-        rt = keys[0].rt
-        response = keys[0].name
-        # Determine if response was correct
-        correct = (color == "red" and response == "left") or \
-                  (color == "blue" and response == "right")
-    else:
-        rt = None
-        response = None
-        correct = False
-    
-    # Return trial results as a dictionary
-    return {
-        "condition": condition,
-        "response": response,
-        "rt": rt,
-        "correct": correct,
-        "onset_time": onset_time
-    }
+block = BlockUnit(
+    block_id=f"block_{block_i}",
+    block_idx=block_i,
+    settings=settings,
+    window=win,
+    keyboard=kb
+).generate_conditions(
+    func=generate_sst_conditions
+)
 ```
 
-### 5. Running the Block
+This single call both creates the block and generates its trial conditions according to the SST constraints, storing the resulting sequence in `block.conditions`.
 
-Once you've set up the block, you can run all trials with a single call:
+**Manual Condition Assignment**
+
+If the exact sequence of conditions is predetermined, bypass the generator entirely:
 
 ```python
-# Run all trials in the block
-block.run_trial(run_trial)
+# Predefined block sequence for alternating ec/eo
+manual_seq = ['ec','eo','ec','eo']
+block.add_condition(manual_seq)
+print(block.conditions)
 ```
 
-This will:
-1. Call your `on_start` hook(s)
-2. Run each trial in sequence, passing the appropriate condition
-3. Store each trial's results
-4. Call your `on_end` hook(s)
+### 3. Hooks: on\_start and on\_end
 
-### 6. Accessing and Summarizing Results
+Hooks allow injection of custom logic at the beginning or end of each block, without modifying the core trial loop. Common uses include:
 
-#### Getting Raw Results
+- **Triggering hardware events** (e.g., sending EEG or MRI triggers)
+- **Updating GUI elements** (e.g., showing block progress or instructions)
+- **Logging or analytics** (e.g., timestamping additional metrics)
+
+Hooks can be registered in two ways:
+
+1. **Decorator style**:
+   ```python
+   @block.on_start()
+   def before_block(b):
+       # Custom setup
+       print(f"Starting block {b.block_id}")
+
+   @block.on_end()
+   def after_block(b):
+       # Custom cleanup
+       print(f"Ending block {b.block_id}")
+   ```
+2. **Chaining style**:
+   ```python
+   block = BlockUnit(...)
+   block.on_start(lambda b: trigger_sender.send(settings.triggers.get("block_onset")))
+        .on_end(lambda b: trigger_sender.send(settings.triggers.get("block_end")))
+   ```
+
+**Example: sending triggers at block boundaries**
 
 ```python
-# Get all trial results as a list of dictionaries
-results = block.to_dict()
-
-# First trial result
-print(results[0])
-# Example output: {'block_id': 'practice_block', 'trial_idx': 0, 'condition': 'congruent', 'response': 'left', 'rt': 0.543, 'correct': True, 'onset_time': 1234.567}
+block = BlockUnit(
+    block_id=f"block_{block_i}",
+    block_idx=block_i,
+    settings=settings,
+    window=win,
+    keyboard=kb
+).generate_conditions(func=generate_sst_conditions)
+  .on_start(lambda b: trigger_sender.send(settings.triggers.get("block_onset")))
+  .on_end(lambda b: trigger_sender.send(settings.triggers.get("block_end")))
 ```
 
-#### Appending to an External List
+This setup ensures that a trigger or an external event is sent precisely when the block begins and ends, integrated seamlessly into the block execution flow.
+
+### 4. Running Trials
+
+The `.run_trials()` method drives the execution of every trial in the block by repeatedly calling a user‑defined trial function. The function is typically implemented in the TAPS codebase under `src/run_trial.py` and encapsulates all trial‑level logic (e.g., stimulus presentation, response capture, triggers).
+
+**Signature:**
 
 ```python
-# Useful for collecting results across multiple blocks
-all_results = []
-block.to_dict(all_results)  # Appends to all_results
+block.run_trials(
+    trial_func,
+    **kwargs
+)
 ```
 
-#### Summarizing Results
+- `trial_func` (callable, required): the trial‑level function. Must accept four mandatory arguments:
+  1. `win` (PsychoPy Window)
+  2. `kb` (PsychoPy Keyboard)
+  3. `settings` (TaskSettings)
+  4. `condition` (str or label) Additional parameters (e.g., `stim_bank`, `controller`, `trigger_sender`) can be passed via `kwargs` and are optional—include them only if your `trial_func` uses them.
+
+> **Note:** Register all `on_start` and `on_end` hooks **before** calling `.run_trials()`, as they are invoked inside this method.
+
+**Execution flow:**
+
+1. **Start timestamp**: saves `meta['block_start_time']`.
+2. **hooks**: runs block‑start callbacks (e.g., triggers).
+3. **Per‑trial loop**:
+   ```python
+   result = trial_func(
+       block.win,
+       block.kb,
+       block.settings,
+       condition,
+       **kwargs
+   )
+   ```
+4. **hooks**: runs block‑end callbacks.
+5. **End timestamp & duration**: sets `meta['block_end_time']` and `meta['duration']`.
+
+#### **Resting‑state example**
+
+This trial function displays an instruction screen followed by a simple stimulus, without response collection.
 
 ```python
-# Get default summary (hit_rate and avg_rt by condition)
+from psyflow import StimUnit
+from functools import partial
+
+def run_trials(win, kb, settings, condition, stim_bank, trigger_sender):
+    data = {'condition': condition}
+    make_unit = partial(StimUnit, win=win, kb=kb, triggersender=trigger_sender)
+
+    # Instruction only
+    make_unit('inst') \
+        .add_stim(stim_bank.get(f"{condition}_instruction")) \
+        .show() \
+        .to_dict(data)
+
+    # Stimulus only
+    make_unit('stim') \
+        .add_stim(stim_bank.get(f"{condition}_stim")) \
+        .show(duration=settings.rest_duration) \
+        .to_dict(data)
+
+    return data
+
+block.run_trials(run_trials, stim_bank=stim_bank, trigger_sender=trigger_sender)
+```
+#### **MID task example**
+Implements a multi‑phase trial (cue → anticipation → target → feedback), using the `controller` to adapt durations and recording responses.
+
+```python
+from psyflow import StimUnit
+from functools import partial
+
+def run_trials(win, kb, settings, condition, stim_bank, controller, trigger_sender):
+    data = {'condition': condition}
+    make_unit = partial(StimUnit, win=win, kb=kb, triggersender=trigger_sender)
+
+    # Cue phase
+    make_unit('cue') \
+        .add_stim(stim_bank.get(f"{condition}_cue")) \
+        .show(duration=settings.cue_duration) \
+        .to_dict(data)
+
+    # (anticipation, target, feedback phases follow similar patterns)
+
+    return data
+
+block.run_trials(run_trials, stim_bank=stim_bank, controller=controller, trigger_sender=trigger_sender)
+```
+
+### 5. Accessing & Filtering Data
+
+To extract and analyze block-level outcomes, use two core methods:
+
+1. **Retrieve all trials** with `.get_all_data()`, which returns an ordered list of all trial dictionaries in the block.
+2. **Filter specific trials** with `.get_trial_data(key, pattern, match_type, negate)`, selecting subsets that match given criteria.
+
+#### Example: MID block summary using `.get_all_data()`
+
+In a Monetary Incentive Delay (MID) task, you typically calculate overall performance metrics across all trials of a block:
+
+```python
+# Retrieve every trial in order
+block_trials = block.get_all_data()
+
+# Compute hit rate: proportion of trials where 'target_hit' is True
+total_trials = len(block_trials)
+hit_trials = sum(t.get('target_hit', False) for t in block_trials)
+hit_rate = hit_trials / total_trials
+
+# Compute total feedback score across trials
+total_score = sum(t.get('feedback_delta', 0) for t in block_trials)
+```
+
+Here, `.get_all_data()` provides the full trial dataset, and simple list comprehensions produce summary statistics for the block.
+
+#### Example: SST block analysis using `.get_trial_data()`
+
+In a Stop-Signal Task (SST), separate go and stop trials for distinct performance metrics:
+
+```python
+# Filter trials by condition prefix
+go_trials = block.get_trial_data(
+    key='condition',
+    pattern='go',
+    match_type='startswith'
+)
+stop_trials = block.get_trial_data(
+    key='condition',
+    pattern='stop',
+    match_type='startswith'
+)
+
+# Go-trial hit rate
+total_go = len(go_trials)
+go_hits = sum(t.get('go_hit', False) for t in go_trials)
+go_hit_rate = go_hits / total_go if total_go else 0
+
+# Stop-trial success rate (no key presses)
+total_stop = len(stop_trials)
+stops_success = sum(
+    not t.get('go_ssd_key_press', False) and not t.get('stop_key_press', False)
+    for t in stop_trials
+)
+stop_success_rate = stops_success / total_stop if total_stop else 0
+```
+
+`.get_trial_data()` filters by matching the `'condition'` field against a pattern, allowing downstream calculations on each trial subset.
+
+### 6. Summarizing Block Results
+
+For full flexibility, it is often preferable to compute block‑level summaries manually using the data retrieval methods covered above. This ensures that the statistics match exactly the fields produced by your trial logic. Two common patterns are:
+
+#### Manual summarization using `.get_all_data()` (e.g., MID task)
+
+Use `.get_all_data()` to obtain every trial’s result dict in order, then apply simple Python expressions to compute block metrics. In a Monetary Incentive Delay (MID) experiment, you might calculate overall hit rate and total score as follows:
+
+```python
+# Fetch all trial data
+block_trials = block.get_all_data()
+
+# Hit rate: proportion of trials where the target was hit
+total_trials = len(block_trials)
+hit_count    = sum(trial.get('target_hit', False) for trial in block_trials)
+hit_rate     = hit_count / total_trials
+
+# Total feedback score (delta) across the block
+total_score  = sum(trial.get('feedback_delta', 0) for trial in block_trials)
+```
+
+This approach works for any field your `run_trials` function stores. Simply adjust the comprehensions to target the relevant keys.
+
+#### Manual summarization using `.get_trial_data()` (e.g., SST task)
+
+When different trial types require separate metrics—as in a Stop‑Signal Task (SST) with go vs. stop trials—use `.get_trial_data()` to filter the block’s trials, then summarize each subset:
+
+```python
+# Separate go and stop trials by condition prefix
+go_trials   = block.get_trial_data(
+    key='condition', pattern='go', match_type='startswith'
+)
+stop_trials = block.get_trial_data(
+    key='condition', pattern='stop', match_type='startswith'
+)
+
+# Go-trial hit rate
+total_go     = len(go_trials)
+go_hits      = sum(trial.get('go_hit', False) for trial in go_trials)
+go_hit_rate  = go_hits / total_go if total_go else 0
+
+# Stop-trial success rate (no responses on stop trials)
+total_stop        = len(stop_trials)
+stop_success_count = sum(
+    not trial.get('go_ssd_key_press', False) and not trial.get('stop_key_press', False)
+    for trial in stop_trials
+)
+stop_success_rate = stop_success_count / total_stop if total_stop else 0
+```
+
+####  Built‑in `.summarize()` utility
+
+`BlockUnit` also provides a default summarizer that computes hit rate and average reaction time per condition:
+
+```python
 summary = block.summarize()
-print(summary)
-# Example output: {'congruent': {'hit_rate': 0.8, 'avg_rt': 0.523}, 'incongruent': {'hit_rate': 0.6, 'avg_rt': 0.678}, 'neutral': {'hit_rate': 0.7, 'avg_rt': 0.601}}
+# Example output:
+# {
+#   'A': {'hit_rate': 0.75, 'avg_rt': 0.48},
+#   'B': {'hit_rate': 0.62, 'avg_rt': 0.55}
+# }
 ```
 
-#### Custom Summarization
+To override this behavior, supply a custom function that accepts the `BlockUnit` and returns a dictionary of summary metrics. Below is an example tailored for an SST block:
 
 ```python
-def custom_summary(block):
-    """Calculate custom performance metrics."""
-    # Group results by condition
-    by_condition = {}
-    for cond in set(r.get("condition") for r in block.results):
-        cond_results = [r for r in block.results if r.get("condition") == cond]
-        
-        # Calculate metrics
-        accuracy = sum(1 for r in cond_results if r.get("correct", False)) / len(cond_results)
-        mean_rt = sum(r.get("rt", 0) for r in cond_results if r.get("rt") is not None) / \
-                  sum(1 for r in cond_results if r.get("rt") is not None)
-        
-        by_condition[cond] = {
-            "accuracy": accuracy,
-            "mean_rt": mean_rt,
-            "trial_count": len(cond_results)
-        }
-    
-    # Add overall metrics
-    by_condition["overall"] = {
-        "accuracy": sum(1 for r in block.results if r.get("correct", False)) / len(block.results),
-        "mean_rt": sum(r.get("rt", 0) for r in block.results if r.get("rt") is not None) / \
-                   sum(1 for r in block.results if r.get("rt") is not None),
-        "trial_count": len(block.results)
-    }
-    
-    return by_condition
-
-# Use custom summary function
-detailed_summary = block.summarize(custom_summary)
-```
-
-## Complete Example: Stroop Task
-
-Here's a complete example implementing a simple Stroop task with two blocks:
-
-```python
-from psychopy import visual, core, event
-from psychopy.hardware.keyboard import Keyboard
-from psyflow import BlockUnit, TaskSettings, StimUnit
 import numpy as np
-import pandas as pd
 
-# Setup experiment
-settings = TaskSettings(
-    exp_name="stroop",
-    trials_per_block=20,
-    total_blocks=2,
-    block_seed=42,
-    resp_keys=["left", "right"]
-)
+def sst_summary(bu):
+    """Compute go hit rate and stop success rate for SST blocks."""
+    # Retrieve all trials
+    trials = bu.get_all_data()
+    # Separate go and stop trials
+    go_trials = bu.get_trial_data('condition', 'go', match_type='startswith')
+    stop_trials = bu.get_trial_data('condition', 'stop', match_type='startswith')
 
-# Create PsychoPy window and keyboard
-win = visual.Window(size=[800, 600], color="black", units="norm")
-kb = Keyboard()
+    # Go-trial hit rate
+    total_go = len(go_trials)
+    go_hits = sum(t.get('go_hit', False) for t in go_trials)
+    go_hit_rate = go_hits / total_go if total_go else 0
 
-# Condition generation function
-def generate_conditions(n, labels, seed=None):
-    rng = np.random.default_rng(seed)
-    reps = int(np.ceil(n / len(labels)))
-    conditions = labels * reps
-    return rng.permutation(conditions)[:n]
+    # Stop-trial success rate (no responses)
+    total_stop = len(stop_trials)
+    stop_success = sum(
+        (not t.get('go_ssd_key_press', False)) and not t.get('stop_key_press', False)
+        for t in stop_trials
+    )
+    stop_success_rate = stop_success / total_stop if total_stop else 0
 
-# Trial function
-def run_stroop_trial(win, kb, settings, condition, **kwargs):
-    # Set up stimuli based on condition
-    if condition == "congruent":
-        word = np.random.choice(["RED", "BLUE"])
-        color = word.lower()
-    elif condition == "incongruent":
-        word = np.random.choice(["RED", "BLUE"])
-        color = "red" if word == "BLUE" else "blue"
-    else:  # neutral
-        word = "XXXX"
-        color = np.random.choice(["red", "blue"])
-    
-    # Create stimulus
-    stim = visual.TextStim(win, text=word, color=color, height=0.2)
-    
-    # Show stimulus and wait for response
-    stim.draw()
-    win.flip()
-    onset_time = core.getTime()
-    
-    # Wait for response with timeout
-    keys = kb.waitForPresses(maxWait=2.0)
-    
-    # Process response
-    if keys:
-        key = keys[0].name
-        rt = keys[0].rt
-        # Check if correct (left for red, right for blue)
-        correct = (color == "red" and key == "left") or \
-                  (color == "blue" and key == "right")
-    else:
-        key = None
-        rt = None
-        correct = False
-    
-    # Clear screen
-    win.flip()
-    core.wait(0.5)  # Inter-trial interval
-    
-    # Return trial data
     return {
-        "word": word,
-        "color": color,
-        "response": key,
-        "rt": rt,
-        "correct": correct,
-        "onset_time": onset_time
+        'go_hit_rate': go_hit_rate,
+        'stop_success_rate': stop_success_rate
     }
 
-# Run experiment
-all_results = []
+# Use the custom summarizer
+summary = block.summarize(summary_func=sst_summary)
+```
 
-# Show welcome screen
-welcome = visual.TextStim(
-    win, 
-    text="Welcome to the Stroop Task\n\nPress any key to begin", 
-    height=0.1
-)
-welcome.draw()
-win.flip()
-kb.waitForPresses()
+### 7. Storing Block-Level Data
 
-# Run blocks
-for block_idx in range(settings.total_blocks):
-    # Create block
-    block = BlockUnit(
-        block_id=f"block_{block_idx}",
-        block_idx=block_idx,
+After each block finishes, its trial results (stored in `block.results`) can be merged into a master list for the entire experiment using the `.to_dict()` method. This method supports two modes:
+
+- **Chaining mode**: Calling `.to_dict()` with no argument simply returns the `BlockUnit` instance, allowing you to chain other calls.
+- **Append mode**: Passing a list to `.to_dict(target_list)` extends that list with the block’s trial dictionaries.
+
+```python
+# Initialize an empty list to collect all trials
+all_data = []
+
+for block_i in range(settings.total_blocks):
+    # Prepare and run block, then append its results
+    BlockUnit(
+        block_id=f"block_{block_i}",
+        block_idx=block_i,
         settings=settings,
         window=win,
         keyboard=kb
-    )
-    
-    # Generate conditions
-    block.generate_conditions(
-        func=generate_conditions,
-        condition_labels=["congruent", "incongruent", "neutral"]
-    )
-    
-    # Register block hooks
-    @block.on_start()
-    def show_block_instructions(b):
-        instructions = visual.TextStim(
-            win,
-            text=f"Block {b.block_idx + 1} of {settings.total_blocks}\n\n" +
-                 "Press LEFT for RED words\n" +
-                 "Press RIGHT for BLUE words\n\n" +
-                 "Ignore the word, respond to the color!\n\n" +
-                 "Press any key to start",
-            height=0.08
-        )
-        instructions.draw()
-        win.flip()
-        kb.waitForPresses()
-    
-    @block.on_end()
-    def show_block_feedback(b):
-        # Calculate accuracy
-        correct_count = sum(1 for r in b.results if r.get("correct", False))
-        accuracy = correct_count / len(b.results) * 100
-        
-        # Show feedback
-        feedback = visual.TextStim(
-            win,
-            text=f"Block complete!\n\n" +
-                 f"Accuracy: {accuracy:.1f}%\n\n" +
-                 "Press any key to continue",
-            height=0.08
-        )
-        feedback.draw()
-        win.flip()
-        kb.waitForPresses()
-    
-    # Run all trials in the block
-    block.run_trial(run_stroop_trial)
-    
-    # Add results to overall results list
-    block.to_dict(all_results)
+    ).generate_conditions() \
+     .on_start(lambda b: trigger_sender.send(settings.triggers.get("block_onset"))) \
+     .on_end(lambda b: trigger_sender.send(settings.triggers.get("block_end"))) \
+     .run_trials(run_trial, stim_bank=stim_bank, controller=controller, trigger_sender=trigger_sender) \
+     .to_dict(all_data)
 
-# Show goodbye screen
-goodbye = visual.TextStim(
-    win,
-    text="Experiment complete!\n\nThank you for participating.",
-    height=0.1
-)
-goodbye.draw()
-win.flip()
-core.wait(3.0)
+# At this point, all_data contains every trial dict from all blocks
 
-# Save results
-df = pd.DataFrame(all_results)
+# Convert to DataFrame and save to CSV
+import pandas as pd
+df = pd.DataFrame(all_data)
 df.to_csv(settings.res_file, index=False)
-
-# Clean up
-win.close()
-core.quit()
 ```
 
-## Advanced Usage
+> **Alternative:** you can call `block.get_all_data()` after running a block and extend your list manually:
+>
+> ```python
+> block.run_trials(...)
+> block_data = block.get_all_data()
+> all_data.extend(block_data)
+> ```
 
-### Multiple Blocks with Different Conditions
+### 8. Logging Block Info
 
-You can create multiple blocks with different condition sets:
+`BlockUnit` logs metadata at start and end automatically:
 
-```python
-# Block 1: Standard Stroop
-block1 = BlockUnit("standard", 0, settings, win, kb)
-block1.generate_conditions(generate_func, ["congruent", "incongruent"])
-block1.run_trial(run_trial)
-
-# Block 2: Emotional Stroop
-block2 = BlockUnit("emotional", 1, settings, win, kb)
-block2.generate_conditions(generate_func, ["neutral", "negative", "positive"])
-block2.run_trial(run_emotional_trial)  # Different trial function
 ```
-
-### Integration with StimBank and TriggerSender
-
-`BlockUnit` works seamlessly with other psyflow components:
-
-```python
-from psyflow import StimBank, TriggerSender, BlockUnit
-from functools import partial
-
-# Create components
-stim_bank = StimBank(win)
-stim_bank.add_from_dict({
-    "fixation": {"type": "TextStim", "text": "+"},
-    "target_a": {"type": "TextStim", "text": "A"},
-    "target_b": {"type": "TextStim", "text": "B"},
-    "feedback": {"type": "TextStim", "text": "{score} points"}
-})
-
-trigger = TriggerSender(mock=True)
-
-# Define trial function using components
-def run_trial_with_components(win, kb, settings, condition, stim_bank, trigger, **kwargs):
-    # Send block start trigger
-    trigger.send(1)
-    
-    # Show fixation
-    fixation = stim_bank.get("fixation")
-    fixation.draw()
-    win.flip()
-    core.wait(0.5)
-    
-    # Show target based on condition
-    target = stim_bank.get(f"target_{condition}")
-    target.draw()
-    win.flip()
-    trigger.send(2)  # Target onset trigger
-    
-    # Wait for response
-    keys = kb.waitForPresses(maxWait=1.0)
-    
-    # Process response
-    if keys:
-        trigger.send(3)  # Response trigger
-        response = keys[0].name
-        rt = keys[0].rt
-    else:
-        response = None
-        rt = None
-    
-    # Return results
-    return {"condition": condition, "response": response, "rt": rt}
-
-# Create and run block with components
-block = BlockUnit("block1", 0, settings, win, kb)
-block.generate_conditions(generate_func, ["a", "b"])
-
-# Use partial to include additional components
-block.run_trial(
-    partial(run_trial_with_components, stim_bank=stim_bank, trigger=trigger)
-)
+[BlockUnit] Blockid: block1
+[BlockUnit] Blockidx: 0
+[BlockUnit] Blockseed: 12345
+[BlockUnit] Blocktrial-N: 40
+[BlockUnit] Blockdist: {'A':20,'B':20}
+[BlockUnit] Blockconditions: ['A','B',...]
 ```
-
-### Dynamic Trial Generation
-
-You can implement adaptive procedures by generating trials dynamically:
-
-```python
-# Staircase procedure example
-difficulty = 5  # Starting difficulty (1-10)
-
-def adaptive_trial_generator(n, labels=None, seed=None):
-    """Generate trials that adapt based on performance."""
-    trials = []
-    for i in range(n):
-        trials.append({"difficulty": difficulty})
-    return trials
-
-block = BlockUnit("adaptive", 0, settings, win, kb)
-block.generate_conditions(adaptive_trial_generator)
-
-def run_adaptive_trial(win, kb, settings, condition, **kwargs):
-    nonlocal difficulty
-    
-    # Get current difficulty
-    current_difficulty = condition["difficulty"]
-    
-    # Run trial with current difficulty
-    # ...
-    
-    # Adjust difficulty based on performance
-    if correct:
-        difficulty = min(10, difficulty + 1)  # Make harder
-    else:
-        difficulty = max(1, difficulty - 1)  # Make easier
-    
-    return {"difficulty": current_difficulty, "correct": correct}
-
-block.run_trial(run_adaptive_trial)
-```
-
-## Best Practices
-
-1. **Use meaningful block IDs**: Choose descriptive names that reflect the block's purpose (e.g., "practice", "main_task", "memory_test").
-
-2. **Separate condition generation from trial execution**: Keep your condition generation function reusable and independent of the trial function.
-
-3. **Use block hooks for setup/cleanup**: Put instructions, breaks, and other non-trial content in block hooks rather than in the trial function.
-
-4. **Return comprehensive trial data**: Include all relevant information in your trial function's return dictionary.
-
-5. **Use custom summarization for complex metrics**: Implement custom summary functions for specialized analyses.
-
-6. **Save raw trial data**: Always save the complete trial-level data, not just summaries.
-
-7. **Set appropriate seeds**: Use consistent seeds for reproducibility in experiments.
-
-## Troubleshooting
-
-- **Trial conditions not balanced**: Check your condition generation function and ensure it properly handles the requested number of trials.
-
-- **Missing trial data**: Verify that your trial function returns a dictionary for every trial.
-
-- **Block hooks not executing**: Ensure hooks are registered before calling `run_trial()`.
-
-- **Performance issues**: If trials run slowly, optimize your trial function and avoid creating new stimuli on each trial.
 
 ## Next Steps
 
