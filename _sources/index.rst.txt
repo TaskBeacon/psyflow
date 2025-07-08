@@ -4,14 +4,28 @@
 ..    :height: 100px
 ..    :align: center
 
-Welcome to psyflow’s documentation!
+Welcome to psyflow
 ===================================
 
 **psyflow** is a modular framework for building cognitive and behavioral tasks using PsychoPy and Python code.
 
-- 🚀 Easy to compose trials and blocks
-- 🧠 EEG/MEG-friendly trigger sending
-- 🎯 Perfect for cognitive experiments in research
+Features
+--------
+- Modular classes for each experiment phase (GUI, stimuli, trials, blocks)
+- Declarative configuration with lifecycle hooks
+- Audio support including text-to-speech and hardware triggers
+- LLM integration and CLI scaffolding tools
+
+Core Components
+---------------
+- **SubInfo**: GUI-based subject metadata collection with localization  
+- **TaskSettings**: Loads `config.yaml`, initializes window/keyboard, manages logging  
+- **StimBank**: Registry for stimuli (decorators or YAML), lazy loading, preview, dynamic formatting, TTS  
+- **StimUnit**: Presents stimuli, captures responses, sends triggers, logs events  
+- **BlockUnit**: Generates and runs trial sequences; supports pre/post hooks  
+- **TriggerSender**: Hardware trigger output with debug and timing control  
+- **LLMClient**: Automates config translation and README generation  
+- **CLI (`psyflow task`)**: Scaffolds a ready-to-use task directory
 
 Start with one of the tutorials below or explore the API reference.
 
@@ -23,8 +37,8 @@ Start with one of the tutorials below or explore the API reference.
    tutorials/get_subinfo
    tutorials/task_settings
    tutorials/build_blocks
-   tutorials/build_stimunit
    tutorials/build_stimulus
+   tutorials/build_stimunit
    tutorials/send_trigger
    tutorials/cli_usage
    tutorials/utilities

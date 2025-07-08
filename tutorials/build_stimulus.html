@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="TriggerSender: Precise Event Marking for EEG/MEG Experiments" href="send_trigger.html" /><link rel="prev" title="BlockUnit: Organizing Trials into Experimental Blocks" href="build_blocks.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="🎯 StimUnit: Modular Trial Controller for PsychoPy" href="build_stimunit.html" /><link rel="prev" title="BlockUnit: Managing Trials" href="build_blocks.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>StimBank: Flexible Stimulus Management for PsychoPy - psyflow 0.1.1 documentation</title>
+        <title>StimBank: Flexible Stimulus Management - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -208,8 +208,9 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with psyflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">StimBank: Flexible Stimulus Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimunit.html">🎯 StimUnit: Modular Trial Controller for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Helpers</a></li>
@@ -254,19 +255,19 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="stimbank-flexible-stimulus-management-for-psychopy">
-<h1>StimBank: Flexible Stimulus Management for PsychoPy<a class="headerlink" href="#stimbank-flexible-stimulus-management-for-psychopy" title="Link to this heading">¶</a></h1>
+          <section id="stimbank-flexible-stimulus-management">
+<h1>StimBank: Flexible Stimulus Management<a class="headerlink" href="#stimbank-flexible-stimulus-management" title="Link to this heading">¶</a></h1>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> is a powerful stimulus management system for PsychoPy experiments that solves several common challenges:</p>
 <ul class="simple">
-<li><p><strong>Centralized stimulus management</strong>: Define all visual elements in one place</p></li>
-<li><p><strong>Multiple definition methods</strong>: Use Python code or configuration files</p></li>
-<li><p><strong>Lazy loading</strong>: Only instantiate stimuli when needed</p></li>
-<li><p><strong>Dynamic formatting</strong>: Update text stimuli with variable content</p></li>
-<li><p><strong>Batch operations</strong>: Preview, export, and validate multiple stimuli</p></li>
+<li><p><strong>Centralized stimulus management</strong>: Define all visual and auditory stimuli in one place.</p></li>
+<li><p><strong>Multiple definition methods</strong>: Register stimuli via Python decorators or configuration files (YAML/dictionaries).</p></li>
+<li><p><strong>Lazy loading</strong>: Instantiate stimuli only when first accessed to reduce initial load time.</p></li>
+<li><p><strong>Dynamic formatting</strong>: Insert runtime values into text stimuli without redefining them.</p></li>
+<li><p><strong>Batch operations</strong>: Preview, export, validate, and group stimuli efficiently.</p></li>
 </ul>
-<p>Whether you’re building a simple experiment or a complex protocol with dozens of visual elements, <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> helps keep your code organized, maintainable, and flexible.</p>
+<p>Whether you are running a simple behavioral task or a complex multi-modal protocol, <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> helps you keep stimulus-related code and configuration clean, consistent, and maintainable.</p>
 </section>
 <section id="key-features">
 <h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
@@ -279,25 +280,22 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Dual registration</p></td>
-<td><p>Define stimuli via decorators or YAML/dictionaries</p></td>
+<td><p>Define stimuli via decorators or declaratively via YAML/dictionaries</p></td>
 </tr>
 <tr class="row-odd"><td><p>Lazy instantiation</p></td>
-<td><p>Create stimuli only when needed to optimize performance</p></td>
+<td><p>Delay object creation until needed</p></td>
 </tr>
 <tr class="row-even"><td><p>Grouping</p></td>
-<td><p>Retrieve related stimuli by prefix or explicit selection</p></td>
+<td><p>Retrieve related stimuli by prefix or explicit list</p></td>
 </tr>
 <tr class="row-odd"><td><p>Text formatting</p></td>
-<td><p>Insert dynamic values into text stimuli</p></td>
+<td><p>Use Python-style placeholders and <code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Stimulus rebuilding</p></td>
-<td><p>Modify stimulus properties on-the-fly</p></td>
+<td><p>Override properties on-the-fly with <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Preview functionality</p></td>
-<td><p>Visually inspect all stimuli during development</p></td>
-</tr>
-<tr class="row-even"><td><p>Configuration export</p></td>
-<td><p>Save stimulus definitions to YAML for reuse</p></td>
+<td><p>Visually inspect or play stimuli in batch</p></td>
 </tr>
 </tbody>
 </table>
@@ -322,36 +320,36 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">&#64;bank.define(name)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&#64;bank.define(&quot;fixation&quot;)</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Register (dict)</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.add_from_dict(dict)</span></code></p></td>
+<tr class="row-even"><td><p>Register (dict/YAML)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.add_from_dict(dict)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bank.add_from_dict(config)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Get stimulus</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.get(name)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.get(name)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">stim</span> <span class="pre">=</span> <span class="pre">bank.get(&quot;target&quot;)</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Get multiple</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.get_selected(keys)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">stims</span> <span class="pre">=</span> <span class="pre">bank.get_selected([&quot;fix&quot;,</span> <span class="pre">&quot;cue&quot;])</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.get_selected(list)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stims</span> <span class="pre">=</span> <span class="pre">bank.get_selected([&quot;fix&quot;,&quot;cue&quot;])</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Get by prefix</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.get_group(prefix)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.get_group(prefix)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">cues</span> <span class="pre">=</span> <span class="pre">bank.get_group(&quot;cue_&quot;)</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Format text</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.get_and_format(name,</span> <span class="pre">**kwargs)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.get_and_format(name,</span> <span class="pre">**kw)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bank.get_and_format(&quot;msg&quot;,</span> <span class="pre">name=&quot;John&quot;)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Modify stimulus</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.rebuild(name,</span> <span class="pre">**kwargs)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.rebuild(name,</span> <span class="pre">**kw)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bank.rebuild(&quot;target&quot;,</span> <span class="pre">fillColor=&quot;blue&quot;)</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Preview all</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.preview_all()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.preview_all()</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bank.preview_all()</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Export config</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.export_to_yaml(file)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.export_to_yaml(file_path)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">bank.export_to_yaml(&quot;stimuli.yaml&quot;)</span></code></p></td>
 </tr>
 </tbody>
@@ -366,83 +364,12 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.visual</span><span class="w"> </span><span class="kn">import</span> <span class="n">Window</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimBank</span>
 
-<span class="c1"># Create PsychoPy window</span>
 <span class="n">win</span> <span class="o">=</span> <span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
-
-<span class="c1"># Initialize stimulus bank</span>
 <span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>You can also provide an initial configuration dictionary:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;fixation&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span><span class="p">}</span>
-<span class="p">}</span>
-<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="registering-stimuli">
-<h3>2. Registering Stimuli<a class="headerlink" href="#registering-stimuli" title="Link to this heading">¶</a></h3>
-<section id="method-1-using-decorators">
-<h4>Method 1: Using Decorators<a class="headerlink" href="#method-1-using-decorators" title="Link to this heading">¶</a></h4>
-<p>The decorator approach gives you full flexibility with Python code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.visual</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextStim</span><span class="p">,</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">ImageStim</span>
-
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">make_fixation</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">make_target</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Circle</span><span class="p">(</span>
-        <span class="n">win</span><span class="p">,</span> 
-        <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> 
-        <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> 
-        <span class="n">lineColor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> 
-        <span class="n">lineWidth</span><span class="o">=</span><span class="mi">2</span>
-    <span class="p">)</span>
-
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;feedback_correct&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">make_feedback</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">TextStim</span><span class="p">(</span>
-        <span class="n">win</span><span class="p">,</span>
-        <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Correct!&quot;</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span>
-        <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
-        <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">]</span>
-    <span class="p">)</span>
-
-<span class="c1"># Complex stimuli with multiple components</span>
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;compound_stimulus&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">make_compound</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="c1"># Create a container (ShapeStim) with multiple elements</span>
-    <span class="n">container</span> <span class="o">=</span> <span class="n">ShapeStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-    
-    <span class="c1"># Add child stimuli</span>
-    <span class="n">circle</span> <span class="o">=</span> <span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">)</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
-    
-    <span class="c1"># Return the container with references to children</span>
-    <span class="n">container</span><span class="o">.</span><span class="n">_circle</span> <span class="o">=</span> <span class="n">circle</span>
-    <span class="n">container</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="n">text</span>
-    
-    <span class="c1"># Define a custom draw method</span>
-    <span class="n">original_draw</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">draw</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">custom_draw</span><span class="p">():</span>
-        <span class="n">circle</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-        <span class="n">text</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-        <span class="n">original_draw</span><span class="p">()</span>
-    <span class="n">container</span><span class="o">.</span><span class="n">draw</span> <span class="o">=</span> <span class="n">custom_draw</span>
-    
-    <span class="k">return</span> <span class="n">container</span>
-</pre></div>
-</div>
-</section>
-<section id="method-2-using-dictionaries-or-yaml">
-<h4>Method 2: Using Dictionaries or YAML<a class="headerlink" href="#method-2-using-dictionaries-or-yaml" title="Link to this heading">¶</a></h4>
-<p>The dictionary approach is more declarative and can be loaded from YAML files:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Direct dictionary definition</span>
-<span class="n">stim_config</span> <span class="o">=</span> <span class="p">{</span>
+<p>Optionally, pass an initial configuration dictionary or load from YAML:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_config</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;instructions&quot;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
         <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Press SPACE to begin&quot;</span><span class="p">,</span>
@@ -450,378 +377,452 @@
         <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
         <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
     <span class="p">},</span>
-    <span class="s2">&quot;left_target&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;circle&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
-        <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-        <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;right_target&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;circle&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span>
-        <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-        <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;image_stimulus&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;images/stimulus.png&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
-    <span class="p">}</span>
+    <span class="s2">&quot;left_target&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;circle&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;image_stimulus&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;images/stimulus.png&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]}</span>
 <span class="p">}</span>
+<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">stim_config</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="supported-stimuli">
+<h3>2. Supported Stimuli<a class="headerlink" href="#supported-stimuli" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> currently supports the following stimulus types. In dict/YAML definitions, use these keys in the <code class="docutils literal notranslate"><span class="pre">type</span></code> field to select the appropriate class:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Class</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>text</p></td>
+<td><p>TextStim</p></td>
+<td><p>Single-line text</p></td>
+</tr>
+<tr class="row-odd"><td><p>textbox</p></td>
+<td><p>TextBox2</p></td>
+<td><p>Multi-line, wrapped text box</p></td>
+</tr>
+<tr class="row-even"><td><p>circle</p></td>
+<td><p>Circle</p></td>
+<td><p>Filled or outlined circle</p></td>
+</tr>
+<tr class="row-odd"><td><p>rect</p></td>
+<td><p>Rect</p></td>
+<td><p>Rectangle</p></td>
+</tr>
+<tr class="row-even"><td><p>polygon</p></td>
+<td><p>Polygon</p></td>
+<td><p>Arbitrary polygon defined by vertices</p></td>
+</tr>
+<tr class="row-odd"><td><p>image</p></td>
+<td><p>ImageStim</p></td>
+<td><p>Static bitmap image</p></td>
+</tr>
+<tr class="row-even"><td><p>shape</p></td>
+<td><p>ShapeStim</p></td>
+<td><p>Custom shapes via vertex lists</p></td>
+</tr>
+<tr class="row-odd"><td><p>movie</p></td>
+<td><p>MovieStim</p></td>
+<td><p>Video playback</p></td>
+</tr>
+<tr class="row-even"><td><p>sound</p></td>
+<td><p>Sound</p></td>
+<td><p>Audio playback using PsychoPy Sound</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A good place to learn about stimulus parameters is the PsychoPy Visual API page (https://www.psychopy.org/api/visual/). We will add support for additional stimulus types as we encounter them during the development of new tasks.</p>
+</div>
+<section id="parameter-validation">
+<h4>Parameter Validation<a class="headerlink" href="#parameter-validation" title="Link to this heading">¶</a></h4>
+<p>When loading definitions via <code class="docutils literal notranslate"><span class="pre">add_from_dict</span></code>, you can validate specs against the constructor signatures:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Validate without raising errors (prints warnings)</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">validate_dict</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-<span class="c1"># Add to stimulus bank</span>
+<span class="c1"># Validate and raise on any issue</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">validate_dict</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This checks for:</p>
+<ul class="simple">
+<li><p><strong>Missing required arguments</strong> (parameters with no default)</p></li>
+<li><p><strong>Unknown arguments</strong> (typos or unsupported fields)</p></li>
+</ul>
+</section>
+<section id="inspecting-available-parameters">
+<h4>Inspecting Available Parameters<a class="headerlink" href="#inspecting-available-parameters" title="Link to this heading">¶</a></h4>
+<p>To see exactly which keyword arguments each stimulus class accepts (and their defaults), use:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_bank</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Example output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Description</span> <span class="n">of</span> <span class="s1">&#39;fixation&#39;</span> <span class="p">(</span><span class="n">TextStim</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">text</span><span class="p">:</span> <span class="n">required</span>
+  <span class="o">-</span> <span class="n">pos</span><span class="p">:</span> <span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">color</span><span class="p">:</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;white&#39;</span>
+  <span class="o">-</span> <span class="n">height</span><span class="p">:</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span>
+  <span class="o">-</span> <span class="n">bold</span><span class="p">:</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+  <span class="o">...</span>
+</pre></div>
+</div>
+<p>This built‑in helper lets you discover all supported parameters and their default values when writing dict/YAML specs or calling <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code>.</p>
+</section>
+</section>
+<section id="registering-stimuli">
+<h3>3. Registering Stimuli<a class="headerlink" href="#registering-stimuli" title="Link to this heading">¶</a></h3>
+<section id="method-1-using-decorators">
+<h4>Method 1: Using Decorators<a class="headerlink" href="#method-1-using-decorators" title="Link to this heading">¶</a></h4>
+<p>Programmatic registration via a factory function decorator:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.visual</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextStim</span><span class="p">,</span> <span class="n">Circle</span>
+
+<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_fixation</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_target</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">lineWidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also build compound stimuli by assembling child elements and overriding methods.</p>
+</section>
+<section id="method-2-using-dictionaries-yaml-or-load-config">
+<h4>Method 2: Using Dictionaries, YAML, or <code class="docutils literal notranslate"><span class="pre">load_config</span></code><a class="headerlink" href="#method-2-using-dictionaries-yaml-or-load-config" title="Link to this heading">¶</a></h4>
+<p>You have two main options for declarative stimulus definitions:</p>
+<p><strong>1. Manual dict/YAML loading</strong></p>
+<p>Use Python’s <code class="docutils literal notranslate"><span class="pre">yaml</span></code> library or plain dicts:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="c1"># a) Load YAML file</span>
+<span class="n">yaml_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">))</span>
+<span class="c1"># b) Extract nested &#39;stimuli&#39; section if present</span>
+<span class="n">stim_config</span> <span class="o">=</span> <span class="n">yaml_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stimuli&#39;</span><span class="p">,</span> <span class="n">yaml_config</span><span class="p">)</span>
+<span class="c1"># c) Register definitions</span>
 <span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">(</span><span class="n">stim_config</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Loading from YAML file:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-
-<span class="c1"># Load from YAML file</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;stimuli.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">yaml_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">(</span><span class="n">yaml_config</span><span class="p">)</span>
+<p>Or define directly using dict in code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;instructions&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Press SPACE to begin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
+        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;left_target&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;circle&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">}</span>
+<span class="p">}</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">(</span><span class="n">stim_config</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Example YAML file (<code class="docutils literal notranslate"><span class="pre">stimuli.yaml</span></code>):</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">fixation</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
-<span class="w">  </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">+</span>
-<span class="w">  </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
-<span class="w">  </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+<p><strong>2. Using the built‑in <strong><code class="docutils literal notranslate"><span class="pre">load_config</span></code></strong> helper</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> normally contains multiple sections (e.g., <code class="docutils literal notranslate"><span class="pre">settings</span></code>, <code class="docutils literal notranslate"><span class="pre">triggers</span></code>, <code class="docutils literal notranslate"><span class="pre">stimuli</span></code>), <code class="docutils literal notranslate"><span class="pre">load_config()</span></code> automatically reads <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> and returns a dict with a key <code class="docutils literal notranslate"><span class="pre">stim_config</span></code> holding only the relevant stimulus definitions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
+<span class="c1"># Load all config sections</span>
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
+<span class="c1"># Extract only stimulus definitions</span>
+<span class="n">stim_config</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;stim_config&#39;</span><span class="p">]</span>
 
-<span class="nt">target</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">circle</span>
-<span class="w">  </span><span class="nt">radius</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
-<span class="w">  </span><span class="nt">fillColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">red</span>
-<span class="w">  </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
-
-<span class="nt">feedback</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
-<span class="w">  </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Correct:</span><span class="nv"> </span><span class="s">{score}</span><span class="nv"> </span><span class="s">points&quot;</span>
-<span class="w">  </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
-<span class="w">  </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">green</span>
-<span class="w">  </span><span class="nt">pos</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-2</span><span class="p p-Indicator">]</span>
+<span class="c1"># Initialize bank with preloaded definitions and chain further setup\ nstim_bank = (</span>
+    <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">stim_config</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">convert_to_voice</span><span class="p">(</span><span class="s1">&#39;instruction_text&#39;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
 </section>
-<section id="converting-text-stimuli-to-voice">
-<h3>Converting Text Stimuli to Voice<a class="headerlink" href="#converting-text-stimuli-to-voice" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> can transform text-based stimuli into spoken audio using the
-<code class="docutils literal notranslate"><span class="pre">edge-tts</span></code> package. Two helper methods handle the heavy lifting for you:</p>
-<ul class="simple">
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">convert_to_voice()</span></code></strong> – Take one or more already registered text stimuli and
-generate an MP3 file for each. The sounds are stored in an <code class="docutils literal notranslate"><span class="pre">assets/</span></code> folder and
-new <code class="docutils literal notranslate"><span class="pre">Sound</span></code> stimuli with the suffix <code class="docutils literal notranslate"><span class="pre">_voice</span></code> are automatically registered.</p></li>
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">add_voice()</span></code></strong> – Synthesize arbitrary text and register it immediately as a
-new voice stimulus.</p></li>
-</ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convert existing text stimuli to speech</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">convert_to_voice</span><span class="p">([</span><span class="s2">&quot;instructions&quot;</span><span class="p">,</span> <span class="s2">&quot;feedback&quot;</span><span class="p">],</span> <span class="n">voice</span><span class="o">=</span><span class="s2">&quot;en-US-AriaNeural&quot;</span><span class="p">)</span>
-
-<span class="c1"># Create a brand new voice stimulus</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_voice</span><span class="p">(</span>
-    <span class="s2">&quot;welcome_voice&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Welcome to the experiment. Press space to start.&quot;</span><span class="p">,</span>
-    <span class="n">voice</span><span class="o">=</span><span class="s2">&quot;en-US-AriaNeural&quot;</span><span class="p">,</span>
-<span class="p">)</span>
+<section id="retrieving-and-previewing-stimuli">
+<h3>4. Retrieving and Previewing Stimuli<a class="headerlink" href="#retrieving-and-previewing-stimuli" title="Link to this heading">¶</a></h3>
+<p>Once stimuli are registered, you can fetch and inspect them on demand.</p>
+<p><strong>Single retrieval</strong>: Fetch a single stimulus by name (instantiates on first use).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fixation</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Selective retrieval</strong>: Get a specific subset by listing names.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">choices</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get_selected</span><span class="p">([</span><span class="s2">&quot;left_target&quot;</span><span class="p">,</span> <span class="s2">&quot;right_target&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>Grouped retrieval</strong>: Fetch all stimuli whose keys share a common prefix.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cues</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="s2">&quot;cue_&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All retrieval methods cache instances after creation, so repeated calls are fast.</p>
+<section id="previewing-stimuli">
+<h4>Previewing stimuli<a class="headerlink" href="#previewing-stimuli" title="Link to this heading">¶</a></h4>
+<p>Before embedding stimuli into trial code, it is often useful to preview their appearance or audio to verify positions, colors, sizes, or playback behavior:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_all</span><span class="p">()</span>                    <span class="c1"># display or play every registered stimulus</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_selected</span><span class="p">([</span><span class="s2">&quot;fixation&quot;</span><span class="p">])</span>   <span class="c1"># only the specified stimuli</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_group</span><span class="p">(</span><span class="s2">&quot;feedback_&quot;</span><span class="p">)</span>       <span class="c1"># all stimuli with the &quot;feedback_&quot; prefix</span>
 </pre></div>
 </div>
 </section>
-<section id="retrieving-stimuli">
-<h3>3. Retrieving Stimuli<a class="headerlink" href="#retrieving-stimuli" title="Link to this heading">¶</a></h3>
-<section id="getting-individual-stimuli">
-<h4>Getting Individual Stimuli<a class="headerlink" href="#getting-individual-stimuli" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a single stimulus (instantiated lazily)</span>
-<span class="n">fixation</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
-<span class="n">fixation</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-<span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-
-<span class="c1"># Check if a stimulus exists</span>
-<span class="k">if</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">has</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
-    <span class="n">target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>
-    <span class="n">target</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<section id="listing-and-describing-stimuli">
+<h4>Listing and describing stimuli<a class="headerlink" href="#listing-and-describing-stimuli" title="Link to this heading">¶</a></h4>
+<p><strong>List all keys</strong>: See which stimuli are registered.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
 </pre></div>
 </div>
-</section>
-<section id="getting-multiple-stimuli">
-<h4>Getting Multiple Stimuli<a class="headerlink" href="#getting-multiple-stimuli" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get specific stimuli by name</span>
-<span class="n">selected_stimuli</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get_selected</span><span class="p">([</span><span class="s2">&quot;fixation&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="s2">&quot;feedback&quot;</span><span class="p">])</span>
-<span class="k">for</span> <span class="n">stim</span> <span class="ow">in</span> <span class="n">selected_stimuli</span><span class="p">:</span>
-    <span class="n">stim</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-
-<span class="c1"># Get all stimuli with a common prefix</span>
-<span class="n">cue_stimuli</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="s2">&quot;cue_&quot;</span><span class="p">)</span>
-<span class="c1"># Returns all stimuli with keys like &quot;cue_left&quot;, &quot;cue_right&quot;, etc.</span>
-
-<span class="c1"># Get all available stimulus keys</span>
-<span class="n">all_keys</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Available stimuli: </span><span class="si">{</span><span class="n">all_keys</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<p><strong>Check existence</strong>: Test whether a name is registered.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">has</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
+    <span class="c1"># proceed</span>
+</pre></div>
+</div>
+<p><strong>Describe parameters</strong>: Inspect constructor arguments and default values for any stimulus.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_bank</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
+<span class="c1"># prints each keyword arg, its default (or &quot;required&quot; if none)</span>
 </pre></div>
 </div>
 </section>
 </section>
 <section id="dynamic-text-formatting">
-<h3>4. Dynamic Text Formatting<a class="headerlink" href="#dynamic-text-formatting" title="Link to this heading">¶</a></h3>
-<p>For <code class="docutils literal notranslate"><span class="pre">TextStim</span></code> objects, you can use Python’s string formatting syntax in the text and then insert values at runtime:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define a text stimulus with placeholders</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">({</span>
-    <span class="s2">&quot;score_message&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Score: </span><span class="si">{points}</span><span class="s2"> points</span><span class="se">\n</span><span class="s2">Accuracy: </span><span class="si">{accuracy}</span><span class="s2">%&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
-        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;welcome&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Welcome, </span><span class="si">{participant_name}</span><span class="s2">!&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;yellow&quot;</span>
-    <span class="p">}</span>
-<span class="p">})</span>
-
-<span class="c1"># Format with values at runtime</span>
-<span class="n">score_text</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get_and_format</span><span class="p">(</span><span class="s2">&quot;score_message&quot;</span><span class="p">,</span> 
-                                    <span class="n">points</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> 
-                                    <span class="n">accuracy</span><span class="o">=</span><span class="mf">87.5</span><span class="p">)</span>
-<span class="n">score_text</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-
-<span class="c1"># Format with participant name</span>
-<span class="n">welcome_text</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get_and_format</span><span class="p">(</span><span class="s2">&quot;welcome&quot;</span><span class="p">,</span> 
-                                      <span class="n">participant_name</span><span class="o">=</span><span class="s2">&quot;Alex&quot;</span><span class="p">)</span>
-<span class="n">welcome_text</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+<h3>5. Dynamic Text Formatting<a class="headerlink" href="#dynamic-text-formatting" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code> supports only <code class="docutils literal notranslate"><span class="pre">TextStim</span></code> and <code class="docutils literal notranslate"><span class="pre">TextBox2</span></code> stimuli. It returns a fresh instance with the same properties except for the formatted <code class="docutils literal notranslate"><span class="pre">text</span></code> field. Applying it to other stimulus types will raise a <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>.</p>
+<p>You just need to define text with Python-style placeholders in your configuration (dict or YAML) and inject runtime values.</p>
+<p>For example, when you need to display a summary screen after each block, with dynamic values and a user prompt. Here’s how to configure and render a multi-line break message.</p>
+<p>You can define the <code class="docutils literal notranslate"><span class="pre">block_break</span></code> stimulus either in a YAML file or directly in Python as a dict:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config.yaml</span>
+<span class="nt">stimuli</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">block_break</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">{block_num}/{total_blocks} Done</span>
+<span class="w">      </span><span class="no">Score: {score}</span>
+<span class="w">      </span><span class="no">Press Enter to proceed</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+<span class="w">    </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.78</span>
 </pre></div>
 </div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># In code, using a dict</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">({</span>
+    <span class="s2">&quot;block_break&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">{block_num}</span><span class="s2">/</span><span class="si">{total_blocks}</span><span class="s2"> Done</span>
+<span class="s2">&quot;</span>
+            <span class="s2">&quot;Score: </span><span class="si">{score}</span>
+<span class="s2">&quot;</span>
+            <span class="s2">&quot;Press Enter to proceed&quot;</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mf">0.78</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p><strong>Runtime example</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># At end of block:</span>
+<span class="n">block_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span>
+<span class="n">score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cue_delta&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">block_trials</span><span class="p">)</span>
+
+<span class="c1"># Format and display break screen</span>
+<span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;block&#39;</span><span class="p">,</span><span class="n">win</span><span class="p">,</span><span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get_and_format</span><span class="p">(</span><span class="s1">&#39;block_break&#39;</span><span class="p">,</span> 
+                                                                <span class="n">block_num</span><span class="o">=</span><span class="n">block_i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> 
+                                                                <span class="n">total_blocks</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">,</span>
+                                                                <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">))</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In this pattern, placeholders <code class="docutils literal notranslate"><span class="pre">{block_num}</span></code>, <code class="docutils literal notranslate"><span class="pre">{total_blocks}</span></code>, and <code class="docutils literal notranslate"><span class="pre">{score}</span></code> are replaced at runtime, and the resulting <code class="docutils literal notranslate"><span class="pre">TextStim</span></code> is passed to a <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> for display and input handling.</p>
+<p>Note: <code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code> works by manually reconstructing a new text stimulus rather than attempting a deep copy of the original. Internally, it inspects the constructor signature of TextStim or TextBox2, pulls out all of the original instance’s stored keyword arguments (from its <strong>dict</strong>), replaces the text field with your formatted string, and then calls the class constructor with that argument set. This approach avoids mutating the version cached in StimBank, but because PsychoPy objects don’t support true deep copying, some complex properties—especially in TextBox2 (e.g. wrapping behavior or anchor points)—may not carry over exactly as in the original. If you hit unexpected layout or formatting issues using <code class="docutils literal notranslate"><span class="pre">TextBox2</span></code>, consider using <code class="docutils literal notranslate"><span class="pre">TextStim</span></code>type or <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code> with a new <code class="docutils literal notranslate"><span class="pre">text</span></code> override instead.</p>
 </section>
 <section id="rebuilding-and-modifying-stimuli">
-<h3>5. Rebuilding and Modifying Stimuli<a class="headerlink" href="#rebuilding-and-modifying-stimuli" title="Link to this heading">¶</a></h3>
-<p>You can modify stimulus properties on-the-fly:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Rebuild a stimulus with new properties</span>
+<h3>6. Rebuilding and Modifying Stimuli<a class="headerlink" href="#rebuilding-and-modifying-stimuli" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">StimBank.rebuild()</span></code> lets you override stimulus parameters on-the-fly without mutating the original definition. Pass keyword arguments matching the stimulus constructor to create a fresh instance. Use <code class="docutils literal notranslate"><span class="pre">update_cache=True</span></code> if you want to overwrite the cached version.</p>
+<p><strong>Basic example</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a blue variant of &quot;target&quot; without altering original</span>
 <span class="n">blue_target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
-<span class="n">blue_target</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-
-<span class="c1"># The original definition remains unchanged</span>
-<span class="n">original_target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>  <span class="c1"># Still red with radius=0.5</span>
+<span class="c1"># Original remains unchanged</span>
+<span class="n">red_target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>  <span class="c1"># still red, radius=0.5</span>
 </pre></div>
 </div>
-<p>This is particularly useful for condition-dependent stimuli:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;reward&quot;</span><span class="p">:</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;gold&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># &quot;neutral&quot; condition</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span>
-    
-    <span class="c1"># Run trial with the modified target</span>
-    <span class="c1"># ...</span>
+<p>Below is a realistic example from a probabilistic reversal learning (PRL) task showing how and when stimuli are rebuilt within a <code class="docutils literal notranslate"><span class="pre">run_trial</span></code> function. In each trial, the two choice stimuli swap positions depending on the <code class="docutils literal notranslate"><span class="pre">condition</span></code> and participant history:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">,</span> <span class="n">controller</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Single PRL trial sequence:</span>
+<span class="sd">      1. fixation</span>
+<span class="sd">      2. cue display + response collection</span>
+<span class="sd">      3. stochastic feedback</span>
+<span class="sd">      4. inter-trial interval</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">trial_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="n">condition</span><span class="p">}</span>
+    <span class="n">make_unit</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">StimUnit</span><span class="p">,</span> <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span>
+    <span class="n">marker_pad</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">reversal_count</span> <span class="o">*</span> <span class="mi">10</span>
+
+    <span class="c1"># 1) Fixation</span>
+    <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">fixation_duration</span><span class="p">,</span>
+              <span class="n">onset_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation_onset&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">marker_pad</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+
+    <span class="c1"># 2) Cue + response collection</span>
+    <span class="c1"># Rebuild left/right stimuli positions based on condition</span>
+    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;AB&quot;</span><span class="p">:</span>
+        <span class="n">stima</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;stima&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">stimb</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;stimb&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># &quot;BA&quot;</span>
+        <span class="n">stimb</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;stimb&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">stima</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;stima&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="c1"># Determine correct response key</span>
+    <span class="n">correct_label</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">current_correct</span>
+    <span class="n">correct_side</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span> <span class="k">if</span> <span class="n">correct_label</span> <span class="o">==</span> <span class="s2">&quot;stima&quot;</span> <span class="k">else</span> <span class="s2">&quot;right&quot;</span>
+    <span class="n">correct_key</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">left_key</span> <span class="k">if</span> <span class="n">correct_side</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span> <span class="k">else</span> <span class="n">settings</span><span class="o">.</span><span class="n">right_key</span>
+
+    <span class="c1"># Build and show cue unit</span>
+    <span class="n">cue_unit</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;cue&quot;</span><span class="p">)</span>
+    <span class="n">cue_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stima</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stimb</span><span class="p">)</span>
+    <span class="n">cue_unit</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
+        <span class="n">key_list</span><span class="o">=</span><span class="p">[</span><span class="n">settings</span><span class="o">.</span><span class="n">left_key</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">right_key</span><span class="p">],</span>
+        <span class="n">correct_key</span><span class="o">=</span><span class="n">correct_key</span><span class="p">,</span>
+        <span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">cue_duration</span><span class="p">,</span>
+        <span class="n">onset_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cue_onset&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">marker_pad</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+
+    <span class="c1"># 3) Feedback and ITI omitted for brevity...</span>
+
+    <span class="k">return</span> <span class="n">trial_data</span>
 </pre></div>
 </div>
-</section>
-<section id="previewing-stimuli">
-<h3>6. Previewing Stimuli<a class="headerlink" href="#previewing-stimuli" title="Link to this heading">¶</a></h3>
-<p>During development, you can preview all stimuli to ensure they appear as expected:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Preview all stimuli (one at a time with key press to advance)</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_all</span><span class="p">()</span>
-
-<span class="c1"># Preview specific stimuli</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_selected</span><span class="p">([</span><span class="s2">&quot;fixation&quot;</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">])</span>
-
-<span class="c1"># Preview stimuli with a common prefix</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_group</span><span class="p">(</span><span class="s2">&quot;feedback_&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="exporting-configurations">
-<h3>7. Exporting Configurations<a class="headerlink" href="#exporting-configurations" title="Link to this heading">¶</a></h3>
-<p>You can export stimulus definitions to YAML for reuse or documentation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Export all stimuli to YAML</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">export_to_yaml</span><span class="p">(</span><span class="s2">&quot;exported_stimuli.yaml&quot;</span><span class="p">)</span>
-
-<span class="c1"># Export selected stimuli</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">export_to_yaml</span><span class="p">(</span><span class="s2">&quot;targets.yaml&quot;</span><span class="p">,</span> 
-                        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left_target&quot;</span><span class="p">,</span> <span class="s2">&quot;right_target&quot;</span><span class="p">])</span>
-</pre></div>
-</div>
-</section>
-<section id="advanced-sound-stimuli">
-<h3>8. Advanced: Sound Stimuli<a class="headerlink" href="#advanced-sound-stimuli" title="Link to this heading">¶</a></h3>
-<p>In addition to visual stimuli, <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> can also manage sound stimuli:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.sound</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sound</span>
-
-<span class="c1"># Using decorator</span>
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;beep&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">make_beep</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Sound</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">secs</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># 1000 Hz tone for 0.5 seconds</span>
-
-<span class="c1"># Using dictionary</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">({</span>
-    <span class="s2">&quot;correct_sound&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;sound&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;sounds/correct.wav&quot;</span>
-    <span class="p">},</span>
-    <span class="s2">&quot;error_sound&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;sound&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="s2">&quot;sounds/error.wav&quot;</span>
-    <span class="p">}</span>
-<span class="p">})</span>
-
-<span class="c1"># Play a sound</span>
-<span class="n">beep</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;beep&quot;</span><span class="p">)</span>
-<span class="n">beep</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-<section id="advanced-text-to-speech">
-<h3>9. Advanced: Text-to-Speech<a class="headerlink" href="#advanced-text-to-speech" title="Link to this heading">¶</a></h3>
-<p>Psyflow includes experimental support for text-to-speech using Microsoft Edge TTS:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define a TTS stimulus</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">({</span>
-    <span class="s2">&quot;instructions_tts&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;tts&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Welcome to the experiment. Press space to begin.&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;voice&quot;</span><span class="p">:</span> <span class="s2">&quot;en-US-AriaNeural&quot;</span><span class="p">,</span>  <span class="c1"># Microsoft Edge TTS voice</span>
-        <span class="s2">&quot;rate&quot;</span><span class="p">:</span> <span class="s2">&quot;+0%&quot;</span><span class="p">,</span>               <span class="c1"># Speed adjustment</span>
-        <span class="s2">&quot;volume&quot;</span><span class="p">:</span> <span class="s2">&quot;+0%&quot;</span>              <span class="c1"># Volume adjustment</span>
-    <span class="p">}</span>
-<span class="p">})</span>
-
-<span class="c1"># Get and play TTS</span>
-<span class="n">tts</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;instructions_tts&quot;</span><span class="p">)</span>
-<span class="n">tts</span><span class="o">.</span><span class="n">play</span><span class="p">()</span>
-</pre></div>
+<p>In this example, using <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code> lets you start from a single base definition and adjust only the parameters that need to change—such as swapping left/right positions—without creating entirely new stimulus entries. By passing constructor overrides (for example, <code class="docutils literal notranslate"><span class="pre">pos</span></code>, <code class="docutils literal notranslate"><span class="pre">fillColor</span></code>, <code class="docutils literal notranslate"><span class="pre">size</span></code>, or <code class="docutils literal notranslate"><span class="pre">opacity</span></code>), you retain full runtime flexibility to customize stimuli based on the current condition or participant data. Because <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code> doesn’t overwrite the cached instance by default, the original definition remains untouched; if you do want to persist your changes across subsequent trials, simply include <code class="docutils literal notranslate"><span class="pre">update_cache=True</span></code>. This pattern keeps your stimulus bank compact and avoids proliferating nearly identical definitions for every possible variant.</p>
+<section id="get-and-format-vs-rebuild">
+<h4><code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code> vs <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code><a class="headerlink" href="#get-and-format-vs-rebuild" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">rebuild()</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Purpose</strong></p></td>
+<td><p>Update only the <strong>text</strong> content</p></td>
+<td><p>Create a new instance with any overridden properties</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Supported Stimuli</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TextStim</span></code>, <code class="docutils literal notranslate"><span class="pre">TextBox2</span></code> only</p></td>
+<td><p>All stimulus types via registered factory</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Modifiable Props</strong></p></td>
+<td><p>Text content only</p></td>
+<td><p>Any constructor argument (<code class="docutils literal notranslate"><span class="pre">pos</span></code>, <code class="docutils literal notranslate"><span class="pre">fillColor</span></code>, <code class="docutils literal notranslate"><span class="pre">size</span></code>, etc.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Mechanism</strong></p></td>
+<td><p>Copies stored kwargs from original, replaces <code class="docutils literal notranslate"><span class="pre">text</span></code>, then calls constructor</p></td>
+<td><p>Calls registered factory with base kwargs + overrides</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Cache Behavior</strong></p></td>
+<td><p>Never overwrites the cache</p></td>
+<td><p>Does <strong>not</strong> overwrite by default; use <code class="docutils literal notranslate"><span class="pre">update_cache=True</span></code> to replace</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Best For</strong></p></td>
+<td><p>Simple label or score updates where visual layout stays constant</p></td>
+<td><p>Complex or multi-property overrides; when TextBox2 formatting is unreliable</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Limitations</strong></p></td>
+<td><p>Cannot change non-text properties; deep-copy issues with wrapping/anchoring</p></td>
+<td><p>Requires valid factory definition; always instantiates a fresh object</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 </section>
-<section id="complete-example">
-<h2>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading">¶</a></h2>
-<p>Here’s a complete example showing how to use <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> in an experiment:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span><span class="p">,</span> <span class="n">core</span><span class="p">,</span> <span class="n">event</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.hardware.keyboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Keyboard</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimBank</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-
-<span class="c1"># Create window and keyboard</span>
-<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
-<span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
-
-<span class="c1"># Initialize stimulus bank</span>
-<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
-
-<span class="c1"># Load stimuli from YAML</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;experiment_stimuli.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">stim_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">(</span><span class="n">stim_config</span><span class="p">)</span>
-
-<span class="c1"># Add programmatic stimuli</span>
-<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">make_fixation</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
-
-<span class="c1"># Run a simple trial</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">participant_name</span><span class="p">):</span>
-    <span class="c1"># Show welcome with participant name</span>
-    <span class="n">welcome</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get_and_format</span><span class="p">(</span><span class="s2">&quot;welcome&quot;</span><span class="p">,</span> <span class="n">participant_name</span><span class="o">=</span><span class="n">participant_name</span><span class="p">)</span>
-    <span class="n">welcome</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-    <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
-    
-    <span class="c1"># Show fixation</span>
-    <span class="n">fixation</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
-    <span class="n">fixation</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-    <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-    
-    <span class="c1"># Show condition-specific target</span>
-    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;reward&quot;</span><span class="p">:</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;gold&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;silver&quot;</span><span class="p">)</span>
-    
-    <span class="n">target</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-    <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-    
-    <span class="c1"># Wait for response</span>
-    <span class="n">keys</span> <span class="o">=</span> <span class="n">kb</span><span class="o">.</span><span class="n">waitKeys</span><span class="p">(</span><span class="n">keyList</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">])</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="k">if</span> <span class="n">keys</span> <span class="k">else</span> <span class="kc">None</span>
-    <span class="n">rt</span> <span class="o">=</span> <span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">rt</span> <span class="k">if</span> <span class="n">keys</span> <span class="k">else</span> <span class="kc">None</span>
-    
-    <span class="c1"># Show feedback</span>
-    <span class="k">if</span> <span class="n">response</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
-        <span class="n">feedback</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get_and_format</span><span class="p">(</span><span class="s2">&quot;feedback&quot;</span><span class="p">,</span> 
-                                          <span class="n">correct</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-                                          <span class="n">points</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">feedback</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get_and_format</span><span class="p">(</span><span class="s2">&quot;feedback&quot;</span><span class="p">,</span> 
-                                          <span class="n">correct</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> 
-                                          <span class="n">points</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-    
-    <span class="n">feedback</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
-    <span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
-    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-    
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="n">condition</span><span class="p">,</span> <span class="s2">&quot;response&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">:</span> <span class="n">rt</span><span class="p">}</span>
-
-<span class="c1"># Run experiment</span>
-<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;neutral&quot;</span><span class="p">,</span> <span class="s2">&quot;reward&quot;</span><span class="p">,</span> <span class="s2">&quot;neutral&quot;</span><span class="p">,</span> <span class="s2">&quot;reward&quot;</span><span class="p">]:</span>
-    <span class="n">trial_result</span> <span class="o">=</span> <span class="n">run_trial</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="s2">&quot;Participant&quot;</span><span class="p">)</span>
-    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trial_result</span><span class="p">)</span>
-
-<span class="c1"># Clean up</span>
-<span class="n">win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<section id="text-to-voice-conversion">
+<h3>7. Text-to-Voice Conversion<a class="headerlink" href="#text-to-voice-conversion" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> supports <strong>text-to-speech (TTS)</strong> conversion to enhance accessibility and standardize instruction delivery across different languages.</p>
+<p><strong>Why it matters</strong>: Using text-to-speech improves accessibility—especially for children, elderly participants, or those with low literacy. It ensures consistent voice delivery across different language versions and eliminates the need to record human voiceovers for each translation. By using standardized synthetic voices, you reduce variability introduced by different experimenters, maintaining consistency across sessions and sites.</p>
+<p><strong>How it works</strong>: <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> uses Microsoft’s <code class="docutils literal notranslate"><span class="pre">edge-tts</span></code>, a cloud-based TTS API that converts text to MP3 audio. Generated files are saved under the <code class="docutils literal notranslate"><span class="pre">assets/</span></code> folder and skipped if they already exist (unless <code class="docutils literal notranslate"><span class="pre">overwrite=True</span></code>), then automatically registered as new <code class="docutils literal notranslate"><span class="pre">Sound</span></code> stimuli.</p>
+<div class="highlight-note notranslate"><div class="highlight"><pre><span></span>An internet connection is required for TTS generation. Offline tools exist but generally produce lower-quality audio.
 </pre></div>
 </div>
-<p>Example YAML file (<code class="docutils literal notranslate"><span class="pre">experiment_stimuli.yaml</span></code>):</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">welcome</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
-<span class="w">  </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Welcome,</span><span class="nv"> </span><span class="s">{participant_name}!&quot;</span>
-<span class="w">  </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
-<span class="w">  </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;yellow&quot;</span>
-<span class="w">  </span><span class="nt">pos</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">]</span>
-
-<span class="nt">target</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">circle</span>
-<span class="w">  </span><span class="nt">radius</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
-<span class="w">  </span><span class="nt">fillColor</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;red&quot;</span>
-<span class="w">  </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;white&quot;</span>
-<span class="w">  </span><span class="nt">lineWidth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
-<span class="w">  </span><span class="nt">pos</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0</span><span class="p p-Indicator">]</span>
-
-<span class="nt">feedback</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
-<span class="w">  </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{correct|Correct!|Incorrect!}</span><span class="nv"> </span><span class="s">You</span><span class="nv"> </span><span class="s">earned</span><span class="nv"> </span><span class="s">{points}</span><span class="nv"> </span><span class="s">points.&quot;</span>
-<span class="w">  </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
-<span class="w">  </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;white&quot;</span>
-<span class="w">  </span><span class="nt">pos</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-2</span><span class="p p-Indicator">]</span>
+<section id="convert-existing-text-stimuli-to-voice">
+<h4>Convert Existing Text Stimuli to Voice<a class="headerlink" href="#convert-existing-text-stimuli-to-voice" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span> <span class="o">=</span> <span class="n">initialize_exp</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+<span class="n">Setup</span> <span class="n">stimulus</span> <span class="n">bank</span>
+<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;stim_config&#39;</span><span class="p">])</span>\
+    <span class="o">.</span><span class="n">convert_to_voice</span><span class="p">(</span><span class="s1">&#39;instruction_text&#39;</span><span class="p">)</span>\
+    <span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>This creates <code class="docutils literal notranslate"><span class="pre">instruction_text_voice.mp3</span></code> and <code class="docutils literal notranslate"><span class="pre">good_bye_voice.mp3</span></code> in <code class="docutils literal notranslate"><span class="pre">assets/</span></code>, and registers stimuli named <code class="docutils literal notranslate"><span class="pre">instruction_text_voice</span></code> and <code class="docutils literal notranslate"><span class="pre">good_bye_voice</span></code>.</p>
+<p>If you plan to regenerate voices, delete previously generated files in <code class="docutils literal notranslate"><span class="pre">assets/</span></code> first. Choose a TTS voice matching the text language to ensure natural pronunciation. The default is <code class="docutils literal notranslate"><span class="pre">zh-CN-XiaoxiaoNeural</span></code>.</p>
 </section>
-<section id="best-practices">
-<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Organize by function</strong>: Group related stimuli with common prefixes (e.g., <code class="docutils literal notranslate"><span class="pre">cue_left</span></code>, <code class="docutils literal notranslate"><span class="pre">cue_right</span></code>).</p></li>
-<li><p><strong>Separate content from presentation</strong>: Use configuration files for content that might change (text, images) and code for complex presentation logic.</p></li>
-<li><p><strong>Preload when needed</strong>: Call <code class="docutils literal notranslate"><span class="pre">stim_bank.preload_all()</span></code> before the experiment starts if you want to front-load initialization time.</p></li>
-<li><p><strong>Use rebuilding sparingly</strong>: While convenient, rebuilding stimuli frequently can impact performance. For stimuli that change on every trial, consider registering separate versions.</p></li>
-<li><p><strong>Document your stimuli</strong>: Include comments in your YAML files or code to explain the purpose of each stimulus.</p></li>
-</ol>
+<section id="add-voice-from-custom-text">
+<h4>Add Voice from Custom Text<a class="headerlink" href="#add-voice-from-custom-text" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_bank</span><span class="o">.</span><span class="n">add_voice</span><span class="p">(</span>
+    <span class="n">stim_label</span><span class="o">=</span><span class="s2">&quot;welcome_voice&quot;</span><span class="p">,</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;ようこそ。タスクを開始します。&quot;</span><span class="p">,</span>
+    <span class="n">voice</span><span class="o">=</span><span class="s2">&quot;ja-JP-NanamiNeural&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Registers <code class="docutils literal notranslate"><span class="pre">welcome_voice</span></code> and saves <code class="docutils literal notranslate"><span class="pre">assets/welcome_voice.mp3</span></code> for playback.</p>
 </section>
-<section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<section id="voice-selection">
+<h4>Voice Selection<a class="headerlink" href="#voice-selection" title="Link to this heading">¶</a></h4>
+<p>Use the helper to list supported voices:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.tts_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_supported_voices</span>
+
+<span class="c1"># All voices</span>
+<span class="n">tsv</span> <span class="o">=</span> <span class="n">list_supported_voices</span><span class="p">(</span><span class="n">human_readable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># Filter by language code</span>
+<span class="n">ts_jp</span> <span class="o">=</span> <span class="n">list_supported_voices</span><span class="p">(</span><span class="n">filter_lang</span><span class="o">=</span><span class="s2">&quot;ja&quot;</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Sample output:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>ShortName</p></th>
+<th class="head"><p>Locale</p></th>
+<th class="head"><p>Gender</p></th>
+<th class="head"><p>Personalities</p></th>
+<th class="head"><p>FriendlyName</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>af-ZA-AdriNeural</p></td>
+<td><p>af-ZA</p></td>
+<td><p>Female</p></td>
+<td><p>Friendly, Positive</p></td>
+<td><p>Microsoft Adri Online (Natural) - Afrikaans (South Africa)</p></td>
+</tr>
+<tr class="row-odd"><td><p>af-ZA-WillemNeural</p></td>
+<td><p>af-ZA</p></td>
+<td><p>Male</p></td>
+<td><p>Friendly, Positive</p></td>
+<td><p>Microsoft Willem Online (Natural) - Afrikaans (South Africa)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Alternatively, view the full list in this <a class="reference external" href="https://gist.github.com/BettyJJ/17cbaa1de96235a7f5773b8690a20462">Gist of supported voices</a>.</p>
+</section>
+<section id="tips-and-caveats">
+<h4>Tips and Caveats<a class="headerlink" href="#tips-and-caveats" title="Link to this heading">¶</a></h4>
 <ul class="simple">
-<li><p><strong>Stimulus not appearing</strong>: Check if the stimulus is properly registered and that its properties (like position and color) are valid.</p></li>
-<li><p><strong>Format errors</strong>: Ensure that placeholders in text stimuli match the keywords provided to <code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code>.</p></li>
-<li><p><strong>Performance issues</strong>: If your experiment slows down, consider preloading stimuli and minimizing rebuilding operations.</p></li>
-<li><p><strong>YAML parsing errors</strong>: Verify your YAML syntax, especially indentation and special characters.</p></li>
+<li><p><strong>Placeholder limitation</strong>: TTS does not support dynamic placeholders (e.g., <code class="docutils literal notranslate"><span class="pre">{duration}</span></code>). Use static text only.</p></li>
+<li><p><strong>Internet connection required</strong>: Generation relies on Microsoft’s cloud service—ensure network access.</p></li>
+<li><p><strong>Overwrite</strong>: Pass <code class="docutils literal notranslate"><span class="pre">overwrite=True</span></code> to force regeneration, but use sparingly.</p></li>
+<li><p><strong>Voice–language match</strong>: Always match voice locale to text language for natural output.</p></li>
+<li><p><strong>Preview audio</strong>: Verify MP3 files in <code class="docutils literal notranslate"><span class="pre">assets/</span></code> before full experiments. If a file is empty or corrupted, delete and regenerate.</p></li>
 </ul>
+</section>
+</section>
 </section>
 <section id="next-steps">
 <h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
 <p>Now that you understand how to use <code class="docutils literal notranslate"><span class="pre">StimBank</span></code>, you can:</p>
 <ul class="simple">
-<li><p>Explore the <a class="reference internal" href="build_trialunit.html"><span class="std std-doc">StimUnit tutorial</span></a> to learn how to create trial sequences</p></li>
+<li><p>Explore the <a class="reference internal" href="build_stimunit.html"><span class="std std-doc">StimUnit tutorial</span></a> to learn how to create trial sequences</p></li>
 <li><p>Check out the <a class="reference internal" href="build_blocks.html"><span class="std std-doc">BlockUnit tutorial</span></a> to organize trials into blocks</p></li>
 <li><p>Learn about <a class="reference internal" href="send_trigger.html"><span class="std std-doc">trigger sending</span></a> for EEG/MEG experiments</p></li>
 </ul>
@@ -833,12 +834,12 @@ new voice stimulus.</p></li>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="send_trigger.html">
+          <a class="next-page" href="build_stimunit.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">TriggerSender: Precise Event Marking for EEG/MEG Experiments</div>
+                <div class="title">🎯 StimUnit: Modular Trial Controller for PsychoPy</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -849,7 +850,7 @@ new voice stimulus.</p></li>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">BlockUnit: Organizing Trials into Experimental Blocks</div>
+                <div class="title">BlockUnit: Managing Trials</div>
                 
               </div>
             </a>
@@ -883,34 +884,41 @@ new voice stimulus.</p></li>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">StimBank: Flexible Stimulus Management for PsychoPy</a><ul>
+<li><a class="reference internal" href="#">StimBank: Flexible Stimulus Management</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#key-features">Key Features</a></li>
 <li><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
 <li><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a><ul>
 <li><a class="reference internal" href="#initialization">1. Initialization</a></li>
-<li><a class="reference internal" href="#registering-stimuli">2. Registering Stimuli</a><ul>
+<li><a class="reference internal" href="#supported-stimuli">2. Supported Stimuli</a><ul>
+<li><a class="reference internal" href="#parameter-validation">Parameter Validation</a></li>
+<li><a class="reference internal" href="#inspecting-available-parameters">Inspecting Available Parameters</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#registering-stimuli">3. Registering Stimuli</a><ul>
 <li><a class="reference internal" href="#method-1-using-decorators">Method 1: Using Decorators</a></li>
-<li><a class="reference internal" href="#method-2-using-dictionaries-or-yaml">Method 2: Using Dictionaries or YAML</a></li>
+<li><a class="reference internal" href="#method-2-using-dictionaries-yaml-or-load-config">Method 2: Using Dictionaries, YAML, or <code class="docutils literal notranslate"><span class="pre">load_config</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#converting-text-stimuli-to-voice">Converting Text Stimuli to Voice</a></li>
-<li><a class="reference internal" href="#retrieving-stimuli">3. Retrieving Stimuli</a><ul>
-<li><a class="reference internal" href="#getting-individual-stimuli">Getting Individual Stimuli</a></li>
-<li><a class="reference internal" href="#getting-multiple-stimuli">Getting Multiple Stimuli</a></li>
+<li><a class="reference internal" href="#retrieving-and-previewing-stimuli">4. Retrieving and Previewing Stimuli</a><ul>
+<li><a class="reference internal" href="#previewing-stimuli">Previewing stimuli</a></li>
+<li><a class="reference internal" href="#listing-and-describing-stimuli">Listing and describing stimuli</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#dynamic-text-formatting">4. Dynamic Text Formatting</a></li>
-<li><a class="reference internal" href="#rebuilding-and-modifying-stimuli">5. Rebuilding and Modifying Stimuli</a></li>
-<li><a class="reference internal" href="#previewing-stimuli">6. Previewing Stimuli</a></li>
-<li><a class="reference internal" href="#exporting-configurations">7. Exporting Configurations</a></li>
-<li><a class="reference internal" href="#advanced-sound-stimuli">8. Advanced: Sound Stimuli</a></li>
-<li><a class="reference internal" href="#advanced-text-to-speech">9. Advanced: Text-to-Speech</a></li>
+<li><a class="reference internal" href="#dynamic-text-formatting">5. Dynamic Text Formatting</a></li>
+<li><a class="reference internal" href="#rebuilding-and-modifying-stimuli">6. Rebuilding and Modifying Stimuli</a><ul>
+<li><a class="reference internal" href="#get-and-format-vs-rebuild"><code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code> vs <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#complete-example">Complete Example</a></li>
-<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
-<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li><a class="reference internal" href="#text-to-voice-conversion">7. Text-to-Voice Conversion</a><ul>
+<li><a class="reference internal" href="#convert-existing-text-stimuli-to-voice">Convert Existing Text Stimuli to Voice</a></li>
+<li><a class="reference internal" href="#add-voice-from-custom-text">Add Voice from Custom Text</a></li>
+<li><a class="reference internal" href="#voice-selection">Voice Selection</a></li>
+<li><a class="reference internal" href="#tips-and-caveats">Tips and Caveats</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
