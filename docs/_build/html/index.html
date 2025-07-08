@@ -179,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -209,7 +209,8 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials/get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_blocks.html">BlockUnit: Managing Trials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimunit.html">🎯 StimUnit: Modular Trial Controller for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/utilities.html">Utility Helpers</a></li>
@@ -248,19 +249,35 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="welcome-to-psyflows-documentation">
-<h1>Welcome to psyflow’s documentation!<a class="headerlink" href="#welcome-to-psyflows-documentation" title="Link to this heading">¶</a></h1>
+          <section id="welcome-to-psyflow">
+<h1>Welcome to psyflow<a class="headerlink" href="#welcome-to-psyflow" title="Link to this heading">¶</a></h1>
 <p><strong>psyflow</strong> is a modular framework for building cognitive and behavioral tasks using PsychoPy and Python code.</p>
+<section id="features">
+<h2>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h2>
 <ul class="simple">
-<li><p>🚀 Easy to compose trials and blocks</p></li>
-<li><p>🧠 EEG/MEG-friendly trigger sending</p></li>
-<li><p>🎯 Perfect for cognitive experiments in research</p></li>
+<li><p>Modular classes for each experiment phase (GUI, stimuli, trials, blocks)</p></li>
+<li><p>Declarative configuration with lifecycle hooks</p></li>
+<li><p>Audio support including text-to-speech and hardware triggers</p></li>
+<li><p>LLM integration and CLI scaffolding tools</p></li>
+</ul>
+</section>
+<section id="core-components">
+<h2>Core Components<a class="headerlink" href="#core-components" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>SubInfo</strong>: GUI-based subject metadata collection with localization</p></li>
+<li><p><strong>TaskSettings</strong>: Loads <cite>config.yaml</cite>, initializes window/keyboard, manages logging</p></li>
+<li><p><strong>StimBank</strong>: Registry for stimuli (decorators or YAML), lazy loading, preview, dynamic formatting, TTS</p></li>
+<li><p><strong>StimUnit</strong>: Presents stimuli, captures responses, sends triggers, logs events</p></li>
+<li><p><strong>BlockUnit</strong>: Generates and runs trial sequences; supports pre/post hooks</p></li>
+<li><p><strong>TriggerSender</strong>: Hardware trigger output with debug and timing control</p></li>
+<li><p><strong>LLMClient</strong>: Automates config translation and README generation</p></li>
+<li><p><strong>CLI (`psyflow task`)</strong>: Scaffolds a ready-to-use task directory</p></li>
 </ul>
 <p>Start with one of the tutorials below or explore the API reference.</p>
 <div class="toctree-wrapper compound">
@@ -270,7 +287,8 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials/get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_blocks.html">BlockUnit: Managing Trials</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimunit.html">🎯 StimUnit: Modular Trial Controller for PsychoPy</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/utilities.html">Utility Helpers</a></li>
@@ -281,6 +299,7 @@
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 </ul>
+</section>
 </section>
 
         </article>
@@ -316,8 +335,28 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Welcome to psyflow</a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#core-components">Core Components</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

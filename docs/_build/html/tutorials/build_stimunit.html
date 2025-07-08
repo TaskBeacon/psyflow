@@ -1,0 +1,973 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="TriggerSender: Precise Event Marking for EEG/MEG Experiments" href="send_trigger.html" /><link rel="prev" title="StimBank: Flexible Stimulus Management" href="build_stimulus.html" />
+
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
+        <title>🎯 StimUnit: Modular Trial Controller for PsychoPy - psyflow 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">psyflow 0.1.1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/logo_white-removebg.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/logo_black-removebg.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">psyflow 0.1.1 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with psyflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🎯 StimUnit: Modular Trial Controller for PsychoPy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/tutorials/build_stimunit.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="stimunit-modular-trial-controller-for-psychopy">
+<h1>🎯 StimUnit: Modular Trial Controller for PsychoPy<a class="headerlink" href="#stimunit-modular-trial-controller-for-psychopy" title="Link to this heading">¶</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> is a powerful trial-level controller for PsychoPy experiments that encapsulates all the components of a single trial:</p>
+<ul class="simple">
+<li><p><strong>Stimulus presentation</strong>: Display multiple stimuli with precise timing</p></li>
+<li><p><strong>Response collection</strong>: Capture keyboard responses with reaction times</p></li>
+<li><p><strong>Event triggers</strong>: Send EEG/MEG trigger codes at critical moments</p></li>
+<li><p><strong>Timing control</strong>: Frame-based or time-based precision</p></li>
+<li><p><strong>State management</strong>: Track trial data in a centralized state object</p></li>
+<li><p><strong>Event hooks</strong>: Execute custom code at key trial moments</p></li>
+</ul>
+<p>With <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>, you can create complex trial structures using a clean, chainable API that makes your experiment code more readable and maintainable.</p>
+</section>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Chainable API</p></td>
+<td><p>Fluent interface for building trials with method chaining</p></td>
+</tr>
+<tr class="row-odd"><td><p>Multiple timing modes</p></td>
+<td><p>Choose between frame-based or clock-based timing</p></td>
+</tr>
+<tr class="row-even"><td><p>Event hooks</p></td>
+<td><p>Register callbacks for trial start, response, timeout, and end</p></td>
+</tr>
+<tr class="row-odd"><td><p>Flexible response handling</p></td>
+<td><p>Capture specific keys with automatic RT measurement</p></td>
+</tr>
+<tr class="row-even"><td><p>Integrated trigger sending</p></td>
+<td><p>Send EEG/MEG triggers at stimulus onset, response, and timeout</p></td>
+</tr>
+<tr class="row-odd"><td><p>State management</p></td>
+<td><p>Centralized data collection for all trial events</p></td>
+</tr>
+<tr class="row-even"><td><p>Response highlighting</p></td>
+<td><p>Automatically highlight selected responses</p></td>
+</tr>
+<tr class="row-odd"><td><p>Jittered timing</p></td>
+<td><p>Support for randomized stimulus durations</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="quick-reference">
+<h2>Quick Reference<a class="headerlink" href="#quick-reference" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Purpose</p></th>
+<th class="head"><p>Method</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Initialize</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StimUnit(label,</span> <span class="pre">win,</span> <span class="pre">kb,</span> <span class="pre">triggersender=sender)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial</span> <span class="pre">=</span> <span class="pre">StimUnit(&quot;cue&quot;,</span> <span class="pre">win,</span> <span class="pre">kb,</span> <span class="pre">triggersender=sender)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Add stimuli</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.add_stim(stim)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial.add_stim(fixation)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Register start hook</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.on_start(fn)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;trial.on_start()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Register response hook</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.on_response(keys,</span> <span class="pre">fn)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;trial.on_response(['left',</span> <span class="pre">'right'])</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Register timeout hook</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.on_timeout(sec,</span> <span class="pre">fn)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;trial.on_timeout(2.0)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Register end hook</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.on_end(fn)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;trial.on_end()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Set auto-close duration</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.duration(t)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial.duration(1.5)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Set auto-close keys</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.close_on(keys)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial.close_on('space')</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Simple display</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.show(duration)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial.show(1.0)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Response capture</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.capture_response(keys)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial.capture_response(['left',</span> <span class="pre">'right'])</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Full trial control</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.run()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial.run()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Pause for input</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.wait_and_continue(keys)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial.wait_and_continue(['space'])</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Update state</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.set_state(**kwargs)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trial.set_state(correct=True)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Get state</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.state</span></code> or <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">=</span> <span class="pre">trial.to_dict()</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="detailed-usage-guide">
+<h2>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h2>
+<section id="initialization">
+<h3>1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h3>
+<p>Create a new <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> by passing your PsychoPy window, a label, and optionally a <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.hardware.keyboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Keyboard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span><span class="p">,</span> <span class="n">TriggerSender</span>
+
+<span class="c1"># Create window and keyboard</span>
+<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
+<span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
+
+<span class="c1"># Create a trigger sender (mock mode for testing)</span>
+<span class="n">sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Initialize a trial unit</span>
+<span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;cue&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For real EEG/MEG experiments, you would use a real trigger function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example with a serial port</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">serial</span>
+<span class="n">port</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">Serial</span><span class="p">(</span><span class="s1">&#39;COM3&#39;</span><span class="p">,</span> <span class="mi">9600</span><span class="p">)</span>
+
+<span class="c1"># Create trigger sender with a real function</span>
+<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span>
+    <span class="n">send_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">code</span><span class="p">:</span> <span class="n">port</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">([</span><span class="n">code</span><span class="p">])),</span>
+    <span class="n">post_delay</span><span class="o">=</span><span class="mf">0.01</span>  <span class="c1"># 10ms delay after sending</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="adding-stimuli">
+<h3>2. Adding Stimuli<a class="headerlink" href="#adding-stimuli" title="Link to this heading">¶</a></h3>
+<p>Attach visual components to your trial unit. You can add individual stimuli, multiple stimuli, or lists of stimuli:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create some PsychoPy stimuli</span>
+<span class="n">fixation</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
+<span class="n">feedback</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Correct!&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="c1"># Add a single stimulus</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span>
+
+<span class="c1"># Add multiple stimuli at once</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">feedback</span><span class="p">)</span>
+
+<span class="c1"># Add a list of stimuli</span>
+<span class="n">stim_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">fixation</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">feedback</span><span class="p">]</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_list</span><span class="p">)</span>
+
+<span class="c1"># Chain multiple add_stim calls</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback</span><span class="p">)</span>
+
+<span class="c1"># Clear all stimuli</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">clear_stimuli</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>All added stimuli will be drawn together when the trial is presented.</p>
+</section>
+<section id="lifecycle-hooks">
+<h3>3. Lifecycle Hooks<a class="headerlink" href="#lifecycle-hooks" title="Link to this heading">¶</a></h3>
+<p>Register callback functions that execute at key moments in the trial lifecycle:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using decorator syntax</span>
+<span class="nd">@trial</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_trial</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting </span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">getTime</span><span class="p">())</span>
+
+<span class="nd">@trial</span><span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_response</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">, RT: </span><span class="si">{</span><span class="n">rt</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+    <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="o">=</span><span class="n">rt</span><span class="p">)</span>
+    
+    <span class="c1"># Check if response is correct</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">unit</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;correct_key&#39;</span><span class="p">):</span>
+        <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">correct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">correct</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nd">@trial</span><span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_timeout</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Response timeout&quot;</span><span class="p">)</span>
+    <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="nd">@trial</span><span class="o">.</span><span class="n">on_end</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">finalize_trial</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trial complete: </span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># Save data, prepare for next trial, etc.</span>
+</pre></div>
+</div>
+<p>Alternatively, you can use method chaining:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trial</span><span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="n">prepare_trial</span><span class="p">)</span> \
+     <span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">],</span> <span class="n">handle_response</span><span class="p">)</span> \
+     <span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">handle_timeout</span><span class="p">)</span> \
+     <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="n">finalize_trial</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="auto-closing-options">
+<h3>4. Auto-Closing Options<a class="headerlink" href="#auto-closing-options" title="Link to this heading">¶</a></h3>
+<p>Set conditions for automatically ending the trial:</p>
+<section id="fixed-or-jittered-duration">
+<h4>Fixed or Jittered Duration<a class="headerlink" href="#fixed-or-jittered-duration" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Close after exactly 1.5 seconds</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">duration</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
+
+<span class="c1"># Close after a random duration between 1.0 and 2.0 seconds</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">duration</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
+</pre></div>
+</div>
+</section>
+<section id="close-on-specific-key-presses">
+<h4>Close on Specific Key Presses<a class="headerlink" href="#close-on-specific-key-presses" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Close when &#39;space&#39; is pressed</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">close_on</span><span class="p">(</span><span class="s1">&#39;space&#39;</span><span class="p">)</span>
+
+<span class="c1"># Close when any of these keys are pressed</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">close_on</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="s1">&#39;escape&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These settings automatically record the key pressed, reaction time, and closing time into the trial’s state.</p>
+</section>
+</section>
+<section id="simple-display-with-show">
+<h3>5. Simple Display with <code class="docutils literal notranslate"><span class="pre">show()</span></code><a class="headerlink" href="#simple-display-with-show" title="Link to this heading">¶</a></h3>
+<p>For basic stimulus presentation with optional trigger:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show stimuli for 1 second</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="c1"># Show with trigger code at onset</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
+    <span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># Send trigger code 10 at stimulus onset</span>
+    <span class="n">frame_based</span><span class="o">=</span><span class="kc">True</span>   <span class="c1"># Use frame-based timing (vs. clock-based)</span>
+<span class="p">)</span>
+
+<span class="c1"># Show with jittered duration</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">cue</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
+    <span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>  <span class="c1"># Random duration between 0.8-1.2s</span>
+    <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">20</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="stimulus-response-window-with-capture-response">
+<h3>6. Stimulus + Response Window with <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code><a class="headerlink" href="#stimulus-response-window-with-capture-response" title="Link to this heading">¶</a></h3>
+<p>For trials requiring response collection:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic response capture</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
+    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">],</span>  <span class="c1"># Valid response keys</span>
+    <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span>             <span class="c1"># Response window duration</span>
+<span class="p">)</span>
+
+<span class="c1"># Advanced response capture with triggers and highlighting</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">left_arrow</span><span class="p">,</span> <span class="n">right_arrow</span><span class="p">)</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
+    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">],</span>
+    <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>                         <span class="c1"># Trigger at stimulus onset</span>
+    <span class="n">response_trigger</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>  <span class="c1"># Key-specific triggers</span>
+    <span class="n">timeout_trigger</span><span class="o">=</span><span class="mi">19</span><span class="p">,</span>                       <span class="c1"># Trigger if no response</span>
+    <span class="n">correct_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">],</span>                   <span class="c1"># Define correct response</span>
+    <span class="n">highlight_stim</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="n">left_highlight</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span> <span class="n">right_highlight</span><span class="p">},</span>
+    <span class="n">dynamic_highlight</span><span class="o">=</span><span class="kc">True</span>                    <span class="c1"># Redraw on multiple presses</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code> method automatically handles:</p>
+<ul class="simple">
+<li><p>Displaying stimuli</p></li>
+<li><p>Sending onset triggers</p></li>
+<li><p>Collecting responses and reaction times</p></li>
+<li><p>Sending response-specific triggers</p></li>
+<li><p>Highlighting selected responses</p></li>
+<li><p>Sending timeout triggers</p></li>
+<li><p>Updating the trial state with all relevant data</p></li>
+</ul>
+</section>
+<section id="full-trial-loop-with-run">
+<h3>7. Full Trial Loop with <code class="docutils literal notranslate"><span class="pre">run()</span></code><a class="headerlink" href="#full-trial-loop-with-run" title="Link to this heading">¶</a></h3>
+<p>For maximum flexibility, use the <code class="docutils literal notranslate"><span class="pre">run()</span></code> method after setting up hooks:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set up the trial</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> \
+     <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="n">start_fn</span><span class="p">)</span> \
+     <span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">],</span> <span class="n">response_fn</span><span class="p">)</span> \
+     <span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">timeout_fn</span><span class="p">)</span> \
+     <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="n">end_fn</span><span class="p">)</span> \
+     <span class="o">.</span><span class="n">duration</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+
+<span class="c1"># Run the trial</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+    <span class="n">terminate_on_response</span><span class="o">=</span><span class="kc">True</span>   <span class="c1"># Stop drawing after response</span>
+<span class="p">)</span>
+
+<span class="c1"># Access trial data</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, RT: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rt&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">run()</span></code> method gives you complete control over the trial execution, while still benefiting from the automatic state management and event handling.</p>
+</section>
+<section id="pause-continue-with-wait-and-continue">
+<h3>8. Pause &amp; Continue with <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code><a class="headerlink" href="#pause-continue-with-wait-and-continue" title="Link to this heading">¶</a></h3>
+<p>For instruction screens or breaks that require a keypress to continue:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show instructions and wait for space</span>
+<span class="n">instructions</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
+    <span class="n">win</span><span class="p">,</span> 
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Press SPACE to begin the experiment&quot;</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="mf">0.7</span>
+<span class="p">)</span>
+
+<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">instructions</span><span class="p">)</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">(</span>
+    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">],</span>
+    <span class="n">log_message</span><span class="o">=</span><span class="s2">&quot;Instructions shown&quot;</span><span class="p">,</span>
+    <span class="n">terminate</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># Continue execution after keypress</span>
+<span class="p">)</span>
+
+<span class="c1"># Show end screen and terminate</span>
+<span class="n">end_text</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
+    <span class="n">win</span><span class="p">,</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Experiment complete. Thank you!&quot;</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="mf">0.7</span>
+<span class="p">)</span>
+
+<span class="n">trial</span><span class="o">.</span><span class="n">clear_stimuli</span><span class="p">()</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">end_text</span><span class="p">)</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">(</span>
+    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">],</span>
+    <span class="n">log_message</span><span class="o">=</span><span class="s2">&quot;Experiment ended&quot;</span><span class="p">,</span>
+    <span class="n">terminate</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># End the experiment after keypress</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="state-management">
+<h3>9. State Management<a class="headerlink" href="#state-management" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> maintains an internal state dictionary that tracks all trial events and data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Update state with custom data</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span>
+    <span class="n">condition</span><span class="o">=</span><span class="s2">&quot;reward&quot;</span><span class="p">,</span>
+    <span class="n">block_num</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">trial_num</span><span class="o">=</span><span class="mi">15</span>
+<span class="p">)</span>
+
+<span class="c1"># Access state values</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Condition: </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RT: </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rt&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Get complete state as dictionary</span>
+<span class="n">full_data</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+<span class="c1"># Log state to console (useful for debugging)</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">log_unit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The state automatically includes:</p>
+<ul class="simple">
+<li><p>Trial label</p></li>
+<li><p>Timestamps for start, response, and end</p></li>
+<li><p>Response key and reaction time</p></li>
+<li><p>Trigger codes sent</p></li>
+<li><p>Any custom data added with <code class="docutils literal notranslate"><span class="pre">set_state()</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="complete-example">
+<h2>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading">¶</a></h2>
+<p>Here’s a complete example showing how to use <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> in an experiment:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span><span class="p">,</span> <span class="n">core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.hardware.keyboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Keyboard</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span><span class="p">,</span> <span class="n">TriggerSender</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+
+<span class="c1"># Setup</span>
+<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
+<span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
+<span class="n">sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Create stimuli</span>
+<span class="n">fixation</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<span class="n">left_target</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">right_target</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">left_highlight</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> 
+                            <span class="n">lineWidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">fillColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">right_highlight</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> 
+                             <span class="n">lineWidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">fillColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">feedback_correct</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Correct!&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> 
+                                  <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">feedback_incorrect</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Incorrect&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> 
+                                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">])</span>
+
+<span class="c1"># Run a trial</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
+    <span class="c1"># Determine correct response for this condition</span>
+    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
+        <span class="n">correct_key</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span>
+        <span class="n">target_trigger</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># condition == &quot;right&quot;</span>
+        <span class="n">correct_key</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span>
+        <span class="n">target_trigger</span> <span class="o">=</span> <span class="mi">12</span>
+    
+    <span class="c1"># Create trial unit</span>
+    <span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;choice&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
+    
+    <span class="c1"># Register response handler</span>
+    <span class="nd">@trial</span><span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">])</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_response</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="p">):</span>
+        <span class="c1"># Check if response is correct</span>
+        <span class="n">is_correct</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="n">correct_key</span><span class="p">)</span>
+        <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">correct</span><span class="o">=</span><span class="n">is_correct</span><span class="p">)</span>
+        
+        <span class="c1"># Show appropriate feedback</span>
+        <span class="n">unit</span><span class="o">.</span><span class="n">clear_stimuli</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">is_correct</span><span class="p">:</span>
+            <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback_correct</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback_incorrect</span><span class="p">)</span>
+    
+    <span class="c1"># Show fixation</span>
+    <span class="n">fixation_trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
+    <span class="n">fixation_trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
+        <span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>  <span class="c1"># Jittered duration</span>
+        <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">10</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># Show targets and collect response</span>
+    <span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">left_target</span><span class="p">,</span> <span class="n">right_target</span><span class="p">)</span>
+    <span class="n">trial</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="n">condition</span><span class="p">,</span> <span class="n">correct_key</span><span class="o">=</span><span class="n">correct_key</span><span class="p">)</span>
+    <span class="n">trial</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
+        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">],</span>
+        <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">onset_trigger</span><span class="o">=</span><span class="n">target_trigger</span><span class="p">,</span>
+        <span class="n">response_trigger</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">},</span>
+        <span class="n">timeout_trigger</span><span class="o">=</span><span class="mi">29</span><span class="p">,</span>
+        <span class="n">correct_keys</span><span class="o">=</span><span class="p">[</span><span class="n">correct_key</span><span class="p">],</span>
+        <span class="n">highlight_stim</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="n">left_highlight</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="n">right_highlight</span><span class="p">}</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># Show feedback for 1 second</span>
+    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+    
+    <span class="c1"># Return trial data</span>
+    <span class="k">return</span> <span class="n">trial</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+<span class="c1"># Run a block of trials</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">5</span>  <span class="c1"># 10 trials total</span>
+<span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">condition</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">conditions</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trial </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">trial_data</span> <span class="o">=</span> <span class="n">run_trial</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
+    <span class="n">trial_data</span><span class="p">[</span><span class="s2">&quot;trial_num&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Inter-trial interval</span>
+
+<span class="c1"># Show completion message</span>
+<span class="n">end_trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
+<span class="n">end_text</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
+    <span class="n">win</span><span class="p">,</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Experiment complete. Thank you!&quot;</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="mf">0.7</span>
+<span class="p">)</span>
+<span class="n">end_trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">end_text</span><span class="p">)</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">(</span>
+    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;space&quot;</span><span class="p">],</span>
+    <span class="n">terminate</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="c1"># Clean up</span>
+<span class="n">win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># Analyze results</span>
+<span class="n">correct_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
+<span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct_count</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy: </span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="advanced-usage">
+<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">¶</a></h2>
+<section id="frame-based-vs-clock-based-timing">
+<h3>Frame-Based vs. Clock-Based Timing<a class="headerlink" href="#frame-based-vs-clock-based-timing" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> supports two timing modes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Frame-based timing (more precise for short durations)</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">frame_based</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Clock-based timing (better for longer durations)</span>
+<span class="n">trial</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">frame_based</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Frame-based timing counts the number of screen refreshes, while clock-based timing uses the system clock. Frame-based timing is generally more precise for short durations but requires a stable frame rate.</p>
+</section>
+<section id="custom-trigger-sequences">
+<h3>Custom Trigger Sequences<a class="headerlink" href="#custom-trigger-sequences" title="Link to this heading">¶</a></h3>
+<p>You can send custom trigger sequences at any point:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@trial</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">custom_triggers</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
+    <span class="c1"># Send a sequence of triggers with delays</span>
+    <span class="n">unit</span><span class="o">.</span><span class="n">triggersender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span>  <span class="c1"># First trigger</span>
+    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>               <span class="c1"># 50ms delay</span>
+    <span class="n">unit</span><span class="o">.</span><span class="n">triggersender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">102</span><span class="p">)</span>  <span class="c1"># Second trigger</span>
+    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>               <span class="c1"># 50ms delay</span>
+    <span class="n">unit</span><span class="o">.</span><span class="n">triggersender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">103</span><span class="p">)</span>  <span class="c1"># Third trigger</span>
+</pre></div>
+</div>
+</section>
+<section id="dynamic-stimulus-updates">
+<h3>Dynamic Stimulus Updates<a class="headerlink" href="#dynamic-stimulus-updates" title="Link to this heading">¶</a></h3>
+<p>You can modify stimuli during the trial:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@trial</span><span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_stimulus</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="p">):</span>
+    <span class="c1"># Get the stimulus from the unit</span>
+    <span class="k">for</span> <span class="n">stim</span> <span class="ow">in</span> <span class="n">unit</span><span class="o">.</span><span class="n">stimuli</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">stim</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
+            <span class="c1"># Update text based on response</span>
+            <span class="n">stim</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;You pressed </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">rt</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="nested-trial-units">
+<h3>Nested Trial Units<a class="headerlink" href="#nested-trial-units" title="Link to this heading">¶</a></h3>
+<p>You can create complex trial structures by nesting <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> instances:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run_complex_trial</span><span class="p">():</span>
+    <span class="c1"># Fixation phase</span>
+    <span class="n">fix_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
+    <span class="n">fix_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1"># Cue phase</span>
+    <span class="n">cue_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;cue&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
+    <span class="n">cue_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">cue</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="c1"># Target phase with response</span>
+    <span class="n">target_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
+    <span class="n">target_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
+        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">],</span>
+        <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">3</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># Feedback phase</span>
+    <span class="n">feedback_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;feedback&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">target_unit</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">feedback_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback_correct</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">feedback_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback_incorrect</span><span class="p">)</span>
+    <span class="n">feedback_unit</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+    
+    <span class="c1"># Combine all data</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;fixation&quot;</span><span class="p">:</span> <span class="n">fix_unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+        <span class="s2">&quot;cue&quot;</span><span class="p">:</span> <span class="n">cue_unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+        <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">target_unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+        <span class="s2">&quot;feedback&quot;</span><span class="p">:</span> <span class="n">feedback_unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Use descriptive labels</strong>: Choose meaningful <code class="docutils literal notranslate"><span class="pre">unit_label</span></code> values to make your state data more readable.</p></li>
+<li><p><strong>Chain methods</strong>: Take advantage of the chainable API to write concise, readable code.</p></li>
+<li><p><strong>Separate trial phases</strong>: For complex trials, use multiple <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> instances for different phases.</p></li>
+<li><p><strong>Predefine stimuli</strong>: Create all stimuli before the trial loop to avoid performance issues.</p></li>
+<li><p><strong>Test with mock triggers</strong>: Use <code class="docutils literal notranslate"><span class="pre">TriggerSender(mock=True)</span></code> during development and testing.</p></li>
+<li><p><strong>Log liberally</strong>: Use <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> to record all relevant trial information.</p></li>
+<li><p><strong>Handle errors gracefully</strong>: Use try/except blocks in your hooks to prevent crashes.</p></li>
+</ol>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<ul class="simple">
+<li><p><strong>Timing issues</strong>: If timing seems off, check if you’re using the appropriate timing mode (frame-based vs. clock-based).</p></li>
+<li><p><strong>Missing responses</strong>: Ensure your keyboard is properly initialized and that you’re listening for the correct keys.</p></li>
+<li><p><strong>Stimulus not appearing</strong>: Check that you’ve added all stimuli to the unit with <code class="docutils literal notranslate"><span class="pre">add_stim()</span></code>.</p></li>
+<li><p><strong>Trigger problems</strong>: Verify your <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> is properly configured and test with <code class="docutils literal notranslate"><span class="pre">mock=True</span></code> first.</p></li>
+</ul>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
+<p>Now that you understand how to use <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>, you can:</p>
+<ul class="simple">
+<li><p>Explore the <a class="reference internal" href="build_blocks.html"><span class="std std-doc">BlockUnit tutorial</span></a> to organize trials into blocks</p></li>
+<li><p>Learn about <a class="reference internal" href="build_stimulus.html"><span class="std std-doc">StimBank</span></a> for flexible stimulus management</p></li>
+<li><p>Check out <a class="reference internal" href="send_trigger.html"><span class="std std-doc">trigger sending</span></a> for EEG/MEG experiments</p></li>
+</ul>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="send_trigger.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">TriggerSender: Precise Event Marking for EEG/MEG Experiments</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="build_stimulus.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">StimBank: Flexible Stimulus Management</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Zhipeng Cao
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">🎯 StimUnit: Modular Trial Controller for PsychoPy</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#key-features">Key Features</a></li>
+<li><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
+<li><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a><ul>
+<li><a class="reference internal" href="#initialization">1. Initialization</a></li>
+<li><a class="reference internal" href="#adding-stimuli">2. Adding Stimuli</a></li>
+<li><a class="reference internal" href="#lifecycle-hooks">3. Lifecycle Hooks</a></li>
+<li><a class="reference internal" href="#auto-closing-options">4. Auto-Closing Options</a><ul>
+<li><a class="reference internal" href="#fixed-or-jittered-duration">Fixed or Jittered Duration</a></li>
+<li><a class="reference internal" href="#close-on-specific-key-presses">Close on Specific Key Presses</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simple-display-with-show">5. Simple Display with <code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
+<li><a class="reference internal" href="#stimulus-response-window-with-capture-response">6. Stimulus + Response Window with <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code></a></li>
+<li><a class="reference internal" href="#full-trial-loop-with-run">7. Full Trial Loop with <code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
+<li><a class="reference internal" href="#pause-continue-with-wait-and-continue">8. Pause &amp; Continue with <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code></a></li>
+<li><a class="reference internal" href="#state-management">9. State Management</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#complete-example">Complete Example</a></li>
+<li><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
+<li><a class="reference internal" href="#frame-based-vs-clock-based-timing">Frame-Based vs. Clock-Based Timing</a></li>
+<li><a class="reference internal" href="#custom-trigger-sequences">Custom Trigger Sequences</a></li>
+<li><a class="reference internal" href="#dynamic-stimulus-updates">Dynamic Stimulus Updates</a></li>
+<li><a class="reference internal" href="#nested-trial-units">Nested Trial Units</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
+<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=a58bc63e"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
+</html>
