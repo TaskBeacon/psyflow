@@ -275,56 +275,6 @@ class StimUnit:
             self._hooks["end"].append(func)
             return self
 
-    def duration(self, duration: float | list | tuple): 
-        """
-        Auto-close the trial after a fixed or jittered duration.
-
-        Parameters
-        ----------
-        duration : float or list
-            Duration or (min, max) range for random sampling.
-        """
-        local_rng = random.Random()
-
-        if isinstance(duration, (list, tuple)):
-            if len(duration) == 2:
-                t_val = local_rng.uniform(*duration)
-            elif len(duration) == 1:
-                t_val = duration[0]
-            else:
-                raise ValueError(f"Duration list/tuple must have 1 or 2 elements, got {len(duration)}")
-        elif isinstance(duration, (int, float)):
-            t_val = duration
-        else:
-            raise TypeError(f"Invalid duration type: {type(duration)}")
-        def auto_close(unit: 'StimUnit'):
-            unit.set_state(
-                duration=t_val,
-                timeout_triggered=True,
-                close_time=core.getTime(),
-                close_time_global=core.getAbsTime()
-            )
-        return self.on_timeout(t_val, auto_close)
-
-    def close_on(self, *keys: str):
-        """
-        Auto-close the trial on specific key press.
-
-        Parameters
-        ----------
-        keys : str
-            One or more response keys.
-        """
-        def close_fn(unit: 'StimUnit', key: str, rt: float):
-            unit.set_state(
-                keys=key,
-                response_time=rt,
-                close_time=core.getTime(),
-                close_time_global=core.getAbsTime()
-            )
-        return self.on_response(list(keys), close_fn)
-
-
     def run(self,
             terminate_on_response: bool = True) -> "StimUnit":
         """Execute the full trial lifecycle.
