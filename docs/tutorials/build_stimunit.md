@@ -1,4 +1,4 @@
-# 🎯 StimUnit: Modular Trial Controller for PsychoPy
+#  StimUnit: Modular Trial Controller 
 
 ## Overview
 
