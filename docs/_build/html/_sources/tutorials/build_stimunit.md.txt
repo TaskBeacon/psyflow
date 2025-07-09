@@ -34,7 +34,7 @@ By using `StimUnit`, your trial logic (typically defined in `src/run_trial.py`) 
 | Response hook      | `.on_response(keys, fn)`            | `@unit.on_response(['left','right'])`          |
 | Timeout hook       | `.on_timeout(sec, fn)`              | `@unit.on_timeout(2.0)`                        |
 | End hook           | `.on_end(fn)`                       | `@unit.on_end()`                               |
-|                    |                                     |                                                |
+
 | Simple display     | `.show(duration)`                   | `unit.show(1.0)`                               |
 | Response capture   | `.capture_response(keys, duration)` | `unit.capture_response(['left','right'], 2.0)` |
 | Full trial control | `.run()`                            | `unit.run()`                                   |

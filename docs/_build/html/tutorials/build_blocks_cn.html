@@ -1,0 +1,534 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="StimBank：灵活的刺激管理" href="build_stimulus_cn.html" /><link rel="prev" title="TaskSettings: 管理实验配置" href="task_settings_cn.html" />
+
+    <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
+        <title>BlockUnit: 组织和运行试验 - psyflow 0.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">psyflow 0.1.1 documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  <div class="sidebar-logo-container">
+    <img class="sidebar-logo only-light" src="../_static/logo_white-removebg.png" alt="Light Logo"/>
+    <img class="sidebar-logo only-dark" src="../_static/logo_black-removebg.png" alt="Dark Logo"/>
+  </div>
+  
+  <span class="sidebar-brand-text">psyflow 0.1.1 documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with psyflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">Sending Hardware Triggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">教程 (Chinese)</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="get_subinfo_cn.html">SubInfo: 收集被试信息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_settings_cn.html">TaskSettings: 管理实验配置</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">BlockUnit: 组织和运行试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus_cn.html">StimBank：灵活的刺激管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimunit_cn.html">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="../_sources/tutorials/build_blocks_cn.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="blockunit">
+<h1>BlockUnit: 组织和运行试验<a class="headerlink" href="#blockunit" title="Link to this heading">¶</a></h1>
+<section id="id1">
+<h2>概述<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 是 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 中用于将单个试验（trials）组织成块（blocks）并以可重复、可随机化的方式运行它们的控制器。它简化了常见的实验设计模式，如试验循环、条件随机化和在块之间传递数据。</p>
+<p>使用 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>，您可以：</p>
+<ul class="simple">
+<li><p>从试验规格列表（例如，从 CSV 文件或 <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> 加载）创建一个块。</p></li>
+<li><p>在将试验传递给您的运行函数之前，自动对它们进行随机化（加洗牌）。</p></li>
+<li><p>在块的开始和结束时显示指令或休息屏幕。</p></li>
+<li><p>在块内的所有试验中轻松传递常量参数。</p></li>
+<li><p>将每个试验的数据聚合到一个单一的、有组织的列表中，以便于保存。</p></li>
+</ul>
+</section>
+<section id="id2">
+<h2>核心概念<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 的工作流程围绕以下三个步骤：</p>
+<ol class="arabic simple">
+<li><p><strong>定义试验</strong>: 您创建一个字典列表，其中每个字典代表一个试验并包含该试验所需的所有信息（例如，条件、刺激名称、正确答案）。这通常是通过加载一个 CSV 文件并将其转换为 <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> 来完成的。</p></li>
+<li><p><strong>初始化 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code></strong>: 您使用您的试验列表、一个运行单个试验的函数以及任何固定的参数来创建一个 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 实例。</p></li>
+<li><p><strong>运行块</strong>: 您调用 <code class="docutils literal notranslate"><span class="pre">.run()</span></code> 方法，该方法会迭代您的试验，根据需要对它们进行随机化，并为每个试验执行您的运行函数。</p></li>
+</ol>
+</section>
+<section id="id3">
+<h2>详细使用指南<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<section id="id4">
+<h3>1. 定义您的试验<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<p>一个块是由一个试验列表定义的。在 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 中，这通常是一个 <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>，其中每一行代表一个试验，每一列代表一个参数。</p>
+<p>假设您有一个名为 <code class="docutils literal notranslate"><span class="pre">trials.csv</span></code> 的文件，内容如下：</p>
+<div class="highlight-csv notranslate"><div class="highlight"><pre><span></span>condition,target_stim,correct_key
+win,win_stim_A,f
+win,win_stim_B,j
+loss,loss_stim_A,f
+loss,loss_stim_B,j
+</pre></div>
+</div>
+<p>您可以使用 <code class="docutils literal notranslate"><span class="pre">pandas</span></code> 来加载这个文件：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">trial_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;trials.csv&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 期望这个 DataFrame 被转换成一个字典列表，其中每个字典代表一行。您可以使用 <code class="docutils literal notranslate"><span class="pre">.to_dict('records')</span></code> 来轻松完成这个转换：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trial_list</span> <span class="o">=</span> <span class="n">trial_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
+<span class="c1"># trial_list 现在是:</span>
+<span class="c1"># [</span>
+<span class="c1">#   {&#39;condition&#39;: &#39;win&#39;, &#39;target_stim&#39;: &#39;win_stim_A&#39;, &#39;correct_key&#39;: &#39;f&#39;},</span>
+<span class="c1">#   {&#39;condition&#39;: &#39;win&#39;, &#39;target_stim&#39;: &#39;win_stim_B&#39;, &#39;correct_key&#39;: &#39;j&#39;},</span>
+<span class="c1">#   ...</span>
+<span class="c1"># ]</span>
+</pre></div>
+</div>
+</section>
+<section id="id5">
+<h3>2. 创建一个试验运行函数<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p>接下来，您需要一个 Python 函数，它知道如何运行 <strong>单个</strong> 试验。这个函数将接收 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 中的信息作为参数。</p>
+<ul class="simple">
+<li><p>它必须接受一个名为 <code class="docutils literal notranslate"><span class="pre">trial_info</span></code> 的参数，这是一个来自您列表的字典（即，一行来自您的 CSV）。</p></li>
+<li><p>它还可以接受您在初始化 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 时定义的任何其他关键字参数（“固定参数”）。</p></li>
+</ul>
+<p>这是一个典型的试验运行函数的骨架，它位于 <code class="docutils literal notranslate"><span class="pre">src/run_trial.py</span></code> 中：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># In src/run_trial.py</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">trial_info</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">,</span> <span class="n">settings</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    运行一个单独的试验。</span>
+
+<span class="sd">    参数:</span>
+<span class="sd">    - trial_info (dict): 来自试验列表的当前试验的规格。</span>
+<span class="sd">    - win, kb, stim_bank, settings: 传递给 BlockUnit 的固定参数。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 1. 从 trial_info 中解包信息</span>
+    <span class="n">condition</span> <span class="o">=</span> <span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;condition&#39;</span><span class="p">]</span>
+    <span class="n">target_name</span> <span class="o">=</span> <span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;target_stim&#39;</span><span class="p">]</span>
+    <span class="n">correct_key</span> <span class="o">=</span> <span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;correct_key&#39;</span><span class="p">]</span>
+
+    <span class="c1"># 2. 使用 stim_bank 检索刺激</span>
+    <span class="n">target_stim</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_name</span><span class="p">)</span>
+
+    <span class="c1"># 3. 使用 StimUnit 来呈现刺激并捕获反应</span>
+    <span class="c1"># (这是一个简化的例子)</span>
+    <span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trial_</span><span class="si">{</span><span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;trial_num&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
+    <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target_stim</span><span class="p">)</span>
+    <span class="n">unit</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;j&#39;</span><span class="p">],</span> <span class="n">correct_keys</span><span class="o">=</span><span class="p">[</span><span class="n">correct_key</span><span class="p">],</span> <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="c1"># 4. 返回试验数据</span>
+    <span class="k">return</span> <span class="n">unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>3. 初始化 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code><a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<p>现在您已经有了您的试验列表和您的 <code class="docutils literal notranslate"><span class="pre">run_trial</span></code> 函数，您可以初始化 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.block_unit</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockUnit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.run_trial</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_trial</span> <span class="c1"># 导入您的函数</span>
+
+<span class="c1"># 试验列表 (来自上面的 .csv)</span>
+<span class="n">trial_list</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;trials.csv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
+
+<span class="c1"># 固定的参数，将传递给每个 run_trial 调用</span>
+<span class="n">fixed_params</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;win&#39;</span><span class="p">:</span> <span class="n">my_psychopy_window</span><span class="p">,</span>
+    <span class="s1">&#39;kb&#39;</span><span class="p">:</span> <span class="n">my_keyboard</span><span class="p">,</span>
+    <span class="s1">&#39;stim_bank&#39;</span><span class="p">:</span> <span class="n">my_stim_bank</span><span class="p">,</span>
+    <span class="s1">&#39;settings&#39;</span><span class="p">:</span> <span class="n">my_experiment_settings</span>
+<span class="p">}</span>
+
+<span class="c1"># 创建 BlockUnit 实例</span>
+<span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
+    <span class="n">trial_list</span><span class="o">=</span><span class="n">trial_list</span><span class="p">,</span>
+    <span class="n">run_func</span><span class="o">=</span><span class="n">run_trial</span><span class="p">,</span>
+    <span class="n">fixed_params</span><span class="o">=</span><span class="n">fixed_params</span><span class="p">,</span>
+    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># 在运行前对试验列表进行随机化</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">trial_list</span></code>: 您的试验规格列表。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">run_func</span></code>: 您为运行单个试验而创建的函数。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fixed_params</span></code>: 一个字典，包含将作为关键字参数传递给您的 <code class="docutils literal notranslate"><span class="pre">run_func</span></code> 的对象。这对于传递像 <code class="docutils literal notranslate"><span class="pre">win</span></code>、<code class="docutils literal notranslate"><span class="pre">kb</span></code> 和 <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code> 这样的全局对象非常有用。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">shuffle</span></code>: 一个布尔值，指示是否在运行前对 <code class="docutils literal notranslate"><span class="pre">trial_list</span></code> 进行随机化。默认为 <code class="docutils literal notranslate"><span class="pre">False</span></code>。</p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>4. 运行块<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<p>最后，调用 <code class="docutils literal notranslate"><span class="pre">.run()</span></code> 方法来执行块。这将迭代（可能是随机化后的）<code class="docutils literal notranslate"><span class="pre">trial_list</span></code>，并为每个条目调用您的 <code class="docutils literal notranslate"><span class="pre">run_trial</span></code> 函数。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 在块开始前显示指令</span>
+<span class="n">show_instructions</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;准备好开始第一个块！&quot;</span><span class="p">)</span>
+
+<span class="c1"># 运行块并收集数据</span>
+<span class="n">block_data</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+<span class="c1"># 在块结束后显示休息屏幕</span>
+<span class="n">show_break_screen</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;休息一下！&quot;</span><span class="p">)</span>
+
+<span class="c1"># block_data 现在是一个列表，其中包含了每个试验返回的字典</span>
+<span class="c1"># [{&#39;condition&#39;: &#39;win&#39;, &#39;response&#39;: &#39;f&#39;, ...}, {&#39;condition&#39;: &#39;loss&#39;, ...}]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">.run()</span></code> 方法会自动将 <code class="docutils literal notranslate"><span class="pre">trial_info</span></code> 和 <code class="docutils literal notranslate"><span class="pre">fixed_params</span></code> 传递给您的 <code class="docutils literal notranslate"><span class="pre">run_trial</span></code> 函数。它收集从每个 <code class="docutils literal notranslate"><span class="pre">run_trial</span></code> 调用返回的字典，并将它们聚合到一个列表中。</p>
+</section>
+<section id="id8">
+<h3>5. 添加开始和结束屏幕<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 使得在块的开始和结束时显示屏幕变得容易，使用 <code class="docutils literal notranslate"><span class="pre">.on_start()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">.on_end()</span></code> 方法。这些方法接受一个函数，该函数将被调用。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">show_start_screen</span><span class="p">(</span><span class="n">block_info</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;在块开始时显示。&quot;&quot;&quot;</span>
+    <span class="c1"># block_info 是一个包含块信息的字典</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;即将开始块 </span><span class="si">{</span><span class="n">block_info</span><span class="p">[</span><span class="s1">&#39;block_num&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">instruction_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;instructions&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
+    <span class="n">instruction_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">msg</span><span class="p">))</span>
+    <span class="n">instruction_unit</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">show_end_screen</span><span class="p">(</span><span class="n">block_info</span><span class="p">,</span> <span class="n">block_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;在块结束时显示。&quot;&quot;&quot;</span>
+    <span class="c1"># block_data 是从块收集的数据</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">calculate_accuracy</span><span class="p">(</span><span class="n">block_data</span><span class="p">)</span>
+    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;块完成！您的准确率是: </span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span>
+    <span class="n">feedback_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
+    <span class="n">feedback_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">msg</span><span class="p">))</span>
+    <span class="n">feedback_unit</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
+
+<span class="c1"># 将钩子附加到您的块</span>
+<span class="n">block</span><span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="n">show_start_screen</span><span class="p">)</span>
+<span class="n">block</span><span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="n">show_end_screen</span><span class="p">)</span>
+
+<span class="c1"># 现在，当您调用 .run() 时，这些函数将被自动执行</span>
+<span class="n">block_data</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>传递给 <code class="docutils literal notranslate"><span class="pre">.on_start()</span></code> 的函数接收一个包含关于块的信息的字典（例如，<code class="docutils literal notranslate"><span class="pre">block_num</span></code>）。</p></li>
+<li><p>传递给 <code class="docutils literal notranslate"><span class="pre">.on_end()</span></code> 的函数接收该信息字典 <strong>和</strong> 从块中收集的 <code class="docutils literal notranslate"><span class="pre">block_data</span></code>。</p></li>
+</ul>
+</section>
+</section>
+<section id="id9">
+<h2>后续步骤<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
+<p>通过 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>，您现在拥有了在 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 中构建功能齐全的实验的所有构建块。您可以：</p>
+<ul class="simple">
+<li><p>回顾 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 教程以获取有关构建单个试验的更多详细信息。</p></li>
+<li><p>学习 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 以了解如何管理整个实验的设置。</p></li>
+</ul>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="build_stimulus_cn.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">StimBank：灵活的刺激管理</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="task_settings_cn.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">TaskSettings: 管理实验配置</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Zhipeng Cao
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">BlockUnit: 组织和运行试验</a><ul>
+<li><a class="reference internal" href="#id1">概述</a></li>
+<li><a class="reference internal" href="#id2">核心概念</a></li>
+<li><a class="reference internal" href="#id3">详细使用指南</a><ul>
+<li><a class="reference internal" href="#id4">1. 定义您的试验</a></li>
+<li><a class="reference internal" href="#id5">2. 创建一个试验运行函数</a></li>
+<li><a class="reference internal" href="#id6">3. 初始化 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code></a></li>
+<li><a class="reference internal" href="#id7">4. 运行块</a></li>
+<li><a class="reference internal" href="#id8">5. 添加开始和结束屏幕</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id9">后续步骤</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="../_static/documentation_options.js?v=a58bc63e"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=5fa4622c"></script>
+    </body>
+</html>

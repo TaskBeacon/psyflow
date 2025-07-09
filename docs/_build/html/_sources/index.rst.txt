@@ -1,4 +1,3 @@
-
 .. .. image:: _static/logo.png
 ..    :alt: psyflow logo
 ..    :height: 100px
@@ -34,6 +33,16 @@ Start with one of the tutorials below or explore the API reference.
    tutorials/utilities
    tutorials/llm_client
 
+.. toctree::
+   :maxdepth: 1
+   :caption: 教程 (Chinese)
+
+   tutorials/get_subinfo_cn
+   tutorials/task_settings_cn
+   tutorials/build_blocks_cn
+   tutorials/build_stimulus_cn
+   tutorials/build_stimunit_cn
+
 
 .. toctree::
    :maxdepth: 1
@@ -41,4 +50,3 @@ Start with one of the tutorials below or explore the API reference.
    release
 * :ref:`genindex`
 * :ref:`modindex`
-
