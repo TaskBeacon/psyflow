@@ -1,8 +1,8 @@
-# StimUnit: Modular Trial Controller
+# StimUnit: Modular Stimulus & Response Handler
 
 ## Overview
 
-`StimUnit` is a versatile, trial-level controller for PsychoPy experiments. It bundles everything you need for one trial into a single, chainable object:
+`StimUnit` is a versatile, stimulus-level controller for PsychoPy experiments. It bundles everything you need for one trial into a single, chainable object:
 
 - **Stimulus presentation**: Draw multiple visual or audio stimuli together with sub-frame accuracy.
 - **Response collection**: Detect keyboard events and record reaction times effortlessly.
@@ -10,7 +10,7 @@
 - **State management**: Store all trial-related data in a centralized internal dictionary.
 - **Event hooks**: Plug in custom callbacks at start, response, timeout, and end stages.
 
-By using `StimUnit`, your experiment code becomes more modular, readable, and maintainable.
+By using `StimUnit`, your trial logic (typically defined in `src/run_trial.py`) becomes more modular, readable, and maintainable.
 
 ## Key Features
 
@@ -40,7 +40,8 @@ By using `StimUnit`, your experiment code becomes more modular, readable, and ma
 | Full trial control | `.run()`                            | `unit.run()`                                   |
 | Pause & continue   | `.wait_and_continue(keys)`          | `unit.wait_and_continue(['space'])`            |
 | Update state       | `.set_state(**kwargs)`              | `unit.set_state(correct=True)`                 |
-| Retrieve state     | `.to_dict()` or access `.state`     | `data = unit.to_dict()`                        |
+| Retrieve state     | `.get_state()` or access `.state`     | `data = unit.get_state(key,default)`                        |
+| Export state     | `.to_dict()`      | `data = unit.to_dict()`                        |
 
 ## Detailed Usage Guide
 
@@ -141,7 +142,6 @@ All added stimuli will be drawn or played together when you present the unit.
 
 Note that `add_stim` also support PsychoPy style definitions of the stimulus. For exmaple:
 ```python
-
 from psychopy.visual import TextStim, Circle
 # Example 1
 stim_list = {'fix': TextStim(win, text='+', pos=(0,0)), 
@@ -166,7 +166,7 @@ make_unit(unit_label=f"pop")\
 
 ### 3. Display stimulus with `show()`
 
-The `.show()` method is the core display function in `StimUnit`. It handles precise timing, drawing, optional audio playback, and state logging—all in one call. Use it when you want to present stimuli without requiring responses.
+The `show()` method is the core display function in `StimUnit`. It handles precise timing, drawing, optional audio playback, and state logging—all in one call. Use it when you want to present stimuli without requiring responses.
 
 
 **Key Features of `show()`**
@@ -212,7 +212,6 @@ Use this method when you need standalone stimulus presentation without response 
 The following examples demonstrate how to use `.show()` for fixed, jittered, and audio-driven durations. Assume `unit` is an initialized `StimUnit` and `stim_bank` contains your stimuli.
 
 ```python
-
 # 1. Fixed duration – shows text for exactly 1.0 second
 unit.add_stim(stim_bank.get('fixation'))\
     .show(duration=1.0)
@@ -276,7 +275,6 @@ final_score = sum(trial.get("feedback_delta", 0) for trial in all_data)
 StimUnit('goodbye',win,kb)\
     .add_stim(stim_bank.get_and_format('good_bye', total_score=final_score))\
     .wait_and_continue(terminate=True)
-
 ```
 
 
@@ -367,7 +365,7 @@ target.to_dict(trial_data)
 - By default, `correct_keys=None`, so any key in `keys` is logged as a response.
 - `response_trigger` and `timeout_trigger` send triggers for EEG/behavior marking.
 
----
+
 
 #### Scenario 3: Detecting Correct vs. Incorrect Responses
 In tasks where only one key is correct (e.g., left vs. right dot detection), specify `correct_keys` to log hits vs. misses.
@@ -510,7 +508,7 @@ unit.add_stim(fix)
 ```
 While `.show()` and `.capture_response()` bundle common patterns, you can achieve the same behavior using lifecycle hooks for greater customization.
 
-#### Replicating `.show()` with Hooks
+#### Replicating `show()` with Hooks
 ```python
 unit = StimUnit('show_demo', win, kb)
 unit.add_stim(my_stim)
@@ -625,25 +623,25 @@ Use `set_state()` to record key–value data into the unit’s state
 
 **Example**
 ```python
-       # --- Feedback ---
-    if early_response:
-        delta = settings.delta * -1
-        hit=False
+    # --- Feedback ---
+if early_response:
+    delta = settings.delta * -1
+    hit=False
+else:
+    hit = target.get_state("hit", False)
+    if condition == "win":
+        delta = settings.delta if hit else 0
+    elif condition == "lose":
+        delta = 0 if hit else settings.delta * -1
     else:
-        hit = target.get_state("hit", False)
-        if condition == "win":
-            delta = settings.delta if hit else 0
-        elif condition == "lose":
-            delta = 0 if hit else settings.delta * -1
-        else:
-            delta = 0
+        delta = 0
 
-    hit_type = "hit" if hit else "miss"
-    fb_stim = stim_bank.get(f"{condition}_{hit_type}_feedback")
-    fb = make_unit(unit_label="feedback") \
-        .add_stim(fb_stim) \
-        .show(duration=settings.feedback_duration, onset_trigger=settings.triggers.get(f"{condition}_{hit_type}_fb_onset"))
-    fb.set_state(hit=hit, delta=delta).to_dict(trial_data)
+hit_type = "hit" if hit else "miss"
+fb_stim = stim_bank.get(f"{condition}_{hit_type}_feedback")
+fb = make_unit(unit_label="feedback") \
+    .add_stim(fb_stim) \
+    .show(duration=settings.feedback_duration, onset_trigger=settings.triggers.get(f"{condition}_{hit_type}_fb_onset"))
+fb.set_state(hit=hit, delta=delta).to_dict(trial_data)
 ```
 In this snippet, we:
 
@@ -751,9 +749,21 @@ When you call `get_state()`, it first looks for the exact key, then for the pref
   ```
 
 #### Logging State Internally with `.log_unit()`
-- Writes all key–value pairs in `unit.state` to PsychoPy’s log via `logging.data`.
-- Automatically called at the end of `unit.run()`, so you normally don't need to invoke it yourself.
 
+`log_unit()` writes every key–value pair in `unit.state` to the log score in `data/*.log`.   It uses PsychoPy’s `logging.data()`, which by default appends timestamped entries to the experiment log file or console.
+  It's automatically invoked within the `StimUnit` class, so you usually don’t need to call it manually.
+
+
+**What gets logged?**  All entries currently in `unit.state`, including:
+
+| State key examples            | Description                                  |
+|-------------------------------|----------------------------------------------|
+| `trial_block`, `trial_trial`  | Pre-trial identifiers                        |
+| `onset_time`, `flip_time`     | Timestamps from `.show()` or `.run()`        |
+| `hit`, `response`, `rt`       | Response metrics from `capture_response()`   |
+| `feedback_hit`, `feedback_delta` | Custom values from your `set_state()` calls |
+
+If you need a separate log for debugging at other points, you can call `unit.log_unit()` manually to snapshot current state.
 
 
 
