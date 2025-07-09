@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Utility Helpers" href="utilities.html" /><link rel="prev" title="TriggerSender: Precise Event Marking for EEG/MEG Experiments" href="send_trigger.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Utility Functions" href="utilities.html" /><link rel="prev" title="Sending Hardware Triggers" href="send_trigger.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>Command-Line Tools: Quick Project Setup - psyflow 0.1.1 documentation</title>
+        <title>Command-Line Interface (CLI) - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -208,12 +208,13 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with psyflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Command-Line Tools: Quick Project Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">Sending Hardware Triggers</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
 </ul>
 
 </div>
@@ -254,408 +255,49 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="command-line-tools-quick-project-setup">
-<h1>Command-Line Tools: Quick Project Setup<a class="headerlink" href="#command-line-tools-quick-project-setup" title="Link to this heading">¶</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>Psyflow provides command-line tools to help you quickly set up new projects and streamline your workflow. These tools allow you to create new experiments from templates, reducing boilerplate code and ensuring best practices from the start.</p>
-<p>The command-line tools solve several common challenges:</p>
-<ul class="simple">
-<li><p><strong>Project setup</strong>: Create new experiments with the correct structure</p></li>
-<li><p><strong>Boilerplate reduction</strong>: Avoid writing repetitive code for common experiment components</p></li>
-<li><p><strong>Standardization</strong>: Ensure consistent project organization across experiments</p></li>
-<li><p><strong>Time savings</strong>: Get started with a working experiment in seconds</p></li>
-</ul>
-</section>
-<section id="key-features">
-<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Feature</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Project templates</p></td>
-<td><p>Pre-configured experiment templates for common paradigms</p></td>
-</tr>
-<tr class="row-odd"><td><p>Customization</p></td>
-<td><p>Prompts for experiment name, author, and other metadata</p></td>
-</tr>
-<tr class="row-even"><td><p>Directory structure</p></td>
-<td><p>Creates organized folder structure for code, data, and resources</p></td>
-</tr>
-<tr class="row-odd"><td><p>Configuration files</p></td>
-<td><p>Generates YAML configuration files with sensible defaults</p></td>
-</tr>
-<tr class="row-even"><td><p>Example code</p></td>
-<td><p>Includes working example code to demonstrate psyflow usage</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="quick-reference">
-<h2>Quick Reference<a class="headerlink" href="#quick-reference" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Tool</p></th>
-<th class="head"><p>Purpose</p></th>
-<th class="head"><p>Example</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code></p></td>
-<td><p>Create a new project from template</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">psyflow.utils.taps()</span></code></p></td>
-<td><p>Create a project programmatically</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">psyflow.utils</span> <span class="pre">import</span> <span class="pre">taps;</span> <span class="pre">taps()</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="detailed-usage-guide">
-<h2>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h2>
-<section id="using-psyflow-init">
-<h3>1. Using <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code><a class="headerlink" href="#using-psyflow-init" title="Link to this heading">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code> command is the easiest way to create a new psyflow project. When you run this command, it will guide you through a series of prompts to customize your project.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Open a terminal/command prompt and run:</span>
-psyflow-init
+          <section id="command-line-interface-cli">
+<h1>Command-Line Interface (CLI)<a class="headerlink" href="#command-line-interface-cli" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">psyflow</span></code> includes a command-line interface (CLI) to streamline your project setup. The CLI helps you create a new task with a standardized and recommended project structure, so you can get to the science faster.</p>
+<section id="creating-a-new-project-with-psyflow-init">
+<h2>Creating a New Project with <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code><a class="headerlink" href="#creating-a-new-project-with-psyflow-init" title="Link to this heading">¶</a></h2>
+<p>The primary command is <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code>, which scaffolds a new project directory for you.</p>
+<section id="basic-usage">
+<h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading">¶</a></h3>
+<p>To create a new project, open your terminal, navigate to the directory where you want to create your project, and run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>psyflow-init<span class="w"> </span>my-new-task
 </pre></div>
 </div>
-<p>You’ll be prompted for information about your project:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">project_name</span> <span class="p">[</span><span class="n">My</span> <span class="n">Psyflow</span> <span class="n">Project</span><span class="p">]:</span> <span class="n">Stroop</span> <span class="n">Task</span>
-<span class="n">author_name</span> <span class="p">[</span><span class="n">Your</span> <span class="n">Name</span><span class="p">]:</span> <span class="n">Jane</span> <span class="n">Researcher</span>
-<span class="n">author_email</span> <span class="p">[</span><span class="n">your</span><span class="o">.</span><span class="n">email</span><span class="nd">@example</span><span class="o">.</span><span class="n">com</span><span class="p">]:</span> <span class="n">jane</span><span class="nd">@university</span><span class="o">.</span><span class="n">edu</span>
-<span class="n">project_slug</span> <span class="p">[</span><span class="n">stroop</span><span class="o">-</span><span class="n">task</span><span class="p">]:</span> <span class="n">stroop_task</span>
-<span class="n">project_short_description</span> <span class="p">[</span><span class="n">A</span> <span class="n">short</span> <span class="n">description</span> <span class="n">of</span> <span class="n">the</span> <span class="n">project</span><span class="o">.</span><span class="p">]:</span> <span class="n">A</span> <span class="n">Stroop</span> <span class="n">task</span> <span class="n">implementation</span> <span class="n">using</span> <span class="n">psyflow</span>
-<span class="n">version</span> <span class="p">[</span><span class="mf">0.1.0</span><span class="p">]:</span> 
-<span class="n">use_pytest</span> <span class="p">[</span><span class="n">n</span><span class="p">]:</span> <span class="n">y</span>
-<span class="n">command_line_interface</span> <span class="p">[</span><span class="n">Click</span><span class="p">]:</span> 
-<span class="n">open_source_license</span> <span class="p">[</span><span class="n">MIT</span><span class="p">]:</span> 
-</pre></div>
-</div>
-<p>After answering these prompts, <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code> will create a new directory with your project structure:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>stroop_task/
-├── .gitignore
-├── LICENSE
+<p>This command will create a new folder named <code class="docutils literal notranslate"><span class="pre">my-new-task</span></code> inside your current directory. This new folder contains all the necessary files and subdirectories to start your experiment.</p>
+</section>
+<section id="project-structure">
+<h3>Project Structure<a class="headerlink" href="#project-structure" title="Link to this heading">¶</a></h3>
+<p>After running the command, you will see the following structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>my-new-task/
+├── main.py
+├── meta.json
 ├── README.md
+├── assets/
 ├── config/
 │   └── config.yaml
 ├── data/
-├── requirements.txt
-├── setup.py
-├── stroop_task/
-│   ├── __init__.py
-│   ├── cli.py
-│   └── experiment.py
-└── tests/
+└── src/
     ├── __init__.py
-    └── test_stroop_task.py
+    ├── run_trial.py
+    └── utils.py
 </pre></div>
 </div>
+<p>This structure helps organize your code, configuration, and data from the very beginning.</p>
 </section>
-<section id="using-psyflow-utils-taps">
-<h3>2. Using <code class="docutils literal notranslate"><span class="pre">psyflow.utils.taps()</span></code><a class="headerlink" href="#using-psyflow-utils-taps" title="Link to this heading">¶</a></h3>
-<p>If you prefer to create a project programmatically or want to integrate project creation into your own scripts, you can use the <code class="docutils literal notranslate"><span class="pre">taps()</span></code> function:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">taps</span>
-
-<span class="c1"># Create a new project with default settings</span>
-<span class="n">taps</span><span class="p">()</span>
-
-<span class="c1"># Or specify custom settings</span>
-<span class="n">taps</span><span class="p">(</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;my_experiments&quot;</span><span class="p">,</span>
-    <span class="n">no_input</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Use defaults without prompting</span>
-    <span class="n">extra_context</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;project_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Flanker Task&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;author_name&quot;</span><span class="p">:</span> <span class="s2">&quot;John Researcher&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;author_email&quot;</span><span class="p">:</span> <span class="s2">&quot;john@university.edu&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;project_slug&quot;</span><span class="p">:</span> <span class="s2">&quot;flanker_task&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;project_short_description&quot;</span><span class="p">:</span> <span class="s2">&quot;A Flanker task implementation using psyflow&quot;</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>This will create a project with the same structure as <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code>, but allows for automation and customization in Python code.</p>
-</section>
-<section id="project-structure">
-<h3>3. Project Structure<a class="headerlink" href="#project-structure" title="Link to this heading">¶</a></h3>
-<p>The generated project includes:</p>
-<section id="configuration-files">
-<h4>Configuration Files<a class="headerlink" href="#configuration-files" title="Link to this heading">¶</a></h4>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config/config.yaml</span>
-<span class="nt">task_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stroop_task</span>
-<span class="nt">window_size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1024</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">768</span><span class="p p-Indicator">]</span>
-<span class="nt">fullscreen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-<span class="nt">bg_color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
-<span class="nt">data_dir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
-
-<span class="nt">timing</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">fixation_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
-<span class="w">  </span><span class="nt">stimulus_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span>
-<span class="w">  </span><span class="nt">feedback_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
-<span class="w">  </span><span class="nt">iti</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
-
-<span class="nt">subinfo_fields</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subject_id</span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span>
-<span class="w">    </span><span class="nt">constraints</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">101</span>
-<span class="w">      </span><span class="nt">max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">999</span>
-<span class="w">      </span><span class="nt">digits</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">age</span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span>
-<span class="w">    </span><span class="nt">constraints</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">18</span>
-<span class="w">      </span><span class="nt">max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gender</span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">choice</span>
-<span class="w">    </span><span class="nt">choices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Male</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Female</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Non-binary</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Prefer not to say</span><span class="p p-Indicator">]</span>
-</pre></div>
-</div>
-</section>
-<section id="main-experiment-file">
-<h4>Main Experiment File<a class="headerlink" href="#main-experiment-file" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># stroop_task/experiment.py</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span><span class="p">,</span> <span class="n">core</span><span class="p">,</span> <span class="n">event</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span><span class="p">,</span> <span class="n">TaskSettings</span><span class="p">,</span> <span class="n">StimBank</span><span class="p">,</span> <span class="n">StimUnit</span><span class="p">,</span> <span class="n">BlockUnit</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-    <span class="c1"># Load configuration</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config/config.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-    
-    <span class="c1"># Collect subject information</span>
-    <span class="n">subinfo</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">({</span>
-        <span class="s2">&quot;subinfo_fields&quot;</span><span class="p">:</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;subinfo_fields&quot;</span><span class="p">,</span> <span class="p">[])</span>
-    <span class="p">})</span>
-    <span class="n">subject_data</span> <span class="o">=</span> <span class="n">subinfo</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
-    
-    <span class="k">if</span> <span class="n">subject_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Experiment cancelled&quot;</span><span class="p">)</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    
-    <span class="c1"># Configure task settings</span>
-    <span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-    <span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subject_data</span><span class="p">)</span>
-    
-    <span class="c1"># Create subject directory if it doesn&#39;t exist</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">subject_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    
-    <span class="c1"># Create PsychoPy window</span>
-    <span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
-        <span class="n">size</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">window_size</span><span class="p">,</span>
-        <span class="n">fullscr</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span><span class="p">,</span>
-        <span class="n">color</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">bg_color</span><span class="p">,</span>
-        <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span>
-    <span class="p">)</span>
-    
-    <span class="c1"># Run experiment</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">run_experiment</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">settings</span><span class="p">)</span>
-    <span class="k">finally</span><span class="p">:</span>
-        <span class="c1"># Clean up</span>
-        <span class="n">win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-        <span class="n">core</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">run_experiment</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">settings</span><span class="p">):</span>
-    <span class="c1"># Your experiment code here</span>
-    <span class="k">pass</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-<section id="command-line-interface">
-<h4>Command-Line Interface<a class="headerlink" href="#command-line-interface" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># stroop_task/cli.py</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">experiment</span>
-
-<span class="nd">@click</span><span class="o">.</span><span class="n">command</span><span class="p">()</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the Stroop Task experiment.&quot;&quot;&quot;</span>
-    <span class="n">experiment</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="customizing-templates">
-<h3>4. Customizing Templates<a class="headerlink" href="#customizing-templates" title="Link to this heading">¶</a></h3>
-<p>The project templates are based on <a class="reference external" href="https://cookiecutter.readthedocs.io/">cookiecutter</a>, a powerful Python tool for creating project templates. If you want to customize the default templates or create your own:</p>
-<ol class="arabic">
-<li><p>Find the template directory in your psyflow installation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">psyflow</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">psyflow</span><span class="o">.</span><span class="n">__path__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/templates&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</li>
-<li><p>Copy the template directory to your own location and modify it.</p></li>
-<li><p>Use your custom template:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">taps</span>
-<span class="n">taps</span><span class="p">(</span><span class="n">template</span><span class="o">=</span><span class="s2">&quot;path/to/your/custom/template&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</li>
-</ol>
-</section>
-</section>
-<section id="complete-example">
-<h2>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading">¶</a></h2>
-<p>Here’s a complete example of creating and running a new project:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new project</span>
+<section id="in-place-initialization">
+<h3>In-Place Initialization<a class="headerlink" href="#in-place-initialization" title="Link to this heading">¶</a></h3>
+<p>Sometimes, you might have already created a directory for your project and want to initialize it with the <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> structure. You can do this by running <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code> without any arguments inside that directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>my-existing-folder
+<span class="nb">cd</span><span class="w"> </span>my-existing-folder
 psyflow-init
-
-<span class="c1"># Navigate to the project directory</span>
-<span class="nb">cd</span><span class="w"> </span>my_project
-
-<span class="c1"># Install the project in development mode</span>
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-
-<span class="c1"># Run the experiment</span>
-python<span class="w"> </span>-m<span class="w"> </span>my_project.cli
 </pre></div>
 </div>
-<p>Or using Python:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new project</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">taps</span>
-<span class="n">taps</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;experiments&quot;</span><span class="p">)</span>
-
-<span class="c1"># Run the experiment</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-
-<span class="c1"># Add the project to the Python path</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;experiments/my_project&quot;</span><span class="p">))</span>
-
-<span class="c1"># Import and run the experiment</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">my_project</span><span class="w"> </span><span class="kn">import</span> <span class="n">experiment</span>
-<span class="n">experiment</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
-</pre></div>
-</div>
+<p>This will populate the <code class="docutils literal notranslate"><span class="pre">my-existing-folder</span></code> with the same project structure without creating a new subdirectory. This is useful for integrating <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> into an existing project structure.</p>
 </section>
-<section id="advanced-usage">
-<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">¶</a></h2>
-<section id="creating-multiple-projects">
-<h3>Creating Multiple Projects<a class="headerlink" href="#creating-multiple-projects" title="Link to this heading">¶</a></h3>
-<p>You can create multiple projects with different configurations:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">taps</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-
-<span class="c1"># Define project configurations</span>
-<span class="n">projects</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;project_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Stroop Task&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;project_slug&quot;</span><span class="p">:</span> <span class="s2">&quot;stroop_task&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;project_short_description&quot;</span><span class="p">:</span> <span class="s2">&quot;A Stroop task implementation&quot;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;project_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Flanker Task&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;project_slug&quot;</span><span class="p">:</span> <span class="s2">&quot;flanker_task&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;project_short_description&quot;</span><span class="p">:</span> <span class="s2">&quot;A Flanker task implementation&quot;</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;project_name&quot;</span><span class="p">:</span> <span class="s2">&quot;N-Back Task&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;project_slug&quot;</span><span class="p">:</span> <span class="s2">&quot;n_back_task&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;project_short_description&quot;</span><span class="p">:</span> <span class="s2">&quot;An N-Back task implementation&quot;</span>
-    <span class="p">}</span>
-<span class="p">]</span>
-
-<span class="c1"># Create each project</span>
-<span class="k">for</span> <span class="n">project</span> <span class="ow">in</span> <span class="n">projects</span><span class="p">:</span>
-    <span class="n">taps</span><span class="p">(</span>
-        <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;experiments&quot;</span><span class="p">,</span>
-        <span class="n">no_input</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">extra_context</span><span class="o">=</span><span class="p">{</span>
-            <span class="o">**</span><span class="n">project</span><span class="p">,</span>
-            <span class="s2">&quot;author_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Research Lab&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;author_email&quot;</span><span class="p">:</span> <span class="s2">&quot;lab@university.edu&quot;</span>
-        <span class="p">}</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="custom-project-structure">
-<h3>Custom Project Structure<a class="headerlink" href="#custom-project-structure" title="Link to this heading">¶</a></h3>
-<p>You can create a more complex project structure by modifying the generated files:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">taps</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
-
-<span class="c1"># Create a basic project</span>
-<span class="n">taps</span><span class="p">(</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;experiments&quot;</span><span class="p">,</span>
-    <span class="n">no_input</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">extra_context</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;project_name&quot;</span><span class="p">:</span> <span class="s2">&quot;Multi-Task Battery&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;project_slug&quot;</span><span class="p">:</span> <span class="s2">&quot;task_battery&quot;</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-
-<span class="c1"># Add custom directories</span>
-<span class="n">project_dir</span> <span class="o">=</span> <span class="s2">&quot;experiments/task_battery&quot;</span>
-<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_dir</span><span class="si">}</span><span class="s2">/task_battery/tasks/stroop&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_dir</span><span class="si">}</span><span class="s2">/task_battery/tasks/flanker&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_dir</span><span class="si">}</span><span class="s2">/task_battery/tasks/n_back&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_dir</span><span class="si">}</span><span class="s2">/config/tasks&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Create task-specific config files</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_dir</span><span class="si">}</span><span class="s2">/config/tasks/stroop.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;task_name: stroop</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_dir</span><span class="si">}</span><span class="s2">/config/tasks/flanker.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;task_name: flanker</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">project_dir</span><span class="si">}</span><span class="s2">/config/tasks/n_back.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;task_name: n_back</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="best-practices">
-<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Use version control</strong>: Initialize a git repository in your new project directory to track changes.</p></li>
-<li><p><strong>Customize the README</strong>: Update the generated README.md with specific information about your experiment.</p></li>
-<li><p><strong>Update requirements</strong>: Add any additional dependencies to requirements.txt.</p></li>
-<li><p><strong>Organize stimuli</strong>: Create a dedicated directory for stimuli and resources.</p></li>
-<li><p><strong>Document your code</strong>: Add docstrings and comments to explain your experiment logic.</p></li>
-<li><p><strong>Use configuration files</strong>: Keep all experiment parameters in the YAML configuration file.</p></li>
-<li><p><strong>Write tests</strong>: Use the generated tests directory to add unit tests for your experiment.</p></li>
-</ol>
-</section>
-<section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p><strong>Command not found</strong>: If <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code> is not found, ensure that psyflow is installed correctly and that your Python scripts directory is in your PATH.</p></li>
-<li><p><strong>Template errors</strong>: If you encounter errors with the template, try updating psyflow to the latest version.</p></li>
-<li><p><strong>Import errors</strong>: If you get import errors when running your project, ensure that it’s installed in development mode (<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code>) or that the project directory is in your Python path.</p></li>
-<li><p><strong>Configuration issues</strong>: If your experiment doesn’t load the configuration correctly, check the path to your config.yaml file.</p></li>
-</ul>
-</section>
-<section id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
-<p>Now that you know how to create new projects, you can:</p>
-<ul class="simple">
-<li><p>Learn about <a class="reference internal" href="task_settings.html"><span class="std std-doc">TaskSettings</span></a> for configuring your experiment</p></li>
-<li><p>Explore <a class="reference internal" href="get_subinfo.html"><span class="std std-doc">SubInfo</span></a> for collecting participant information</p></li>
-<li><p>Check out <a class="reference internal" href="build_stimulus.html"><span class="std std-doc">StimBank</span></a> for managing stimuli</p></li>
-<li><p>See <a class="reference internal" href="build_trialunit.html"><span class="std std-doc">StimUnit</span></a> for creating individual trials</p></li>
-<li><p>Learn about <a class="reference internal" href="build_blocks.html"><span class="std std-doc">BlockUnit</span></a> for organizing trials into blocks</p></li>
-</ul>
 </section>
 </section>
 
@@ -669,7 +311,7 @@ python<span class="w"> </span>-m<span class="w"> </span>my_project.cli
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Utility Helpers</div>
+                <div class="title">Utility Functions</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -680,7 +322,7 @@ python<span class="w"> </span>-m<span class="w"> </span>my_project.cli
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">TriggerSender: Precise Event Marking for EEG/MEG Experiments</div>
+                <div class="title">Sending Hardware Triggers</div>
                 
               </div>
             </a>
@@ -714,31 +356,13 @@ python<span class="w"> </span>-m<span class="w"> </span>my_project.cli
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Command-Line Tools: Quick Project Setup</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#key-features">Key Features</a></li>
-<li><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
-<li><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a><ul>
-<li><a class="reference internal" href="#using-psyflow-init">1. Using <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code></a></li>
-<li><a class="reference internal" href="#using-psyflow-utils-taps">2. Using <code class="docutils literal notranslate"><span class="pre">psyflow.utils.taps()</span></code></a></li>
-<li><a class="reference internal" href="#project-structure">3. Project Structure</a><ul>
-<li><a class="reference internal" href="#configuration-files">Configuration Files</a></li>
-<li><a class="reference internal" href="#main-experiment-file">Main Experiment File</a></li>
-<li><a class="reference internal" href="#command-line-interface">Command-Line Interface</a></li>
+<li><a class="reference internal" href="#">Command-Line Interface (CLI)</a><ul>
+<li><a class="reference internal" href="#creating-a-new-project-with-psyflow-init">Creating a New Project with <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code></a><ul>
+<li><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li><a class="reference internal" href="#project-structure">Project Structure</a></li>
+<li><a class="reference internal" href="#in-place-initialization">In-Place Initialization</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#customizing-templates">4. Customizing Templates</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#complete-example">Complete Example</a></li>
-<li><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
-<li><a class="reference internal" href="#creating-multiple-projects">Creating Multiple Projects</a></li>
-<li><a class="reference internal" href="#custom-project-structure">Custom Project Structure</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
-<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
-<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>
 </ul>

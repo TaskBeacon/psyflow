@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Command-Line Tools: Quick Project Setup" href="cli_usage.html" /><link rel="prev" title="StimBank: Flexible Stimulus Management for PsychoPy" href="build_stimulus.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Command-Line Interface (CLI)" href="cli_usage.html" /><link rel="prev" title="StimUnit: Modular Stimulus &amp; Response Handler" href="build_stimunit.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>TriggerSender: Precise Event Marking for EEG/MEG Experiments - psyflow 0.1.1 documentation</title>
+        <title>Sending Hardware Triggers - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -208,12 +208,13 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with psyflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Sending Hardware Triggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
 </ul>
 
 </div>
@@ -254,479 +255,67 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="triggersender-precise-event-marking-for-eeg-meg-experiments">
-<h1>TriggerSender: Precise Event Marking for EEG/MEG Experiments<a class="headerlink" href="#triggersender-precise-event-marking-for-eeg-meg-experiments" title="Link to this heading">¶</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> class provides a flexible and reliable way to send event markers (triggers) to EEG/MEG recording systems. It solves several common challenges in neuroscience experiments:</p>
+          <section id="sending-hardware-triggers">
+<h1>Sending Hardware Triggers<a class="headerlink" href="#sending-hardware-triggers" title="Link to this heading">¶</a></h1>
+<p>In many psychology and neuroscience experiments, it’s crucial to send precise time markers (triggers) to external recording equipment like EEG, MEG, or eye-trackers. <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> provides a flexible and hardware-agnostic <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> class to handle this.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> is designed to be a wrapper around the actual hardware communication logic, making your experiment code cleaner and easier to test.</p>
+<section id="getting-started-mock-mode-for-development">
+<h2>Getting Started: Mock Mode for Development<a class="headerlink" href="#getting-started-mock-mode-for-development" title="Link to this heading">¶</a></h2>
+<p>You don’t need any hardware to start developing your experiment. The <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> can be initialized in a <code class="docutils literal notranslate"><span class="pre">mock</span></code> mode, which simply prints the trigger codes to the console instead of sending them to a real device. This is extremely useful for testing and debugging.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.TriggerSender</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
+
+<span class="c1"># Initialize in mock mode</span>
+<span class="n">trigger_sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># This will print &quot;[MockTrigger] Sent code: 1&quot; to the console</span>
+<span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># This will print &quot;[MockTrigger] Sent code: 255&quot;</span>
+<span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By using <code class="docutils literal notranslate"><span class="pre">mock=True</span></code>, you can develop and test your entire experiment logic on any computer, even without the final data acquisition hardware.</p>
+</section>
+<section id="connecting-to-real-hardware">
+<h2>Connecting to Real Hardware<a class="headerlink" href="#connecting-to-real-hardware" title="Link to this heading">¶</a></h2>
+<p>When you are ready to connect to your actual hardware, you need to provide a function to the <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> that knows how to communicate with your specific device. This is done via the <code class="docutils literal notranslate"><span class="pre">trigger_func</span></code> argument.</p>
+<section id="example-parallel-lpt-port">
+<h3>Example: Parallel (LPT) Port<a class="headerlink" href="#example-parallel-lpt-port" title="Link to this heading">¶</a></h3>
+<p>A common way to send triggers is through a parallel (LPT) port. PsychoPy’s <code class="docutils literal notranslate"><span class="pre">psychopy.parallel</span></code> module can be used for this. Here is how you would configure the <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> to use a parallel port:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">parallel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.TriggerSender</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
+
+<span class="c1"># Initialize the parallel port</span>
+<span class="c1"># The address might be different on your system (e.g., 0x0378 on Windows)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="n">parallel</span><span class="o">.</span><span class="n">ParallelPort</span><span class="p">(</span><span class="n">address</span><span class="o">=</span><span class="s1">&#39;/dev/parport0&#39;</span><span class="p">)</span>
+    <span class="c1"># The actual function that sends the trigger</span>
+    <span class="n">send_code</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">code</span><span class="p">:</span> <span class="n">port</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="n">trigger_sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">trigger_func</span><span class="o">=</span><span class="n">send_code</span><span class="p">)</span>
+    
+    <span class="c1"># Now, this will send the value 128 to the parallel port</span>
+    <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to initialize parallel port: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Running in mock mode instead.&quot;</span><span class="p">)</span>
+    <span class="n">trigger_sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span> <span class="c1"># This will now print to console</span>
+</pre></div>
+</div>
+<p>In this example, we define a <code class="docutils literal notranslate"><span class="pre">send_code</span></code> function that takes a <code class="docutils literal notranslate"><span class="pre">code</span></code> and uses <code class="docutils literal notranslate"><span class="pre">port.setData()</span></code> to send it. This function is then passed to our <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>. We also include error handling to fall back to mock mode if the port can’t be opened.</p>
+</section>
+<section id="other-devices">
+<h3>Other Devices<a class="headerlink" href="#other-devices" title="Link to this heading">¶</a></h3>
+<p>The same principle applies to any other device. As long as you can write a Python function to send a number to it (e.g., via a serial port or a LabJack device), you can integrate it with the <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>.</p>
+</section>
+</section>
+<section id="advanced-timing-and-hooks">
+<h2>Advanced: Timing and Hooks<a class="headerlink" href="#advanced-timing-and-hooks" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> also has optional parameters for more advanced control:</p>
 <ul class="simple">
-<li><p><strong>Consistent timing</strong>: Ensure precise timing of event markers</p></li>
-<li><p><strong>Flexible configuration</strong>: Support various hardware interfaces</p></li>
-<li><p><strong>Mock mode</strong>: Test experiments without actual hardware</p></li>
-<li><p><strong>Pre/post hooks</strong>: Execute custom code before/after sending triggers</p></li>
-<li><p><strong>Centralized trigger management</strong>: Organize all event codes in one place</p></li>
-</ul>
-<p>Whether you’re using a parallel port, serial port, USB device, or network-based trigger system, <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> provides a unified interface that makes your experiment code cleaner and more maintainable.</p>
-</section>
-<section id="key-features">
-<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Feature</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Hardware abstraction</p></td>
-<td><p>Works with any trigger hardware via custom send function</p></td>
-</tr>
-<tr class="row-odd"><td><p>Mock mode</p></td>
-<td><p>Test experiments without actual hardware</p></td>
-</tr>
-<tr class="row-even"><td><p>Pre/post hooks</p></td>
-<td><p>Execute custom code before/after sending triggers</p></td>
-</tr>
-<tr class="row-odd"><td><p>Post-delay</p></td>
-<td><p>Configurable delay after sending triggers</p></td>
-</tr>
-<tr class="row-even"><td><p>Trigger dictionary</p></td>
-<td><p>Organize event codes with meaningful labels</p></td>
-</tr>
-<tr class="row-odd"><td><p>Integration with StimUnit</p></td>
-<td><p>Seamless use with psyflow’s trial controller</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="quick-reference">
-<h2>Quick Reference<a class="headerlink" href="#quick-reference" title="Link to this heading">¶</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Purpose</p></th>
-<th class="head"><p>Method</p></th>
-<th class="head"><p>Example</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Initialize</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">TriggerSender(send_fn)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trigger</span> <span class="pre">=</span> <span class="pre">TriggerSender(send_func)</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>Mock mode</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">TriggerSender(mock=True)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trigger</span> <span class="pre">=</span> <span class="pre">TriggerSender(mock=True)</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>Send trigger</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.send(code)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trigger.send(10)</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>Add pre-hook</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">on_trigger_start</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">TriggerSender(on_trigger_start=fn)</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>Add post-hook</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">on_trigger_end</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">TriggerSender(on_trigger_end=fn)</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>Set post-delay</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">post_delay</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">TriggerSender(post_delay=0.01)</span></code></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="detailed-usage-guide">
-<h2>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h2>
-<section id="creating-a-trigger-dictionary">
-<h3>1. Creating a Trigger Dictionary<a class="headerlink" href="#creating-a-trigger-dictionary" title="Link to this heading">¶</a></h3>
-<p>Before setting up the <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>, it’s good practice to organize your event codes in a dictionary. This makes your experiment code more readable and maintainable.</p>
-<section id="option-a-define-manually-in-python">
-<h4>Option A: Define Manually in Python<a class="headerlink" href="#option-a-define-manually-in-python" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trigger_codes</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="c1"># Stimulus events</span>
-    <span class="s2">&quot;fixation_onset&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;cue_onset&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s2">&quot;target_onset&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
-    
-    <span class="c1"># Response events</span>
-    <span class="s2">&quot;left_response&quot;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
-    <span class="s2">&quot;right_response&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span>
-    <span class="s2">&quot;timeout&quot;</span><span class="p">:</span> <span class="mi">19</span><span class="p">,</span>
-    
-    <span class="c1"># Block events</span>
-    <span class="s2">&quot;block_start&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span>
-    <span class="s2">&quot;block_end&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">,</span>
-    
-    <span class="c1"># Condition markers</span>
-    <span class="s2">&quot;condition_a&quot;</span><span class="p">:</span> <span class="mi">31</span><span class="p">,</span>
-    <span class="s2">&quot;condition_b&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-    
-    <span class="c1"># Special events</span>
-    <span class="s2">&quot;experiment_start&quot;</span><span class="p">:</span> <span class="mi">91</span><span class="p">,</span>
-    <span class="s2">&quot;experiment_end&quot;</span><span class="p">:</span> <span class="mi">92</span><span class="p">,</span>
-    <span class="s2">&quot;error&quot;</span><span class="p">:</span> <span class="mi">99</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-</section>
-<section id="option-b-load-from-yaml-configuration">
-<h4>Option B: Load from YAML Configuration<a class="headerlink" href="#option-b-load-from-yaml-configuration" title="Link to this heading">¶</a></h4>
-<p>YAML file (<code class="docutils literal notranslate"><span class="pre">triggers.yaml</span></code>):</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">triggers</span><span class="p">:</span>
-<span class="w">  </span><span class="c1"># Stimulus events</span>
-<span class="w">  </span><span class="nt">fixation_onset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-<span class="w">  </span><span class="nt">cue_onset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
-<span class="w">  </span><span class="nt">target_onset</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
-<span class="w">  </span>
-<span class="w">  </span><span class="c1"># Response events</span>
-<span class="w">  </span><span class="nt">left_response</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">11</span>
-<span class="w">  </span><span class="nt">right_response</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12</span>
-<span class="w">  </span><span class="nt">timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">19</span>
-<span class="w">  </span>
-<span class="w">  </span><span class="c1"># Block events</span>
-<span class="w">  </span><span class="nt">block_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">21</span>
-<span class="w">  </span><span class="nt">block_end</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">22</span>
-<span class="w">  </span>
-<span class="w">  </span><span class="c1"># Condition markers</span>
-<span class="w">  </span><span class="nt">condition_a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">31</span>
-<span class="w">  </span><span class="nt">condition_b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">32</span>
-<span class="w">  </span>
-<span class="w">  </span><span class="c1"># Special events</span>
-<span class="w">  </span><span class="nt">experiment_start</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">91</span>
-<span class="w">  </span><span class="nt">experiment_end</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">92</span>
-<span class="w">  </span><span class="nt">error</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">99</span>
-</pre></div>
-</div>
-<p>Loading in Python:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;triggers.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-    <span class="n">trigger_codes</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;triggers&quot;</span><span class="p">]</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="initializing-triggersender">
-<h3>2. Initializing TriggerSender<a class="headerlink" href="#initializing-triggersender" title="Link to this heading">¶</a></h3>
-<section id="option-a-mock-mode-for-testing">
-<h4>Option A: Mock Mode (for Testing)<a class="headerlink" href="#option-a-mock-mode-for-testing" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
-
-<span class="c1"># Create a mock trigger sender for testing</span>
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>In mock mode, triggers are printed to the console but not actually sent to any hardware.</p>
-</section>
-<section id="option-b-serial-port">
-<h4>Option B: Serial Port<a class="headerlink" href="#option-b-serial-port" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">serial</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
-
-<span class="c1"># Open serial port</span>
-<span class="n">port</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">Serial</span><span class="p">(</span><span class="s1">&#39;COM3&#39;</span><span class="p">,</span> <span class="n">baudrate</span><span class="o">=</span><span class="mi">9600</span><span class="p">)</span>
-
-<span class="c1"># Define send function</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">send_to_serial</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
-    <span class="n">port</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">([</span><span class="n">code</span><span class="p">]))</span>
-
-<span class="c1"># Create trigger sender</span>
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span>
-    <span class="n">send_fn</span><span class="o">=</span><span class="n">send_to_serial</span><span class="p">,</span>
-    <span class="n">post_delay</span><span class="o">=</span><span class="mf">0.001</span>  <span class="c1"># 1ms delay after sending</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="option-c-parallel-port">
-<h4>Option C: Parallel Port<a class="headerlink" href="#option-c-parallel-port" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">parallel</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
-
-<span class="c1"># Open parallel port</span>
-<span class="n">port</span> <span class="o">=</span> <span class="n">parallel</span><span class="o">.</span><span class="n">Parallel</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Usually 0x378 or 0x3BC</span>
-
-<span class="c1"># Define send function</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">send_to_parallel</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
-    <span class="n">port</span><span class="o">.</span><span class="n">setData</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
-
-<span class="c1"># Create trigger sender</span>
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">send_fn</span><span class="o">=</span><span class="n">send_to_parallel</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="option-d-labstreaminglayer-lsl">
-<h4>Option D: LabStreamingLayer (LSL)<a class="headerlink" href="#option-d-labstreaminglayer-lsl" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pylsl</span><span class="w"> </span><span class="kn">import</span> <span class="n">StreamInfo</span><span class="p">,</span> <span class="n">StreamOutlet</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
-
-<span class="c1"># Create LSL outlet</span>
-<span class="n">info</span> <span class="o">=</span> <span class="n">StreamInfo</span><span class="p">(</span><span class="s1">&#39;PsychoPy_Markers&#39;</span><span class="p">,</span> <span class="s1">&#39;Markers&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;int32&#39;</span><span class="p">,</span> <span class="s1">&#39;trigger&#39;</span><span class="p">)</span>
-<span class="n">outlet</span> <span class="o">=</span> <span class="n">StreamOutlet</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
-
-<span class="c1"># Define send function</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">send_to_lsl</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
-    <span class="n">outlet</span><span class="o">.</span><span class="n">push_sample</span><span class="p">([</span><span class="n">code</span><span class="p">])</span>
-
-<span class="c1"># Create trigger sender</span>
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">send_fn</span><span class="o">=</span><span class="n">send_to_lsl</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="sending-triggers">
-<h3>3. Sending Triggers<a class="headerlink" href="#sending-triggers" title="Link to this heading">¶</a></h3>
-<p>Once you have a <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> instance, sending triggers is straightforward:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Send a trigger directly with a code</span>
-<span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
-
-<span class="c1"># Send a trigger using the dictionary</span>
-<span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;fixation_onset&quot;</span><span class="p">])</span>
-
-<span class="c1"># Send a trigger with condition-specific code</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">send_condition_trigger</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;a&quot;</span><span class="p">:</span>
-        <span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;condition_a&quot;</span><span class="p">])</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># condition == &quot;b&quot;</span>
-        <span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;condition_b&quot;</span><span class="p">])</span>
-</pre></div>
-</div>
-</section>
-<section id="using-pre-post-hooks">
-<h3>4. Using Pre/Post Hooks<a class="headerlink" href="#using-pre-post-hooks" title="Link to this heading">¶</a></h3>
-<p>You can register functions to be called before and after sending a trigger:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define hook functions</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">before_trigger</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Preparing to send trigger...&quot;</span><span class="p">)</span>
-    <span class="c1"># Additional setup if needed</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">after_trigger</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trigger sent successfully.&quot;</span><span class="p">)</span>
-    <span class="c1"># Additional cleanup if needed</span>
-
-<span class="c1"># Create trigger sender with hooks</span>
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span>
-    <span class="n">send_fn</span><span class="o">=</span><span class="n">send_to_serial</span><span class="p">,</span>
-    <span class="n">on_trigger_start</span><span class="o">=</span><span class="n">before_trigger</span><span class="p">,</span>
-    <span class="n">on_trigger_end</span><span class="o">=</span><span class="n">after_trigger</span><span class="p">,</span>
-    <span class="n">post_delay</span><span class="o">=</span><span class="mf">0.002</span>  <span class="c1"># 2ms delay after sending</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>These hooks are useful for operations like:</p>
-<ul class="simple">
-<li><p>Opening/closing ports</p></li>
-<li><p>Setting up hardware before sending</p></li>
-<li><p>Logging trigger events</p></li>
-<li><p>Synchronizing with other equipment</p></li>
-</ul>
-</section>
-<section id="integration-with-stimunit">
-<h3>5. Integration with StimUnit<a class="headerlink" href="#integration-with-stimunit" title="Link to this heading">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> integrates seamlessly with <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> for trial-based experiments:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span><span class="p">,</span> <span class="n">TriggerSender</span>
-
-<span class="c1"># Create trigger sender</span>
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">send_fn</span><span class="o">=</span><span class="n">send_function</span><span class="p">)</span>
-
-<span class="c1"># Create trial unit with trigger sender</span>
-<span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span>
-    <span class="n">win</span><span class="o">=</span><span class="n">window</span><span class="p">,</span>
-    <span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;trial&quot;</span><span class="p">,</span>
-    <span class="n">triggersender</span><span class="o">=</span><span class="n">trigger</span>
-<span class="p">)</span>
-
-<span class="c1"># Use in a trial with automatic trigger sending</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
-    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">],</span>
-    <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
-    <span class="n">onset_trigger</span><span class="o">=</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;target_onset&quot;</span><span class="p">],</span>
-    <span class="n">response_trigger</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;left_response&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;right_response&quot;</span><span class="p">]</span>
-    <span class="p">},</span>
-    <span class="n">timeout_trigger</span><span class="o">=</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;timeout&quot;</span><span class="p">]</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="complete-example">
-<h2>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading">¶</a></h2>
-<p>Here’s a complete example showing how to use <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> in an experiment:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span><span class="p">,</span> <span class="n">core</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.hardware.keyboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Keyboard</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span><span class="p">,</span> <span class="n">StimUnit</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
-
-<span class="c1"># Load trigger codes from YAML</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;triggers.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-    <span class="n">trigger_codes</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;triggers&quot;</span><span class="p">]</span>
-
-<span class="c1"># Setup PsychoPy window and keyboard</span>
-<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
-<span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
-
-<span class="c1"># Create trigger sender (mock mode for testing)</span>
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Create stimuli</span>
-<span class="n">fixation</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
-<span class="n">target</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-<span class="n">feedback</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">])</span>
-
-<span class="c1"># Run a trial</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
-    <span class="c1"># Send block start trigger</span>
-    <span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;block_start&quot;</span><span class="p">])</span>
-    
-    <span class="c1"># Show fixation</span>
-    <span class="n">fix_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;fixation&quot;</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
-    <span class="n">fix_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
-        <span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">onset_trigger</span><span class="o">=</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;fixation_onset&quot;</span><span class="p">]</span>
-    <span class="p">)</span>
-    
-    <span class="c1"># Send condition-specific trigger</span>
-    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;a&quot;</span><span class="p">:</span>
-        <span class="n">condition_trigger</span> <span class="o">=</span> <span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;condition_a&quot;</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># condition == &quot;b&quot;</span>
-        <span class="n">condition_trigger</span> <span class="o">=</span> <span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;condition_b&quot;</span><span class="p">]</span>
-    <span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">condition_trigger</span><span class="p">)</span>
-    
-    <span class="c1"># Show target and collect response</span>
-    <span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
-    <span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
-        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">],</span>
-        <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
-        <span class="n">onset_trigger</span><span class="o">=</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;target_onset&quot;</span><span class="p">],</span>
-        <span class="n">response_trigger</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;left_response&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;right_response&quot;</span><span class="p">]</span>
-        <span class="p">},</span>
-        <span class="n">timeout_trigger</span><span class="o">=</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;timeout&quot;</span><span class="p">]</span>
-    <span class="p">)</span>
-    
-    <span class="c1"># Show feedback</span>
-    <span class="n">feedback_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;feedback&quot;</span><span class="p">,</span> <span class="n">trigger</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">trial</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;response&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">feedback</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;You pressed </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;response&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">feedback</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;No response&quot;</span>
-    
-    <span class="n">feedback_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-    
-    <span class="c1"># Send block end trigger</span>
-    <span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;block_end&quot;</span><span class="p">])</span>
-    
-    <span class="k">return</span> <span class="n">trial</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-
-<span class="c1"># Run experiment</span>
-<span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;experiment_start&quot;</span><span class="p">])</span>
-
-<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>  <span class="c1"># 6 trials total</span>
-<span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">condition</span> <span class="ow">in</span> <span class="n">conditions</span><span class="p">:</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">run_trial</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
-    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Inter-trial interval</span>
-
-<span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">trigger_codes</span><span class="p">[</span><span class="s2">&quot;experiment_end&quot;</span><span class="p">])</span>
-
-<span class="c1"># Clean up</span>
-<span class="n">win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-<section id="advanced-usage">
-<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">¶</a></h2>
-<section id="custom-trigger-protocols">
-<h3>Custom Trigger Protocols<a class="headerlink" href="#custom-trigger-protocols" title="Link to this heading">¶</a></h3>
-<p>Some EEG/MEG systems require specific trigger protocols. You can implement these in your send function:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: BrainProducts trigger protocol</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">send_to_brainproducts</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
-    <span class="c1"># Send start byte</span>
-    <span class="n">port</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">([</span><span class="mh">0xA0</span><span class="p">]))</span>
-    <span class="c1"># Send code</span>
-    <span class="n">port</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">([</span><span class="n">code</span><span class="p">]))</span>
-    <span class="c1"># Send end byte</span>
-    <span class="n">port</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">([</span><span class="mh">0xB0</span><span class="p">]))</span>
-
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">send_fn</span><span class="o">=</span><span class="n">send_to_brainproducts</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="trigger-sequences">
-<h3>Trigger Sequences<a class="headerlink" href="#trigger-sequences" title="Link to this heading">¶</a></h3>
-<p>For complex event marking, you might need to send sequences of triggers:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">send_trigger_sequence</span><span class="p">(</span><span class="n">base_code</span><span class="p">,</span> <span class="n">condition_code</span><span class="p">):</span>
-    <span class="c1"># Send base code</span>
-    <span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">base_code</span><span class="p">)</span>
-    <span class="c1"># Wait a short time</span>
-    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># 10ms</span>
-    <span class="c1"># Send condition modifier</span>
-    <span class="n">trigger</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">condition_code</span><span class="p">)</span>
-
-<span class="c1"># Usage</span>
-<span class="n">send_trigger_sequence</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># e.g., 10 = target, 1 = condition A</span>
-</pre></div>
-</div>
-</section>
-<section id="trigger-validation">
-<h3>Trigger Validation<a class="headerlink" href="#trigger-validation" title="Link to this heading">¶</a></h3>
-<p>For critical applications, you might want to validate that triggers were actually sent:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">validated_send</span><span class="p">(</span><span class="n">code</span><span class="p">):</span>
-    <span class="c1"># Send the trigger</span>
-    <span class="n">port</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">([</span><span class="n">code</span><span class="p">]))</span>
-    <span class="c1"># Read back to verify</span>
-    <span class="n">readback</span> <span class="o">=</span> <span class="n">port</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">readback</span> <span class="ow">and</span> <span class="nb">ord</span><span class="p">(</span><span class="n">readback</span><span class="p">)</span> <span class="o">==</span> <span class="n">code</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trigger </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2"> successfully sent and verified&quot;</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;WARNING: Trigger </span><span class="si">{</span><span class="n">code</span><span class="si">}</span><span class="s2"> may not have been sent correctly&quot;</span><span class="p">)</span>
-
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">send_fn</span><span class="o">=</span><span class="n">validated_send</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="best-practices">
-<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Use meaningful trigger codes</strong>: Organize your trigger codes logically (e.g., 1-10 for stimuli, 11-20 for responses).</p></li>
-<li><p><strong>Document your trigger codes</strong>: Keep a detailed record of what each code represents.</p></li>
-<li><p><strong>Test with mock mode</strong>: Always test your experiment with <code class="docutils literal notranslate"><span class="pre">mock=True</span></code> before connecting real hardware.</p></li>
-<li><p><strong>Use post-delays</strong>: Add a small delay (1-5ms) after sending triggers to ensure they’re registered properly.</p></li>
-<li><p><strong>Validate timing</strong>: Use an oscilloscope or recording software to verify trigger timing during development.</p></li>
-<li><p><strong>Handle errors gracefully</strong>: Wrap trigger sending in try/except blocks to prevent experiment crashes.</p></li>
-<li><p><strong>Centralize trigger management</strong>: Keep all trigger codes in one configuration file.</p></li>
-</ol>
-</section>
-<section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p><strong>Missing triggers</strong>: Check hardware connections and verify your send function works correctly.</p></li>
-<li><p><strong>Timing issues</strong>: Ensure your post-delay is appropriate for your hardware and that your computer isn’t overloaded.</p></li>
-<li><p><strong>Code conflicts</strong>: Verify that your trigger codes don’t conflict with other signals in your system.</p></li>
-<li><p><strong>Serial port problems</strong>: Check port settings (baud rate, parity, etc.) and ensure the port is not being used by another program.</p></li>
-</ul>
-</section>
-<section id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
-<p>Now that you understand how to use <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>, you can:</p>
-<ul class="simple">
-<li><p>Explore the <a class="reference internal" href="build_trialunit.html"><span class="std std-doc">StimUnit tutorial</span></a> to learn how to create trial sequences with integrated triggers</p></li>
-<li><p>Check out the <a class="reference internal" href="build_blocks.html"><span class="std std-doc">BlockUnit tutorial</span></a> to organize trials into blocks</p></li>
-<li><p>Learn about <a class="reference internal" href="build_stimulus.html"><span class="std std-doc">StimBank</span></a> for flexible stimulus management</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post_delay</span></code>: A small delay (in seconds) to wait after a trigger is sent.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">on_trigger_start</span></code> and <code class="docutils literal notranslate"><span class="pre">on_trigger_end</span></code>: Custom functions (hooks) that can be executed immediately before and after the trigger is sent, which can be useful for precise timing measurements.</p></li>
 </ul>
 </section>
 </section>
@@ -741,18 +330,18 @@
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Command-Line Tools: Quick Project Setup</div>
+                <div class="title">Command-Line Interface (CLI)</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="build_stimulus.html">
+          <a class="prev-page" href="build_stimunit.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">StimBank: Flexible Stimulus Management for PsychoPy</div>
+                <div class="title">StimUnit: Modular Stimulus &amp; Response Handler</div>
                 
               </div>
             </a>
@@ -786,38 +375,14 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#key-features">Key Features</a></li>
-<li><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
-<li><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a><ul>
-<li><a class="reference internal" href="#creating-a-trigger-dictionary">1. Creating a Trigger Dictionary</a><ul>
-<li><a class="reference internal" href="#option-a-define-manually-in-python">Option A: Define Manually in Python</a></li>
-<li><a class="reference internal" href="#option-b-load-from-yaml-configuration">Option B: Load from YAML Configuration</a></li>
+<li><a class="reference internal" href="#">Sending Hardware Triggers</a><ul>
+<li><a class="reference internal" href="#getting-started-mock-mode-for-development">Getting Started: Mock Mode for Development</a></li>
+<li><a class="reference internal" href="#connecting-to-real-hardware">Connecting to Real Hardware</a><ul>
+<li><a class="reference internal" href="#example-parallel-lpt-port">Example: Parallel (LPT) Port</a></li>
+<li><a class="reference internal" href="#other-devices">Other Devices</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#initializing-triggersender">2. Initializing TriggerSender</a><ul>
-<li><a class="reference internal" href="#option-a-mock-mode-for-testing">Option A: Mock Mode (for Testing)</a></li>
-<li><a class="reference internal" href="#option-b-serial-port">Option B: Serial Port</a></li>
-<li><a class="reference internal" href="#option-c-parallel-port">Option C: Parallel Port</a></li>
-<li><a class="reference internal" href="#option-d-labstreaminglayer-lsl">Option D: LabStreamingLayer (LSL)</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#sending-triggers">3. Sending Triggers</a></li>
-<li><a class="reference internal" href="#using-pre-post-hooks">4. Using Pre/Post Hooks</a></li>
-<li><a class="reference internal" href="#integration-with-stimunit">5. Integration with StimUnit</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#complete-example">Complete Example</a></li>
-<li><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
-<li><a class="reference internal" href="#custom-trigger-protocols">Custom Trigger Protocols</a></li>
-<li><a class="reference internal" href="#trigger-sequences">Trigger Sequences</a></li>
-<li><a class="reference internal" href="#trigger-validation">Trigger Validation</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
-<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
-<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+<li><a class="reference internal" href="#advanced-timing-and-hooks">Advanced: Timing and Hooks</a></li>
 </ul>
 </li>
 </ul>

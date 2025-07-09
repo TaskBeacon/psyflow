@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Using LLMClient for AI-Driven Helpers" href="llm_client.html" /><link rel="prev" title="Command-Line Tools: Quick Project Setup" href="cli_usage.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Interacting with Large Language Models (LLMs)" href="llm_client.html" /><link rel="prev" title="Command-Line Interface (CLI)" href="cli_usage.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>Utility Helpers - psyflow 0.1.1 documentation</title>
+        <title>Utility Functions - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -208,12 +208,13 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with psyflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Utility Helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">Sending Hardware Triggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Utility Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
 </ul>
 
 </div>
@@ -254,47 +255,90 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="utility-helpers">
-<h1>Utility Helpers<a class="headerlink" href="#utility-helpers" title="Link to this heading">¶</a></h1>
-<p>These small helper functions streamline common setup tasks.</p>
-<section id="initialize-exp">
-<h2><code class="docutils literal notranslate"><span class="pre">initialize_exp</span></code><a class="headerlink" href="#initialize-exp" title="Link to this heading">¶</a></h2>
-<p>Initialize the PsychoPy window and keyboard while setting up logging.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">initialize_exp</span><span class="p">,</span> <span class="n">TaskSettings</span>
+          <section id="utility-functions">
+<h1>Utility Functions<a class="headerlink" href="#utility-functions" title="Link to this heading">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">psyflow.utils</span></code> module provides a collection of helper functions designed to simplify common tasks and reduce boilerplate code in your PsychoPy experiments.</p>
+<p>Here are some of the most useful functions you might need.</p>
+<section id="load-config">
+<h2><code class="docutils literal notranslate"><span class="pre">load_config()</span></code><a class="headerlink" href="#load-config" title="Link to this heading">¶</a></h2>
+<p>This function is your primary tool for loading experiment settings. It reads your <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> file and organizes the settings into a structured Python dictionary.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
 
-<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">({</span><span class="s2">&quot;fullscreen&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">})</span>
-<span class="n">win</span><span class="p">,</span> <span class="n">kb</span> <span class="o">=</span> <span class="n">initialize_exp</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+<span class="c1"># Load the default config file (config/config.yaml)</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
+
+<span class="c1"># Access different parts of the configuration</span>
+<span class="n">task_settings</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">]</span>
+<span class="n">stimuli</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;stim_config&#39;</span><span class="p">]</span>
+<span class="n">window_settings</span> <span class="o">=</span> <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">]</span> 
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The experiment will run in a window of size </span><span class="si">{</span><span class="n">window_settings</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">load_config</span></code> intelligently separates your raw configuration into different sections like <code class="docutils literal notranslate"><span class="pre">task_config</span></code>, <code class="docutils literal notranslate"><span class="pre">stim_config</span></code>, <code class="docutils literal notranslate"><span class="pre">subform_config</span></code>, etc., making it easy to access the settings you need.</p>
+</section>
+<section id="initialize-exp">
+<h2><code class="docutils literal notranslate"><span class="pre">initialize_exp()</span></code><a class="headerlink" href="#initialize-exp" title="Link to this heading">¶</a></h2>
+<p>Setting up the PsychoPy window, keyboard, and log file is a repetitive task. <code class="docutils literal notranslate"><span class="pre">initialize_exp()</span></code> handles all of it for you in a single function call. It takes a configuration object and returns the initialized <code class="docutils literal notranslate"><span class="pre">Window</span></code> and <code class="docutils literal notranslate"><span class="pre">Keyboard</span></code> objects.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">initialize_exp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.TaskSettings</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
+
+<span class="c1"># 1. Load configuration</span>
+<span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
+
+<span class="c1"># 2. Create a TaskSettings object (or any object with attributes)</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">])</span>
+
+<span class="c1"># 3. Initialize the experiment</span>
+<span class="n">win</span><span class="p">,</span> <span class="n">kb</span> <span class="o">=</span> <span class="n">initialize_exp</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+
+<span class="c1"># Now you are ready to run your experiment!</span>
+<span class="n">win</span><span class="o">.</span><span class="n">flip</span><span class="p">()</span>
+<span class="c1"># ... your experiment logic ...</span>
+<span class="n">win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This function also sets up a global quit key (<code class="docutils literal notranslate"><span class="pre">Ctrl+Q</span></code>) and configures logging to save your data.</p>
 </section>
 <section id="count-down">
-<h2><code class="docutils literal notranslate"><span class="pre">count_down</span></code><a class="headerlink" href="#count-down" title="Link to this heading">¶</a></h2>
-<p>Display a simple countdown before the experiment starts.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">count_down</span>
+<h2><code class="docutils literal notranslate"><span class="pre">count_down()</span></code><a class="headerlink" href="#count-down" title="Link to this heading">¶</a></h2>
+<p>A countdown is a common way to start a trial or a block. <code class="docutils literal notranslate"><span class="pre">count_down()</span></code> displays a simple numeric countdown on the screen.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">count_down</span>
 
-<span class="n">count_down</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">seconds</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+<span class="c1"># Assuming &#39;win&#39; is your PsychoPy window from initialize_exp()</span>
+<span class="c1"># win, _ = initialize_exp(settings) # if you need to run this snippet</span>
+<span class="c1"># count_down(win, seconds=3, color=&quot;white&quot;, height=50)</span>
 </pre></div>
 </div>
+<p><em>Note: To run the line above, you need a <code class="docutils literal notranslate"><span class="pre">win</span></code> object created by <code class="docutils literal notranslate"><span class="pre">initialize_exp()</span></code>.</em></p>
+<p>You can customize the appearance of the countdown numbers by passing keyword arguments that will be forwarded to PsychoPy’s <code class="docutils literal notranslate"><span class="pre">TextStim</span></code>.</p>
 </section>
-<section id="list-serial-ports">
-<h2><code class="docutils literal notranslate"><span class="pre">list_serial_ports</span></code><a class="headerlink" href="#list-serial-ports" title="Link to this heading">¶</a></h2>
-<p>Quickly list available serial ports (alias of <code class="docutils literal notranslate"><span class="pre">show_ports</span></code>).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_serial_ports</span>
+<section id="show-ports">
+<h2><code class="docutils literal notranslate"><span class="pre">show_ports()</span></code><a class="headerlink" href="#show-ports" title="Link to this heading">¶</a></h2>
+<p>If you are using hardware that connects via a serial port (like a trigger box), <code class="docutils literal notranslate"><span class="pre">show_ports()</span></code> can help you find the correct port name on your system.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">show_ports</span>
 
-<span class="n">list_serial_ports</span><span class="p">()</span>  <span class="c1"># prints numbered ports to the console</span>
+<span class="c1"># This will print a list of available serial ports</span>
+<span class="n">show_ports</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Example output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Available</span> <span class="n">serial</span> <span class="n">ports</span><span class="p">:</span>
+<span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">ttyS0</span> <span class="o">-</span> <span class="n">ttyS0</span>
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">ttyUSB0</span> <span class="o">-</span> <span class="n">USB</span><span class="o">-</span><span class="n">Serial</span> <span class="n">Controller</span>
 </pre></div>
 </div>
 </section>
 <section id="list-supported-voices">
-<h2><code class="docutils literal notranslate"><span class="pre">list_supported_voices</span></code><a class="headerlink" href="#list-supported-voices" title="Link to this heading">¶</a></h2>
-<p>Retrieve available voices for speech synthesis via <code class="docutils literal notranslate"><span class="pre">edge-tts</span></code>.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_supported_voices</span>
+<h2><code class="docutils literal notranslate"><span class="pre">list_supported_voices()</span></code><a class="headerlink" href="#list-supported-voices" title="Link to this heading">¶</a></h2>
+<p>If you are using text-to-speech features, this function lists the voices available through <code class="docutils literal notranslate"><span class="pre">edge-tts</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_supported_voices</span>
 
-<span class="n">voices</span> <span class="o">=</span> <span class="n">list_supported_voices</span><span class="p">(</span><span class="n">filter_lang</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">voices</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;ShortName&quot;</span><span class="p">])</span>  <span class="c1"># Inspect voice attributes</span>
+<span class="c1"># Get a list of all English voices and print them in a table</span>
+<span class="n">list_supported_voices</span><span class="p">(</span><span class="n">filter_lang</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Use <code class="docutils literal notranslate"><span class="pre">list_supported_voices(human_readable=True)</span></code> to print a formatted table.</p>
+<p>This helps you find the right voice for your experiment’s needs.</p>
 </section>
 </section>
 
@@ -308,7 +352,7 @@
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</div>
+                <div class="title">Interacting with Large Language Models (LLMs)</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -319,7 +363,7 @@
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Command-Line Tools: Quick Project Setup</div>
+                <div class="title">Command-Line Interface (CLI)</div>
                 
               </div>
             </a>
@@ -353,11 +397,12 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Utility Helpers</a><ul>
-<li><a class="reference internal" href="#initialize-exp"><code class="docutils literal notranslate"><span class="pre">initialize_exp</span></code></a></li>
-<li><a class="reference internal" href="#count-down"><code class="docutils literal notranslate"><span class="pre">count_down</span></code></a></li>
-<li><a class="reference internal" href="#list-serial-ports"><code class="docutils literal notranslate"><span class="pre">list_serial_ports</span></code></a></li>
-<li><a class="reference internal" href="#list-supported-voices"><code class="docutils literal notranslate"><span class="pre">list_supported_voices</span></code></a></li>
+<li><a class="reference internal" href="#">Utility Functions</a><ul>
+<li><a class="reference internal" href="#load-config"><code class="docutils literal notranslate"><span class="pre">load_config()</span></code></a></li>
+<li><a class="reference internal" href="#initialize-exp"><code class="docutils literal notranslate"><span class="pre">initialize_exp()</span></code></a></li>
+<li><a class="reference internal" href="#count-down"><code class="docutils literal notranslate"><span class="pre">count_down()</span></code></a></li>
+<li><a class="reference internal" href="#show-ports"><code class="docutils literal notranslate"><span class="pre">show_ports()</span></code></a></li>
+<li><a class="reference internal" href="#list-supported-voices"><code class="docutils literal notranslate"><span class="pre">list_supported_voices()</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -207,12 +207,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/getting_started.html">Getting Started with psyflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorials/task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/utilities.html">Utility Helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorials/llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/build_blocks.html">BlockUnit: Managing Trials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/send_trigger.html">Sending Hardware Triggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/cli_usage.html">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/utilities.html">Utility Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
 </ul>
 
 </div>
@@ -429,24 +430,6 @@
         <span class="k">return</span> <span class="bp">self</span></div>
 
     
-<div class="viewcode-block" id="StimUnit.get_dict">
-<a class="viewcode-back" href="../../api/psyflow.html#psyflow.StimUnit.StimUnit.get_dict">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return the internal state dictionary, or merge into an external one.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        target : dict, optional</span>
-<span class="sd">            If provided, updates this dict in-place and returns it.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            The internal state (or merged result if target is provided).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">)</span></div>
-
 
 <div class="viewcode-block" id="StimUnit.send_trigger">
 <a class="viewcode-back" href="../../api/psyflow.html#psyflow.StimUnit.StimUnit.send_trigger">[docs]</a>
@@ -561,62 +544,6 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_hooks</span><span class="p">[</span><span class="s2">&quot;end&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span></div>
-
-
-<div class="viewcode-block" id="StimUnit.duration">
-<a class="viewcode-back" href="../../api/psyflow.html#psyflow.StimUnit.StimUnit.duration">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">duration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">list</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">):</span> 
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Auto-close the trial after a fixed or jittered duration.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        duration : float or list</span>
-<span class="sd">            Duration or (min, max) range for random sampling.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">local_rng</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="n">t_val</span> <span class="o">=</span> <span class="n">local_rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">*</span><span class="n">duration</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="n">t_val</span> <span class="o">=</span> <span class="n">duration</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Duration list/tuple must have 1 or 2 elements, got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">duration</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
-            <span class="n">t_val</span> <span class="o">=</span> <span class="n">duration</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid duration type: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">duration</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">auto_close</span><span class="p">(</span><span class="n">unit</span><span class="p">:</span> <span class="s1">&#39;StimUnit&#39;</span><span class="p">):</span>
-            <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span>
-                <span class="n">duration</span><span class="o">=</span><span class="n">t_val</span><span class="p">,</span>
-                <span class="n">timeout_triggered</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">close_time</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">getTime</span><span class="p">(),</span>
-                <span class="n">close_time_global</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">getAbsTime</span><span class="p">()</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="n">t_val</span><span class="p">,</span> <span class="n">auto_close</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="StimUnit.close_on">
-<a class="viewcode-back" href="../../api/psyflow.html#psyflow.StimUnit.StimUnit.close_on">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">close_on</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Auto-close the trial on specific key press.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        keys : str</span>
-<span class="sd">            One or more response keys.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">def</span><span class="w"> </span><span class="nf">close_fn</span><span class="p">(</span><span class="n">unit</span><span class="p">:</span> <span class="s1">&#39;StimUnit&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">rt</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-            <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span>
-                <span class="n">keys</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
-                <span class="n">response_time</span><span class="o">=</span><span class="n">rt</span><span class="p">,</span>
-                <span class="n">close_time</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">getTime</span><span class="p">(),</span>
-                <span class="n">close_time_global</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">getAbsTime</span><span class="p">()</span>
-            <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_response</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">close_fn</span><span class="p">)</span></div>
-
 
 
 <div class="viewcode-block" id="StimUnit.run">

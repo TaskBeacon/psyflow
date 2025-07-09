@@ -208,12 +208,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/getting_started.html">Getting Started with psyflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/utilities.html">Utility Helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tutorials/llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_blocks.html">BlockUnit: Managing Trials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/send_trigger.html">Sending Hardware Triggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/cli_usage.html">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/utilities.html">Utility Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
 </ul>
 
 </div>
@@ -1198,45 +1199,6 @@ If a dict: maps key names -&gt; highlight stimuli.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.close_on">
-<span class="sig-name descname"><span class="pre">close_on</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.close_on"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.close_on" title="Link to this definition">¶</a></dt>
-<dd><p>Auto-close the trial on specific key press.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>keys</strong> (<em>str</em>) – One or more response keys.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.duration">
-<span class="sig-name descname"><span class="pre">duration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">duration</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.duration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.duration" title="Link to this definition">¶</a></dt>
-<dd><p>Auto-close the trial after a fixed or jittered duration.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>duration</strong> (<em>float</em><em> or </em><em>list</em>) – Duration or (min, max) range for random sampling.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.get_dict">
-<span class="sig-name descname"><span class="pre">get_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.get_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.get_dict" title="Link to this definition">¶</a></dt>
-<dd><p>Return the internal state dictionary, or merge into an external one.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>target</strong> (<em>dict</em><em>, </em><em>optional</em>) – If provided, updates this dict in-place and returns it.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The internal state (or merged result if target is provided).</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt class="sig sig-object py" id="psyflow.StimUnit.StimUnit.get_state">
 <span class="sig-name descname"><span class="pre">get_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/psyflow/StimUnit.html#StimUnit.get_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#psyflow.StimUnit.StimUnit.get_state" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieve a value from internal state.</p>
@@ -2076,9 +2038,6 @@ a port for trigger boxes or external devices.</p>
 <li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.add_stim"><code class="docutils literal notranslate"><span class="pre">StimUnit.add_stim()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.capture_response"><code class="docutils literal notranslate"><span class="pre">StimUnit.capture_response()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.clear_stimuli"><code class="docutils literal notranslate"><span class="pre">StimUnit.clear_stimuli()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.close_on"><code class="docutils literal notranslate"><span class="pre">StimUnit.close_on()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.duration"><code class="docutils literal notranslate"><span class="pre">StimUnit.duration()</span></code></a></li>
-<li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.get_dict"><code class="docutils literal notranslate"><span class="pre">StimUnit.get_dict()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.get_state"><code class="docutils literal notranslate"><span class="pre">StimUnit.get_state()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.log_unit"><code class="docutils literal notranslate"><span class="pre">StimUnit.log_unit()</span></code></a></li>
 <li><a class="reference internal" href="#psyflow.StimUnit.StimUnit.on_end"><code class="docutils literal notranslate"><span class="pre">StimUnit.on_end()</span></code></a></li>

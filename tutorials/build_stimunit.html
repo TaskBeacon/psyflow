@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="TriggerSender: Precise Event Marking for EEG/MEG Experiments" href="send_trigger.html" /><link rel="prev" title="StimBank: Flexible Stimulus Management" href="build_stimulus.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Sending Hardware Triggers" href="send_trigger.html" /><link rel="prev" title="StimBank: Flexible Stimulus Management" href="build_stimulus.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>🎯 StimUnit: Modular Trial Controller for PsychoPy - psyflow 0.1.1 documentation</title>
+        <title>StimUnit: Modular Stimulus &amp; Response Handler - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -210,11 +210,11 @@
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">🎯 StimUnit: Modular Trial Controller for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">Sending Hardware Triggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
 </ul>
 
 </div>
@@ -255,20 +255,19 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="stimunit-modular-trial-controller-for-psychopy">
-<h1>🎯 StimUnit: Modular Trial Controller for PsychoPy<a class="headerlink" href="#stimunit-modular-trial-controller-for-psychopy" title="Link to this heading">¶</a></h1>
+          <section id="stimunit-modular-stimulus-response-handler">
+<h1>StimUnit: Modular Stimulus &amp; Response Handler<a class="headerlink" href="#stimunit-modular-stimulus-response-handler" title="Link to this heading">¶</a></h1>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> is a powerful trial-level controller for PsychoPy experiments that encapsulates all the components of a single trial:</p>
+<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> is a versatile, stimulus-level controller for PsychoPy experiments. It bundles everything you need for one trial into a single, chainable object:</p>
 <ul class="simple">
-<li><p><strong>Stimulus presentation</strong>: Display multiple stimuli with precise timing</p></li>
-<li><p><strong>Response collection</strong>: Capture keyboard responses with reaction times</p></li>
-<li><p><strong>Event triggers</strong>: Send EEG/MEG trigger codes at critical moments</p></li>
-<li><p><strong>Timing control</strong>: Frame-based or time-based precision</p></li>
-<li><p><strong>State management</strong>: Track trial data in a centralized state object</p></li>
-<li><p><strong>Event hooks</strong>: Execute custom code at key trial moments</p></li>
+<li><p><strong>Stimulus presentation</strong>: Draw multiple visual or audio stimuli together with sub-frame accuracy.</p></li>
+<li><p><strong>Response collection</strong>: Detect keyboard events and record reaction times effortlessly.</p></li>
+<li><p><strong>Timing control</strong>: Opt for frame-based (refresh-locked) or clock-based timing based on your needs.</p></li>
+<li><p><strong>State management</strong>: Store all trial-related data in a centralized internal dictionary.</p></li>
+<li><p><strong>Event hooks</strong>: Plug in custom callbacks at start, response, timeout, and end stages.</p></li>
 </ul>
-<p>With <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>, you can create complex trial structures using a clean, chainable API that makes your experiment code more readable and maintainable.</p>
+<p>By using <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>, your trial logic (typically defined in <code class="docutils literal notranslate"><span class="pre">src/run_trial.py</span></code>) becomes more modular, readable, and maintainable.</p>
 </section>
 <section id="key-features">
 <h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
@@ -280,29 +279,26 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Chainable API</p></td>
-<td><p>Fluent interface for building trials with method chaining</p></td>
+<tr class="row-even"><td><p><strong>Chainable API</strong></p></td>
+<td><p>Build trials fluently by chaining methods.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Multiple timing modes</p></td>
-<td><p>Choose between frame-based or clock-based timing</p></td>
+<tr class="row-odd"><td><p><strong>Frame-based Timing</strong></p></td>
+<td><p>High precision</p></td>
 </tr>
-<tr class="row-even"><td><p>Event hooks</p></td>
-<td><p>Register callbacks for trial start, response, timeout, and end</p></td>
+<tr class="row-even"><td><p><strong>Event hooks</strong></p></td>
+<td><p>Call custom functions on start, response, timeout, or end.</p></td>
 </tr>
-<tr class="row-odd"><td><p>Flexible response handling</p></td>
-<td><p>Capture specific keys with automatic RT measurement</p></td>
+<tr class="row-odd"><td><p><strong>Flexible responses</strong></p></td>
+<td><p>Specify valid keys and automatic RT handling.</p></td>
 </tr>
-<tr class="row-even"><td><p>Integrated trigger sending</p></td>
-<td><p>Send EEG/MEG triggers at stimulus onset, response, and timeout</p></td>
+<tr class="row-even"><td><p><strong>State tracking</strong></p></td>
+<td><p>Centralized storage of timestamps, responses, and custom data.</p></td>
 </tr>
-<tr class="row-odd"><td><p>State management</p></td>
-<td><p>Centralized data collection for all trial events</p></td>
+<tr class="row-odd"><td><p><strong>Response highlight</strong></p></td>
+<td><p>Visually emphasize selections (static or dynamic).</p></td>
 </tr>
-<tr class="row-even"><td><p>Response highlighting</p></td>
-<td><p>Automatically highlight selected responses</p></td>
-</tr>
-<tr class="row-odd"><td><p>Jittered timing</p></td>
-<td><p>Support for randomized stimulus durations</p></td>
+<tr class="row-even"><td><p><strong>Jittered timing</strong></p></td>
+<td><p>Support randomized (min–max) durations for unpredictability.</p></td>
 </tr>
 </tbody>
 </table>
@@ -320,60 +316,60 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Initialize</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">StimUnit(label,</span> <span class="pre">win,</span> <span class="pre">kb,</span> <span class="pre">triggersender=sender)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trial</span> <span class="pre">=</span> <span class="pre">StimUnit(&quot;cue&quot;,</span> <span class="pre">win,</span> <span class="pre">kb,</span> <span class="pre">triggersender=sender)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StimUnit(label,</span> <span class="pre">win,</span> <span class="pre">kb)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">StimUnit(&quot;cue&quot;,</span> <span class="pre">win,</span> <span class="pre">kb)</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Add stimuli</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.add_stim(stim)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trial.add_stim(fixation)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.add_stim(stim1,</span> <span class="pre">stim2,</span> <span class="pre">...)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit.add_stim(fixation,</span> <span class="pre">target)</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Register start hook</p></td>
+<tr class="row-even"><td><p>Start hook</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.on_start(fn)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&#64;trial.on_start()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;unit.on_start()</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Register response hook</p></td>
+<tr class="row-odd"><td><p>Response hook</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.on_response(keys,</span> <span class="pre">fn)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&#64;trial.on_response(['left',</span> <span class="pre">'right'])</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;unit.on_response(['left','right'])</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Register timeout hook</p></td>
+<tr class="row-even"><td><p>Timeout hook</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.on_timeout(sec,</span> <span class="pre">fn)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&#64;trial.on_timeout(2.0)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;unit.on_timeout(2.0)</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Register end hook</p></td>
+<tr class="row-odd"><td><p>End hook</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.on_end(fn)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">&#64;trial.on_end()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;unit.on_end()</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Set auto-close duration</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.duration(t)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trial.duration(1.5)</span></code></p></td>
+<tr class="row-even"><td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p>Set auto-close keys</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.close_on(keys)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trial.close_on('space')</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>Simple display</p></td>
+<tr class="row-odd"><td><p>Simple display</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.show(duration)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trial.show(1.0)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit.show(1.0)</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Response capture</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.capture_response(keys)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trial.capture_response(['left',</span> <span class="pre">'right'])</span></code></p></td>
+<tr class="row-even"><td><p>Response capture</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.capture_response(keys,</span> <span class="pre">duration)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit.capture_response(['left','right'],</span> <span class="pre">2.0)</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Full trial control</p></td>
+<tr class="row-odd"><td><p>Full trial control</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.run()</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trial.run()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit.run()</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Pause for input</p></td>
+<tr class="row-even"><td><p>Pause &amp; continue</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.wait_and_continue(keys)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trial.wait_and_continue(['space'])</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit.wait_and_continue(['space'])</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Update state</p></td>
+<tr class="row-odd"><td><p>Update state</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.set_state(**kwargs)</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">trial.set_state(correct=True)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit.set_state(correct=True)</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Get state</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">.state</span></code> or <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">=</span> <span class="pre">trial.to_dict()</span></code></p></td>
+<tr class="row-even"><td><p>Retrieve state</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.get_state()</span></code> or access <code class="docutils literal notranslate"><span class="pre">.state</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">=</span> <span class="pre">unit.get_state(key,default)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Export state</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">=</span> <span class="pre">unit.to_dict()</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -381,481 +377,807 @@
 </section>
 <section id="detailed-usage-guide">
 <h2>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h2>
-<section id="initialization">
-<h3>1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h3>
-<p>Create a new <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> by passing your PsychoPy window, a label, and optionally a <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.hardware.keyboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Keyboard</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span><span class="p">,</span> <span class="n">TriggerSender</span>
+<section id="create-a-stimbank">
+<h3>0. Create a StimBank<a class="headerlink" href="#create-a-stimbank" title="Link to this heading">¶</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.stim_bank</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimBank</span>
+<span class="c1"># 1. Define a dictionary of stimulus configurations</span>
+<span class="n">stim_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;fixation&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;white&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;height&#39;</span><span class="p">:</span> <span class="mf">1.0</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;circle&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="s1">&#39;fillColor&#39;</span><span class="p">:</span> <span class="s1">&#39;red&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;feedback&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;Correct!&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;pos&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+        <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;green&#39;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
 
-<span class="c1"># Create window and keyboard</span>
-<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
-<span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
-
-<span class="c1"># Create a trigger sender (mock mode for testing)</span>
-<span class="n">sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Initialize a trial unit</span>
-<span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;cue&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
+<span class="c1"># 2. Create your StimBank with window and definitions</span>
+<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">stim_config</span><span class="p">)</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>  <span class="c1"># optional</span>
 </pre></div>
 </div>
-<p>For real EEG/MEG experiments, you would use a real trigger function:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example with a serial port</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">serial</span>
-<span class="n">port</span> <span class="o">=</span> <span class="n">serial</span><span class="o">.</span><span class="n">Serial</span><span class="p">(</span><span class="s1">&#39;COM3&#39;</span><span class="p">,</span> <span class="mi">9600</span><span class="p">)</span>
+</section>
+<section id="initialization">
+<h3>1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h3>
+<p>Start by creating your PsychoPy window and keyboard, then instantiate <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> with a descriptive label.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">([</span><span class="mi">1024</span><span class="p">,</span><span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+<span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
 
-<span class="c1"># Create trigger sender with a real function</span>
-<span class="n">trigger</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span>
-    <span class="n">send_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">code</span><span class="p">:</span> <span class="n">port</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">([</span><span class="n">code</span><span class="p">])),</span>
-    <span class="n">post_delay</span><span class="o">=</span><span class="mf">0.01</span>  <span class="c1"># 10ms delay after sending</span>
-<span class="p">)</span>
+<span class="c1"># Instantiate StimUnit</span>
+<span class="n">fix</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;fix&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>
+<span class="n">tar</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;tar&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">))</span>
+<span class="n">fb</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;fb&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Choose descriptive <code class="docutils literal notranslate"><span class="pre">unit_label</span></code>s (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;fix&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;tar&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;fb&quot;</span></code>). These labels are automatically prefixed to your state keys when you call <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> and accessed by <code class="docutils literal notranslate"><span class="pre">get_state()</span></code>, ensuring your trial data is neatly namespaced and easy to query.</p>
+<p><strong>Pro tip:</strong> When you need to create many similar trial units in the same context, use Python’s <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code> to simplify instantiation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+<span class="c1"># Create a shortcut with common arguments</span>
+<span class="n">make_unit</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">StimUnit</span><span class="p">,</span> <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="n">kb</span><span class="p">)</span>
+
+<span class="c1"># --- Cue phase ---</span>
+<span class="n">fix</span><span class="o">=</span><span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;fix&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>
+<span class="n">tar</span><span class="o">=</span><span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;tar&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">))</span>
+<span class="n">fb</span><span class="o">=</span><span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;fb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 </section>
 <section id="adding-stimuli">
 <h3>2. Adding Stimuli<a class="headerlink" href="#adding-stimuli" title="Link to this heading">¶</a></h3>
-<p>Attach visual components to your trial unit. You can add individual stimuli, multiple stimuli, or lists of stimuli:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create some PsychoPy stimuli</span>
-<span class="n">fixation</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-<span class="n">target</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">)</span>
-<span class="n">feedback</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Correct!&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">])</span>
-
-<span class="c1"># Add a single stimulus</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span>
+<p>Before presenting a trial, attach the stimuli you want to display or play—this defines what participants will see or hear during the unit.</p>
+<p>StimUnit accepts instances of <code class="docutils literal notranslate"><span class="pre">visual.BaseVisualStim</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">TextStim</span></code>, <code class="docutils literal notranslate"><span class="pre">Circle</span></code>) and <code class="docutils literal notranslate"><span class="pre">sound.Sound</span></code>. You can add a single stimulus, multiple stimuli at once, or pass a list of stimuli:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add a single stimulus</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>
 
 <span class="c1"># Add multiple stimuli at once</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">feedback</span><span class="p">)</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span>
+    <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">),</span>
+    <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">)</span>
+<span class="p">)</span>
 
 <span class="c1"># Add a list of stimuli</span>
-<span class="n">stim_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">fixation</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">feedback</span><span class="p">]</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_list</span><span class="p">)</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">([</span>
+    <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">),</span>
+    <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">),</span>
+    <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">)</span>
+<span class="p">])</span>
 
-<span class="c1"># Chain multiple add_stim calls</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback</span><span class="p">)</span>
+<span class="c1"># Chain additions </span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span> \
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">))</span> \
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">))</span>
 
 <span class="c1"># Clear all stimuli</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">clear_stimuli</span><span class="p">()</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">clear_stimuli</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>All added stimuli will be drawn together when the trial is presented.</p>
-</section>
-<section id="lifecycle-hooks">
-<h3>3. Lifecycle Hooks<a class="headerlink" href="#lifecycle-hooks" title="Link to this heading">¶</a></h3>
-<p>Register callback functions that execute at key moments in the trial lifecycle:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using decorator syntax</span>
-<span class="nd">@trial</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">prepare_trial</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Starting </span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="n">core</span><span class="o">.</span><span class="n">getTime</span><span class="p">())</span>
+<p>All added stimuli will be drawn or played together when you present the unit.</p>
+<p>Note that <code class="docutils literal notranslate"><span class="pre">add_stim</span></code> also support PsychoPy style definitions of the stimulus. For exmaple:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.visual</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextStim</span><span class="p">,</span> <span class="n">Circle</span>
+<span class="c1"># Example 1</span>
+<span class="n">stim_list</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fix&#39;</span><span class="p">:</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)),</span> 
+            <span class="s1">&#39;tar&#39;</span><span class="p">:</span> <span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">),</span>
+            <span class="s1">&#39;fb&#39;</span><span class="p">:</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Correct!&#39;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))}</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;fix&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;tar&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;fb&#39;</span><span class="p">])</span>
 
-<span class="nd">@trial</span><span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">])</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">handle_response</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">, RT: </span><span class="si">{</span><span class="n">rt</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
-    <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="o">=</span><span class="n">rt</span><span class="p">)</span>
-    
-    <span class="c1"># Check if response is correct</span>
-    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="n">unit</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;correct_key&#39;</span><span class="p">):</span>
-        <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">correct</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">correct</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="nd">@trial</span><span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">handle_timeout</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Response timeout&quot;</span><span class="p">)</span>
-    <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="nd">@trial</span><span class="o">.</span><span class="n">on_end</span><span class="p">()</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">finalize_trial</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trial complete: </span><span class="si">{</span><span class="n">unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="c1"># Save data, prepare for next trial, etc.</span>
+<span class="c1"># Example 2</span>
+<span class="n">fixation</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Alternatively, you can use method chaining:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trial</span><span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="n">prepare_trial</span><span class="p">)</span> \
-     <span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">],</span> <span class="n">handle_response</span><span class="p">)</span> \
-     <span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">handle_timeout</span><span class="p">)</span> \
-     <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="n">finalize_trial</span><span class="p">)</span>
+<p>In the <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> framework, stimuli are normally retrieved from a <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code> object.
+This lets you quickly retrieve named stimuli from your <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code> and pass them into a <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>, streamlining stimunit setup. For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">condition</span> <span class="o">=</span> <span class="s1">&#39;loss&#39;</span>
+<span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s1">&#39;cue&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_cue&quot;</span><span class="p">))</span>
+<span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;pop&quot;</span><span class="p">)</span>\
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_pop&quot;</span><span class="p">))</span>\
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pop_sound&quot;</span><span class="p">))</span>
 </pre></div>
 </div>
 </section>
-<section id="auto-closing-options">
-<h3>4. Auto-Closing Options<a class="headerlink" href="#auto-closing-options" title="Link to this heading">¶</a></h3>
-<p>Set conditions for automatically ending the trial:</p>
-<section id="fixed-or-jittered-duration">
-<h4>Fixed or Jittered Duration<a class="headerlink" href="#fixed-or-jittered-duration" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Close after exactly 1.5 seconds</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">duration</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
-
-<span class="c1"># Close after a random duration between 1.0 and 2.0 seconds</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">duration</span><span class="p">((</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">))</span>
-</pre></div>
-</div>
-</section>
-<section id="close-on-specific-key-presses">
-<h4>Close on Specific Key Presses<a class="headerlink" href="#close-on-specific-key-presses" title="Link to this heading">¶</a></h4>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Close when &#39;space&#39; is pressed</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">close_on</span><span class="p">(</span><span class="s1">&#39;space&#39;</span><span class="p">)</span>
-
-<span class="c1"># Close when any of these keys are pressed</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">close_on</span><span class="p">(</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">,</span> <span class="s1">&#39;escape&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>These settings automatically record the key pressed, reaction time, and closing time into the trial’s state.</p>
-</section>
-</section>
-<section id="simple-display-with-show">
-<h3>5. Simple Display with <code class="docutils literal notranslate"><span class="pre">show()</span></code><a class="headerlink" href="#simple-display-with-show" title="Link to this heading">¶</a></h3>
-<p>For basic stimulus presentation with optional trigger:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show stimuli for 1 second</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-
-<span class="c1"># Show with trigger code at onset</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
-    <span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
-    <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>  <span class="c1"># Send trigger code 10 at stimulus onset</span>
-    <span class="n">frame_based</span><span class="o">=</span><span class="kc">True</span>   <span class="c1"># Use frame-based timing (vs. clock-based)</span>
-<span class="p">)</span>
-
-<span class="c1"># Show with jittered duration</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">cue</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
-    <span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>  <span class="c1"># Random duration between 0.8-1.2s</span>
-    <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">20</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="stimulus-response-window-with-capture-response">
-<h3>6. Stimulus + Response Window with <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code><a class="headerlink" href="#stimulus-response-window-with-capture-response" title="Link to this heading">¶</a></h3>
-<p>For trials requiring response collection:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Basic response capture</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
-    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">],</span>  <span class="c1"># Valid response keys</span>
-    <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span>             <span class="c1"># Response window duration</span>
-<span class="p">)</span>
-
-<span class="c1"># Advanced response capture with triggers and highlighting</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">left_arrow</span><span class="p">,</span> <span class="n">right_arrow</span><span class="p">)</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
-    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">],</span>
-    <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
-    <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>                         <span class="c1"># Trigger at stimulus onset</span>
-    <span class="n">response_trigger</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span> <span class="mi">12</span><span class="p">},</span>  <span class="c1"># Key-specific triggers</span>
-    <span class="n">timeout_trigger</span><span class="o">=</span><span class="mi">19</span><span class="p">,</span>                       <span class="c1"># Trigger if no response</span>
-    <span class="n">correct_keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">],</span>                   <span class="c1"># Define correct response</span>
-    <span class="n">highlight_stim</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;left&#39;</span><span class="p">:</span> <span class="n">left_highlight</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">:</span> <span class="n">right_highlight</span><span class="p">},</span>
-    <span class="n">dynamic_highlight</span><span class="o">=</span><span class="kc">True</span>                    <span class="c1"># Redraw on multiple presses</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>The <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code> method automatically handles:</p>
+<section id="display-stimulus-with-show">
+<h3>3. Display stimulus with <code class="docutils literal notranslate"><span class="pre">show()</span></code><a class="headerlink" href="#display-stimulus-with-show" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">show()</span></code> method is the core display function in <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>. It handles precise timing, drawing, optional audio playback, and state logging—all in one call. Use it when you want to present stimuli without requiring responses.</p>
+<p><strong>Key Features of <code class="docutils literal notranslate"><span class="pre">show()</span></code></strong></p>
 <ul class="simple">
-<li><p>Displaying stimuli</p></li>
-<li><p>Sending onset triggers</p></li>
-<li><p>Collecting responses and reaction times</p></li>
-<li><p>Sending response-specific triggers</p></li>
-<li><p>Highlighting selected responses</p></li>
-<li><p>Sending timeout triggers</p></li>
-<li><p>Updating the trial state with all relevant data</p></li>
+<li><p><strong>Frame-based timing</strong>: Locks presentation to monitor refreshes for sub-frame precision.</p></li>
+<li><p><strong>Automatic audio support</strong>: Starts any sound stimuli on the first flip.</p></li>
+<li><p><strong>Flexible duration</strong>: Accepts fixed times, jittered ranges, or automatically uses sound length.</p></li>
+<li><p><strong>State logging</strong>: Records onset/offset timestamps and duration into <code class="docutils literal notranslate"><span class="pre">unit.state</span></code>.</p></li>
+</ul>
+<p>Use this method when you need standalone stimulus presentation without response handling:</p>
+<ul class="simple">
+<li><p><strong>Feedback Displays</strong>: Show feedback messages or sounds (e.g., “Correct!”, error tones) for a short duration.</p></li>
+<li><p><strong>Passive Stimulus Presentation</strong>: Present visual or auditory stimuli (e.g., flicker, tones) in paradigms where responses are recorded separately, such as resting-state EEG or fMRI.</p></li>
+<li><p><strong>Baseline/Rest Periods</strong>: Present fixation crosses or blank screens for jittered durations to serve as inter-trial intervals or baselines.</p></li>
+</ul>
+<section id="method-signature">
+<h4>Method Signature<a class="headerlink" href="#method-signature" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
+    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">onset_trigger</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">offset_trigger</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StimUnit</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">duration</span></code>:</p>
+<ul>
+<li><p><strong>None</strong>: Uses the longest <code class="docutils literal notranslate"><span class="pre">getDuration()</span></code> of your sound stimuli (0.0 if none).</p></li>
+<li><p><strong>float</strong>: A fixed presentation time in seconds.</p></li>
+<li><p><strong>(min, max)</strong>: Uniformly randomize between <code class="docutils literal notranslate"><span class="pre">min</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span></code>.</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">onset_trigger</span></code> / <code class="docutils literal notranslate"><span class="pre">offset_trigger</span></code>: <em>(optional)</em> placeholder parameters for sending triggers—these are ignored if you manage triggers separately.</p></li>
 </ul>
 </section>
-<section id="full-trial-loop-with-run">
-<h3>7. Full Trial Loop with <code class="docutils literal notranslate"><span class="pre">run()</span></code><a class="headerlink" href="#full-trial-loop-with-run" title="Link to this heading">¶</a></h3>
-<p>For maximum flexibility, use the <code class="docutils literal notranslate"><span class="pre">run()</span></code> method after setting up hooks:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set up the trial</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> \
-     <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="n">start_fn</span><span class="p">)</span> \
-     <span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">],</span> <span class="n">response_fn</span><span class="p">)</span> \
-     <span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">timeout_fn</span><span class="p">)</span> \
-     <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="n">end_fn</span><span class="p">)</span> \
-     <span class="o">.</span><span class="n">duration</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+<section id="behavior-table">
+<h4>Behavior Table<a class="headerlink" href="#behavior-table" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Input Duration</p></th>
+<th class="head"><p>Behavior</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Auto-select from audio (max duration or 0.0).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code></p></td>
+<td><p>Present for exactly 0.5 s.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">(0.8,</span> <span class="pre">1.2)</span></code></p></td>
+<td><p>Sample in [0.8, 1.2] s.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code> + audio of 2.5 s</p></td>
+<td><p>Screen stops at 1.0 s; audio may be cut off.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">None</span></code> + audio of 2.5 s</p></td>
+<td><p>Both screen &amp; audio last full 2.5 s.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The following examples demonstrate how to use <code class="docutils literal notranslate"><span class="pre">.show()</span></code> for fixed, jittered, and audio-driven durations. Assume <code class="docutils literal notranslate"><span class="pre">unit</span></code> is an initialized <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> and <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code> contains your stimuli.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Fixed duration – shows text for exactly 1.0 second</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>\
+    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
-<span class="c1"># Run the trial</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
-    <span class="n">terminate_on_response</span><span class="o">=</span><span class="kc">True</span>   <span class="c1"># Stop drawing after response</span>
-<span class="p">)</span>
+<span class="c1"># 2. Jittered duration – shows text for a random time between 1 and 2s</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>\
+    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="c1">#tuple</span>
 
-<span class="c1"># Access trial data</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">, RT: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rt&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>\
+    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="c1">#list</span>
+
+<span class="c1"># 3. Auto from audio – shows visual and plays audio for the full sound duration</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="p">[</span><span class="s1">&#39;pop_sound&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># duration=None is default</span>
+
+<span class="c1"># 4. Multiple stimuli</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pop_sound&#39;</span><span class="p">))</span>\
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>\
+    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">run()</span></code> method gives you complete control over the trial execution, while still benefiting from the automatic state management and event handling.</p>
+</section>
 </section>
 <section id="pause-continue-with-wait-and-continue">
-<h3>8. Pause &amp; Continue with <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code><a class="headerlink" href="#pause-continue-with-wait-and-continue" title="Link to this heading">¶</a></h3>
-<p>For instruction screens or breaks that require a keypress to continue:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Show instructions and wait for space</span>
-<span class="n">instructions</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
-    <span class="n">win</span><span class="p">,</span> 
-    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Press SPACE to begin the experiment&quot;</span><span class="p">,</span>
-    <span class="n">height</span><span class="o">=</span><span class="mf">0.7</span>
-<span class="p">)</span>
+<h3>4. Pause &amp; Continue with <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code><a class="headerlink" href="#pause-continue-with-wait-and-continue" title="Link to this heading">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">.wait_and_continue()</span></code> to display stimuli and wait for participant input before proceeding, ideal for instruction screens, inter-block breaks, and end-of-experiment acknowledgments. It enforces a minimum display time and can optionally terminate the session after the key press.</p>
+<p>Use this method when you need participants to confirm or acknowledge before moving on, without capturing a trial response. Common scenarios include:</p>
+<ul class="simple">
+<li><p><strong>Instruction screens</strong>: e.g., “Press SPACE to start” before an experiment block.</p></li>
+<li><p><strong>Inter-block breaks</strong>: Giving participants a chance to rest and proceed when ready.</p></li>
+<li><p><strong>End-of-experiment messages</strong>: Display a thank‑you note or debrief until key press.</p></li>
+<li><p><strong>Any standalone confirmation</strong>: When you don’t need to record response data but require an explicit continuation.</p></li>
+</ul>
+<section id="id1">
+<h4>Method Signature<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">wait_and_continue</span><span class="p">(</span>
+    <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;space&quot;</span><span class="p">],</span>
+    <span class="n">min_wait</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">log_message</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">terminate</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StimUnit</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">keys</span></code>: List of keys that allow continuation (default <code class="docutils literal notranslate"><span class="pre">['space']</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min_wait</span></code>: Minimum seconds to wait before accepting input. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, and audio stimuli are present, it defaults to the longest sound duration. If only visual stimuli are present, it defaults to infinite until the button preseed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log_message</span></code>: Custom message logged to PsychoPy’s log (defaults to:</p>
+<ul>
+<li><p>“Continuing after key ‘X’” or</p></li>
+<li><p>“Experiment ended by key press.” if <code class="docutils literal notranslate"><span class="pre">terminate=True</span></code>).</p></li>
+</ul>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">terminate</span></code>: If <code class="docutils literal notranslate"><span class="pre">True</span></code>, closes the PsychoPy window after input.</p></li>
+</ul>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instruction screen: wait at least 2s for SPACE</span>
+<span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;instruction_text&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>\
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;instruction_text&#39;</span><span class="p">))</span>\
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;instruction_text_voice&#39;</span><span class="p">))</span>\
+    <span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
 
-<span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">instructions</span><span class="p">)</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">(</span>
-    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">],</span>
-    <span class="n">log_message</span><span class="o">=</span><span class="s2">&quot;Instructions shown&quot;</span><span class="p">,</span>
-    <span class="n">terminate</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># Continue execution after keypress</span>
-<span class="p">)</span>
-
-<span class="c1"># Show end screen and terminate</span>
-<span class="n">end_text</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
-    <span class="n">win</span><span class="p">,</span>
-    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Experiment complete. Thank you!&quot;</span><span class="p">,</span>
-    <span class="n">height</span><span class="o">=</span><span class="mf">0.7</span>
-<span class="p">)</span>
-
-<span class="n">trial</span><span class="o">.</span><span class="n">clear_stimuli</span><span class="p">()</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">end_text</span><span class="p">)</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">(</span>
-    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">],</span>
-    <span class="n">log_message</span><span class="o">=</span><span class="s2">&quot;Experiment ended&quot;</span><span class="p">,</span>
-    <span class="n">terminate</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># End the experiment after keypress</span>
-<span class="p">)</span>
+<span class="c1"># End screen: immediate termination on key</span>
+<span class="n">final_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;feedback_delta&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">all_data</span><span class="p">)</span>
+<span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;goodbye&#39;</span><span class="p">,</span><span class="n">win</span><span class="p">,</span><span class="n">kb</span><span class="p">)</span>\
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get_and_format</span><span class="p">(</span><span class="s1">&#39;good_bye&#39;</span><span class="p">,</span> <span class="n">total_score</span><span class="o">=</span><span class="n">final_score</span><span class="p">))</span>\
+    <span class="o">.</span><span class="n">wait_and_continue</span><span class="p">(</span><span class="n">terminate</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="state-management">
-<h3>9. State Management<a class="headerlink" href="#state-management" title="Link to this heading">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> maintains an internal state dictionary that tracks all trial events and data:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Update state with custom data</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span>
-    <span class="n">condition</span><span class="o">=</span><span class="s2">&quot;reward&quot;</span><span class="p">,</span>
-    <span class="n">block_num</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-    <span class="n">trial_num</span><span class="o">=</span><span class="mi">15</span>
-<span class="p">)</span>
-
-<span class="c1"># Access state values</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Condition: </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Response: </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RT: </span><span class="si">{</span><span class="n">trial</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rt&#39;</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="c1"># Get complete state as dictionary</span>
-<span class="n">full_data</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-
-<span class="c1"># Log state to console (useful for debugging)</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">log_unit</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>The state automatically includes:</p>
+</section>
+<section id="get-responses-with-capture-response">
+<h3>6. Get responses with <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code><a class="headerlink" href="#get-responses-with-capture-response" title="Link to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code> method in <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> integrates stimulus presentation, timing, triggers, and response handling into a single, chainable call. It is ideal for:</p>
 <ul class="simple">
-<li><p>Trial label</p></li>
-<li><p>Timestamps for start, response, and end</p></li>
-<li><p>Response key and reaction time</p></li>
-<li><p>Trigger codes sent</p></li>
-<li><p>Any custom data added with <code class="docutils literal notranslate"><span class="pre">set_state()</span></code></p></li>
+<li><p>Detecting and logging subject responses within a predefined response window</p></li>
+<li><p>Determining correct versus incorrect responses for performance analysis</p></li>
+<li><p>Delivering immediate visual feedback by highlighting participant selections</p></li>
+</ul>
+<section id="features">
+<h4>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p>Capturing and logging participant choices within precise time windows</p></li>
+<li><p>Sending and receiving hardware triggers (e.g., EEG/fMRI) in sync with stimuli</p></li>
+<li><p>Differentiating correct vs. incorrect responses for performance metrics</p></li>
+<li><p>Providing both static and dynamic visual feedback based on key presses</p></li>
 </ul>
 </section>
+<section id="id2">
+<h4>Method Signature<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">capture_response</span><span class="p">(</span>
+    <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">onset_trigger</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">response_trigger</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">timeout_trigger</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">terminate_on_response</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">correct_keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">highlight_stim</span><span class="p">:</span> <span class="n">visual</span><span class="o">.</span><span class="n">BaseVisualStim</span> <span class="o">|</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">visual</span><span class="o">.</span><span class="n">BaseVisualStim</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dynamic_highlight</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StimUnit</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">key</span></code>: Valid response keys.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">duration</span></code>: Response window (fixed or jittered range).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">terminate_on_response</span></code>: If <code class="docutils literal notranslate"><span class="pre">True</span></code>, stops redrawing after a valid response.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">correct_keys</span></code>: Subset of <code class="docutils literal notranslate"><span class="pre">keys</span></code> to be treated as correct responses (for state logging).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">highligt_stim</span></code>: A stim (or dict mapping keys→stim) to draw around the selected choice.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dynamic_highlight</span></code>: If <code class="docutils literal notranslate"><span class="pre">True</span></code>, highlights update on every keypress instead of just the first.</p></li>
+</ul>
+<p>Below is the signature and four practical scenarios illustrating its use.</p>
 </section>
-<section id="complete-example">
-<h2>Complete Example<a class="headerlink" href="#complete-example" title="Link to this heading">¶</a></h2>
-<p>Here’s a complete example showing how to use <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> in an experiment:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span><span class="p">,</span> <span class="n">core</span>
+<section id="scenario-1-simple-anticipation-phase-detect-early-responses-without-termination">
+<h4>Scenario 1: Simple Anticipation Phase (detect early responses without termination)<a class="headerlink" href="#scenario-1-simple-anticipation-phase-detect-early-responses-without-termination" title="Link to this heading">¶</a></h4>
+<p>In an anticipation phase of MID task, we want to monitor for any key presses but continue presenting the fixation cross even if the participant responds early. After the window, we record whether there was an early response.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Anticipation phase ---</span>
+<span class="n">anti</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s1">&#39;anticipation&#39;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">))</span>
+<span class="n">anti</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
+    <span class="n">keys</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">key_list</span><span class="p">,</span>
+    <span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">anticipation_duration</span><span class="p">,</span>
+    <span class="n">onset_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_anti_onset&quot;</span><span class="p">],</span>
+    <span class="n">terminate_on_response</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># After capture_response returns, check and store early response</span>
+<span class="n">early_response</span> <span class="o">=</span> <span class="n">anti</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="s2">&quot;response&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+<span class="n">anti</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">early_response</span><span class="o">=</span><span class="n">early_response</span><span class="p">)</span>
+<span class="n">anti</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">terminate_on_response=False</span></code> ensures the fixation stays on screen for the full anticipation duration, regardless of key presses.</p></li>
+<li><p>After running, <code class="docutils literal notranslate"><span class="pre">anti.get_state(&quot;response&quot;)</span></code> tells whether any key was pressed.</p></li>
+</ul>
+</section>
+<section id="scenario-2-target-phase-with-required-response">
+<h4>Scenario 2: Target Phase with Required Response<a class="headerlink" href="#scenario-2-target-phase-with-required-response" title="Link to this heading">¶</a></h4>
+<p>In the target phase of the MID task, we require a response. Here we use default settings where keys in the <code class="docutils literal notranslate"><span class="pre">keys=settings.key_list</span></code> count as potential responses, and no separate <code class="docutils literal notranslate"><span class="pre">correct_keys</span></code> are defined. By default, <code class="docutils literal notranslate"><span class="pre">correct_keys=None</span></code>, so any key in <code class="docutils literal notranslate"><span class="pre">keys=settings.key_list</span></code> is counted as a correct response.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Target phase ---</span>
+<span class="n">duration</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">get_duration</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
+<span class="n">target</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_target&quot;</span><span class="p">))</span>
+
+<span class="n">target</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
+    <span class="n">keys</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">key_list</span><span class="p">,</span>
+    <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span>
+    <span class="n">onset_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_target_onset&quot;</span><span class="p">],</span>
+    <span class="n">response_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_key_press&quot;</span><span class="p">],</span>
+    <span class="n">timeout_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_no_response&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">target</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>By default, <code class="docutils literal notranslate"><span class="pre">correct_keys=None</span></code>, so any key in <code class="docutils literal notranslate"><span class="pre">keys</span></code> is logged as a response.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">response_trigger</span></code> and <code class="docutils literal notranslate"><span class="pre">timeout_trigger</span></code> send triggers for EEG/behavior marking.</p></li>
+</ul>
+</section>
+<section id="scenario-3-detecting-correct-vs-incorrect-responses">
+<h4>Scenario 3: Detecting Correct vs. Incorrect Responses<a class="headerlink" href="#scenario-3-detecting-correct-vs-incorrect-responses" title="Link to this heading">¶</a></h4>
+<p>In tasks where only one key is correct (e.g., left vs. right dot detection), specify <code class="docutils literal notranslate"><span class="pre">correct_keys</span></code> to log hits vs. misses.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Determine which key is correct based on target position</span>
+<span class="n">target_stim</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;target_position&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_target&quot;</span><span class="p">)</span>
+<span class="n">correct_key</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">settings</span><span class="o">.</span><span class="n">left_key</span>
+    <span class="k">if</span> <span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;target_position&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;left&#39;</span>
+    <span class="k">else</span> <span class="n">settings</span><span class="o">.</span><span class="n">right_key</span>
+<span class="p">)</span>
+
+<span class="n">target_unit</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target_stim</span><span class="p">)</span>
+
+<span class="n">target_unit</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
+    <span class="n">keys</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">key_list</span><span class="p">,</span>
+    <span class="n">correct_keys</span><span class="o">=</span><span class="p">[</span><span class="n">correct_key</span><span class="p">],</span>
+    <span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">target_duration</span><span class="p">,</span>
+    <span class="n">onset_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_target_onset&quot;</span><span class="p">],</span>
+    <span class="n">response_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;key_press&quot;</span><span class="p">),</span>
+    <span class="n">timeout_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;no_response&quot;</span><span class="p">),</span>
+    <span class="n">terminate_on_response</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">target_unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">correct_keys</span></code> filters which responses count as hits. The boolean <code class="docutils literal notranslate"><span class="pre">hit</span></code> state is set accordingly.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">terminate_on_response=True</span></code> ends the trial on the first valid key press.</p></li>
+</ul>
+</section>
+<section id="scenario-4-highlighting-participant-choices">
+<h4>Scenario 4: Highlighting Participant Choices<a class="headerlink" href="#scenario-4-highlighting-participant-choices" title="Link to this heading">¶</a></h4>
+<p>To provide visual feedback, pass a dictionary of highlight stimuli to draw around the chosen option. Use <code class="docutils literal notranslate"><span class="pre">dynamic_highlight=True</span></code> to allow participants to change their selection during the window.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cue</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;cue&quot;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stimA&#39;</span><span class="p">))</span> \
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stimB&#39;</span><span class="p">))</span>
+
+<span class="n">correct_key</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">left_key</span>  <span class="c1"># for example</span>
+
+<span class="n">cue</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
+    <span class="n">keys</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">key_list</span><span class="p">,</span>
+    <span class="n">correct_keys</span><span class="o">=</span><span class="p">[</span><span class="n">correct_key</span><span class="p">],</span>
+    <span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">cue_duration</span><span class="p">,</span>
+    <span class="n">onset_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="p">[</span><span class="s1">&#39;cue_onset&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">marker_pad</span><span class="p">,</span>
+    <span class="n">response_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="p">[</span><span class="s1">&#39;key_press&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">marker_pad</span><span class="p">,</span>
+    <span class="n">timeout_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="p">[</span><span class="s1">&#39;no_response&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">marker_pad</span><span class="p">,</span>
+    <span class="n">terminate_on_response</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">highlight_stim</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;highlight_left&#39;</span><span class="p">),</span>
+        <span class="s1">&#39;j&#39;</span><span class="p">:</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;highlight_right&#39;</span><span class="p">)</span>
+    <span class="p">},</span>
+    <span class="n">dynamic_highlight</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="n">cue</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">highlight_stim</span></code> maps each key to a visual cue (e.g., a frame or dot).</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">dynamic_highlight=True</span></code>, each new key press updates the highlight until the window ends.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can also pass a <code class="docutils literal notranslate"><span class="pre">dict</span></code> to <code class="docutils literal notranslate"><span class="pre">response_trigger</span></code> to send different trigger codes per key.</p>
+</div>
+</section>
+</section>
+<section id="lifecycle-hooks">
+<h3>7. Lifecycle Hooks<a class="headerlink" href="#lifecycle-hooks" title="Link to this heading">¶</a></h3>
+<p>Lifecycle hooks give you maximum flexibility to define custom behaviors at key trial events—complementing built‑in methods like <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code> or <code class="docutils literal notranslate"><span class="pre">.show()</span></code>. You pick exactly what code runs during <strong>start</strong>, <strong>response</strong>, <strong>timeout</strong>, and <strong>end</strong> phases.</p>
+<p>Below is a complete example demonstrating how each hook operates in practice. Watch how state keys are automatically prefixed with your <code class="docutils literal notranslate"><span class="pre">unit_label</span></code> (“demo”):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span><span class="p">,</span> <span class="n">visual</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.hardware.keyboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Keyboard</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span><span class="p">,</span> <span class="n">TriggerSender</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span>
 
-<span class="c1"># Setup</span>
-<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
-<span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
-<span class="n">sender</span> <span class="o">=</span> <span class="n">TriggerSender</span><span class="p">(</span><span class="n">mock</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># 1. Setup</span>
+<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">([</span><span class="mi">800</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
+<span class="n">kb</span>  <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
+<span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
 
-<span class="c1"># Create stimuli</span>
-<span class="n">fixation</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
-<span class="n">left_target</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="n">right_target</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="n">left_highlight</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> 
-                            <span class="n">lineWidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">fillColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-<span class="n">right_highlight</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Rect</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="s2">&quot;yellow&quot;</span><span class="p">,</span> 
-                             <span class="n">lineWidth</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">fillColor</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-<span class="n">feedback_correct</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Correct!&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> 
-                                  <span class="n">color</span><span class="o">=</span><span class="s2">&quot;green&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">])</span>
-<span class="n">feedback_incorrect</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Incorrect&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> 
-                                    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">])</span>
+<span class="c1"># 2. Add a stimulus</span>
+<span class="n">fix</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fix</span><span class="p">)</span>
 
-<span class="c1"># Run a trial</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">condition</span><span class="p">):</span>
-    <span class="c1"># Determine correct response for this condition</span>
-    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span><span class="p">:</span>
-        <span class="n">correct_key</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span>
-        <span class="n">target_trigger</span> <span class="o">=</span> <span class="mi">11</span>
-    <span class="k">else</span><span class="p">:</span>  <span class="c1"># condition == &quot;right&quot;</span>
-        <span class="n">correct_key</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span>
-        <span class="n">target_trigger</span> <span class="o">=</span> <span class="mi">12</span>
-    
-    <span class="c1"># Create trial unit</span>
-    <span class="n">trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;choice&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
-    
-    <span class="c1"># Register response handler</span>
-    <span class="nd">@trial</span><span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">])</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">handle_response</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="p">):</span>
-        <span class="c1"># Check if response is correct</span>
-        <span class="n">is_correct</span> <span class="o">=</span> <span class="p">(</span><span class="n">key</span> <span class="o">==</span> <span class="n">correct_key</span><span class="p">)</span>
-        <span class="n">unit</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">correct</span><span class="o">=</span><span class="n">is_correct</span><span class="p">)</span>
-        
-        <span class="c1"># Show appropriate feedback</span>
-        <span class="n">unit</span><span class="o">.</span><span class="n">clear_stimuli</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">is_correct</span><span class="p">:</span>
-            <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback_correct</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback_incorrect</span><span class="p">)</span>
-    
-    <span class="c1"># Show fixation</span>
-    <span class="n">fixation_trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
-    <span class="n">fixation_trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
-        <span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>  <span class="c1"># Jittered duration</span>
-        <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">10</span>
-    <span class="p">)</span>
-    
-    <span class="c1"># Show targets and collect response</span>
-    <span class="n">trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">left_target</span><span class="p">,</span> <span class="n">right_target</span><span class="p">)</span>
-    <span class="n">trial</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">condition</span><span class="o">=</span><span class="n">condition</span><span class="p">,</span> <span class="n">correct_key</span><span class="o">=</span><span class="n">correct_key</span><span class="p">)</span>
-    <span class="n">trial</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
-        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">],</span>
-        <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
-        <span class="n">onset_trigger</span><span class="o">=</span><span class="n">target_trigger</span><span class="p">,</span>
-        <span class="n">response_trigger</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mi">21</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="mi">22</span><span class="p">},</span>
-        <span class="n">timeout_trigger</span><span class="o">=</span><span class="mi">29</span><span class="p">,</span>
-        <span class="n">correct_keys</span><span class="o">=</span><span class="p">[</span><span class="n">correct_key</span><span class="p">],</span>
-        <span class="n">highlight_stim</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="n">left_highlight</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="n">right_highlight</span><span class="p">}</span>
-    <span class="p">)</span>
-    
-    <span class="c1"># Show feedback for 1 second</span>
-    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
-    
-    <span class="c1"># Return trial data</span>
-    <span class="k">return</span> <span class="n">trial</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="c1"># 3. Define hooks</span>
+<span class="nd">@unit</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">start_hook</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="c1"># record the moment the trial begins</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">getTime</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[start_hook] prefix key &#39;demo_start_time&#39; = </span><span class="si">{</span><span class="n">u</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;demo_start_time&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="c1"># Run a block of trials</span>
-<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">5</span>  <span class="c1"># 10 trials total</span>
-<span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span>
+<span class="nd">@unit</span><span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;space&#39;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">response_hook</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="p">):</span>
+    <span class="c1"># capture spacebar presses</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="o">=</span><span class="n">rt</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[response_hook] key=</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">, rt=</span><span class="si">{</span><span class="n">rt</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">condition</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">conditions</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Trial </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">conditions</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-    <span class="n">trial_data</span> <span class="o">=</span> <span class="n">run_trial</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
-    <span class="n">trial_data</span><span class="p">[</span><span class="s2">&quot;trial_num&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
-    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
-    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Inter-trial interval</span>
+<span class="nd">@unit</span><span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">timeout_hook</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="c1"># handle no-response after 1 second</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[timeout_hook] no response within 1.0s&quot;</span><span class="p">)</span>
 
-<span class="c1"># Show completion message</span>
-<span class="n">end_trial</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
-<span class="n">end_text</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span>
-    <span class="n">win</span><span class="p">,</span>
-    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Experiment complete. Thank you!&quot;</span><span class="p">,</span>
-    <span class="n">height</span><span class="o">=</span><span class="mf">0.7</span>
-<span class="p">)</span>
-<span class="n">end_trial</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">end_text</span><span class="p">)</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">(</span>
-    <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;space&quot;</span><span class="p">],</span>
-    <span class="n">terminate</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
+<span class="nd">@unit</span><span class="o">.</span><span class="n">on_end</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">end_hook</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="c1"># finalize and inspect full state</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[end_hook] final state:&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
-<span class="c1"># Clean up</span>
-<span class="n">win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-<span class="c1"># Analyze results</span>
-<span class="n">correct_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">results</span> <span class="k">if</span> <span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span>
-<span class="n">accuracy</span> <span class="o">=</span> <span class="n">correct_count</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Accuracy: </span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<span class="c1"># 4. Run the trial</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-</section>
-<section id="advanced-usage">
-<h2>Advanced Usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">¶</a></h2>
-<section id="frame-based-vs-clock-based-timing">
-<h3>Frame-Based vs. Clock-Based Timing<a class="headerlink" href="#frame-based-vs-clock-based-timing" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> supports two timing modes:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Frame-based timing (more precise for short durations)</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">frame_based</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Clock-based timing (better for longer durations)</span>
-<span class="n">trial</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">frame_based</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Frame-based timing counts the number of screen refreshes, while clock-based timing uses the system clock. Frame-based timing is generally more precise for short durations but requires a stable frame rate.</p>
-</section>
-<section id="custom-trigger-sequences">
-<h3>Custom Trigger Sequences<a class="headerlink" href="#custom-trigger-sequences" title="Link to this heading">¶</a></h3>
-<p>You can send custom trigger sequences at any point:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@trial</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">custom_triggers</span><span class="p">(</span><span class="n">unit</span><span class="p">):</span>
-    <span class="c1"># Send a sequence of triggers with delays</span>
-    <span class="n">unit</span><span class="o">.</span><span class="n">triggersender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span>  <span class="c1"># First trigger</span>
-    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>               <span class="c1"># 50ms delay</span>
-    <span class="n">unit</span><span class="o">.</span><span class="n">triggersender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">102</span><span class="p">)</span>  <span class="c1"># Second trigger</span>
-    <span class="n">core</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="mf">0.05</span><span class="p">)</span>               <span class="c1"># 50ms delay</span>
-    <span class="n">unit</span><span class="o">.</span><span class="n">triggersender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="mi">103</span><span class="p">)</span>  <span class="c1"># Third trigger</span>
-</pre></div>
-</div>
-</section>
-<section id="dynamic-stimulus-updates">
-<h3>Dynamic Stimulus Updates<a class="headerlink" href="#dynamic-stimulus-updates" title="Link to this heading">¶</a></h3>
-<p>You can modify stimuli during the trial:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@trial</span><span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">])</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">update_stimulus</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="p">):</span>
-    <span class="c1"># Get the stimulus from the unit</span>
-    <span class="k">for</span> <span class="n">stim</span> <span class="ow">in</span> <span class="n">unit</span><span class="o">.</span><span class="n">stimuli</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">stim</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
-            <span class="c1"># Update text based on response</span>
-            <span class="n">stim</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;You pressed </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> in </span><span class="si">{</span><span class="n">rt</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">s&quot;</span>
-</pre></div>
-</div>
-</section>
-<section id="nested-trial-units">
-<h3>Nested Trial Units<a class="headerlink" href="#nested-trial-units" title="Link to this heading">¶</a></h3>
-<p>You can create complex trial structures by nesting <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> instances:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run_complex_trial</span><span class="p">():</span>
-    <span class="c1"># Fixation phase</span>
-    <span class="n">fix_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
-    <span class="n">fix_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    
-    <span class="c1"># Cue phase</span>
-    <span class="n">cue_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;cue&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
-    <span class="n">cue_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">cue</span><span class="p">)</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    
-    <span class="c1"># Target phase with response</span>
-    <span class="n">target_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
-    <span class="n">target_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
-        <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">],</span>
-        <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
-        <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">3</span>
-    <span class="p">)</span>
-    
-    <span class="c1"># Feedback phase</span>
-    <span class="n">feedback_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s2">&quot;feedback&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">sender</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">target_unit</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;correct&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="n">feedback_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback_correct</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">feedback_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback_incorrect</span><span class="p">)</span>
-    <span class="n">feedback_unit</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
-    
-    <span class="c1"># Combine all data</span>
-    <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;fixation&quot;</span><span class="p">:</span> <span class="n">fix_unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
-        <span class="s2">&quot;cue&quot;</span><span class="p">:</span> <span class="n">cue_unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
-        <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="n">target_unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
-        <span class="s2">&quot;feedback&quot;</span><span class="p">:</span> <span class="n">feedback_unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-    <span class="p">}</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="best-practices">
-<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading">¶</a></h2>
-<ol class="arabic simple">
-<li><p><strong>Use descriptive labels</strong>: Choose meaningful <code class="docutils literal notranslate"><span class="pre">unit_label</span></code> values to make your state data more readable.</p></li>
-<li><p><strong>Chain methods</strong>: Take advantage of the chainable API to write concise, readable code.</p></li>
-<li><p><strong>Separate trial phases</strong>: For complex trials, use multiple <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> instances for different phases.</p></li>
-<li><p><strong>Predefine stimuli</strong>: Create all stimuli before the trial loop to avoid performance issues.</p></li>
-<li><p><strong>Test with mock triggers</strong>: Use <code class="docutils literal notranslate"><span class="pre">TriggerSender(mock=True)</span></code> during development and testing.</p></li>
-<li><p><strong>Log liberally</strong>: Use <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> to record all relevant trial information.</p></li>
-<li><p><strong>Handle errors gracefully</strong>: Use try/except blocks in your hooks to prevent crashes.</p></li>
-</ol>
-</section>
-<section id="troubleshooting">
-<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
+<p><strong>Explanation:</strong></p>
 <ul class="simple">
-<li><p><strong>Timing issues</strong>: If timing seems off, check if you’re using the appropriate timing mode (frame-based vs. clock-based).</p></li>
-<li><p><strong>Missing responses</strong>: Ensure your keyboard is properly initialized and that you’re listening for the correct keys.</p></li>
-<li><p><strong>Stimulus not appearing</strong>: Check that you’ve added all stimuli to the unit with <code class="docutils literal notranslate"><span class="pre">add_stim()</span></code>.</p></li>
-<li><p><strong>Trigger problems</strong>: Verify your <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> is properly configured and test with <code class="docutils literal notranslate"><span class="pre">mock=True</span></code> first.</p></li>
+<li><p><strong>start_hook</strong>: Fires immediately after the global start time is recorded and before the first screen flip.</p></li>
+<li><p><strong>response_hook</strong>: Executes on <code class="docutils literal notranslate"><span class="pre">'space'</span></code> press, providing <code class="docutils literal notranslate"><span class="pre">(unit,</span> <span class="pre">key,</span> <span class="pre">rt)</span></code>.</p></li>
+<li><p><strong>timeout_hook</strong>: Triggers if no response occurs within 1.0 second.</p></li>
+<li><p><strong>end_hook</strong>: Runs after the trial finishes but before logging, giving you a final chance to inspect or modify data.</p></li>
 </ul>
+<p>All calls to <code class="docutils literal notranslate"><span class="pre">u.set_state()</span></code> automatically add entries like <code class="docutils literal notranslate"><span class="pre">demo_start_time</span></code>, <code class="docutils literal notranslate"><span class="pre">demo_response</span></code>, and <code class="docutils literal notranslate"><span class="pre">demo_timeout</span></code> into <code class="docutils literal notranslate"><span class="pre">unit.state</span></code>, which you can retrieve with <code class="docutils literal notranslate"><span class="pre">unit.to_dict()</span></code> or view in your PsychoPy logs via <code class="docutils literal notranslate"><span class="pre">unit.log_unit()</span></code>.</p>
+<p>Instead of decorators, you can register hooks fluently via chaining for concise code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;chain_demo&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>  
+
+<span class="c1"># Chain registrations and run in one statement</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fix</span><span class="p">)</span>  
+    <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>  
+    <span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;space&#39;</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">rt</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">rt</span><span class="o">=</span><span class="n">rt</span><span class="p">))</span>  
+    <span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>  
+    <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Chained final state:&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>  
+    <span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>While <code class="docutils literal notranslate"><span class="pre">.show()</span></code> and <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code> bundle common patterns, you can achieve the same behavior using lifecycle hooks for greater customization.</p>
+<section id="replicating-show-with-hooks">
+<h4>Replicating <code class="docutils literal notranslate"><span class="pre">show()</span></code> with Hooks<a class="headerlink" href="#replicating-show-with-hooks" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;show_demo&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">my_stim</span><span class="p">)</span>
+
+<span class="c1"># Start: send onset trigger, record time</span>
+<span class="nd">@unit</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">start_show</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">callOnFlip</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">,</span> <span class="n">trigger_onset</span><span class="p">)</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">onset_time</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">getTime</span><span class="p">())</span>
+
+<span class="c1"># Timeout after desired duration: send offset trigger, record close time</span>
+<span class="nd">@unit</span><span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="n">show_duration</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">end_show</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">(</span><span class="n">trigger_offset</span><span class="p">)</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">close_time</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">getTime</span><span class="p">())</span>
+
+<span class="c1"># End hook for any cleanup or logging</span>
+<span class="nd">@unit</span><span class="o">.</span><span class="n">on_end</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">finalize_show</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Show ended, state:&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">get_dict</span><span class="p">())</span>
+
+<span class="c1"># Run without terminating on response (no responses listened for)</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">terminate_on_response</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>on_start sets up the flip‑synchronized onset trigger and timestamps.</p></li>
+<li><p>on_timeout fires after show_duration, mirroring offset_trigger.</p></li>
+<li><p>on_end finalizes the trial.</p></li>
+</ul>
+<p>For a more fluent style, you can register hooks and configure trials in a chainable manner:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;show_chain&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">my_stim</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">callOnFlip</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">,</span> <span class="n">trigger_onset</span><span class="p">),</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">onset_time</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">getTime</span><span class="p">())</span>
+    <span class="p">))</span> \
+    <span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="n">show_duration</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">(</span><span class="n">trigger_offset</span><span class="p">),</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">close_time</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">getTime</span><span class="p">())</span>
+    <span class="p">))</span> \
+    <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Show ended, state:&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">get_dict</span><span class="p">()))</span> \
+    <span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">terminate_on_response</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="replicating-capture-response-with-hooks">
+<h4>Replicating <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code> with Hooks<a class="headerlink" href="#replicating-capture-response-with-hooks" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;resp_demo&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">response_stim</span><span class="p">)</span>
+
+<span class="c1"># Start: draw stimuli, flip, send onset trigger, reset clock</span>
+<span class="nd">@unit</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">start_resp</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">u</span><span class="o">.</span><span class="n">stimuli</span><span class="p">:</span>
+        <span class="n">s</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">callOnFlip</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="p">)</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">callOnFlip</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">reset</span><span class="p">)</span>
+
+<span class="c1"># Response: for each valid key, send trigger and set state</span>
+<span class="nd">@unit</span><span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;f&#39;</span><span class="p">,</span><span class="s1">&#39;j&#39;</span><span class="p">])</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">on_resp</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="p">):</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="n">response_triggers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="o">=</span><span class="n">rt</span><span class="p">,</span> <span class="n">hit</span><span class="o">=</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">correct_keys</span><span class="p">))</span>
+
+<span class="c1"># Timeout: if no response within window</span>
+<span class="nd">@unit</span><span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="n">response_duration</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">on_timeout</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">(</span><span class="n">timeout_trigger</span><span class="p">)</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># End: log and clean up</span>
+<span class="nd">@unit</span><span class="o">.</span><span class="n">on_end</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">end_resp</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
+    <span class="n">u</span><span class="o">.</span><span class="n">log_unit</span><span class="p">()</span>
+
+<span class="c1"># Run the trial (hooks manage drawing and events)</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Make it in a chainable manner:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;resp_chain&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">response_stim</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="p">(</span>
+        <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">u</span><span class="o">.</span><span class="n">stimuli</span><span class="p">],</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">callOnFlip</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="p">),</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">callOnFlip</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">reset</span><span class="p">)</span>
+    <span class="p">))</span> \
+    <span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;f&#39;</span><span class="p">,</span><span class="s1">&#39;j&#39;</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">(</span><span class="n">response_triggers</span><span class="p">[</span><span class="n">key</span><span class="p">]),</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="o">=</span><span class="n">rt</span><span class="p">,</span> <span class="n">hit</span><span class="o">=</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">correct_keys</span><span class="p">))</span>
+    <span class="p">))</span> \
+    <span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="n">response_duration</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="p">(</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">(</span><span class="n">timeout_trigger</span><span class="p">),</span>
+        <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">))</span> \
+    <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">log_unit</span><span class="p">())</span> \
+    <span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In most cases, using <code class="docutils literal notranslate"><span class="pre">.show()</span></code>, <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code>, and <code class="docutils literal notranslate"><span class="pre">.wait_and_continue()</span></code> covers the vast majority of task requirements and has been extensively tested. Lifecycle hooks offer maximum flexibility, but they are less commonly used and have seen less practical validation. We did not test their usage extensively. Only opt for manual hooks when you need custom behavior beyond the built-in methods—and proceed with caution.</p>
+</div>
+</section>
+</section>
+<section id="state-and-data-management">
+<h3>8. State and Data Management<a class="headerlink" href="#state-and-data-management" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> keeps all unit-related values in its internal <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> dictionary. Use the following methods to keep your StimUnit data organized, easily retrievable, and ready for analysis or export.</p>
+<section id="recording-or-updating-values-with-set-state">
+<h4>Recording or Updating Values with <code class="docutils literal notranslate"><span class="pre">set_state()</span></code><a class="headerlink" href="#recording-or-updating-values-with-set-state" title="Link to this heading">¶</a></h4>
+<p>Use <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> to record key–value data into the unit’s state</p>
+<p><strong>Example</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># --- Feedback ---</span>
+<span class="k">if</span> <span class="n">early_response</span><span class="p">:</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">delta</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">hit</span><span class="o">=</span><span class="kc">False</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">hit</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="s2">&quot;hit&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;win&quot;</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">delta</span> <span class="k">if</span> <span class="n">hit</span> <span class="k">else</span> <span class="mi">0</span>
+    <span class="k">elif</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;lose&quot;</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">hit</span> <span class="k">else</span> <span class="n">settings</span><span class="o">.</span><span class="n">delta</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">hit_type</span> <span class="o">=</span> <span class="s2">&quot;hit&quot;</span> <span class="k">if</span> <span class="n">hit</span> <span class="k">else</span> <span class="s2">&quot;miss&quot;</span>
+<span class="n">fb_stim</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">hit_type</span><span class="si">}</span><span class="s2">_feedback&quot;</span><span class="p">)</span>
+<span class="n">fb</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;feedback&quot;</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fb_stim</span><span class="p">)</span> \
+    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">feedback_duration</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">hit_type</span><span class="si">}</span><span class="s2">_fb_onset&quot;</span><span class="p">))</span>
+<span class="n">fb</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">hit</span><span class="o">=</span><span class="n">hit</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In this snippet, we:</p>
+<ol class="arabic simple">
+<li><p><strong>Create and display</strong> a feedback <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> labeled “feedback” with the correct stimulus and triggers.</p></li>
+<li><p><strong>Compute</strong> whether the trial was a hit (<code class="docutils literal notranslate"><span class="pre">True</span></code>/<code class="docutils literal notranslate"><span class="pre">False</span></code>) and determine the <code class="docutils literal notranslate"><span class="pre">delta</span></code> value (+Δ, –Δ, or 0).</p></li>
+<li><p><strong>Record</strong> these values into the unit’s internal state using <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> (which prefixes keys by default).</p></li>
+<li><p><strong>Export</strong> all stored state entries into your <code class="docutils literal notranslate"><span class="pre">trial_data</span></code> dict for logging or further analysis.</p></li>
+</ol>
+<p>Note: <code class="docutils literal notranslate"><span class="pre">set_sate()</span></code> uses <strong>prefixing</strong> to control how keys are stored</p>
+<p><strong>Default</strong> (unit label): keys stored as <code class="docutils literal notranslate"><span class="pre">&lt;unit_label&gt;_&lt;key&gt;</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fb</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">hit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="c1"># stores &#39;feedback_hit&#39; and &#39;feedback_delta&#39;</span>
+</pre></div>
+</div>
+<p><strong>Raw</strong> (<code class="docutils literal notranslate"><span class="pre">prefix=''</span></code>): keys stored as-is</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fb</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">hit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="c1"># stores &#39;hit&#39; and &#39;delta&#39;</span>
+</pre></div>
+</div>
+<p><strong>Custom</strong> (<code class="docutils literal notranslate"><span class="pre">prefix='special'</span></code>): keys prefixed with ‘special_’</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fb</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;special&#39;</span><span class="p">,</span> <span class="n">hit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># stores &#39;special_hit&#39;</span>
+</pre></div>
+</div>
+<p><strong>Summary of the prefix behavior</strong></p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Mode</p></th>
+<th class="head"><p>Prefix</p></th>
+<th class="head"><p>Stored keys</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Default</p></td>
+<td><p>(unit label)</p></td>
+<td><p>feedback_hit, feedback_delta</p></td>
+</tr>
+<tr class="row-odd"><td><p>Raw</p></td>
+<td><p>‘’</p></td>
+<td><p>hit, delta</p></td>
+</tr>
+<tr class="row-even"><td><p>Custom</p></td>
+<td><p>‘special’</p></td>
+<td><p>special_hit</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><code class="docutils literal notranslate"><span class="pre">set_state</span></code> is <strong>Chaining</strong>: it returns the same <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>, so you can chain calls:<code class="docutils literal notranslate"><span class="pre">unit.set_state(block=2,</span> <span class="pre">trial=5).set_state(condition='win')</span></code></p>
+</div>
+<p><strong>Summary of Automatic State Entries</strong></p>
+<p>Several <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> methods populate internal state without explicit <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> calls. Here’s a quick reference:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Method</p></th>
+<th class="head"><p>Keys Set in <code class="docutils literal notranslate"><span class="pre">.state</span></code></p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">run()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">global_time</span></code></p></td>
+<td><p>Experiment-wide timestamp before start</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">onset_time</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time_global</span></code>, <code class="docutils literal notranslate"><span class="pre">flip_time</span></code></p></td>
+<td><p>Recorded at first <code class="docutils literal notranslate"><span class="pre">win.flip()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">close_time</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time_global</span></code></p></td>
+<td><p>At end of trial (response or timeout)</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">timeout_triggered</span></code>, <code class="docutils literal notranslate"><span class="pre">duration</span></code></p></td>
+<td><p>If a timeout occurs</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">show()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">duration</span></code></p></td>
+<td><p>Final chosen duration</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">onset_time</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time_global</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_trigger</span></code></p></td>
+<td><p>At stimulus onset</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">flip_time</span></code></p></td>
+<td><p>Time of flip after onset</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">close_time</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time_global</span></code>, <code class="docutils literal notranslate"><span class="pre">offset_trigger</span></code></p></td>
+<td><p>At presentation end</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">capture_response()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">duration</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time_global</span></code>, <code class="docutils literal notranslate"><span class="pre">flip_time</span></code></p></td>
+<td><p>Response window setup</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">hit</span></code>, <code class="docutils literal notranslate"><span class="pre">correct_keys</span></code>, <code class="docutils literal notranslate"><span class="pre">response</span></code>, <code class="docutils literal notranslate"><span class="pre">key_press</span></code>, <code class="docutils literal notranslate"><span class="pre">rt</span></code></p></td>
+<td><p>On response</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">response_trigger</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time_global</span></code></p></td>
+<td><p>Response trigger and end time</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">timeout_trigger</span></code>, <code class="docutils literal notranslate"><span class="pre">hit=False</span></code>, <code class="docutils literal notranslate"><span class="pre">response=None</span></code>, <code class="docutils literal notranslate"><span class="pre">rt=None</span></code></p></td>
+<td><p>On timeout</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">wait_keys</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time_global</span></code>, <code class="docutils literal notranslate"><span class="pre">flip_time</span></code></p></td>
+<td><p>At display onset</p></td>
+</tr>
+<tr class="row-odd"><td><p></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">response</span></code>, <code class="docutils literal notranslate"><span class="pre">response_time</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time_global</span></code></p></td>
+<td><p>When continuation key pressed</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Use this table to quickly see what state values are filled in automatically, so you know which additional <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> calls you might still need.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code>, the <code class="docutils literal notranslate"><span class="pre">hit</span></code> means the response was a correct key press.</p>
+</div>
+</section>
+<section id="retrieving-values-with-get-state">
+<h4>Retrieving Values with <code class="docutils literal notranslate"><span class="pre">get_state()</span></code><a class="headerlink" href="#retrieving-values-with-get-state" title="Link to this heading">¶</a></h4>
+<p>When you call <code class="docutils literal notranslate"><span class="pre">get_state()</span></code>, it first looks for the exact key, then for the prefixed form (using your unit_label or a supplied prefix), and if neither is found it returns the default value.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reads either &#39;response&#39; or &#39;cue_response&#39; if the unit_label is &#39;cue&#39;</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="c1"># Force a different prefix lookup, it reads &#39;custom_response&#39;</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;custom&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="exporting-all-state-with-to-dict">
+<h4>Exporting All State with <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code><a class="headerlink" href="#exporting-all-state-with-to-dict" title="Link to this heading">¶</a></h4>
+<p><strong><code class="docutils literal notranslate"><span class="pre">to_dict(target=None)</span></code></strong></p>
+<ul class="simple">
+<li><p>If no <code class="docutils literal notranslate"><span class="pre">target</span></code> is given, returns the <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> instance (for chaining) and leaves you to inspect <code class="docutils literal notranslate"><span class="pre">unit.state</span></code>.</p></li>
+<li><p>If you pass in a dict, it merges <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> into that dict and returns the <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="c1"># After an anticipation phase:</span>
+  <span class="n">anti</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;anticipation&#39;</span><span class="p">)</span>\
+      <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>\
+      <span class="o">.</span><span class="n">capture_response</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">keys</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">anticipation_duration</span><span class="p">)</span>
+  <span class="c1"># Check if participant responded early</span>
+  <span class="n">early</span> <span class="o">=</span> <span class="n">anti</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+  <span class="c1"># Record this custom flag and merge into main trial_data</span>
+  <span class="n">anti</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">early_response</span><span class="o">=</span><span class="n">early</span><span class="p">)</span>\
+      <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+
+  <span class="c1"># In the target phase:</span>
+  <span class="n">target</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">)</span>\
+      <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_target&quot;</span><span class="p">))</span>\
+      <span class="o">.</span><span class="n">capture_response</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">keys</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
+  <span class="c1"># Export results</span>
+  <span class="n">target</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="logging-state-internally-with-log-unit">
+<h4>Logging State Internally with <code class="docutils literal notranslate"><span class="pre">.log_unit()</span></code><a class="headerlink" href="#logging-state-internally-with-log-unit" title="Link to this heading">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">log_unit()</span></code> writes every key–value pair in <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> to the log score in <code class="docutils literal notranslate"><span class="pre">data/*.log</span></code>.   It uses PsychoPy’s <code class="docutils literal notranslate"><span class="pre">logging.data()</span></code>, which by default appends timestamped entries to the experiment log file or console.
+It’s automatically invoked within the <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> class, so you usually don’t need to call it manually.</p>
+<p><strong>What gets logged?</strong>  All entries currently in <code class="docutils literal notranslate"><span class="pre">unit.state</span></code>, including:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>State key examples</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">trial_block</span></code>, <code class="docutils literal notranslate"><span class="pre">trial_trial</span></code></p></td>
+<td><p>Pre-trial identifiers</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">onset_time</span></code>, <code class="docutils literal notranslate"><span class="pre">flip_time</span></code></p></td>
+<td><p>Timestamps from <code class="docutils literal notranslate"><span class="pre">.show()</span></code> or <code class="docutils literal notranslate"><span class="pre">.run()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hit</span></code>, <code class="docutils literal notranslate"><span class="pre">response</span></code>, <code class="docutils literal notranslate"><span class="pre">rt</span></code></p></td>
+<td><p>Response metrics from <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">feedback_hit</span></code>, <code class="docutils literal notranslate"><span class="pre">feedback_delta</span></code></p></td>
+<td><p>Custom values from your <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> calls</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>If you need a separate log for debugging at other points, you can call <code class="docutils literal notranslate"><span class="pre">unit.log_unit()</span></code> manually to snapshot current state.</p>
+</section>
+</section>
 </section>
 <section id="next-steps">
 <h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
@@ -878,7 +1200,7 @@
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">TriggerSender: Precise Event Marking for EEG/MEG Experiments</div>
+                <div class="title">Sending Hardware Triggers</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -923,36 +1245,46 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">🎯 StimUnit: Modular Trial Controller for PsychoPy</a><ul>
+<li><a class="reference internal" href="#">StimUnit: Modular Stimulus &amp; Response Handler</a><ul>
 <li><a class="reference internal" href="#overview">Overview</a></li>
 <li><a class="reference internal" href="#key-features">Key Features</a></li>
 <li><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
 <li><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a><ul>
+<li><a class="reference internal" href="#create-a-stimbank">0. Create a StimBank</a></li>
 <li><a class="reference internal" href="#initialization">1. Initialization</a></li>
 <li><a class="reference internal" href="#adding-stimuli">2. Adding Stimuli</a></li>
-<li><a class="reference internal" href="#lifecycle-hooks">3. Lifecycle Hooks</a></li>
-<li><a class="reference internal" href="#auto-closing-options">4. Auto-Closing Options</a><ul>
-<li><a class="reference internal" href="#fixed-or-jittered-duration">Fixed or Jittered Duration</a></li>
-<li><a class="reference internal" href="#close-on-specific-key-presses">Close on Specific Key Presses</a></li>
+<li><a class="reference internal" href="#display-stimulus-with-show">3. Display stimulus with <code class="docutils literal notranslate"><span class="pre">show()</span></code></a><ul>
+<li><a class="reference internal" href="#method-signature">Method Signature</a></li>
+<li><a class="reference internal" href="#behavior-table">Behavior Table</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#simple-display-with-show">5. Simple Display with <code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
-<li><a class="reference internal" href="#stimulus-response-window-with-capture-response">6. Stimulus + Response Window with <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code></a></li>
-<li><a class="reference internal" href="#full-trial-loop-with-run">7. Full Trial Loop with <code class="docutils literal notranslate"><span class="pre">run()</span></code></a></li>
-<li><a class="reference internal" href="#pause-continue-with-wait-and-continue">8. Pause &amp; Continue with <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code></a></li>
-<li><a class="reference internal" href="#state-management">9. State Management</a></li>
+<li><a class="reference internal" href="#pause-continue-with-wait-and-continue">4. Pause &amp; Continue with <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code></a><ul>
+<li><a class="reference internal" href="#id1">Method Signature</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#complete-example">Complete Example</a></li>
-<li><a class="reference internal" href="#advanced-usage">Advanced Usage</a><ul>
-<li><a class="reference internal" href="#frame-based-vs-clock-based-timing">Frame-Based vs. Clock-Based Timing</a></li>
-<li><a class="reference internal" href="#custom-trigger-sequences">Custom Trigger Sequences</a></li>
-<li><a class="reference internal" href="#dynamic-stimulus-updates">Dynamic Stimulus Updates</a></li>
-<li><a class="reference internal" href="#nested-trial-units">Nested Trial Units</a></li>
+<li><a class="reference internal" href="#get-responses-with-capture-response">6. Get responses with <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code></a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#id2">Method Signature</a></li>
+<li><a class="reference internal" href="#scenario-1-simple-anticipation-phase-detect-early-responses-without-termination">Scenario 1: Simple Anticipation Phase (detect early responses without termination)</a></li>
+<li><a class="reference internal" href="#scenario-2-target-phase-with-required-response">Scenario 2: Target Phase with Required Response</a></li>
+<li><a class="reference internal" href="#scenario-3-detecting-correct-vs-incorrect-responses">Scenario 3: Detecting Correct vs. Incorrect Responses</a></li>
+<li><a class="reference internal" href="#scenario-4-highlighting-participant-choices">Scenario 4: Highlighting Participant Choices</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#best-practices">Best Practices</a></li>
-<li><a class="reference internal" href="#troubleshooting">Troubleshooting</a></li>
+<li><a class="reference internal" href="#lifecycle-hooks">7. Lifecycle Hooks</a><ul>
+<li><a class="reference internal" href="#replicating-show-with-hooks">Replicating <code class="docutils literal notranslate"><span class="pre">show()</span></code> with Hooks</a></li>
+<li><a class="reference internal" href="#replicating-capture-response-with-hooks">Replicating <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code> with Hooks</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#state-and-data-management">8. State and Data Management</a><ul>
+<li><a class="reference internal" href="#recording-or-updating-values-with-set-state">Recording or Updating Values with <code class="docutils literal notranslate"><span class="pre">set_state()</span></code></a></li>
+<li><a class="reference internal" href="#retrieving-values-with-get-state">Retrieving Values with <code class="docutils literal notranslate"><span class="pre">get_state()</span></code></a></li>
+<li><a class="reference internal" href="#exporting-all-state-with-to-dict">Exporting All State with <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#logging-state-internally-with-log-unit">Logging State Internally with <code class="docutils literal notranslate"><span class="pre">.log_unit()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a class="reference internal" href="#next-steps">Next Steps</a></li>
 </ul>
 </li>

@@ -210,11 +210,11 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials/task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_blocks.html">BlockUnit: Managing Trials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimunit.html">🎯 StimUnit: Modular Trial Controller for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/utilities.html">Utility Helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">Sending Hardware Triggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/utilities.html">Utility Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
 </ul>
 
 </div>
@@ -266,19 +266,6 @@
 <li><p>Audio support including text-to-speech and hardware triggers</p></li>
 <li><p>LLM integration and CLI scaffolding tools</p></li>
 </ul>
-</section>
-<section id="core-components">
-<h2>Core Components<a class="headerlink" href="#core-components" title="Link to this heading">¶</a></h2>
-<ul class="simple">
-<li><p><strong>SubInfo</strong>: GUI-based subject metadata collection with localization</p></li>
-<li><p><strong>TaskSettings</strong>: Loads <cite>config.yaml</cite>, initializes window/keyboard, manages logging</p></li>
-<li><p><strong>StimBank</strong>: Registry for stimuli (decorators or YAML), lazy loading, preview, dynamic formatting, TTS</p></li>
-<li><p><strong>StimUnit</strong>: Presents stimuli, captures responses, sends triggers, logs events</p></li>
-<li><p><strong>BlockUnit</strong>: Generates and runs trial sequences; supports pre/post hooks</p></li>
-<li><p><strong>TriggerSender</strong>: Hardware trigger output with debug and timing control</p></li>
-<li><p><strong>LLMClient</strong>: Automates config translation and README generation</p></li>
-<li><p><strong>CLI (`psyflow task`)</strong>: Scaffolds a ready-to-use task directory</p></li>
-</ul>
 <p>Start with one of the tutorials below or explore the API reference.</p>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
@@ -288,11 +275,11 @@
 <li class="toctree-l1"><a class="reference internal" href="tutorials/task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_blocks.html">BlockUnit: Managing Trials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimunit.html">🎯 StimUnit: Modular Trial Controller for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/utilities.html">Utility Helpers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">Sending Hardware Triggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/utilities.html">Utility Functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
 </ul>
 </div>
 <ul class="simple">
@@ -349,7 +336,6 @@
             <ul>
 <li><a class="reference internal" href="#">Welcome to psyflow</a><ul>
 <li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#core-components">Core Components</a></li>
 </ul>
 </li>
 </ul>
