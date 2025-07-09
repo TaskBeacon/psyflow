@@ -162,21 +162,6 @@ class StimUnit:
             target.update(self.state)
         return self
     
-    def get_dict(self, target: Optional[dict] = None) -> dict:
-        """
-        Return the internal state dictionary, or merge into an external one.
-
-        Parameters
-        ----------
-        target : dict, optional
-            If provided, updates this dict in-place and returns it.
-
-        Returns
-        -------
-        dict
-            The internal state (or merged result if target is provided).
-        """
-        return dict(self.state)
 
     def send_trigger(self, trigger_code: int) -> "StimUnit":
         """
