@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Sending Hardware Triggers" href="send_trigger.html" /><link rel="prev" title="StimBank: Flexible Stimulus Management" href="build_stimulus.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="StimBank：灵活的刺激管理" href="build_stimulus_cn.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>StimUnit: Modular Stimulus &amp; Response Handler - psyflow 0.1.1 documentation</title>
+        <title>StimUnit：模块化的刺激呈现与反应处理单元 - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -204,25 +204,25 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul class="current">
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with psyflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">Sending Hardware Triggers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Interface (CLI)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Functions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">教程 (Chinese)</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo_cn.html">SubInfo: 收集被试信息</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings_cn.html">TaskSettings: 管理实验配置</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks_cn.html">BlockUnit: 组织和运行试验</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus_cn.html">StimBank：灵活的刺激管理</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimunit_cn.html">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
 </ul>
 
 </div>
@@ -243,7 +243,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/tutorials/build_stimunit.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/tutorials/build_stimunit_cn.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -263,107 +263,128 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="stimunit-modular-stimulus-response-handler">
-<h1>StimUnit: Modular Stimulus &amp; Response Handler<a class="headerlink" href="#stimunit-modular-stimulus-response-handler" title="Link to this heading">¶</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> is a versatile, stimulus-level controller for PsychoPy experiments. It bundles everything you need for one trial into a single, chainable object:</p>
+          <section id="stimunit">
+<h1>StimUnit：模块化的刺激呈现与反应处理单元<a class="headerlink" href="#stimunit" title="Link to this heading">¶</a></h1>
+<section id="id1">
+<h2>概述<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 是一个功能多样、用于 PsychoPy 实验的刺激级别控制器。它将单个试次（trial）所需的一切都捆绑到一个可链式调用的对象中：</p>
 <ul class="simple">
-<li><p><strong>Stimulus presentation</strong>: Draw multiple visual or audio stimuli together with sub-frame accuracy.</p></li>
-<li><p><strong>Response collection</strong>: Detect keyboard events and record reaction times effortlessly.</p></li>
-<li><p><strong>Timing control</strong>: Opt for frame-based (refresh-locked) or clock-based timing based on your needs.</p></li>
-<li><p><strong>State management</strong>: Store all trial-related data in a centralized internal dictionary.</p></li>
-<li><p><strong>Event hooks</strong>: Plug in custom callbacks at start, response, timeout, and end stages.</p></li>
+<li><p><strong>刺激呈现</strong>：以亚帧级的精度同时绘制多个视觉或听觉刺激。</p></li>
+<li><p><strong>反应收集</strong>：轻松检测键盘事件并记录反应时。</p></li>
+<li><p><strong>时间控制</strong>：根据您的需求，选择基于帧（刷新锁定）或基于时钟的计时方式。</p></li>
+<li><p><strong>状态管理</strong>：将所有与试次相关的数据存储在集中的内部字典中。</p></li>
+<li><p><strong>事件钩子（Event hooks）</strong>：在开始、反应、超时和结束阶段插入自定义回调函数。</p></li>
 </ul>
-<p>By using <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>, your trial logic (typically defined in <code class="docutils literal notranslate"><span class="pre">src/run_trial.py</span></code>) becomes more modular, readable, and maintainable.</p>
+<p>通过使用 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>，您的试次逻辑（通常在 <code class="docutils literal notranslate"><span class="pre">src/run_trial.py</span></code> 中定义）将变得更加模块化、可读和易于维护。</p>
 </section>
-<section id="key-features">
-<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
+<section id="id2">
+<h2>主要特性<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>Feature</p></th>
-<th class="head"><p>Description</p></th>
+<tr class="row-odd"><th class="head"><p>特性</p></th>
+<th class="head"><p>描述</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><strong>Chainable API</strong></p></td>
-<td><p>Build trials fluently by chaining methods.</p></td>
+<tr class="row-even"><td><p><strong>链式 API</strong></p></td>
+<td><p>通过链式调用方法，流畅地构建试次。</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Frame-based Timing</strong></p></td>
-<td><p>High precision</p></td>
+<tr class="row-odd"><td><p><strong>基于帧的计时</strong></p></td>
+<td><p>高精度。</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>Event hooks</strong></p></td>
-<td><p>Call custom functions on start, response, timeout, or end.</p></td>
+<tr class="row-even"><td><p><strong>事件钩子</strong></p></td>
+<td><p>在开始、反应、超时或结束时调用自定义函数。</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Flexible responses</strong></p></td>
-<td><p>Specify valid keys and automatic RT handling.</p></td>
+<tr class="row-odd"><td><p><strong>灵活的反应</strong></p></td>
+<td><p>指定有效按键和自动反应时处理。</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>State tracking</strong></p></td>
-<td><p>Centralized storage of timestamps, responses, and custom data.</p></td>
+<tr class="row-even"><td><p><strong>状态追踪</strong></p></td>
+<td><p>集中存储时间戳、反应和自定义数据。</p></td>
 </tr>
-<tr class="row-odd"><td><p><strong>Response highlight</strong></p></td>
-<td><p>Visually emphasize selections (static or dynamic).</p></td>
+<tr class="row-odd"><td><p><strong>反应高亮</strong></p></td>
+<td><p>视觉上突出显示选择（静态或动态）。</p></td>
 </tr>
-<tr class="row-even"><td><p><strong>Jittered timing</strong></p></td>
-<td><p>Support randomized (min–max) durations for unpredictability.</p></td>
+<tr class="row-even"><td><p><strong>抖动计时</strong></p></td>
+<td><p>支持随机化（最小-最大）的持续时间，以增加不可预测性。</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
-<section id="quick-reference">
-<h2>Quick Reference<a class="headerlink" href="#quick-reference" title="Link to this heading">¶</a></h2>
+<section id="id3">
+<h2>快速参考<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>Purpose</p></th>
-<th class="head"><p>Method</p></th>
-<th class="head"><p>Example</p></th>
+<tr class="row-odd"><th class="head"><p>用途</p></th>
+<th class="head"><p>方法</p></th>
+<th class="head"><p>示例</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Initialize</p></td>
+<tr class="row-even"><td><p>初始化</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">StimUnit(label,</span> <span class="pre">win,</span> <span class="pre">kb)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">unit</span> <span class="pre">=</span> <span class="pre">StimUnit(&quot;cue&quot;,</span> <span class="pre">win,</span> <span class="pre">kb)</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Add stimuli</p></td>
+<tr class="row-odd"><td><p>添加刺激</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.add_stim(stim1,</span> <span class="pre">stim2,</span> <span class="pre">...)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">unit.add_stim(fixation,</span> <span class="pre">target)</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Start hook</p></td>
+<tr class="row-even"><td><p>开始钩子</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.on_start(fn)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&#64;unit.on_start()</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Response hook</p></td>
+<tr class="row-odd"><td><p>反应钩子</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.on_response(keys,</span> <span class="pre">fn)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&#64;unit.on_response(['left','right'])</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Timeout hook</p></td>
+<tr class="row-even"><td><p>超时钩子</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.on_timeout(sec,</span> <span class="pre">fn)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&#64;unit.on_timeout(2.0)</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>End hook</p></td>
+<tr class="row-odd"><td><p>结束钩子</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">.on_end(fn)</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&#64;unit.on_end()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>简单显示</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.show(duration)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit.show(1.0)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>捕获反应</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.capture_response(keys,</span> <span class="pre">duration)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit.capture_response(['left','right'],</span> <span class="pre">2.0)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>完整试次控制</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.run()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit.run()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>暂停与继续</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.wait_and_continue(keys)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit.wait_and_continue(['space'])</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>更新状态</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.set_state(**kwargs)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">unit.set_state(correct=True)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>检索状态</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.get_state()</span></code> 或访问 <code class="docutils literal notranslate"><span class="pre">.state</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">=</span> <span class="pre">unit.get_state(key,default)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>导出状态</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">=</span> <span class="pre">unit.to_dict()</span></code></p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>| Simple display     | <code class="docutils literal notranslate"><span class="pre">.show(duration)</span></code>                   | <code class="docutils literal notranslate"><span class="pre">unit.show(1.0)</span></code>                               |
-| Response capture   | <code class="docutils literal notranslate"><span class="pre">.capture_response(keys,</span> <span class="pre">duration)</span></code> | <code class="docutils literal notranslate"><span class="pre">unit.capture_response(['left','right'],</span> <span class="pre">2.0)</span></code> |
-| Full trial control | <code class="docutils literal notranslate"><span class="pre">.run()</span></code>                            | <code class="docutils literal notranslate"><span class="pre">unit.run()</span></code>                                   |
-| Pause &amp; continue   | <code class="docutils literal notranslate"><span class="pre">.wait_and_continue(keys)</span></code>          | <code class="docutils literal notranslate"><span class="pre">unit.wait_and_continue(['space'])</span></code>            |
-| Update state       | <code class="docutils literal notranslate"><span class="pre">.set_state(**kwargs)</span></code>              | <code class="docutils literal notranslate"><span class="pre">unit.set_state(correct=True)</span></code>                 |
-| Retrieve state     | <code class="docutils literal notranslate"><span class="pre">.get_state()</span></code> or access <code class="docutils literal notranslate"><span class="pre">.state</span></code>     | <code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">=</span> <span class="pre">unit.get_state(key,default)</span></code>                        |
-| Export state     | <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code>      | <code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">=</span> <span class="pre">unit.to_dict()</span></code>                        |</p>
 </section>
-<section id="detailed-usage-guide">
-<h2>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h2>
-<section id="create-a-stimbank">
-<h3>0. Create a StimBank<a class="headerlink" href="#create-a-stimbank" title="Link to this heading">¶</a></h3>
+<section id="id4">
+<h2>详细使用指南<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<section id="stimbank">
+<h3>0. 创建一个 StimBank<a class="headerlink" href="#stimbank" title="Link to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.stim_bank</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimBank</span>
-<span class="c1"># 1. Define a dictionary of stimulus configurations</span>
+<span class="c1"># 1. 定义一个刺激配置的字典</span>
 <span class="n">stim_config</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s1">&#39;fixation&#39;</span><span class="p">:</span> <span class="p">{</span>
         <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span>
@@ -384,84 +405,83 @@
     <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="c1"># 2. Create your StimBank with window and definitions</span>
+<span class="c1"># 2. 使用窗口和定义创建您的 StimBank</span>
 <span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">stim_config</span><span class="p">)</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>  <span class="c1"># optional</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>  <span class="c1"># 可选</span>
 </pre></div>
 </div>
 </section>
-<section id="initialization">
-<h3>1. Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h3>
-<p>Start by creating your PsychoPy window and keyboard, then instantiate <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> with a descriptive label.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
-<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">([</span><span class="mi">1024</span><span class="p">,</span><span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+<section id="id5">
+<h3>1. 初始化<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p>首先创建您的 PsychoPy 窗口和键盘，然后用一个描述性的标签来实例化 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">([</span><span class="mi">1024</span><span class="p">,</span><span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
 <span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
 
-<span class="c1"># Instantiate StimUnit</span>
+<span class="c1"># 实例化 StimUnit</span>
 <span class="n">fix</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;fix&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>
 <span class="n">tar</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;tar&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">))</span>
 <span class="n">fb</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;fb&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>Choose descriptive <code class="docutils literal notranslate"><span class="pre">unit_label</span></code>s (e.g., <code class="docutils literal notranslate"><span class="pre">&quot;fix&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;tar&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;fb&quot;</span></code>). These labels are automatically prefixed to your state keys when you call <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> and accessed by <code class="docutils literal notranslate"><span class="pre">get_state()</span></code>, ensuring your trial data is neatly namespaced and easy to query.</p>
-<p><strong>Pro tip:</strong> When you need to create many similar trial units in the same context, use Python’s <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code> to simplify instantiation:</p>
+<p>选择描述性的 <code class="docutils literal notranslate"><span class="pre">unit_label</span></code>（例如 <code class="docutils literal notranslate"><span class="pre">&quot;fix&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;tar&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;fb&quot;</span></code>）。当您调用 <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> 时，这些标签会自动作为前缀添加到您的状态键上，并通过 <code class="docutils literal notranslate"><span class="pre">get_state()</span></code> 访问，确保您的试次数据整洁地命名并且易于查询。</p>
+<p><strong>专业提示：</strong> 当您需要在同一上下文中创建许多相似的试次单元时，使用 Python 的 <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code> 来简化实例化过程：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
-<span class="c1"># Create a shortcut with common arguments</span>
+<span class="c1"># 创建一个带有通用参数的快捷方式</span>
 <span class="n">make_unit</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">StimUnit</span><span class="p">,</span> <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="n">kb</span><span class="p">)</span>
 
-<span class="c1"># --- Cue phase ---</span>
+<span class="c1"># --- 提示阶段 ---</span>
 <span class="n">fix</span><span class="o">=</span><span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;fix&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>
 <span class="n">tar</span><span class="o">=</span><span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;tar&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">))</span>
 <span class="n">fb</span><span class="o">=</span><span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;fb&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">))</span>
 </pre></div>
 </div>
 </section>
-<section id="adding-stimuli">
-<h3>2. Adding Stimuli<a class="headerlink" href="#adding-stimuli" title="Link to this heading">¶</a></h3>
-<p>Before presenting a trial, attach the stimuli you want to display or play—this defines what participants will see or hear during the unit.</p>
-<p>StimUnit accepts instances of <code class="docutils literal notranslate"><span class="pre">visual.BaseVisualStim</span></code> (e.g., <code class="docutils literal notranslate"><span class="pre">TextStim</span></code>, <code class="docutils literal notranslate"><span class="pre">Circle</span></code>) and <code class="docutils literal notranslate"><span class="pre">sound.Sound</span></code>. You can add a single stimulus, multiple stimuli at once, or pass a list of stimuli:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Add a single stimulus</span>
+<section id="id6">
+<h3>2. 添加刺激<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<p>在呈现一个试次之前，附加您想要显示或播放的刺激——这定义了被试在该单元期间将看到或听到的内容。</p>
+<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 接受 <code class="docutils literal notranslate"><span class="pre">visual.BaseVisualStim</span></code>（例如 <code class="docutils literal notranslate"><span class="pre">TextStim</span></code>, <code class="docutils literal notranslate"><span class="pre">Circle</span></code>）和 <code class="docutils literal notranslate"><span class="pre">sound.Sound</span></code> 的实例。您可以一次添加单个刺激、多个刺激，或传递一个刺激列表：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 添加单个刺激</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>
 
-<span class="c1"># Add multiple stimuli at once</span>
+<span class="c1"># 一次添加多个刺激</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span>
     <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">),</span>
     <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">)</span>
 <span class="p">)</span>
 
-<span class="c1"># Add a list of stimuli</span>
+<span class="c1"># 添加一个刺激列表</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">([</span>
     <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">),</span>
     <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">),</span>
     <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">)</span>
 <span class="p">])</span>
 
-<span class="c1"># Chain additions </span>
+<span class="c1"># 链式添加</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span> \
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">))</span> \
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">))</span>
 
-<span class="c1"># Clear all stimuli</span>
+<span class="c1"># 清除所有刺激</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">clear_stimuli</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>All added stimuli will be drawn or played together when you present the unit.</p>
-<p>Note that <code class="docutils literal notranslate"><span class="pre">add_stim</span></code> also support PsychoPy style definitions of the stimulus. For exmaple:</p>
+<p>当您呈现该单元时，所有添加的刺激将一起被绘制或播放。</p>
+<p>请注意，<code class="docutils literal notranslate"><span class="pre">add_stim</span></code> 也支持 PsychoPy 风格的刺激定义。例如：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.visual</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextStim</span><span class="p">,</span> <span class="n">Circle</span>
-<span class="c1"># Example 1</span>
+<span class="c1"># 示例 1</span>
 <span class="n">stim_list</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fix&#39;</span><span class="p">:</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)),</span> 
             <span class="s1">&#39;tar&#39;</span><span class="p">:</span> <span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">),</span>
             <span class="s1">&#39;fb&#39;</span><span class="p">:</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;Correct!&#39;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">))}</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;fix&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;tar&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_list</span><span class="p">[</span><span class="s1">&#39;fb&#39;</span><span class="p">])</span>
 
-<span class="c1"># Example 2</span>
+<span class="c1"># 示例 2</span>
 <span class="n">fixation</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation</span><span class="p">)</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">))</span>
 </pre></div>
 </div>
-<p>In the <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> framework, stimuli are normally retrieved from a <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code> object.
-This lets you quickly retrieve named stimuli from your <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code> and pass them into a <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>, streamlining stimunit setup. For example:</p>
+<p>在 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 框架中，刺激通常从一个 <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code> 对象中检索。
+这让您可以快速地从您的 <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code> 中检索命名好的刺激，并将它们传递给 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>，从而简化了 stimunit 的设置。例如：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">condition</span> <span class="o">=</span> <span class="s1">&#39;loss&#39;</span>
 <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s1">&#39;cue&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_cue&quot;</span><span class="p">))</span>
 <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;pop&quot;</span><span class="p">)</span>\
@@ -470,24 +490,24 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 </pre></div>
 </div>
 </section>
-<section id="display-stimulus-with-show">
-<h3>3. Display stimulus with <code class="docutils literal notranslate"><span class="pre">show()</span></code><a class="headerlink" href="#display-stimulus-with-show" title="Link to this heading">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">show()</span></code> method is the core display function in <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>. It handles precise timing, drawing, optional audio playback, and state logging—all in one call. Use it when you want to present stimuli without requiring responses.</p>
-<p><strong>Key Features of <code class="docutils literal notranslate"><span class="pre">show()</span></code></strong></p>
+<section id="show">
+<h3>3. 使用 <code class="docutils literal notranslate"><span class="pre">show()</span></code> 显示刺激<a class="headerlink" href="#show" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">show()</span></code> 方法是 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 中的核心显示函数。它在一个调用中处理了精确定时、绘制、可选的音频播放和状态记录。当您想要呈现刺激而不需要反应时，请使用它。</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">show()</span></code> 的主要特性</strong></p>
 <ul class="simple">
-<li><p><strong>Frame-based timing</strong>: Locks presentation to monitor refreshes for sub-frame precision.</p></li>
-<li><p><strong>Automatic audio support</strong>: Starts any sound stimuli on the first flip.</p></li>
-<li><p><strong>Flexible duration</strong>: Accepts fixed times, jittered ranges, or automatically uses sound length.</p></li>
-<li><p><strong>State logging</strong>: Records onset/offset timestamps and duration into <code class="docutils literal notranslate"><span class="pre">unit.state</span></code>.</p></li>
+<li><p><strong>基于帧的计时</strong>：将呈现锁定到显示器刷新，以实现亚帧级精度。</p></li>
+<li><p><strong>自动音频支持</strong>：在第一次翻转时开始播放任何声音刺激。</p></li>
+<li><p><strong>灵活的持续时间</strong>：接受固定的时间、抖动的范围，或自动使用声音的长度。</p></li>
+<li><p><strong>状态记录</strong>：将开始/结束时间戳和持续时间记录到 <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> 中。</p></li>
 </ul>
-<p>Use this method when you need standalone stimulus presentation without response handling:</p>
+<p>当您需要独立的刺激呈现而无需反应处理时，请使用此方法：</p>
 <ul class="simple">
-<li><p><strong>Feedback Displays</strong>: Show feedback messages or sounds (e.g., “Correct!”, error tones) for a short duration.</p></li>
-<li><p><strong>Passive Stimulus Presentation</strong>: Present visual or auditory stimuli (e.g., flicker, tones) in paradigms where responses are recorded separately, such as resting-state EEG or fMRI.</p></li>
-<li><p><strong>Baseline/Rest Periods</strong>: Present fixation crosses or blank screens for jittered durations to serve as inter-trial intervals or baselines.</p></li>
+<li><p><strong>反馈显示</strong>：在短时间内显示反馈信息或声音（例如，“正确！”，错误音）。</p></li>
+<li><p><strong>被动刺激呈现</strong>：在反应被分开记录的范式中（如静息态 EEG 或 fMRI），呈现视觉或听觉刺激（例如，闪烁、音调）。</p></li>
+<li><p><strong>基线/休息期</strong>：呈现注视十字或空白屏幕，持续时间可抖动，作为试次间间隔或基线。</p></li>
 </ul>
-<section id="method-signature">
-<h4>Method Signature<a class="headerlink" href="#method-signature" title="Link to this heading">¶</a></h4>
+<section id="id7">
+<h4>方法签名<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">.</span><span class="n">show</span><span class="p">(</span>
     <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">onset_trigger</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -498,58 +518,58 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">duration</span></code>:</p>
 <ul>
-<li><p><strong>None</strong>: Uses the longest <code class="docutils literal notranslate"><span class="pre">getDuration()</span></code> of your sound stimuli (0.0 if none).</p></li>
-<li><p><strong>float</strong>: A fixed presentation time in seconds.</p></li>
-<li><p><strong>(min, max)</strong>: Uniformly randomize between <code class="docutils literal notranslate"><span class="pre">min</span></code> and <code class="docutils literal notranslate"><span class="pre">max</span></code>.</p></li>
+<li><p><strong>None</strong>：使用声音刺激中最长的 <code class="docutils literal notranslate"><span class="pre">getDuration()</span></code>（如果没有声音则为 0.0）。</p></li>
+<li><p><strong>float</strong>：以秒为单位的固定呈现时间。</p></li>
+<li><p><strong>(min, max)</strong>：在 <code class="docutils literal notranslate"><span class="pre">min</span></code> 和 <code class="docutils literal notranslate"><span class="pre">max</span></code> 之间均匀随机化。</p></li>
 </ul>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">onset_trigger</span></code> / <code class="docutils literal notranslate"><span class="pre">offset_trigger</span></code>: <em>(optional)</em> placeholder parameters for sending triggers—these are ignored if you manage triggers separately.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">onset_trigger</span></code> / <code class="docutils literal notranslate"><span class="pre">offset_trigger</span></code>: <em>（可选）</em> 用于发送触发器的占位符参数——如果您单独管理触发器，这些参数将被忽略。</p></li>
 </ul>
 </section>
-<section id="behavior-table">
-<h4>Behavior Table<a class="headerlink" href="#behavior-table" title="Link to this heading">¶</a></h4>
+<section id="id8">
+<h4>行为表<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h4>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>Input Duration</p></th>
-<th class="head"><p>Behavior</p></th>
+<tr class="row-odd"><th class="head"><p>输入的持续时间</p></th>
+<th class="head"><p>行为</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>Auto-select from audio (max duration or 0.0).</p></td>
+<td><p>从音频中自动选择（最大持续时间或 0.0）。</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code></p></td>
-<td><p>Present for exactly 0.5 s.</p></td>
+<td><p>精确呈现 0.5 秒。</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">(0.8,</span> <span class="pre">1.2)</span></code></p></td>
-<td><p>Sample in [0.8, 1.2] s.</p></td>
+<td><p>在 [0.8, 1.2] 秒内采样。</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code> + audio of 2.5 s</p></td>
-<td><p>Screen stops at 1.0 s; audio may be cut off.</p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code> + 2.5 秒的音频</p></td>
+<td><p>屏幕在 1.0 秒时停止；音频可能会被切断。</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">None</span></code> + audio of 2.5 s</p></td>
-<td><p>Both screen &amp; audio last full 2.5 s.</p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">None</span></code> + 2.5 秒的音频</p></td>
+<td><p>屏幕和音频都持续完整的 2.5 秒。</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>The following examples demonstrate how to use <code class="docutils literal notranslate"><span class="pre">.show()</span></code> for fixed, jittered, and audio-driven durations. Assume <code class="docutils literal notranslate"><span class="pre">unit</span></code> is an initialized <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> and <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code> contains your stimuli.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Fixed duration – shows text for exactly 1.0 second</span>
+<p>以下示例演示了如何使用 <code class="docutils literal notranslate"><span class="pre">.show()</span></code> 实现固定、抖动和音频驱动的持续时间。假设 <code class="docutils literal notranslate"><span class="pre">unit</span></code> 是一个已初始化的 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>，<code class="docutils literal notranslate"><span class="pre">stim_bank</span></code> 包含您的刺激。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. 固定持续时间 – 显示文本恰好 1.0 秒</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>\
     <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
-<span class="c1"># 2. Jittered duration – shows text for a random time between 1 and 2s</span>
+<span class="c1"># 2. 抖动持续时间 – 在 1 到 2 秒之间的随机时间内显示文本</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>\
-    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="c1">#tuple</span>
+    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="c1"># 元组</span>
 
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>\
-    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="c1">#list</span>
+    <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="c1"># 列表</span>
 
-<span class="c1"># 3. Auto from audio – shows visual and plays audio for the full sound duration</span>
-<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="p">[</span><span class="s1">&#39;pop_sound&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># duration=None is default</span>
+<span class="c1"># 3. 从音频自动确定 – 显示视觉并播放音频，持续整个声音的长度</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="p">[</span><span class="s1">&#39;pop_sound&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1"># duration=None 是默认值</span>
 
-<span class="c1"># 4. Multiple stimuli</span>
+<span class="c1"># 4. 多个刺激</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;pop_sound&#39;</span><span class="p">))</span>\
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>\
     <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
@@ -557,18 +577,18 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 </div>
 </section>
 </section>
-<section id="pause-continue-with-wait-and-continue">
-<h3>4. Pause &amp; Continue with <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code><a class="headerlink" href="#pause-continue-with-wait-and-continue" title="Link to this heading">¶</a></h3>
-<p>Use <code class="docutils literal notranslate"><span class="pre">.wait_and_continue()</span></code> to display stimuli and wait for participant input before proceeding, ideal for instruction screens, inter-block breaks, and end-of-experiment acknowledgments. It enforces a minimum display time and can optionally terminate the session after the key press.</p>
-<p>Use this method when you need participants to confirm or acknowledge before moving on, without capturing a trial response. Common scenarios include:</p>
+<section id="wait-and-continue">
+<h3>4. 使用 <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code> 暂停和继续<a class="headerlink" href="#wait-and-continue" title="Link to this heading">¶</a></h3>
+<p>使用 <code class="docutils literal notranslate"><span class="pre">.wait_and_continue()</span></code> 来显示刺激并等待被试输入后再继续，这对于指导语屏幕、组块间休息和实验结束致谢非常理想。它强制一个最小的显示时间，并可以选择在按键后终止会话。</p>
+<p>当您需要被试在继续前确认或知晓，而无需捕获试次反应时，请使用此方法。常见场景包括：</p>
 <ul class="simple">
-<li><p><strong>Instruction screens</strong>: e.g., “Press SPACE to start” before an experiment block.</p></li>
-<li><p><strong>Inter-block breaks</strong>: Giving participants a chance to rest and proceed when ready.</p></li>
-<li><p><strong>End-of-experiment messages</strong>: Display a thank‑you note or debrief until key press.</p></li>
-<li><p><strong>Any standalone confirmation</strong>: When you don’t need to record response data but require an explicit continuation.</p></li>
+<li><p><strong>指导语屏幕</strong>：例如，在实验组块开始前显示“按空格键开始”。</p></li>
+<li><p><strong>组块间休息</strong>：给被试休息的机会，并在他们准备好时继续。</p></li>
+<li><p><strong>实验结束信息</strong>：显示感谢语或实验说明，直到按键。</p></li>
+<li><p><strong>任何独立的确认</strong>：当您不需要记录反应数据但需要明确的继续操作时。</p></li>
 </ul>
-<section id="id1">
-<h4>Method Signature<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
+<section id="id9">
+<h4>方法签名<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">wait_and_continue</span><span class="p">(</span>
     <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;space&quot;</span><span class="p">],</span>
     <span class="n">min_wait</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -578,24 +598,24 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">keys</span></code>: List of keys that allow continuation (default <code class="docutils literal notranslate"><span class="pre">['space']</span></code>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">min_wait</span></code>: Minimum seconds to wait before accepting input. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, and audio stimuli are present, it defaults to the longest sound duration. If only visual stimuli are present, it defaults to infinite until the button preseed.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">log_message</span></code>: Custom message logged to PsychoPy’s log (defaults to:</p>
+<li><p><code class="docutils literal notranslate"><span class="pre">keys</span></code>: 允许继续的按键列表（默认为 <code class="docutils literal notranslate"><span class="pre">['space']</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min_wait</span></code>: 接受输入前等待的最小秒数。如果为 <code class="docutils literal notranslate"><span class="pre">None</span></code>，并且存在音频刺激，则默认为最长的声音持续时间。如果只有视觉刺激，则默认为无限，直到按下按钮。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log_message</span></code>: 记录到 PsychoPy 日志的自定义消息（默认为：</p>
 <ul>
-<li><p>“Continuing after key ‘X’” or</p></li>
-<li><p>“Experiment ended by key press.” if <code class="docutils literal notranslate"><span class="pre">terminate=True</span></code>).</p></li>
+<li><p>“Continuing after key ‘X’” 或</p></li>
+<li><p>“Experiment ended by key press.” 如果 <code class="docutils literal notranslate"><span class="pre">terminate=True</span></code>）。</p></li>
 </ul>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">terminate</span></code>: If <code class="docutils literal notranslate"><span class="pre">True</span></code>, closes the PsychoPy window after input.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">terminate</span></code>: 如果为 <code class="docutils literal notranslate"><span class="pre">True</span></code>，则在输入后关闭 PsychoPy 窗口。</p></li>
 </ul>
-<p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instruction screen: wait at least 2s for SPACE</span>
+<p><strong>示例</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 指导语屏幕：等待至少 2 秒以响应空格键</span>
 <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;instruction_text&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>\
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;instruction_text&#39;</span><span class="p">))</span>\
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;instruction_text_voice&#39;</span><span class="p">))</span>\
     <span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
 
-<span class="c1"># End screen: immediate termination on key</span>
+<span class="c1"># 结束屏幕：按键后立即终止</span>
 <span class="n">final_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;feedback_delta&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">all_data</span><span class="p">)</span>
 <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;goodbye&#39;</span><span class="p">,</span><span class="n">win</span><span class="p">,</span><span class="n">kb</span><span class="p">)</span>\
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get_and_format</span><span class="p">(</span><span class="s1">&#39;good_bye&#39;</span><span class="p">,</span> <span class="n">total_score</span><span class="o">=</span><span class="n">final_score</span><span class="p">))</span>\
@@ -604,25 +624,25 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 </div>
 </section>
 </section>
-<section id="get-responses-with-capture-response">
-<h3>6. Get responses with <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code><a class="headerlink" href="#get-responses-with-capture-response" title="Link to this heading">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code> method in <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> integrates stimulus presentation, timing, triggers, and response handling into a single, chainable call. It is ideal for:</p>
+<section id="capture-response">
+<h3>6. 使用 <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code> 获取反应<a class="headerlink" href="#capture-response" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">capture_response()</span></code> 方法在 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 中将刺激呈现、计时、触发器和反应处理集成到一个单一的、可链式调用的函数中。它非常适合：</p>
 <ul class="simple">
-<li><p>Detecting and logging subject responses within a predefined response window</p></li>
-<li><p>Determining correct versus incorrect responses for performance analysis</p></li>
-<li><p>Delivering immediate visual feedback by highlighting participant selections</p></li>
+<li><p>在预定义的反应窗口内检测和记录被试的反应</p></li>
+<li><p>为性能分析确定正确与不正确的反应</p></li>
+<li><p>通过高亮被试的选择来提供即时的视觉反馈</p></li>
 </ul>
-<section id="features">
-<h4>Features<a class="headerlink" href="#features" title="Link to this heading">¶</a></h4>
+<section id="id10">
+<h4>特性<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h4>
 <ul class="simple">
-<li><p>Capturing and logging participant choices within precise time windows</p></li>
-<li><p>Sending and receiving hardware triggers (e.g., EEG/fMRI) in sync with stimuli</p></li>
-<li><p>Differentiating correct vs. incorrect responses for performance metrics</p></li>
-<li><p>Providing both static and dynamic visual feedback based on key presses</p></li>
+<li><p>在精确的时间窗口内捕获和记录被试的选择</p></li>
+<li><p>与刺激同步发送和接收硬件触发器（例如，EEG/fMRI）</p></li>
+<li><p>区分正确与不正确的反应以进行性能度量</p></li>
+<li><p>根据按键提供静态和动态的视觉反馈</p></li>
 </ul>
 </section>
-<section id="id2">
-<h4>Method Signature<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<section id="id11">
+<h4>方法签名<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">capture_response</span><span class="p">(</span>
     <span class="n">keys</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">duration</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
@@ -637,19 +657,19 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">key</span></code>: Valid response keys.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">duration</span></code>: Response window (fixed or jittered range).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">terminate_on_response</span></code>: If <code class="docutils literal notranslate"><span class="pre">True</span></code>, stops redrawing after a valid response.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">correct_keys</span></code>: Subset of <code class="docutils literal notranslate"><span class="pre">keys</span></code> to be treated as correct responses (for state logging).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">highligt_stim</span></code>: A stim (or dict mapping keys→stim) to draw around the selected choice.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dynamic_highlight</span></code>: If <code class="docutils literal notranslate"><span class="pre">True</span></code>, highlights update on every keypress instead of just the first.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">key</span></code>: 有效的反应按键。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">duration</span></code>: 反应窗口（固定或抖动范围）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">terminate_on_response</span></code>: 如果为 <code class="docutils literal notranslate"><span class="pre">True</span></code>，在有效反应后停止重绘。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">correct_keys</span></code>: <code class="docutils literal notranslate"><span class="pre">keys</span></code> 的子集，被视为正确反应（用于状态记录）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">highlight_stim</span></code>: 一个刺激（或将按键映射到刺激的字典），用于在所选选项周围绘制。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dynamic_highlight</span></code>: 如果为 <code class="docutils literal notranslate"><span class="pre">True</span></code>，高亮会随着每次按键更新，而不仅仅是第一次。</p></li>
 </ul>
-<p>Below is the signature and four practical scenarios illustrating its use.</p>
+<p>以下是该签名和四个实际场景的说明。</p>
 </section>
-<section id="scenario-1-simple-anticipation-phase-detect-early-responses-without-termination">
-<h4>Scenario 1: Simple Anticipation Phase (detect early responses without termination)<a class="headerlink" href="#scenario-1-simple-anticipation-phase-detect-early-responses-without-termination" title="Link to this heading">¶</a></h4>
-<p>In an anticipation phase of MID task, we want to monitor for any key presses but continue presenting the fixation cross even if the participant responds early. After the window, we record whether there was an early response.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Anticipation phase ---</span>
+<section id="id12">
+<h4>场景 1：简单的预期阶段（检测早期反应而不终止）<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h4>
+<p>在 MID 任务的预期阶段，我们希望监控任何按键，但即使被试提前反应，也要继续呈现注视十字。在窗口结束后，我们记录是否有早期反应。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- 预期阶段 ---</span>
 <span class="n">anti</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s1">&#39;anticipation&#39;</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">))</span>
 <span class="n">anti</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
@@ -659,21 +679,21 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
     <span class="n">terminate_on_response</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
 
-<span class="c1"># After capture_response returns, check and store early response</span>
+<span class="c1"># capture_response 返回后，检查并存储早期反应</span>
 <span class="n">early_response</span> <span class="o">=</span> <span class="n">anti</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="s2">&quot;response&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 <span class="n">anti</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">early_response</span><span class="o">=</span><span class="n">early_response</span><span class="p">)</span>
 <span class="n">anti</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">terminate_on_response=False</span></code> ensures the fixation stays on screen for the full anticipation duration, regardless of key presses.</p></li>
-<li><p>After running, <code class="docutils literal notranslate"><span class="pre">anti.get_state(&quot;response&quot;)</span></code> tells whether any key was pressed.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">terminate_on_response=False</span></code> 确保注视点在整个预期持续时间内都显示在屏幕上，无论是否有按键。</p></li>
+<li><p>运行后，<code class="docutils literal notranslate"><span class="pre">anti.get_state(&quot;response&quot;)</span></code> 会告知是否有任何按键被按下。</p></li>
 </ul>
 </section>
-<section id="scenario-2-target-phase-with-required-response">
-<h4>Scenario 2: Target Phase with Required Response<a class="headerlink" href="#scenario-2-target-phase-with-required-response" title="Link to this heading">¶</a></h4>
-<p>In the target phase of the MID task, we require a response. Here we use default settings where keys in the <code class="docutils literal notranslate"><span class="pre">keys=settings.key_list</span></code> count as potential responses, and no separate <code class="docutils literal notranslate"><span class="pre">correct_keys</span></code> are defined. By default, <code class="docutils literal notranslate"><span class="pre">correct_keys=None</span></code>, so any key in <code class="docutils literal notranslate"><span class="pre">keys=settings.key_list</span></code> is counted as a correct response.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- Target phase ---</span>
+<section id="id13">
+<h4>场景 2：需要反应的目标阶段<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h4>
+<p>在 MID 任务的目标阶段，我们需要一个反应。这里我们使用默认设置，其中 <code class="docutils literal notranslate"><span class="pre">keys=settings.key_list</span></code> 中的按键算作潜在反应，没有定义单独的 <code class="docutils literal notranslate"><span class="pre">correct_keys</span></code>。默认情况下，<code class="docutils literal notranslate"><span class="pre">correct_keys=None</span></code>，因此 <code class="docutils literal notranslate"><span class="pre">keys=settings.key_list</span></code> 中的任何按键都被算作正确反应。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># --- 目标阶段 ---</span>
 <span class="n">duration</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">get_duration</span><span class="p">(</span><span class="n">condition</span><span class="p">)</span>
 <span class="n">target</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;target&quot;</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_target&quot;</span><span class="p">))</span>
@@ -690,14 +710,14 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>By default, <code class="docutils literal notranslate"><span class="pre">correct_keys=None</span></code>, so any key in <code class="docutils literal notranslate"><span class="pre">keys</span></code> is logged as a response.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">response_trigger</span></code> and <code class="docutils literal notranslate"><span class="pre">timeout_trigger</span></code> send triggers for EEG/behavior marking.</p></li>
+<li><p>默认情况下，<code class="docutils literal notranslate"><span class="pre">correct_keys=None</span></code>，因此 <code class="docutils literal notranslate"><span class="pre">keys</span></code> 中的任何按键都会被记录为反应。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">response_trigger</span></code> 和 <code class="docutils literal notranslate"><span class="pre">timeout_trigger</span></code> 发送用于 EEG/行为标记的触发器。</p></li>
 </ul>
 </section>
-<section id="scenario-3-detecting-correct-vs-incorrect-responses">
-<h4>Scenario 3: Detecting Correct vs. Incorrect Responses<a class="headerlink" href="#scenario-3-detecting-correct-vs-incorrect-responses" title="Link to this heading">¶</a></h4>
-<p>In tasks where only one key is correct (e.g., left vs. right dot detection), specify <code class="docutils literal notranslate"><span class="pre">correct_keys</span></code> to log hits vs. misses.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Determine which key is correct based on target position</span>
+<section id="id14">
+<h4>场景 3：检测正确与不正确的反应<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h4>
+<p>在只有一个按键是正确的任务中（例如，左与右的点检测），指定 <code class="docutils literal notranslate"><span class="pre">correct_keys</span></code> 来记录命中与失误。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 根据目标位置确定哪个键是正确的</span>
 <span class="n">target_stim</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;target_position&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_target&quot;</span><span class="p">)</span>
 <span class="n">correct_key</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">settings</span><span class="o">.</span><span class="n">left_key</span>
@@ -722,18 +742,18 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">correct_keys</span></code> filters which responses count as hits. The boolean <code class="docutils literal notranslate"><span class="pre">hit</span></code> state is set accordingly.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">terminate_on_response=True</span></code> ends the trial on the first valid key press.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">correct_keys</span></code> 筛选哪些反应算作命中。布尔值 <code class="docutils literal notranslate"><span class="pre">hit</span></code> 状态会相应设置。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">terminate_on_response=True</span></code> 在第一次有效按键时结束试次。</p></li>
 </ul>
 </section>
-<section id="scenario-4-highlighting-participant-choices">
-<h4>Scenario 4: Highlighting Participant Choices<a class="headerlink" href="#scenario-4-highlighting-participant-choices" title="Link to this heading">¶</a></h4>
-<p>To provide visual feedback, pass a dictionary of highlight stimuli to draw around the chosen option. Use <code class="docutils literal notranslate"><span class="pre">dynamic_highlight=True</span></code> to allow participants to change their selection during the window.</p>
+<section id="id15">
+<h4>场景 4：高亮被试的选择<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h4>
+<p>为了提供视觉反馈，传递一个高亮刺激的字典，以在所选选项周围绘制。使用 <code class="docutils literal notranslate"><span class="pre">dynamic_highlight=True</span></code> 允许被试在窗口期间更改他们的选择。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cue</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;cue&quot;</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stimA&#39;</span><span class="p">))</span> \
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stimB&#39;</span><span class="p">))</span>
 
-<span class="n">correct_key</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">left_key</span>  <span class="c1"># for example</span>
+<span class="n">correct_key</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">left_key</span>  <span class="c1"># 例如</span>
 
 <span class="n">cue</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
     <span class="n">keys</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">key_list</span><span class="p">,</span>
@@ -754,114 +774,114 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">highlight_stim</span></code> maps each key to a visual cue (e.g., a frame or dot).</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">dynamic_highlight=True</span></code>, each new key press updates the highlight until the window ends.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">highlight_stim</span></code> 将每个按键映射到一个视觉提示（例如，一个框或一个点）。</p></li>
+<li><p>如果 <code class="docutils literal notranslate"><span class="pre">dynamic_highlight=True</span></code>，每次新的按键都会更新高亮，直到窗口结束。</p></li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>You can also pass a <code class="docutils literal notranslate"><span class="pre">dict</span></code> to <code class="docutils literal notranslate"><span class="pre">response_trigger</span></code> to send different trigger codes per key.</p>
+<p>您还可以将一个 <code class="docutils literal notranslate"><span class="pre">dict</span></code> 传递给 <code class="docutils literal notranslate"><span class="pre">response_trigger</span></code>，以便为每个按键发送不同的触发码。</p>
 </div>
 </section>
 </section>
-<section id="lifecycle-hooks">
-<h3>7. Lifecycle Hooks<a class="headerlink" href="#lifecycle-hooks" title="Link to this heading">¶</a></h3>
-<p>Lifecycle hooks give you maximum flexibility to define custom behaviors at key trial events—complementing built‑in methods like <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code> or <code class="docutils literal notranslate"><span class="pre">.show()</span></code>. You pick exactly what code runs during <strong>start</strong>, <strong>response</strong>, <strong>timeout</strong>, and <strong>end</strong> phases.</p>
-<p>Below is a complete example demonstrating how each hook operates in practice. Watch how state keys are automatically prefixed with your <code class="docutils literal notranslate"><span class="pre">unit_label</span></code> (“demo”):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span><span class="p">,</span> <span class="n">visual</span>
+<section id="id16">
+<h3>7. 生命周期钩子<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
+<p>生命周期钩子为您在关键试次事件中定义自定义行为提供了最大的灵活性——补充了像 <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code> 或 <code class="docutils literal notranslate"><span class="pre">.show()</span></code> 这样的内置方法。您可以精确地选择在 <strong>开始</strong>、<strong>反应</strong>、<strong>超时</strong> 和 <strong>结束</strong> 阶段运行什么代码。</p>
+<p>下面是一个完整的示例，演示了每个钩子在实践中如何操作。请注意状态键如何自动以您的 <code class="docutils literal notranslate"><span class="pre">unit_label</span></code>（“demo”）为前缀：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">core</span><span class="p">,</span> <span class="n">visual</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.hardware.keyboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Keyboard</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span>
 
-<span class="c1"># 1. Setup</span>
+<span class="c1"># 1. 设置</span>
 <span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">([</span><span class="mi">800</span><span class="p">,</span><span class="mi">600</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
 <span class="n">kb</span>  <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
 <span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
 
-<span class="c1"># 2. Add a stimulus</span>
+<span class="c1"># 2. 添加一个刺激</span>
 <span class="n">fix</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fix</span><span class="p">)</span>
 
-<span class="c1"># 3. Define hooks</span>
+<span class="c1"># 3. 定义钩子</span>
 <span class="nd">@unit</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">start_hook</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
-    <span class="c1"># record the moment the trial begins</span>
+    <span class="c1"># 记录试次开始的时刻</span>
     <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">start_time</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">getTime</span><span class="p">())</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[start_hook] prefix key &#39;demo_start_time&#39; = </span><span class="si">{</span><span class="n">u</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;demo_start_time&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="nd">@unit</span><span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;space&#39;</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">response_hook</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="p">):</span>
-    <span class="c1"># capture spacebar presses</span>
+    <span class="c1"># 捕获空格键按键</span>
     <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="o">=</span><span class="n">rt</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[response_hook] key=</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">, rt=</span><span class="si">{</span><span class="n">rt</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="nd">@unit</span><span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">timeout_hook</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
-    <span class="c1"># handle no-response after 1 second</span>
+    <span class="c1"># 处理 1 秒内无反应的情况</span>
     <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[timeout_hook] no response within 1.0s&quot;</span><span class="p">)</span>
 
 <span class="nd">@unit</span><span class="o">.</span><span class="n">on_end</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">end_hook</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
-    <span class="c1"># finalize and inspect full state</span>
+    <span class="c1"># 完成并检查完整状态</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[end_hook] final state:&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
-<span class="c1"># 4. Run the trial</span>
+<span class="c1"># 4. 运行试次</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p><strong>Explanation:</strong></p>
+<p><strong>解释：</strong></p>
 <ul class="simple">
-<li><p><strong>start_hook</strong>: Fires immediately after the global start time is recorded and before the first screen flip.</p></li>
-<li><p><strong>response_hook</strong>: Executes on <code class="docutils literal notranslate"><span class="pre">'space'</span></code> press, providing <code class="docutils literal notranslate"><span class="pre">(unit,</span> <span class="pre">key,</span> <span class="pre">rt)</span></code>.</p></li>
-<li><p><strong>timeout_hook</strong>: Triggers if no response occurs within 1.0 second.</p></li>
-<li><p><strong>end_hook</strong>: Runs after the trial finishes but before logging, giving you a final chance to inspect or modify data.</p></li>
+<li><p><strong>start_hook</strong>：在记录全局开始时间之后、第一次屏幕翻转之前立即触发。</p></li>
+<li><p><strong>response_hook</strong>：在按下 <code class="docutils literal notranslate"><span class="pre">'space'</span></code> 键时执行，提供 <code class="docutils literal notranslate"><span class="pre">(unit,</span> <span class="pre">key,</span> <span class="pre">rt)</span></code>。</p></li>
+<li><p><strong>timeout_hook</strong>：如果在 1.0 秒内没有发生反应，则触发。</p></li>
+<li><p><strong>end_hook</strong>：在试次结束后、记录之前运行，为您提供最后一次检查或修改数据的机会。</p></li>
 </ul>
-<p>All calls to <code class="docutils literal notranslate"><span class="pre">u.set_state()</span></code> automatically add entries like <code class="docutils literal notranslate"><span class="pre">demo_start_time</span></code>, <code class="docutils literal notranslate"><span class="pre">demo_response</span></code>, and <code class="docutils literal notranslate"><span class="pre">demo_timeout</span></code> into <code class="docutils literal notranslate"><span class="pre">unit.state</span></code>, which you can retrieve with <code class="docutils literal notranslate"><span class="pre">unit.to_dict()</span></code> or view in your PsychoPy logs via <code class="docutils literal notranslate"><span class="pre">unit.log_unit()</span></code>.</p>
-<p>Instead of decorators, you can register hooks fluently via chaining for concise code:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;chain_demo&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>  
+<p>所有对 <code class="docutils literal notranslate"><span class="pre">u.set_state()</span></code> 的调用都会自动在 <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> 中添加像 <code class="docutils literal notranslate"><span class="pre">demo_start_time</span></code>、<code class="docutils literal notranslate"><span class="pre">demo_response</span></code> 和 <code class="docutils literal notranslate"><span class="pre">demo_timeout</span></code> 这样的条目，您可以使用 <code class="docutils literal notranslate"><span class="pre">unit.to_dict()</span></code> 检索或通过 <code class="docutils literal notranslate"><span class="pre">unit.log_unit()</span></code> 在您的 PsychoPy 日志中查看。</p>
+<p>除了装饰器，您还可以通过链式调用流畅地注册钩子，以获得简洁的代码：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;chain_demo&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>  
 
-<span class="c1"># Chain registrations and run in one statement</span>
-<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fix</span><span class="p">)</span>  
-    <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>  
-    <span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;space&#39;</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">rt</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">rt</span><span class="o">=</span><span class="n">rt</span><span class="p">))</span>  
-    <span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>  
-    <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Chained final state:&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>  
+<span class="c1"># 在一个语句中链式注册并运行</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fix</span><span class="p">)</span>  \
+    <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()))</span>  \
+    <span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;space&#39;</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">rt</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">k</span><span class="p">,</span> <span class="n">rt</span><span class="o">=</span><span class="n">rt</span><span class="p">))</span>  \
+    <span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>  \
+    <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Chained final state:&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>  \
     <span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>While <code class="docutils literal notranslate"><span class="pre">.show()</span></code> and <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code> bundle common patterns, you can achieve the same behavior using lifecycle hooks for greater customization.</p>
-<section id="replicating-show-with-hooks">
-<h4>Replicating <code class="docutils literal notranslate"><span class="pre">show()</span></code> with Hooks<a class="headerlink" href="#replicating-show-with-hooks" title="Link to this heading">¶</a></h4>
+<p>虽然 <code class="docutils literal notranslate"><span class="pre">.show()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code> 捆绑了常见的模式，但您可以使用生命周期钩子来实现相同的行为，以获得更大的定制性。</p>
+<section id="id17">
+<h4>使用钩子复制 <code class="docutils literal notranslate"><span class="pre">show()</span></code><a class="headerlink" href="#id17" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;show_demo&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">my_stim</span><span class="p">)</span>
 
-<span class="c1"># Start: send onset trigger, record time</span>
+<span class="c1"># 开始：发送 onset 触发器，记录时间</span>
 <span class="nd">@unit</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">start_show</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
     <span class="n">u</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">callOnFlip</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">,</span> <span class="n">trigger_onset</span><span class="p">)</span>
     <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">onset_time</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">getTime</span><span class="p">())</span>
 
-<span class="c1"># Timeout after desired duration: send offset trigger, record close time</span>
+<span class="c1"># 在所需持续时间后超时：发送 offset 触发器，记录关闭时间</span>
 <span class="nd">@unit</span><span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="n">show_duration</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">end_show</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
     <span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">(</span><span class="n">trigger_offset</span><span class="p">)</span>
     <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">close_time</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">getTime</span><span class="p">())</span>
 
-<span class="c1"># End hook for any cleanup or logging</span>
+<span class="c1"># 用于任何清理或记录的结束钩子</span>
 <span class="nd">@unit</span><span class="o">.</span><span class="n">on_end</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">finalize_show</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Show ended, state:&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">get_dict</span><span class="p">())</span>
 
-<span class="c1"># Run without terminating on response (no responses listened for)</span>
+<span class="c1"># 运行而不因响应而终止（不监听响应）</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">terminate_on_response</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p>on_start sets up the flip‑synchronized onset trigger and timestamps.</p></li>
-<li><p>on_timeout fires after show_duration, mirroring offset_trigger.</p></li>
-<li><p>on_end finalizes the trial.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">on_start</span></code> 设置了与翻转同步的 onset 触发器和时间戳。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">on_timeout</span></code> 在 <code class="docutils literal notranslate"><span class="pre">show_duration</span></code> 后触发，镜像 <code class="docutils literal notranslate"><span class="pre">offset_trigger</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">on_end</span></code> 完成试次。</p></li>
 </ul>
-<p>For a more fluent style, you can register hooks and configure trials in a chainable manner:</p>
+<p>为了更流畅的风格，您可以链式地注册钩子和配置试次：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;show_chain&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">my_stim</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="p">(</span>
@@ -877,12 +897,12 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 </pre></div>
 </div>
 </section>
-<section id="replicating-capture-response-with-hooks">
-<h4>Replicating <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code> with Hooks<a class="headerlink" href="#replicating-capture-response-with-hooks" title="Link to this heading">¶</a></h4>
+<section id="id18">
+<h4>使用钩子复制 <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code><a class="headerlink" href="#id18" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;resp_demo&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">response_stim</span><span class="p">)</span>
 
-<span class="c1"># Start: draw stimuli, flip, send onset trigger, reset clock</span>
+<span class="c1"># 开始：绘制刺激，翻转，发送 onset 触发器，重置时钟</span>
 <span class="nd">@unit</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">start_resp</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">u</span><span class="o">.</span><span class="n">stimuli</span><span class="p">:</span>
@@ -890,29 +910,29 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
     <span class="n">u</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">callOnFlip</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="p">)</span>
     <span class="n">u</span><span class="o">.</span><span class="n">win</span><span class="o">.</span><span class="n">callOnFlip</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">clock</span><span class="o">.</span><span class="n">reset</span><span class="p">)</span>
 
-<span class="c1"># Response: for each valid key, send trigger and set state</span>
+<span class="c1"># 反应：对于每个有效按键，发送触发器并设置状态</span>
 <span class="nd">@unit</span><span class="o">.</span><span class="n">on_response</span><span class="p">([</span><span class="s1">&#39;f&#39;</span><span class="p">,</span><span class="s1">&#39;j&#39;</span><span class="p">])</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">on_resp</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="p">):</span>
     <span class="n">code</span> <span class="o">=</span> <span class="n">response_triggers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
     <span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">(</span><span class="n">code</span><span class="p">)</span>
     <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">rt</span><span class="o">=</span><span class="n">rt</span><span class="p">,</span> <span class="n">hit</span><span class="o">=</span><span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">correct_keys</span><span class="p">))</span>
 
-<span class="c1"># Timeout: if no response within window</span>
+<span class="c1"># 超时：如果在反应窗口内没有反应</span>
 <span class="nd">@unit</span><span class="o">.</span><span class="n">on_timeout</span><span class="p">(</span><span class="n">response_duration</span><span class="p">)</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">on_timeout</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
     <span class="n">u</span><span class="o">.</span><span class="n">send_trigger</span><span class="p">(</span><span class="n">timeout_trigger</span><span class="p">)</span>
     <span class="n">u</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># End: log and clean up</span>
+<span class="c1"># 结束：记录和清理</span>
 <span class="nd">@unit</span><span class="o">.</span><span class="n">on_end</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">end_resp</span><span class="p">(</span><span class="n">u</span><span class="p">):</span>
     <span class="n">u</span><span class="o">.</span><span class="n">log_unit</span><span class="p">()</span>
 
-<span class="c1"># Run the trial (hooks manage drawing and events)</span>
+<span class="c1"># 运行试次（钩子管理绘制和事件）</span>
 <span class="n">unit</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Make it in a chainable manner:</p>
+<p>以链式方式实现：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;resp_chain&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">response_stim</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">:</span> <span class="p">(</span>
@@ -934,18 +954,18 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>In most cases, using <code class="docutils literal notranslate"><span class="pre">.show()</span></code>, <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code>, and <code class="docutils literal notranslate"><span class="pre">.wait_and_continue()</span></code> covers the vast majority of task requirements and has been extensively tested. Lifecycle hooks offer maximum flexibility, but they are less commonly used and have seen less practical validation. We did not test their usage extensively. Only opt for manual hooks when you need custom behavior beyond the built-in methods—and proceed with caution.</p>
+<p>在大多数情况下，使用 <code class="docutils literal notranslate"><span class="pre">.show()</span></code>、<code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">.wait_and_continue()</span></code> 涵盖了绝大多数任务需求，并经过了广泛测试。生命周期钩子提供了最大的灵活性，但它们不太常用，并且实际验证较少。我们没有广泛测试它们的用法。只有当您需要超出内置方法的自定义行为时才选择手动钩子——并谨慎行事。</p>
 </div>
 </section>
 </section>
-<section id="state-and-data-management">
-<h3>8. State and Data Management<a class="headerlink" href="#state-and-data-management" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> keeps all unit-related values in its internal <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> dictionary. Use the following methods to keep your StimUnit data organized, easily retrievable, and ready for analysis or export.</p>
-<section id="recording-or-updating-values-with-set-state">
-<h4>Recording or Updating Values with <code class="docutils literal notranslate"><span class="pre">set_state()</span></code><a class="headerlink" href="#recording-or-updating-values-with-set-state" title="Link to this heading">¶</a></h4>
-<p>Use <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> to record key–value data into the unit’s state</p>
-<p><strong>Example</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># --- Feedback ---</span>
+<section id="id19">
+<h3>8. 状态和数据管理<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 将所有与单元相关的值保存在其内部的 <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> 字典中。使用以下方法可以使您的 StimUnit 数据井然有序、易于检索，并为分析或导出做好准备。</p>
+<section id="set-state">
+<h4>使用 <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> 记录或更新值<a class="headerlink" href="#set-state" title="Link to this heading">¶</a></h4>
+<p>使用 <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> 将键值数据记录到单元的状态中。</p>
+<p><strong>示例</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="c1"># --- 反馈 ---</span>
 <span class="k">if</span> <span class="n">early_response</span><span class="p">:</span>
     <span class="n">delta</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">delta</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
     <span class="n">hit</span><span class="o">=</span><span class="kc">False</span>
@@ -966,48 +986,48 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 <span class="n">fb</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">hit</span><span class="o">=</span><span class="n">hit</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>In this snippet, we:</p>
+<p>在这个片段中，我们：</p>
 <ol class="arabic simple">
-<li><p><strong>Create and display</strong> a feedback <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> labeled “feedback” with the correct stimulus and triggers.</p></li>
-<li><p><strong>Compute</strong> whether the trial was a hit (<code class="docutils literal notranslate"><span class="pre">True</span></code>/<code class="docutils literal notranslate"><span class="pre">False</span></code>) and determine the <code class="docutils literal notranslate"><span class="pre">delta</span></code> value (+Δ, –Δ, or 0).</p></li>
-<li><p><strong>Record</strong> these values into the unit’s internal state using <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> (which prefixes keys by default).</p></li>
-<li><p><strong>Export</strong> all stored state entries into your <code class="docutils literal notranslate"><span class="pre">trial_data</span></code> dict for logging or further analysis.</p></li>
+<li><p><strong>创建并显示</strong> 一个标记为“feedback”的反馈 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>，带有正确的刺激和触发器。</p></li>
+<li><p><strong>计算</strong> 试次是否命中（<code class="docutils literal notranslate"><span class="pre">True</span></code>/<code class="docutils literal notranslate"><span class="pre">False</span></code>）并确定 <code class="docutils literal notranslate"><span class="pre">delta</span></code> 值（+Δ, –Δ, 或 0）。</p></li>
+<li><p><strong>记录</strong> 这些值到单元的内部状态中，使用 <code class="docutils literal notranslate"><span class="pre">set_state()</span></code>（默认情况下会添加前缀）。</p></li>
+<li><p><strong>导出</strong> 所有存储的状态条目到您的 <code class="docutils literal notranslate"><span class="pre">trial_data</span></code> 字典中，用于记录或进一步分析。</p></li>
 </ol>
-<p>Note: <code class="docutils literal notranslate"><span class="pre">set_sate()</span></code> uses <strong>prefixing</strong> to control how keys are stored</p>
-<p><strong>Default</strong> (unit label): keys stored as <code class="docutils literal notranslate"><span class="pre">&lt;unit_label&gt;_&lt;key&gt;</span></code></p>
+<p>注意：<code class="docutils literal notranslate"><span class="pre">set_state()</span></code> 使用 <strong>前缀</strong> 来控制键的存储方式。</p>
+<p><strong>默认</strong> (单元标签): 键存储为 <code class="docutils literal notranslate"><span class="pre">&lt;unit_label&gt;_&lt;key&gt;</span></code></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fb</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">hit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="c1"># stores &#39;feedback_hit&#39; and &#39;feedback_delta&#39;</span>
+<span class="c1"># 存储 &#39;feedback_hit&#39; 和 &#39;feedback_delta&#39;</span>
 </pre></div>
 </div>
-<p><strong>Raw</strong> (<code class="docutils literal notranslate"><span class="pre">prefix=''</span></code>): keys stored as-is</p>
+<p><strong>原始</strong> (<code class="docutils literal notranslate"><span class="pre">prefix=''</span></code>)：键按原样存储</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fb</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">hit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-<span class="c1"># stores &#39;hit&#39; and &#39;delta&#39;</span>
+<span class="c1"># 存储 &#39;hit&#39; 和 &#39;delta&#39;</span>
 </pre></div>
 </div>
-<p><strong>Custom</strong> (<code class="docutils literal notranslate"><span class="pre">prefix='special'</span></code>): keys prefixed with ‘special_’</p>
+<p><strong>自定义</strong> (<code class="docutils literal notranslate"><span class="pre">prefix='special'</span></code>)：键以 ‘special_’ 为前缀</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fb</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;special&#39;</span><span class="p">,</span> <span class="n">hit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="c1"># stores &#39;special_hit&#39;</span>
+<span class="c1"># 存储 &#39;special_hit&#39;</span>
 </pre></div>
 </div>
-<p><strong>Summary of the prefix behavior</strong></p>
+<p><strong>前缀行为总结</strong></p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>Mode</p></th>
-<th class="head"><p>Prefix</p></th>
-<th class="head"><p>Stored keys</p></th>
+<tr class="row-odd"><th class="head"><p>模式</p></th>
+<th class="head"><p>前缀</p></th>
+<th class="head"><p>存储的键</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Default</p></td>
-<td><p>(unit label)</p></td>
+<tr class="row-even"><td><p>默认</p></td>
+<td><p>(单元标签)</p></td>
 <td><p>feedback_hit, feedback_delta</p></td>
 </tr>
-<tr class="row-odd"><td><p>Raw</p></td>
+<tr class="row-odd"><td><p>原始</p></td>
 <td><p>‘’</p></td>
 <td><p>hit, delta</p></td>
 </tr>
-<tr class="row-even"><td><p>Custom</p></td>
+<tr class="row-even"><td><p>自定义</p></td>
 <td><p>‘special’</p></td>
 <td><p>special_hit</p></td>
 </tr>
@@ -1016,159 +1036,159 @@ This lets you quickly retrieve named stimuli from your <code class="docutils lit
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p><code class="docutils literal notranslate"><span class="pre">set_state</span></code> is <strong>Chaining</strong>: it returns the same <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>, so you can chain calls:<code class="docutils literal notranslate"><span class="pre">unit.set_state(block=2,</span> <span class="pre">trial=5).set_state(condition='win')</span></code></p>
+<p><code class="docutils literal notranslate"><span class="pre">set_state</span></code> 是 <strong>可链式调用的</strong>：它返回同一个 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>，所以您可以链式调用：<code class="docutils literal notranslate"><span class="pre">unit.set_state(block=2,</span> <span class="pre">trial=5).set_state(condition='win')</span></code></p>
 </div>
-<p><strong>Summary of Automatic State Entries</strong></p>
-<p>Several <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> methods populate internal state without explicit <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> calls. Here’s a quick reference:</p>
+<p><strong>自动状态条目总结</strong></p>
+<p>一些 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 方法会在没有显式调用 <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> 的情况下填充内部状态。这里是一个快速参考：</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>Method</p></th>
-<th class="head"><p>Keys Set in <code class="docutils literal notranslate"><span class="pre">.state</span></code></p></th>
-<th class="head"><p>Notes</p></th>
+<tr class="row-odd"><th class="head"><p>方法</p></th>
+<th class="head"><p>在 <code class="docutils literal notranslate"><span class="pre">.state</span></code> 中设置的键</p></th>
+<th class="head"><p>注意</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">run()</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">global_time</span></code></p></td>
-<td><p>Experiment-wide timestamp before start</p></td>
+<td><p>开始前的实验范围时间戳</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">onset_time</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time_global</span></code>, <code class="docutils literal notranslate"><span class="pre">flip_time</span></code></p></td>
-<td><p>Recorded at first <code class="docutils literal notranslate"><span class="pre">win.flip()</span></code></p></td>
+<td><p>在第一次 <code class="docutils literal notranslate"><span class="pre">win.flip()</span></code> 时记录</p></td>
 </tr>
 <tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">close_time</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time_global</span></code></p></td>
-<td><p>At end of trial (response or timeout)</p></td>
+<td><p>在试次结束时（反应或超时）</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">timeout_triggered</span></code>, <code class="docutils literal notranslate"><span class="pre">duration</span></code></p></td>
-<td><p>If a timeout occurs</p></td>
+<td><p>如果发生超时</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">show()</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">duration</span></code></p></td>
-<td><p>Final chosen duration</p></td>
+<td><p>最终选择的持续时间</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">onset_time</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time_global</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_trigger</span></code></p></td>
-<td><p>At stimulus onset</p></td>
+<td><p>在刺激开始时</p></td>
 </tr>
 <tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">flip_time</span></code></p></td>
-<td><p>Time of flip after onset</p></td>
+<td><p>开始后翻转的时间</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">close_time</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time_global</span></code>, <code class="docutils literal notranslate"><span class="pre">offset_trigger</span></code></p></td>
-<td><p>At presentation end</p></td>
+<td><p>在呈现结束时</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">capture_response()</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">duration</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time_global</span></code>, <code class="docutils literal notranslate"><span class="pre">flip_time</span></code></p></td>
-<td><p>Response window setup</p></td>
+<td><p>反应窗口设置</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">hit</span></code>, <code class="docutils literal notranslate"><span class="pre">correct_keys</span></code>, <code class="docutils literal notranslate"><span class="pre">response</span></code>, <code class="docutils literal notranslate"><span class="pre">key_press</span></code>, <code class="docutils literal notranslate"><span class="pre">rt</span></code></p></td>
-<td><p>On response</p></td>
+<td><p>在反应时</p></td>
 </tr>
 <tr class="row-even"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">response_trigger</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time_global</span></code></p></td>
-<td><p>Response trigger and end time</p></td>
+<td><p>反应触发器和结束时间</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">timeout_trigger</span></code>, <code class="docutils literal notranslate"><span class="pre">hit=False</span></code>, <code class="docutils literal notranslate"><span class="pre">response=None</span></code>, <code class="docutils literal notranslate"><span class="pre">rt=None</span></code></p></td>
-<td><p>On timeout</p></td>
+<td><p>在超时时</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">wait_keys</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time</span></code>, <code class="docutils literal notranslate"><span class="pre">onset_time_global</span></code>, <code class="docutils literal notranslate"><span class="pre">flip_time</span></code></p></td>
-<td><p>At display onset</p></td>
+<td><p>在显示开始时</p></td>
 </tr>
 <tr class="row-odd"><td><p></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">response</span></code>, <code class="docutils literal notranslate"><span class="pre">response_time</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time</span></code>, <code class="docutils literal notranslate"><span class="pre">close_time_global</span></code></p></td>
-<td><p>When continuation key pressed</p></td>
+<td><p>当按下继续键时</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Use this table to quickly see what state values are filled in automatically, so you know which additional <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> calls you might still need.</p>
+<p>使用此表可以快速查看哪些状态值是自动填充的，这样您就知道可能还需要哪些额外的 <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> 调用。</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>For <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code>, the <code class="docutils literal notranslate"><span class="pre">hit</span></code> means the response was a correct key press.</p>
+<p>对于 <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code>，<code class="docutils literal notranslate"><span class="pre">hit</span></code> 表示反应是正确的按键。</p>
 </div>
 </section>
-<section id="retrieving-values-with-get-state">
-<h4>Retrieving Values with <code class="docutils literal notranslate"><span class="pre">get_state()</span></code><a class="headerlink" href="#retrieving-values-with-get-state" title="Link to this heading">¶</a></h4>
-<p>When you call <code class="docutils literal notranslate"><span class="pre">get_state()</span></code>, it first looks for the exact key, then for the prefixed form (using your unit_label or a supplied prefix), and if neither is found it returns the default value.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Reads either &#39;response&#39; or &#39;cue_response&#39; if the unit_label is &#39;cue&#39;</span>
+<section id="get-state">
+<h4>使用 <code class="docutils literal notranslate"><span class="pre">get_state()</span></code> 检索值<a class="headerlink" href="#get-state" title="Link to this heading">¶</a></h4>
+<p>当您调用 <code class="docutils literal notranslate"><span class="pre">get_state()</span></code> 时，它首先查找确切的键，然后查找带前缀的形式（使用您的 unit_label 或提供的
+前缀），如果两者都找不到，则返回默认值。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 如果 unit_label 是 &#39;cue&#39;，则读取 &#39;response&#39; 或 &#39;cue_response&#39;</span>
 <span class="n">resp</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-<span class="c1"># Force a different prefix lookup, it reads &#39;custom_response&#39;</span>
+<span class="c1"># 强制使用不同的前缀查找，它会读取 &#39;custom_response&#39;</span>
 <span class="n">resp</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;custom&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="exporting-all-state-with-to-dict">
-<h4>Exporting All State with <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code><a class="headerlink" href="#exporting-all-state-with-to-dict" title="Link to this heading">¶</a></h4>
+<section id="to-dict">
+<h4>使用 <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code> 导出所有状态<a class="headerlink" href="#to-dict" title="Link to this heading">¶</a></h4>
 <p><strong><code class="docutils literal notranslate"><span class="pre">to_dict(target=None)</span></code></strong></p>
 <ul class="simple">
-<li><p>If no <code class="docutils literal notranslate"><span class="pre">target</span></code> is given, returns the <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> instance (for chaining) and leaves you to inspect <code class="docutils literal notranslate"><span class="pre">unit.state</span></code>.</p></li>
-<li><p>If you pass in a dict, it merges <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> into that dict and returns the <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>.</p></li>
+<li><p>如果没有给出 <code class="docutils literal notranslate"><span class="pre">target</span></code>，则返回 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 实例（用于链式调用），并让您检查 <code class="docutils literal notranslate"><span class="pre">unit.state</span></code>。</p></li>
+<li><p>如果您传入一个字典，它会将 <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> 合并到该字典中并返回 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>。</p></li>
 </ul>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="c1"># After an anticipation phase:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>  <span class="c1"># 在一个预期阶段之后：</span>
   <span class="n">anti</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;anticipation&#39;</span><span class="p">)</span>\
       <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>\
       <span class="o">.</span><span class="n">capture_response</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">keys</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">anticipation_duration</span><span class="p">)</span>
-  <span class="c1"># Check if participant responded early</span>
+  <span class="c1"># 检查被试是否提前反应</span>
   <span class="n">early</span> <span class="o">=</span> <span class="n">anti</span><span class="o">.</span><span class="n">get_state</span><span class="p">(</span><span class="s1">&#39;response&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
-  <span class="c1"># Record this custom flag and merge into main trial_data</span>
+  <span class="c1"># 记录这个自定义标志并合并到主 trial_data 中</span>
   <span class="n">anti</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="n">early_response</span><span class="o">=</span><span class="n">early</span><span class="p">)</span>\
       <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
 
-  <span class="c1"># In the target phase:</span>
+  <span class="c1"># 在目标阶段：</span>
   <span class="n">target</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;target&#39;</span><span class="p">)</span>\
       <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_target&quot;</span><span class="p">))</span>\
       <span class="o">.</span><span class="n">capture_response</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">keys</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">)</span>
-  <span class="c1"># Export results</span>
+  <span class="c1"># 导出结果</span>
   <span class="n">target</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="logging-state-internally-with-log-unit">
-<h4>Logging State Internally with <code class="docutils literal notranslate"><span class="pre">.log_unit()</span></code><a class="headerlink" href="#logging-state-internally-with-log-unit" title="Link to this heading">¶</a></h4>
-<p><code class="docutils literal notranslate"><span class="pre">log_unit()</span></code> writes every key–value pair in <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> to the log score in <code class="docutils literal notranslate"><span class="pre">data/*.log</span></code>.   It uses PsychoPy’s <code class="docutils literal notranslate"><span class="pre">logging.data()</span></code>, which by default appends timestamped entries to the experiment log file or console.
-It’s automatically invoked within the <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> class, so you usually don’t need to call it manually.</p>
-<p><strong>What gets logged?</strong>  All entries currently in <code class="docutils literal notranslate"><span class="pre">unit.state</span></code>, including:</p>
+<section id="log-unit">
+<h4>使用 <code class="docutils literal notranslate"><span class="pre">.log_unit()</span></code> 在内部记录状态<a class="headerlink" href="#log-unit" title="Link to this heading">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">log_unit()</span></code> 将 <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> 中的每个键值对写入 <code class="docutils literal notranslate"><span class="pre">data/*.log</span></code> 中的日志分数。它使用 PsychoPy 的 <code class="docutils literal notranslate"><span class="pre">logging.data()</span></code>，默认情况下，它会将带时间戳的条目附加到实验日志文件或控制台。它在 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 类中自动调用，所以您通常不需要手动调用它。</p>
+<p><strong>记录什么？</strong> <code class="docutils literal notranslate"><span class="pre">unit.state</span></code> 中当前的所有条目，包括：</p>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>State key examples</p></th>
-<th class="head"><p>Description</p></th>
+<tr class="row-odd"><th class="head"><p>状态键示例</p></th>
+<th class="head"><p>描述</p></th>
 </tr>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">trial_block</span></code>, <code class="docutils literal notranslate"><span class="pre">trial_trial</span></code></p></td>
-<td><p>Pre-trial identifiers</p></td>
+<td><p>试次前标识符</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">onset_time</span></code>, <code class="docutils literal notranslate"><span class="pre">flip_time</span></code></p></td>
-<td><p>Timestamps from <code class="docutils literal notranslate"><span class="pre">.show()</span></code> or <code class="docutils literal notranslate"><span class="pre">.run()</span></code></p></td>
+<td><p>来自 <code class="docutils literal notranslate"><span class="pre">.show()</span></code> 或 <code class="docutils literal notranslate"><span class="pre">.run()</span></code> 的时间戳</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hit</span></code>, <code class="docutils literal notranslate"><span class="pre">response</span></code>, <code class="docutils literal notranslate"><span class="pre">rt</span></code></p></td>
-<td><p>Response metrics from <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code></p></td>
+<td><p>来自 <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code> 的反应指标</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">feedback_hit</span></code>, <code class="docutils literal notranslate"><span class="pre">feedback_delta</span></code></p></td>
-<td><p>Custom values from your <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> calls</p></td>
+<td><p>来自您的 <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> 调用的自定义值</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>If you need a separate log for debugging at other points, you can call <code class="docutils literal notranslate"><span class="pre">unit.log_unit()</span></code> manually to snapshot current state.</p>
+<p>如果您需要在其他点进行调试的单独日志，您可以手动调用 <code class="docutils literal notranslate"><span class="pre">unit.log_unit()</span></code> 来快照当前状态。</p>
 </section>
 </section>
 </section>
-<section id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
-<p>Now that you understand how to use <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>, you can:</p>
+<section id="id20">
+<h2>后续步骤<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h2>
+<p>现在您已经了解了如何使用 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code>，您可以：</p>
 <ul class="simple">
-<li><p>Explore the <a class="reference internal" href="build_blocks.html"><span class="std std-doc">BlockUnit tutorial</span></a> to organize trials into blocks</p></li>
-<li><p>Learn about <a class="reference internal" href="build_stimulus.html"><span class="std std-doc">StimBank</span></a> for flexible stimulus management</p></li>
-<li><p>Check out <a class="reference internal" href="send_trigger.html"><span class="std std-doc">trigger sending</span></a> for EEG/MEG experiments</p></li>
+<li><p>探索 <a class="reference internal" href="build_blocks.html"><span class="std std-doc">BlockUnit 教程</span></a> 来将试次组织成组块</p></li>
+<li><p>了解 <a class="reference internal" href="build_stimulus.html"><span class="std std-doc">StimBank</span></a> 以进行灵活的刺激管理</p></li>
+<li><p>查看 <a class="reference internal" href="send_trigger.html"><span class="std std-doc">发送触发器</span></a> 以用于 EEG/MEG 实验</p></li>
 </ul>
 </section>
 </section>
@@ -1178,23 +1198,15 @@ It’s automatically invoked within the <code class="docutils literal notranslat
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="send_trigger.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Sending Hardware Triggers</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="build_stimulus.html">
+          
+          <a class="prev-page" href="build_stimulus_cn.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">StimBank: Flexible Stimulus Management</div>
+                <div class="title">StimBank：灵活的刺激管理</div>
                 
               </div>
             </a>
@@ -1228,47 +1240,47 @@ It’s automatically invoked within the <code class="docutils literal notranslat
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">StimUnit: Modular Stimulus &amp; Response Handler</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#key-features">Key Features</a></li>
-<li><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
-<li><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a><ul>
-<li><a class="reference internal" href="#create-a-stimbank">0. Create a StimBank</a></li>
-<li><a class="reference internal" href="#initialization">1. Initialization</a></li>
-<li><a class="reference internal" href="#adding-stimuli">2. Adding Stimuli</a></li>
-<li><a class="reference internal" href="#display-stimulus-with-show">3. Display stimulus with <code class="docutils literal notranslate"><span class="pre">show()</span></code></a><ul>
-<li><a class="reference internal" href="#method-signature">Method Signature</a></li>
-<li><a class="reference internal" href="#behavior-table">Behavior Table</a></li>
+<li><a class="reference internal" href="#">StimUnit：模块化的刺激呈现与反应处理单元</a><ul>
+<li><a class="reference internal" href="#id1">概述</a></li>
+<li><a class="reference internal" href="#id2">主要特性</a></li>
+<li><a class="reference internal" href="#id3">快速参考</a></li>
+<li><a class="reference internal" href="#id4">详细使用指南</a><ul>
+<li><a class="reference internal" href="#stimbank">0. 创建一个 StimBank</a></li>
+<li><a class="reference internal" href="#id5">1. 初始化</a></li>
+<li><a class="reference internal" href="#id6">2. 添加刺激</a></li>
+<li><a class="reference internal" href="#show">3. 使用 <code class="docutils literal notranslate"><span class="pre">show()</span></code> 显示刺激</a><ul>
+<li><a class="reference internal" href="#id7">方法签名</a></li>
+<li><a class="reference internal" href="#id8">行为表</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#pause-continue-with-wait-and-continue">4. Pause &amp; Continue with <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code></a><ul>
-<li><a class="reference internal" href="#id1">Method Signature</a></li>
+<li><a class="reference internal" href="#wait-and-continue">4. 使用 <code class="docutils literal notranslate"><span class="pre">wait_and_continue()</span></code> 暂停和继续</a><ul>
+<li><a class="reference internal" href="#id9">方法签名</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#get-responses-with-capture-response">6. Get responses with <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code></a><ul>
-<li><a class="reference internal" href="#features">Features</a></li>
-<li><a class="reference internal" href="#id2">Method Signature</a></li>
-<li><a class="reference internal" href="#scenario-1-simple-anticipation-phase-detect-early-responses-without-termination">Scenario 1: Simple Anticipation Phase (detect early responses without termination)</a></li>
-<li><a class="reference internal" href="#scenario-2-target-phase-with-required-response">Scenario 2: Target Phase with Required Response</a></li>
-<li><a class="reference internal" href="#scenario-3-detecting-correct-vs-incorrect-responses">Scenario 3: Detecting Correct vs. Incorrect Responses</a></li>
-<li><a class="reference internal" href="#scenario-4-highlighting-participant-choices">Scenario 4: Highlighting Participant Choices</a></li>
+<li><a class="reference internal" href="#capture-response">6. 使用 <code class="docutils literal notranslate"><span class="pre">capture_response()</span></code> 获取反应</a><ul>
+<li><a class="reference internal" href="#id10">特性</a></li>
+<li><a class="reference internal" href="#id11">方法签名</a></li>
+<li><a class="reference internal" href="#id12">场景 1：简单的预期阶段（检测早期反应而不终止）</a></li>
+<li><a class="reference internal" href="#id13">场景 2：需要反应的目标阶段</a></li>
+<li><a class="reference internal" href="#id14">场景 3：检测正确与不正确的反应</a></li>
+<li><a class="reference internal" href="#id15">场景 4：高亮被试的选择</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#lifecycle-hooks">7. Lifecycle Hooks</a><ul>
-<li><a class="reference internal" href="#replicating-show-with-hooks">Replicating <code class="docutils literal notranslate"><span class="pre">show()</span></code> with Hooks</a></li>
-<li><a class="reference internal" href="#replicating-capture-response-with-hooks">Replicating <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code> with Hooks</a></li>
+<li><a class="reference internal" href="#id16">7. 生命周期钩子</a><ul>
+<li><a class="reference internal" href="#id17">使用钩子复制 <code class="docutils literal notranslate"><span class="pre">show()</span></code></a></li>
+<li><a class="reference internal" href="#id18">使用钩子复制 <code class="docutils literal notranslate"><span class="pre">.capture_response()</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#state-and-data-management">8. State and Data Management</a><ul>
-<li><a class="reference internal" href="#recording-or-updating-values-with-set-state">Recording or Updating Values with <code class="docutils literal notranslate"><span class="pre">set_state()</span></code></a></li>
-<li><a class="reference internal" href="#retrieving-values-with-get-state">Retrieving Values with <code class="docutils literal notranslate"><span class="pre">get_state()</span></code></a></li>
-<li><a class="reference internal" href="#exporting-all-state-with-to-dict">Exporting All State with <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code></a></li>
-<li><a class="reference internal" href="#logging-state-internally-with-log-unit">Logging State Internally with <code class="docutils literal notranslate"><span class="pre">.log_unit()</span></code></a></li>
+<li><a class="reference internal" href="#id19">8. 状态和数据管理</a><ul>
+<li><a class="reference internal" href="#set-state">使用 <code class="docutils literal notranslate"><span class="pre">set_state()</span></code> 记录或更新值</a></li>
+<li><a class="reference internal" href="#get-state">使用 <code class="docutils literal notranslate"><span class="pre">get_state()</span></code> 检索值</a></li>
+<li><a class="reference internal" href="#to-dict">使用 <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code> 导出所有状态</a></li>
+<li><a class="reference internal" href="#log-unit">使用 <code class="docutils literal notranslate"><span class="pre">.log_unit()</span></code> 在内部记录状态</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+<li><a class="reference internal" href="#id20">后续步骤</a></li>
 </ul>
 </li>
 </ul>
