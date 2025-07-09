@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="Utility Helpers" href="utilities.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="prev" title="Utility Functions" href="utilities.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>Using LLMClient for AI-Driven Helpers - psyflow 0.1.1 documentation</title>
+        <title>Interacting with Large Language Models (LLMs) - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -208,12 +208,13 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with psyflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Organizing Trials into Experimental Blocks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management for PsychoPy</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Precise Event Marking for EEG/MEG Experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Tools: Quick Project Setup</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Helpers</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">Sending Hardware Triggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Functions</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Interacting with Large Language Models (LLMs)</a></li>
 </ul>
 
 </div>
@@ -254,89 +255,100 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="using-llmclient-for-ai-driven-helpers">
-<h1>Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers<a class="headerlink" href="#using-llmclient-for-ai-driven-helpers" title="Link to this heading">¶</a></h1>
-<section id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> provides a unified interface for interacting with several large language model (LLM) providers and includes helpers for converting tasks to documentation, reconstructing tasks from documentation, and translating experiment resources.</p>
-<p>It supports:</p>
+          <section id="interacting-with-large-language-models-llms">
+<h1>Interacting with Large Language Models (LLMs)<a class="headerlink" href="#interacting-with-large-language-models-llms" title="Link to this heading">¶</a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">psyflow</span></code> provides a powerful and unified <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> to connect your experiments with various Large Language Models (LLMs). This client can be used for a variety of tasks, including generating text, creating documentation for your task, and even translating content.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> supports multiple providers out-of-the-box:</p>
 <ul class="simple">
-<li><p><strong>Google Gemini</strong> via the GenAI SDK (<code class="docutils literal notranslate"><span class="pre">provider=&quot;gemini&quot;</span></code>)</p></li>
-<li><p><strong>OpenAI</strong> models (<code class="docutils literal notranslate"><span class="pre">provider=&quot;openai&quot;</span></code>)</p></li>
-<li><p><strong>Deepseek</strong> models using the OpenAI API format (<code class="docutils literal notranslate"><span class="pre">provider=&quot;deepseek&quot;</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gemini</span></code> (Google)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">openai</span></code> (OpenAI)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">deepseek</span></code> (DeepSeek)</p></li>
 </ul>
-<p>Custom providers can also be registered programmatically.</p>
-</section>
-<section id="initialization">
-<h2>Initialization<a class="headerlink" href="#initialization" title="Link to this heading">¶</a></h2>
-<p>Create an instance by specifying the provider, API key, and model name:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMClient</span>
+<section id="getting-started-initializing-the-client">
+<h2>Getting Started: Initializing the Client<a class="headerlink" href="#getting-started-initializing-the-client" title="Link to this heading">¶</a></h2>
+<p>First, you need to import the <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> and initialize it with your provider details. You will need an API key from your chosen provider.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.LLM</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMClient</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
-<span class="n">client</span> <span class="o">=</span> <span class="n">LLMClient</span><span class="p">(</span>
+<span class="c1"># Make sure to set your API key securely</span>
+<span class="c1"># For example, load it from an environment variable</span>
+<span class="c1"># api_key = os.environ.get(&quot;OPENAI_API_KEY&quot;)</span>
+
+<span class="n">llm_client</span> <span class="o">=</span> <span class="n">LLMClient</span><span class="p">(</span>
     <span class="n">provider</span><span class="o">=</span><span class="s2">&quot;openai&quot;</span><span class="p">,</span>
-    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;YOUR_API_KEY&quot;</span><span class="p">,</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;YOUR_API_KEY&quot;</span><span class="p">,</span>  <span class="c1"># Replace with your actual key</span>
     <span class="n">model</span><span class="o">=</span><span class="s2">&quot;gpt-3.5-turbo&quot;</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>The client wraps the underlying SDK and exposes common methods regardless of provider.</p>
+<p>When you create an <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> instance, you specify the <code class="docutils literal notranslate"><span class="pre">provider</span></code>, your <code class="docutils literal notranslate"><span class="pre">api_key</span></code>, and the <code class="docutils literal notranslate"><span class="pre">model</span></code> you wish to use.</p>
 </section>
-<section id="generating-text">
-<h2>Generating Text<a class="headerlink" href="#generating-text" title="Link to this heading">¶</a></h2>
-<p>Use <code class="docutils literal notranslate"><span class="pre">generate(prompt,</span> <span class="pre">**kwargs)</span></code> to obtain a completion from the configured model. Optional keyword arguments are passed to the underlying provider. Setting <code class="docutils literal notranslate"><span class="pre">deterministic=True</span></code> disables sampling randomness.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">reply</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
-    <span class="s2">&quot;Summarise the Stroop task in one sentence&quot;</span><span class="p">,</span>
-    <span class="n">deterministic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">max_tokens</span><span class="o">=</span><span class="mi">50</span>
-<span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">reply</span><span class="p">)</span>
+<section id="basic-text-generation">
+<h2>Basic Text Generation<a class="headerlink" href="#basic-text-generation" title="Link to this heading">¶</a></h2>
+<p>The most fundamental use of the client is to generate text from a prompt using the <code class="docutils literal notranslate"><span class="pre">generate()</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">prompt</span> <span class="o">=</span> <span class="s2">&quot;Explain the Stroop effect in one sentence.&quot;</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">llm_client</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also control the creativity of the response. For a more predictable, less random output, set <code class="docutils literal notranslate"><span class="pre">deterministic=True</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">response</span> <span class="o">=</span> <span class="n">llm_client</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="converting-tasks-to-documentation">
-<h2>Converting Tasks to Documentation<a class="headerlink" href="#converting-tasks-to-documentation" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">task2doc()</span></code> summarises an existing task into a README. The function loads your task logic and configuration, optionally uses few‑shot examples from <code class="docutils literal notranslate"><span class="pre">add_knowledge()</span></code>, and returns the generated Markdown text. If <code class="docutils literal notranslate"><span class="pre">output_path</span></code> is provided the README is also written to disk.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">readme_text</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">task2doc</span><span class="p">(</span>
+<section id="listing-available-models">
+<h2>Listing Available Models<a class="headerlink" href="#listing-available-models" title="Link to this heading">¶</a></h2>
+<p>If you are not sure which model identifier to use, you can list all available models for your configured provider.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">available_models</span> <span class="o">=</span> <span class="n">llm_client</span><span class="o">.</span><span class="n">list_models</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">available_models</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is a great way to explore and find the perfect model for your needs.</p>
+</section>
+<section id="advanced-usage-auto-generating-task-documentation">
+<h2>Advanced Usage: Auto-generating Task Documentation<a class="headerlink" href="#advanced-usage-auto-generating-task-documentation" title="Link to this heading">¶</a></h2>
+<p>One of the powerful features of the <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> is its ability to automatically generate a <code class="docutils literal notranslate"><span class="pre">README.md</span></code> file for your task based on your source code and configuration. This is done with the <code class="docutils literal notranslate"><span class="pre">task2doc()</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This assumes you are running from the root of a psyflow project</span>
+<span class="n">readme_content</span> <span class="o">=</span> <span class="n">llm_client</span><span class="o">.</span><span class="n">task2doc</span><span class="p">(</span>
     <span class="n">logic_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;./src/run_trial.py&quot;</span><span class="p">,</span> <span class="s2">&quot;./main.py&quot;</span><span class="p">],</span>
     <span class="n">config_paths</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;./config/config.yaml&quot;</span><span class="p">],</span>
-    <span class="n">deterministic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;./README.md&quot;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="recreating-tasks-from-documentation">
-<h2>Recreating Tasks from Documentation<a class="headerlink" href="#recreating-tasks-from-documentation" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">doc2task()</span></code> performs the reverse operation. Given a README or raw description it regenerates the key source files. Provide a directory for outputs via <code class="docutils literal notranslate"><span class="pre">taps_root</span></code> and optionally customise the list of expected file names.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">files</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">doc2task</span><span class="p">(</span>
-    <span class="n">doc_text</span><span class="o">=</span><span class="s2">&quot;./README.md&quot;</span><span class="p">,</span>
-    <span class="n">taps_root</span><span class="o">=</span><span class="s2">&quot;./recreated_task&quot;</span><span class="p">,</span>
-    <span class="n">deterministic</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-<span class="c1"># files is a dict mapping each file name to its saved path</span>
-</pre></div>
-</div>
-</section>
-<section id="translation-utilities">
-<h2>Translation Utilities<a class="headerlink" href="#translation-utilities" title="Link to this heading">¶</a></h2>
-<p>Several helper methods assist with localisation. The base <code class="docutils literal notranslate"><span class="pre">translate(text,</span> <span class="pre">target_language)</span></code> function translates arbitrary text while keeping formatting intact. <code class="docutils literal notranslate"><span class="pre">translate_config()</span></code> applies translation to relevant fields in a psyflow YAML configuration and can write the translated file to disk.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">translated</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span>
-    <span class="s2">&quot;Press the space bar when you see the target word&quot;</span><span class="p">,</span>
-    <span class="n">target_language</span><span class="o">=</span><span class="s2">&quot;German&quot;</span>
+    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;./&quot;</span>  <span class="c1"># Save the README.md in the current directory</span>
 <span class="p">)</span>
 
-<span class="n">new_cfg</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">translate_config</span><span class="p">(</span>
-    <span class="n">target_language</span><span class="o">=</span><span class="s2">&quot;German&quot;</span><span class="p">,</span>
-    <span class="n">config</span><span class="o">=</span><span class="s2">&quot;./config/config.yaml&quot;</span><span class="p">,</span>
-    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./i18n&quot;</span>
-<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;README.md has been generated!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>These utilities store the last prompt and response for inspection (<code class="docutils literal notranslate"><span class="pre">last_prompt</span></code>, <code class="docutils literal notranslate"><span class="pre">last_response</span></code>) and automatically count tokens for the active model.</p>
+<p>This method reads your task logic and configuration, sends it to the LLM with a carefully crafted prompt, and saves the generated documentation.</p>
 </section>
-<section id="further-reading">
-<h2>Further Reading<a class="headerlink" href="#further-reading" title="Link to this heading">¶</a></h2>
-<p>See the API reference for a full description of all attributes and methods provided by <a class="reference internal" href="#../api/psyflow#psyflow.LLMClient"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">psyflow.LLMClient</span></code></span></a>.</p>
+<section id="advanced-usage-translating-content">
+<h2>Advanced Usage: Translating Content<a class="headerlink" href="#advanced-usage-translating-content" title="Link to this heading">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> can also be used to translate text, which is incredibly useful for creating multilingual experiments.</p>
+<section id="translating-a-simple-string">
+<h3>Translating a simple string<a class="headerlink" href="#translating-a-simple-string" title="Link to this heading">¶</a></h3>
+<p>You can translate any string to a target language using the <code class="docutils literal notranslate"><span class="pre">translate()</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">english_text</span> <span class="o">=</span> <span class="s2">&quot;Welcome to the experiment.&quot;</span>
+<span class="n">german_text</span> <span class="o">=</span> <span class="n">llm_client</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">english_text</span><span class="p">,</span> <span class="n">target_language</span><span class="o">=</span><span class="s2">&quot;German&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">german_text</span><span class="p">)</span>
+<span class="c1"># Expected output: Willkommen zum Experiment.</span>
+</pre></div>
+</div>
+</section>
+<section id="translating-a-configuration-file">
+<h3>Translating a configuration file<a class="headerlink" href="#translating-a-configuration-file" title="Link to this heading">¶</a></h3>
+<p>You can even translate a whole configuration file using the <code class="docutils literal notranslate"><span class="pre">translate_config()</span></code> method. This is useful for localizing instructions or stimuli defined in your <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This will translate relevant fields in the config file</span>
+<span class="c1"># and save a new file (e.g., config.translated.yaml)</span>
+<span class="n">translated_config</span> <span class="o">=</span> <span class="n">llm_client</span><span class="o">.</span><span class="n">translate_config</span><span class="p">(</span>
+    <span class="n">target_language</span><span class="o">=</span><span class="s2">&quot;Spanish&quot;</span><span class="p">,</span>
+    <span class="n">config</span><span class="o">=</span><span class="s2">&quot;./config/config.yaml&quot;</span><span class="p">,</span>
+    <span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./config&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Translated config has been saved!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will automatically find text-based stimuli and other translatable fields in your configuration and translate them.</p>
+</section>
 </section>
 </section>
 
@@ -353,7 +365,7 @@
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Utility Helpers</div>
+                <div class="title">Utility Functions</div>
                 
               </div>
             </a>
@@ -387,14 +399,16 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Using <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> for AI-Driven Helpers</a><ul>
-<li><a class="reference internal" href="#overview">Overview</a></li>
-<li><a class="reference internal" href="#initialization">Initialization</a></li>
-<li><a class="reference internal" href="#generating-text">Generating Text</a></li>
-<li><a class="reference internal" href="#converting-tasks-to-documentation">Converting Tasks to Documentation</a></li>
-<li><a class="reference internal" href="#recreating-tasks-from-documentation">Recreating Tasks from Documentation</a></li>
-<li><a class="reference internal" href="#translation-utilities">Translation Utilities</a></li>
-<li><a class="reference internal" href="#further-reading">Further Reading</a></li>
+<li><a class="reference internal" href="#">Interacting with Large Language Models (LLMs)</a><ul>
+<li><a class="reference internal" href="#getting-started-initializing-the-client">Getting Started: Initializing the Client</a></li>
+<li><a class="reference internal" href="#basic-text-generation">Basic Text Generation</a></li>
+<li><a class="reference internal" href="#listing-available-models">Listing Available Models</a></li>
+<li><a class="reference internal" href="#advanced-usage-auto-generating-task-documentation">Advanced Usage: Auto-generating Task Documentation</a></li>
+<li><a class="reference internal" href="#advanced-usage-translating-content">Advanced Usage: Translating Content</a><ul>
+<li><a class="reference internal" href="#translating-a-simple-string">Translating a simple string</a></li>
+<li><a class="reference internal" href="#translating-a-configuration-file">Translating a configuration file</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

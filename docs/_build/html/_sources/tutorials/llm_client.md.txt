@@ -1,92 +1,99 @@
-# Using `LLMClient` for AI-Driven Helpers
+# Interacting with Large Language Models (LLMs)
 
-## Overview
+`psyflow` provides a powerful and unified `LLMClient` to connect your experiments with various Large Language Models (LLMs). This client can be used for a variety of tasks, including generating text, creating documentation for your task, and even translating content.
 
-`LLMClient` provides a unified interface for interacting with several large language model (LLM) providers and includes helpers for converting tasks to documentation, reconstructing tasks from documentation, and translating experiment resources.
+The `LLMClient` supports multiple providers out-of-the-box:
+- `gemini` (Google)
+- `openai` (OpenAI)
+- `deepseek` (DeepSeek)
 
-It supports:
+## Getting Started: Initializing the Client
 
-- **Google Gemini** via the GenAI SDK (`provider="gemini"`)
-- **OpenAI** models (`provider="openai"`)
-- **Deepseek** models using the OpenAI API format (`provider="deepseek"`)
-
-Custom providers can also be registered programmatically.
-
-## Initialization
-
-Create an instance by specifying the provider, API key, and model name:
+First, you need to import the `LLMClient` and initialize it with your provider details. You will need an API key from your chosen provider.
 
 ```python
-from psyflow import LLMClient
+from psyflow.LLM import LLMClient
+import os
 
-client = LLMClient(
+# Make sure to set your API key securely
+# For example, load it from an environment variable
+# api_key = os.environ.get("OPENAI_API_KEY")
+
+llm_client = LLMClient(
     provider="openai",
-    api_key="YOUR_API_KEY",
+    api_key="YOUR_API_KEY",  # Replace with your actual key
     model="gpt-3.5-turbo"
 )
 ```
 
-The client wraps the underlying SDK and exposes common methods regardless of provider.
+When you create an `LLMClient` instance, you specify the `provider`, your `api_key`, and the `model` you wish to use.
 
-## Generating Text
+## Basic Text Generation
 
-Use `generate(prompt, **kwargs)` to obtain a completion from the configured model. Optional keyword arguments are passed to the underlying provider. Setting `deterministic=True` disables sampling randomness.
+The most fundamental use of the client is to generate text from a prompt using the `generate()` method.
 
 ```python
-reply = client.generate(
-    "Summarise the Stroop task in one sentence",
-    deterministic=True,
-    max_tokens=50
-)
-print(reply)
+prompt = "Explain the Stroop effect in one sentence."
+response = llm_client.generate(prompt)
+print(response)
 ```
 
-## Converting Tasks to Documentation
-
-`task2doc()` summarises an existing task into a README. The function loads your task logic and configuration, optionally uses few‑shot examples from `add_knowledge()`, and returns the generated Markdown text. If `output_path` is provided the README is also written to disk.
+You can also control the creativity of the response. For a more predictable, less random output, set `deterministic=True`.
 
 ```python
-readme_text = client.task2doc(
+response = llm_client.generate(prompt, deterministic=True)
+print(response)
+```
+
+## Listing Available Models
+
+If you are not sure which model identifier to use, you can list all available models for your configured provider.
+
+```python
+available_models = llm_client.list_models()
+print(available_models)
+```
+This is a great way to explore and find the perfect model for your needs.
+
+## Advanced Usage: Auto-generating Task Documentation
+
+One of the powerful features of the `LLMClient` is its ability to automatically generate a `README.md` file for your task based on your source code and configuration. This is done with the `task2doc()` method.
+
+```python
+# This assumes you are running from the root of a psyflow project
+readme_content = llm_client.task2doc(
     logic_paths=["./src/run_trial.py", "./main.py"],
     config_paths=["./config/config.yaml"],
-    deterministic=True,
-    output_path="./README.md"
+    output_path="./"  # Save the README.md in the current directory
 )
+
+print("README.md has been generated!")
+```
+This method reads your task logic and configuration, sends it to the LLM with a carefully crafted prompt, and saves the generated documentation.
+
+## Advanced Usage: Translating Content
+
+The `LLMClient` can also be used to translate text, which is incredibly useful for creating multilingual experiments.
+
+### Translating a simple string
+You can translate any string to a target language using the `translate()` method.
+```python
+english_text = "Welcome to the experiment."
+german_text = llm_client.translate(english_text, target_language="German")
+print(german_text)
+# Expected output: Willkommen zum Experiment.
 ```
 
-## Recreating Tasks from Documentation
-
-`doc2task()` performs the reverse operation. Given a README or raw description it regenerates the key source files. Provide a directory for outputs via `taps_root` and optionally customise the list of expected file names.
-
+### Translating a configuration file
+You can even translate a whole configuration file using the `translate_config()` method. This is useful for localizing instructions or stimuli defined in your `config.yaml`.
 ```python
-files = client.doc2task(
-    doc_text="./README.md",
-    taps_root="./recreated_task",
-    deterministic=True
-)
-# files is a dict mapping each file name to its saved path
-```
-
-## Translation Utilities
-
-Several helper methods assist with localisation. The base `translate(text, target_language)` function translates arbitrary text while keeping formatting intact. `translate_config()` applies translation to relevant fields in a psyflow YAML configuration and can write the translated file to disk.
-
-```python
-translated = client.translate(
-    "Press the space bar when you see the target word",
-    target_language="German"
-)
-
-new_cfg = client.translate_config(
-    target_language="German",
+# This will translate relevant fields in the config file
+# and save a new file (e.g., config.translated.yaml)
+translated_config = llm_client.translate_config(
+    target_language="Spanish",
     config="./config/config.yaml",
-    output_dir="./i18n"
+    output_dir="./config"
 )
+print("Translated config has been saved!")
 ```
-
-These utilities store the last prompt and response for inspection (`last_prompt`, `last_response`) and automatically count tokens for the active model.
-
-## Further Reading
-
-See the API reference for a full description of all attributes and methods provided by [`psyflow.LLMClient`](../api/psyflow#psyflow.LLMClient).
-
+This will automatically find text-based stimuli and other translatable fields in your configuration and translate them.

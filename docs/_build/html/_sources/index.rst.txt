@@ -16,16 +16,6 @@ Features
 - Audio support including text-to-speech and hardware triggers
 - LLM integration and CLI scaffolding tools
 
-Core Components
----------------
-- **SubInfo**: GUI-based subject metadata collection with localization  
-- **TaskSettings**: Loads `config.yaml`, initializes window/keyboard, manages logging  
-- **StimBank**: Registry for stimuli (decorators or YAML), lazy loading, preview, dynamic formatting, TTS  
-- **StimUnit**: Presents stimuli, captures responses, sends triggers, logs events  
-- **BlockUnit**: Generates and runs trial sequences; supports pre/post hooks  
-- **TriggerSender**: Hardware trigger output with debug and timing control  
-- **LLMClient**: Automates config translation and README generation  
-- **CLI (`psyflow task`)**: Scaffolds a ready-to-use task directory
 
 Start with one of the tutorials below or explore the API reference.
 

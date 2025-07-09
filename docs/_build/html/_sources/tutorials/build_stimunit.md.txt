@@ -1,549 +1,771 @@
-# 🎯 StimUnit: Modular Trial Controller for PsychoPy
+# StimUnit: Modular Stimulus & Response Handler
 
 ## Overview
 
-`StimUnit` is a powerful trial-level controller for PsychoPy experiments that encapsulates all the components of a single trial:
+`StimUnit` is a versatile, stimulus-level controller for PsychoPy experiments. It bundles everything you need for one trial into a single, chainable object:
 
-- **Stimulus presentation**: Display multiple stimuli with precise timing
-- **Response collection**: Capture keyboard responses with reaction times
-- **Event triggers**: Send EEG/MEG trigger codes at critical moments
-- **Timing control**: Frame-based or time-based precision
-- **State management**: Track trial data in a centralized state object
-- **Event hooks**: Execute custom code at key trial moments
+- **Stimulus presentation**: Draw multiple visual or audio stimuli together with sub-frame accuracy.
+- **Response collection**: Detect keyboard events and record reaction times effortlessly.
+- **Timing control**: Opt for frame-based (refresh-locked) or clock-based timing based on your needs.
+- **State management**: Store all trial-related data in a centralized internal dictionary.
+- **Event hooks**: Plug in custom callbacks at start, response, timeout, and end stages.
 
-With `StimUnit`, you can create complex trial structures using a clean, chainable API that makes your experiment code more readable and maintainable.
+By using `StimUnit`, your trial logic (typically defined in `src/run_trial.py`) becomes more modular, readable, and maintainable.
 
 ## Key Features
 
-| Feature | Description |
-|---------|-------------|
-| Chainable API | Fluent interface for building trials with method chaining |
-| Multiple timing modes | Choose between frame-based or clock-based timing |
-| Event hooks | Register callbacks for trial start, response, timeout, and end |
-| Flexible response handling | Capture specific keys with automatic RT measurement |
-| Integrated trigger sending | Send EEG/MEG triggers at stimulus onset, response, and timeout |
-| State management | Centralized data collection for all trial events |
-| Response highlighting | Automatically highlight selected responses |
-| Jittered timing | Support for randomized stimulus durations |
+| Feature                | Description                                                    |
+| ---------------------- | -------------------------------------------------------------- |
+| **Chainable API**      | Build trials fluently by chaining methods.                     |
+| **Frame-based Timing** | High precision  |
+| **Event hooks**        | Call custom functions on start, response, timeout, or end.     |
+| **Flexible responses** | Specify valid keys and automatic RT handling.                  |
+| **State tracking**     | Centralized storage of timestamps, responses, and custom data. |
+| **Response highlight** | Visually emphasize selections (static or dynamic).             |
+| **Jittered timing**    | Support randomized (min–max) durations for unpredictability.   |
 
 ## Quick Reference
 
-| Purpose | Method | Example |
-|---------|--------|--------|
-| Initialize | `StimUnit(label, win, kb, triggersender=sender)` | `trial = StimUnit("cue", win, kb, triggersender=sender)` |
-| Add stimuli | `.add_stim(stim)` | `trial.add_stim(fixation)` |
-| Register start hook | `.on_start(fn)` | `@trial.on_start()` |
-| Register response hook | `.on_response(keys, fn)` | `@trial.on_response(['left', 'right'])` |
-| Register timeout hook | `.on_timeout(sec, fn)` | `@trial.on_timeout(2.0)` |
-| Register end hook | `.on_end(fn)` | `@trial.on_end()` |
-| Set auto-close duration | `.duration(t)` | `trial.duration(1.5)` |
-| Set auto-close keys | `.close_on(keys)` | `trial.close_on('space')` |
-| Simple display | `.show(duration)` | `trial.show(1.0)` |
-| Response capture | `.capture_response(keys)` | `trial.capture_response(['left', 'right'])` |
-| Full trial control | `.run()` | `trial.run()` |
-| Pause for input | `.wait_and_continue(keys)` | `trial.wait_and_continue(['space'])` |
-| Update state | `.set_state(**kwargs)` | `trial.set_state(correct=True)` |
-| Get state | `.state` or `.to_dict()` | `data = trial.to_dict()` |
+| Purpose            | Method                              | Example                                        |
+| ------------------ | ----------------------------------- | ---------------------------------------------- |
+| Initialize         | `StimUnit(label, win, kb)`          | `unit = StimUnit("cue", win, kb)`              |
+| Add stimuli        | `.add_stim(stim1, stim2, ...)`      | `unit.add_stim(fixation, target)`              |
+| Start hook         | `.on_start(fn)`                     | `@unit.on_start()`                             |
+| Response hook      | `.on_response(keys, fn)`            | `@unit.on_response(['left','right'])`          |
+| Timeout hook       | `.on_timeout(sec, fn)`              | `@unit.on_timeout(2.0)`                        |
+| End hook           | `.on_end(fn)`                       | `@unit.on_end()`                               |
+|                    |                                     |                                                |
+| Simple display     | `.show(duration)`                   | `unit.show(1.0)`                               |
+| Response capture   | `.capture_response(keys, duration)` | `unit.capture_response(['left','right'], 2.0)` |
+| Full trial control | `.run()`                            | `unit.run()`                                   |
+| Pause & continue   | `.wait_and_continue(keys)`          | `unit.wait_and_continue(['space'])`            |
+| Update state       | `.set_state(**kwargs)`              | `unit.set_state(correct=True)`                 |
+| Retrieve state     | `.get_state()` or access `.state`     | `data = unit.get_state(key,default)`                        |
+| Export state     | `.to_dict()`      | `data = unit.to_dict()`                        |
 
 ## Detailed Usage Guide
 
+### 0. Create a StimBank
+```python
+from psyflow.stim_bank import StimBank
+# 1. Define a dictionary of stimulus configurations
+stim_config = {
+    'fixation': {
+        'type': 'text',
+        'text': '+',
+        'color': 'white',
+        'height': 1.0
+    },
+    'target': {
+        'type': 'circle',
+        'radius': 0.5,
+        'fillColor': 'red'
+    },
+    'feedback': {
+        'type': 'text',
+        'text': 'Correct!',
+        'pos': [0, -2],
+        'color': 'green'
+    }
+}
+
+# 2. Create your StimBank with window and definitions
+stim_bank = StimBank(win, stim_config)
+stim_bank.preload_all()  # optional
+```
+
+
 ### 1. Initialization
 
-Create a new `StimUnit` by passing your PsychoPy window, a label, and optionally a `TriggerSender`:
+Start by creating your PsychoPy window and keyboard, then instantiate `StimUnit` with a descriptive label.
 
 ```python
-from psychopy import visual
-from psychopy.hardware.keyboard import Keyboard
-from psyflow import StimUnit, TriggerSender
 
-# Create window and keyboard
-win = visual.Window(size=[1024, 768], color="black", units="deg")
+win = visual.Window([1024,768], color='black')
 kb = Keyboard()
 
-# Create a trigger sender (mock mode for testing)
-sender = TriggerSender(mock=True)
-
-# Initialize a trial unit
-trial = StimUnit("cue", win, kb, triggersender=sender)
+# Instantiate StimUnit
+fix = StimUnit('fix', win, kb).add_stim(stim_bank.get('fixation'))
+tar = StimUnit('tar', win, kb).add_stim(stim_bank.get('target'))
+fb = StimUnit('fb', win, kb).add_stim(stim_bank.get('feedback'))
 ```
 
-For real EEG/MEG experiments, you would use a real trigger function:
+Choose descriptive `unit_label`s (e.g., `"fix"`, `"tar"`, `"fb"`). These labels are automatically prefixed to your state keys when you call `set_state()` and accessed by `get_state()`, ensuring your trial data is neatly namespaced and easy to query.
+
+**Pro tip:** When you need to create many similar trial units in the same context, use Python’s `functools.partial` to simplify instantiation:
 
 ```python
-# Example with a serial port
-import serial
-port = serial.Serial('COM3', 9600)
+from functools import partial
+# Create a shortcut with common arguments
+make_unit = partial(StimUnit, win=win, kb=kb)
 
-# Create trigger sender with a real function
-trigger = TriggerSender(
-    send_fn=lambda code: port.write(bytes([code])),
-    post_delay=0.01  # 10ms delay after sending
-)
+# --- Cue phase ---
+fix=make_unit('fix').add_stim(stim_bank.get('fixation'))
+tar=make_unit('tar').add_stim(stim_bank.get('target'))
+fb=make_unit('fb').add_stim(stim_bank.get('feedback'))
 ```
+
 
 ### 2. Adding Stimuli
 
-Attach visual components to your trial unit. You can add individual stimuli, multiple stimuli, or lists of stimuli:
+Before presenting a trial, attach the stimuli you want to display or play—this defines what participants will see or hear during the unit.
+
+StimUnit accepts instances of `visual.BaseVisualStim` (e.g., `TextStim`, `Circle`) and `sound.Sound`. You can add a single stimulus, multiple stimuli at once, or pass a list of stimuli:
 
 ```python
-# Create some PsychoPy stimuli
-fixation = visual.TextStim(win, text="+", height=1.0)
-target = visual.Circle(win, radius=0.5, fillColor="red")
-feedback = visual.TextStim(win, text="Correct!", pos=[0, -2])
-
 # Add a single stimulus
-trial.add_stim(fixation)
+unit.add_stim(stim_bank.get('fixation'))
 
 # Add multiple stimuli at once
-trial.add_stim(target, feedback)
+unit.add_stim(
+    stim_bank.get('target'),
+    stim_bank.get('feedback')
+)
 
 # Add a list of stimuli
-stim_list = [fixation, target, feedback]
-trial.add_stim(stim_list)
+unit.add_stim([
+    stim_bank.get('fixation'),
+    stim_bank.get('target'),
+    stim_bank.get('feedback')
+])
 
-# Chain multiple add_stim calls
-trial.add_stim(fixation).add_stim(target).add_stim(feedback)
+# Chain additions 
+unit.add_stim(stim_bank.get('fixation')) \
+    .add_stim(stim_bank.get('target')) \
+    .add_stim(stim_bank.get('feedback'))
 
 # Clear all stimuli
-trial.clear_stimuli()
+unit.clear_stimuli()
 ```
 
-All added stimuli will be drawn together when the trial is presented.
+All added stimuli will be drawn or played together when you present the unit. 
 
-### 3. Lifecycle Hooks
-
-Register callback functions that execute at key moments in the trial lifecycle:
-
+Note that `add_stim` also support PsychoPy style definitions of the stimulus. For exmaple:
 ```python
-# Using decorator syntax
-@trial.on_start()
-def prepare_trial(unit):
-    print(f"Starting {unit.label}")
-    unit.set_state(start_time=core.getTime())
+from psychopy.visual import TextStim, Circle
+# Example 1
+stim_list = {'fix': TextStim(win, text='+', pos=(0,0)), 
+            'tar': Circle(win, radius=0.5, fillColor='red'),
+            'fb': TextStim(win, text='Correct!', pos=(0,0))}
+unit.add_stim(stim_list['fix']).add_stim(stim_list['tar']).add_stim(stim_list['fb'])
 
-@trial.on_response(['left', 'right'])
-def handle_response(unit, key, rt):
-    print(f"Response: {key}, RT: {rt:.3f}s")
-    unit.set_state(response=key, rt=rt)
-    
-    # Check if response is correct
-    if key == unit.state.get('correct_key'):
-        unit.set_state(correct=True)
-    else:
-        unit.set_state(correct=False)
-
-@trial.on_timeout(2.0)
-def handle_timeout(unit):
-    print("Response timeout")
-    unit.set_state(timeout=True)
-
-@trial.on_end()
-def finalize_trial(unit):
-    print(f"Trial complete: {unit.to_dict()}")
-    # Save data, prepare for next trial, etc.
+# Example 2
+fixation = visual.TextStim(win, text='+', height=0.8)
+unit.add_stim(fixation)
+unit.show(duration=(0.5, 1.5))
+```
+In the `psyflow` framework, stimuli are normally retrieved from a `stim_bank` object. 
+This lets you quickly retrieve named stimuli from your `stim_bank` and pass them into a `StimUnit`, streamlining stimunit setup. For example:
+```python
+condition = 'loss'
+make_unit(unit_label='cue').add_stim(stim_bank.get(f"{condition}_cue"))
+make_unit(unit_label=f"pop")\
+    .add_stim(stim_bank.get(f"{condition}_pop"))\
+    .add_stim(stim_bank.get("pop_sound"))
 ```
 
-Alternatively, you can use method chaining:
+### 3. Display stimulus with `show()`
+
+The `show()` method is the core display function in `StimUnit`. It handles precise timing, drawing, optional audio playback, and state logging—all in one call. Use it when you want to present stimuli without requiring responses.
+
+
+**Key Features of `show()`**
+- **Frame-based timing**: Locks presentation to monitor refreshes for sub-frame precision.
+- **Automatic audio support**: Starts any sound stimuli on the first flip.
+- **Flexible duration**: Accepts fixed times, jittered ranges, or automatically uses sound length.
+- **State logging**: Records onset/offset timestamps and duration into `unit.state`.
+
+
+Use this method when you need standalone stimulus presentation without response handling:
+- **Feedback Displays**: Show feedback messages or sounds (e.g., "Correct!", error tones) for a short duration.
+- **Passive Stimulus Presentation**: Present visual or auditory stimuli (e.g., flicker, tones) in paradigms where responses are recorded separately, such as resting-state EEG or fMRI.
+- **Baseline/Rest Periods**: Present fixation crosses or blank screens for jittered durations to serve as inter-trial intervals or baselines.
+
+#### Method Signature
 
 ```python
-trial.on_start(prepare_trial) \
-     .on_response(['left', 'right'], handle_response) \
-     .on_timeout(2.0, handle_timeout) \
-     .on_end(finalize_trial)
+.show(
+    duration: float | tuple[float, float] | None = None,
+    onset_trigger: int = None,
+    offset_trigger: int = None
+) -> StimUnit
 ```
 
-### 4. Auto-Closing Options
+- `duration`:
 
-Set conditions for automatically ending the trial:
+  - **None**: Uses the longest `getDuration()` of your sound stimuli (0.0 if none).
+  - **float**: A fixed presentation time in seconds.
+  - **(min, max)**: Uniformly randomize between `min` and `max`.
 
-#### Fixed or Jittered Duration
+- `onset_trigger` / `offset_trigger`: *(optional)* placeholder parameters for sending triggers—these are ignored if you manage triggers separately.
+
+#### Behavior Table
+
+| Input Duration          | Behavior                                      |
+| ----------------------- | --------------------------------------------- |
+| `None`                  | Auto-select from audio (max duration or 0.0). |
+| `0.5`                   | Present for exactly 0.5 s.                    |
+| `(0.8, 1.2)`            | Sample in [0.8, 1.2] s.                       |
+| `1.0` + audio of 2.5 s  | Screen stops at 1.0 s; audio may be cut off.  |
+| `None` + audio of 2.5 s | Both screen & audio last full 2.5 s.          |
+
+The following examples demonstrate how to use `.show()` for fixed, jittered, and audio-driven durations. Assume `unit` is an initialized `StimUnit` and `stim_bank` contains your stimuli.
 
 ```python
-# Close after exactly 1.5 seconds
-trial.duration(1.5)
+# 1. Fixed duration – shows text for exactly 1.0 second
+unit.add_stim(stim_bank.get('fixation'))\
+    .show(duration=1.0)
 
-# Close after a random duration between 1.0 and 2.0 seconds
-trial.duration((1.0, 2.0))
+# 2. Jittered duration – shows text for a random time between 1 and 2s
+unit.add_stim(stim_bank.get('fixation'))\
+    .show(duration=(1,2)) #tuple
+
+unit.add_stim(stim_bank.get('fixation'))\
+    .show(duration=[1,2]) #list
+
+# 3. Auto from audio – shows visual and plays audio for the full sound duration
+unit.add_stim(stim_bank['pop_sound']).show() # duration=None is default
+
+# 4. Multiple stimuli
+unit.add_stim(stim_bank.get('pop_sound'))\
+    .add_stim(stim_bank.get('fixation'))\
+    .show(duration=None)
 ```
 
-#### Close on Specific Key Presses
+
+
+### 4. Pause & Continue with `wait_and_continue()`
+
+Use `.wait_and_continue()` to display stimuli and wait for participant input before proceeding, ideal for instruction screens, inter-block breaks, and end-of-experiment acknowledgments. It enforces a minimum display time and can optionally terminate the session after the key press.
+
+Use this method when you need participants to confirm or acknowledge before moving on, without capturing a trial response. Common scenarios include:
+- **Instruction screens**: e.g., "Press SPACE to start" before an experiment block.
+- **Inter-block breaks**: Giving participants a chance to rest and proceed when ready.
+- **End-of-experiment messages**: Display a thank‑you note or debrief until key press.
+- **Any standalone confirmation**: When you don’t need to record response data but require an explicit continuation.
+
+#### Method Signature
 
 ```python
-# Close when 'space' is pressed
-trial.close_on('space')
-
-# Close when any of these keys are pressed
-trial.close_on('left', 'right', 'escape')
+def wait_and_continue(
+    keys: list[str] = ["space"],
+    min_wait: Optional[float] = None,
+    log_message: Optional[str] = None,
+    terminate: bool = False
+) -> StimUnit
 ```
 
-These settings automatically record the key pressed, reaction time, and closing time into the trial's state.
+- `keys`: List of keys that allow continuation (default `['space']`).
+- `min_wait`: Minimum seconds to wait before accepting input. If `None`, and audio stimuli are present, it defaults to the longest sound duration. If only visual stimuli are present, it defaults to infinite until the button preseed.
+- `log_message`: Custom message logged to PsychoPy’s log (defaults to:
+  - “Continuing after key 'X'” or
+  - “Experiment ended by key press.” if `terminate=True`).
+- `terminate`: If `True`, closes the PsychoPy window after input.
 
-### 5. Simple Display with `show()`
-
-For basic stimulus presentation with optional trigger:
-
+**Example**
 ```python
-# Show stimuli for 1 second
-trial.add_stim(fixation).show(duration=1.0)
+# Instruction screen: wait at least 2s for SPACE
+StimUnit('instruction_text', win, kb)\
+    .add_stim(stim_bank.get('instruction_text'))\
+    .add_stim(stim_bank.get('instruction_text_voice'))\
+    .wait_and_continue()
 
-# Show with trigger code at onset
-trial.add_stim(target).show(
-    duration=1.0,
-    onset_trigger=10,  # Send trigger code 10 at stimulus onset
-    frame_based=True   # Use frame-based timing (vs. clock-based)
-)
-
-# Show with jittered duration
-trial.add_stim(cue).show(
-    duration=(0.8, 1.2),  # Random duration between 0.8-1.2s
-    onset_trigger=20
-)
+# End screen: immediate termination on key
+final_score = sum(trial.get("feedback_delta", 0) for trial in all_data)
+StimUnit('goodbye',win,kb)\
+    .add_stim(stim_bank.get_and_format('good_bye', total_score=final_score))\
+    .wait_and_continue(terminate=True)
 ```
 
-### 6. Stimulus + Response Window with `capture_response()`
 
-For trials requiring response collection:
+### 6. Get responses with `capture_response()`
+
+The `capture_response()` method in `StimUnit` integrates stimulus presentation, timing, triggers, and response handling into a single, chainable call. It is ideal for:
+
+- Detecting and logging subject responses within a predefined response window
+- Determining correct versus incorrect responses for performance analysis
+- Delivering immediate visual feedback by highlighting participant selections
+
+#### Features
+- Capturing and logging participant choices within precise time windows
+- Sending and receiving hardware triggers (e.g., EEG/fMRI) in sync with stimuli
+- Differentiating correct vs. incorrect responses for performance metrics
+- Providing both static and dynamic visual feedback based on key presses
+
+#### Method Signature
 
 ```python
-# Basic response capture
-trial.add_stim(target).capture_response(
-    keys=['left', 'right'],  # Valid response keys
-    duration=2.0             # Response window duration
-)
-
-# Advanced response capture with triggers and highlighting
-trial.add_stim(left_arrow, right_arrow).capture_response(
-    keys=['left', 'right'],
-    duration=2.0,
-    onset_trigger=10,                         # Trigger at stimulus onset
-    response_trigger={'left': 11, 'right': 12},  # Key-specific triggers
-    timeout_trigger=19,                       # Trigger if no response
-    correct_keys=['right'],                   # Define correct response
-    highlight_stim={'left': left_highlight, 'right': right_highlight},
-    dynamic_highlight=True                    # Redraw on multiple presses
-)
+def capture_response(
+    keys: list[str],
+    duration: float | tuple[float, float],
+    onset_trigger: int = None,
+    response_trigger: int | dict[str, int] = None,
+    timeout_trigger: int = None,
+    terminate_on_response: bool = True,
+    correct_keys: list[str] | None = None,
+    highlight_stim: visual.BaseVisualStim | dict[str, visual.BaseVisualStim] = None,
+    dynamic_highlight: bool = False
+) -> StimUnit
 ```
 
-The `capture_response()` method automatically handles:
-- Displaying stimuli
-- Sending onset triggers
-- Collecting responses and reaction times
-- Sending response-specific triggers
-- Highlighting selected responses
-- Sending timeout triggers
-- Updating the trial state with all relevant data
+- `key`: Valid response keys.
+- `duration`: Response window (fixed or jittered range).
+- `terminate_on_response`: If `True`, stops redrawing after a valid response.
+- `correct_keys`: Subset of `keys` to be treated as correct responses (for state logging).
+- `highligt_stim`: A stim (or dict mapping keys→stim) to draw around the selected choice.
+- `dynamic_highlight`: If `True`, highlights update on every keypress instead of just the first.
 
-### 7. Full Trial Loop with `run()`
+Below is the signature and four practical scenarios illustrating its use.
 
-For maximum flexibility, use the `run()` method after setting up hooks:
+#### Scenario 1: Simple Anticipation Phase (detect early responses without termination)
+In an anticipation phase of MID task, we want to monitor for any key presses but continue presenting the fixation cross even if the participant responds early. After the window, we record whether there was an early response.
 
 ```python
-# Set up the trial
-trial.add_stim(fixation, target) \
-     .on_start(start_fn) \
-     .on_response(['left', 'right'], response_fn) \
-     .on_timeout(2.0, timeout_fn) \
-     .on_end(end_fn) \
-     .duration(2.0)
-
-# Run the trial
-trial.run(
-    terminate_on_response=True   # Stop drawing after response
+# --- Anticipation phase ---
+anti = make_unit(unit_label='anticipation') \
+    .add_stim(stim_bank.get("fixation"))
+anti.capture_response(
+    keys=settings.key_list,
+    duration=settings.anticipation_duration,
+    onset_trigger=settings.triggers[f"{condition}_anti_onset"],
+    terminate_on_response=False
 )
 
-# Access trial data
-result = trial.to_dict()
-print(f"Response: {result.get('response')}, RT: {result.get('rt')}")
+# After capture_response returns, check and store early response
+early_response = anti.get_state("response", False)
+anti.set_state(early_response=early_response)
+anti.to_dict(trial_data)
 ```
 
-The `run()` method gives you complete control over the trial execution, while still benefiting from the automatic state management and event handling.
+- `terminate_on_response=False` ensures the fixation stays on screen for the full anticipation duration, regardless of key presses.
+- After running, `anti.get_state("response")` tells whether any key was pressed.
 
-### 8. Pause & Continue with `wait_and_continue()`
 
-For instruction screens or breaks that require a keypress to continue:
+
+#### Scenario 2: Target Phase with Required Response
+In the target phase of the MID task, we require a response. Here we use default settings where keys in the `keys=settings.key_list` count as potential responses, and no separate `correct_keys` are defined. By default, `correct_keys=None`, so any key in `keys=settings.key_list` is counted as a correct response.
 
 ```python
-# Show instructions and wait for space
-instructions = visual.TextStim(
-    win, 
-    text="Press SPACE to begin the experiment",
-    height=0.7
+# --- Target phase ---
+duration = controller.get_duration(condition)
+target = make_unit(unit_label="target") \
+    .add_stim(stim_bank.get(f"{condition}_target"))
+
+target.capture_response(
+    keys=settings.key_list,
+    duration=duration,
+    onset_trigger=settings.triggers[f"{condition}_target_onset"],
+    response_trigger=settings.triggers[f"{condition}_key_press"],
+    timeout_trigger=settings.triggers[f"{condition}_no_response"]
 )
 
-trial.add_stim(instructions).wait_and_continue(
-    keys=['space'],
-    log_message="Instructions shown",
-    terminate=False  # Continue execution after keypress
-)
-
-# Show end screen and terminate
-end_text = visual.TextStim(
-    win,
-    text="Experiment complete. Thank you!",
-    height=0.7
-)
-
-trial.clear_stimuli().add_stim(end_text).wait_and_continue(
-    keys=['space'],
-    log_message="Experiment ended",
-    terminate=True  # End the experiment after keypress
-)
+target.to_dict(trial_data)
 ```
 
-### 9. State Management
+- By default, `correct_keys=None`, so any key in `keys` is logged as a response.
+- `response_trigger` and `timeout_trigger` send triggers for EEG/behavior marking.
 
-The `StimUnit` maintains an internal state dictionary that tracks all trial events and data:
+
+
+#### Scenario 3: Detecting Correct vs. Incorrect Responses
+In tasks where only one key is correct (e.g., left vs. right dot detection), specify `correct_keys` to log hits vs. misses.
 
 ```python
-# Update state with custom data
-trial.set_state(
-    condition="reward",
-    block_num=2,
-    trial_num=15
+# Determine which key is correct based on target position
+target_stim = stim_bank.get(f"{trial_info['target_position']}_target")
+correct_key = (
+    settings.left_key
+    if trial_info['target_position'] == 'left'
+    else settings.right_key
 )
 
-# Access state values
-print(f"Condition: {trial.state.get('condition')}")
-print(f"Response: {trial.state.get('response')}")
-print(f"RT: {trial.state.get('rt')}")
+target_unit = make_unit(unit_label="target") \
+    .add_stim(target_stim)
 
-# Get complete state as dictionary
-full_data = trial.to_dict()
+target_unit.capture_response(
+    keys=settings.key_list,
+    correct_keys=[correct_key],
+    duration=settings.target_duration,
+    onset_trigger=settings.triggers[f"{condition}_target_onset"],
+    response_trigger=settings.triggers.get("key_press"),
+    timeout_trigger=settings.triggers.get("no_response"),
+    terminate_on_response=True
+)
 
-# Log state to console (useful for debugging)
-trial.log_unit()
+target_unit.to_dict(trial_data)
 ```
 
-The state automatically includes:
-- Trial label
-- Timestamps for start, response, and end
-- Response key and reaction time
-- Trigger codes sent
-- Any custom data added with `set_state()`
+- `correct_keys` filters which responses count as hits. The boolean `hit` state is set accordingly.
+- `terminate_on_response=True` ends the trial on the first valid key press.
 
-## Complete Example
 
-Here's a complete example showing how to use `StimUnit` in an experiment:
+#### Scenario 4: Highlighting Participant Choices
+To provide visual feedback, pass a dictionary of highlight stimuli to draw around the chosen option. Use `dynamic_highlight=True` to allow participants to change their selection during the window.
 
 ```python
-from psychopy import visual, core
+cue = make_unit(unit_label="cue") \
+    .add_stim(stim_bank.get('stimA')) \
+    .add_stim(stim_bank.get('stimB'))
+
+correct_key = settings.left_key  # for example
+
+cue.capture_response(
+    keys=settings.key_list,
+    correct_keys=[correct_key],
+    duration=settings.cue_duration,
+    onset_trigger=settings.triggers['cue_onset'] + marker_pad,
+    response_trigger=settings.triggers['key_press'] + marker_pad,
+    timeout_trigger=settings.triggers['no_response'] + marker_pad,
+    terminate_on_response=False,
+    highlight_stim={
+        'f': stim_bank.get('highlight_left'),
+        'j': stim_bank.get('highlight_right')
+    },
+    dynamic_highlight=False
+)
+
+cue.to_dict(trial_data)
+```
+
+- `highlight_stim` maps each key to a visual cue (e.g., a frame or dot).
+- If `dynamic_highlight=True`, each new key press updates the highlight until the window ends.
+
+```{Tip}
+You can also pass a `dict` to `response_trigger` to send different trigger codes per key.
+```
+
+
+### 7. Lifecycle Hooks
+
+Lifecycle hooks give you maximum flexibility to define custom behaviors at key trial events—complementing built‑in methods like `.capture_response()` or `.show()`. You pick exactly what code runs during **start**, **response**, **timeout**, and **end** phases.
+
+Below is a complete example demonstrating how each hook operates in practice. Watch how state keys are automatically prefixed with your `unit_label` ("demo"):
+
+```
+from psychopy import core, visual
 from psychopy.hardware.keyboard import Keyboard
-from psyflow import StimUnit, TriggerSender
-import random
+from psyflow import StimUnit
 
-# Setup
-win = visual.Window(size=[1024, 768], color="black", units="deg")
-kb = Keyboard()
-sender = TriggerSender(mock=True)
+# 1. Setup
+win = visual.Window([800,600], color='black', units='deg')
+kb  = Keyboard()
+unit = StimUnit('demo', win, kb)
 
-# Create stimuli
-fixation = visual.TextStim(win, text="+", height=1.0, color="white")
-left_target = visual.Circle(win, radius=0.8, fillColor="blue", pos=[-5, 0])
-right_target = visual.Circle(win, radius=0.8, fillColor="red", pos=[5, 0])
-left_highlight = visual.Rect(win, width=3, height=3, lineColor="yellow", 
-                            lineWidth=3, pos=[-5, 0], fillColor=None)
-right_highlight = visual.Rect(win, width=3, height=3, lineColor="yellow", 
-                             lineWidth=3, pos=[5, 0], fillColor=None)
-feedback_correct = visual.TextStim(win, text="Correct!", height=0.8, 
-                                  color="green", pos=[0, -3])
-feedback_incorrect = visual.TextStim(win, text="Incorrect", height=0.8, 
-                                    color="red", pos=[0, -3])
+# 2. Add a stimulus
+fix = visual.TextStim(win, text='+', height=1.0)
+unit.add_stim(fix)
 
-# Run a trial
-def run_trial(condition):
-    # Determine correct response for this condition
-    if condition == "left":
-        correct_key = "left"
-        target_trigger = 11
-    else:  # condition == "right"
-        correct_key = "right"
-        target_trigger = 12
-    
-    # Create trial unit
-    trial = StimUnit("choice", win, kb, triggersender=sender)
-    
-    # Register response handler
-    @trial.on_response(["left", "right"])
-    def handle_response(unit, key, rt):
-        # Check if response is correct
-        is_correct = (key == correct_key)
-        unit.set_state(correct=is_correct)
-        
-        # Show appropriate feedback
-        unit.clear_stimuli()
-        if is_correct:
-            unit.add_stim(feedback_correct)
-        else:
-            unit.add_stim(feedback_incorrect)
-    
-    # Show fixation
-    fixation_trial = StimUnit("fixation", win, kb, triggersender=sender)
-    fixation_trial.add_stim(fixation).show(
-        duration=(0.8, 1.2),  # Jittered duration
-        onset_trigger=10
-    )
-    
-    # Show targets and collect response
-    trial.add_stim(left_target, right_target)
-    trial.set_state(condition=condition, correct_key=correct_key)
-    trial.capture_response(
-        keys=["left", "right"],
-        duration=2.0,
-        onset_trigger=target_trigger,
-        response_trigger={"left": 21, "right": 22},
-        timeout_trigger=29,
-        correct_keys=[correct_key],
-        highlight_stim={"left": left_highlight, "right": right_highlight}
-    )
-    
-    # Show feedback for 1 second
-    core.wait(1.0)
-    
-    # Return trial data
-    return trial.to_dict()
+# 3. Define hooks
+@unit.on_start()
+def start_hook(u):
+    # record the moment the trial begins
+    u.set_state(start_time=u.clock.getTime())
+    print(f"[start_hook] prefix key 'demo_start_time' = {u.state['demo_start_time']}")
 
-# Run a block of trials
-results = []
-conditions = ["left", "right"] * 5  # 10 trials total
-random.shuffle(conditions)
+@unit.on_response(['space'])
+def response_hook(u, key, rt):
+    # capture spacebar presses
+    u.set_state(response=key, rt=rt)
+    print(f"[response_hook] key={key}, rt={rt:.3f}")
 
-for i, condition in enumerate(conditions):
-    print(f"Trial {i+1}/{len(conditions)}")
-    trial_data = run_trial(condition)
-    trial_data["trial_num"] = i + 1
-    results.append(trial_data)
-    core.wait(0.5)  # Inter-trial interval
+@unit.on_timeout(1.0)
+def timeout_hook(u):
+    # handle no-response after 1 second
+    u.set_state(timeout=True)
+    print("[timeout_hook] no response within 1.0s")
 
-# Show completion message
-end_trial = StimUnit("end", win, kb, triggersender=sender)
-end_text = visual.TextStim(
-    win,
-    text="Experiment complete. Thank you!",
-    height=0.7
-)
-end_trial.add_stim(end_text).wait_and_continue(
-    keys=["space"],
-    terminate=True
-)
+@unit.on_end()
+def end_hook(u):
+    # finalize and inspect full state
+    data = u.to_dict()
+    print("[end_hook] final state:", data)
 
-# Clean up
-win.close()
-
-# Analyze results
-correct_count = sum(1 for trial in results if trial.get("correct", False))
-accuracy = correct_count / len(results) * 100
-print(f"Accuracy: {accuracy:.1f}%")
+# 4. Run the trial
+unit.run()
 ```
 
-## Advanced Usage
+**Explanation:**
 
-### Frame-Based vs. Clock-Based Timing
+- **start\_hook**: Fires immediately after the global start time is recorded and before the first screen flip.
+- **response\_hook**: Executes on `'space'` press, providing `(unit, key, rt)`.
+- **timeout\_hook**: Triggers if no response occurs within 1.0 second.
+- **end\_hook**: Runs after the trial finishes but before logging, giving you a final chance to inspect or modify data.
 
-`StimUnit` supports two timing modes:
+All calls to `u.set_state()` automatically add entries like `demo_start_time`, `demo_response`, and `demo_timeout` into `unit.state`, which you can retrieve with `unit.to_dict()` or view in your PsychoPy logs via `unit.log_unit()`.
 
+Instead of decorators, you can register hooks fluently via chaining for concise code:
+
+```
+unit = StimUnit('chain_demo', win, kb)  
+
+# Chain registrations and run in one statement
+unit.add_stim(fix)  
+    .on_start(lambda u: u.set_state(start=time.time()))  
+    .on_response(['space'], lambda u, k, rt: u.set_state(response=k, rt=rt))  
+    .on_timeout(1.0, lambda u: u.set_state(timeout=True))  
+    .on_end(lambda u: print('Chained final state:', u.to_dict()))  
+    .run()
+```
+While `.show()` and `.capture_response()` bundle common patterns, you can achieve the same behavior using lifecycle hooks for greater customization.
+
+#### Replicating `show()` with Hooks
 ```python
-# Frame-based timing (more precise for short durations)
-trial.show(duration=0.5, frame_based=True)
+unit = StimUnit('show_demo', win, kb)
+unit.add_stim(my_stim)
 
-# Clock-based timing (better for longer durations)
-trial.show(duration=10.0, frame_based=False)
+# Start: send onset trigger, record time
+@unit.on_start()
+def start_show(u):
+    u.win.callOnFlip(u.send_trigger, trigger_onset)
+    u.set_state(onset_time=u.clock.getTime())
+
+# Timeout after desired duration: send offset trigger, record close time
+@unit.on_timeout(show_duration)
+def end_show(u):
+    u.send_trigger(trigger_offset)
+    u.set_state(close_time=u.clock.getTime())
+
+# End hook for any cleanup or logging
+@unit.on_end()
+def finalize_show(u):
+    print('Show ended, state:', u.get_dict())
+
+# Run without terminating on response (no responses listened for)
+unit.run(terminate_on_response=False)
+```
+- on_start sets up the flip‑synchronized onset trigger and timestamps.
+- on_timeout fires after show_duration, mirroring offset_trigger.
+- on_end finalizes the trial.
+
+For a more fluent style, you can register hooks and configure trials in a chainable manner:
+```python
+make_unit('show_chain', win, kb) \
+    .add_stim(my_stim) \
+    .on_start(lambda u: (
+        u.win.callOnFlip(u.send_trigger, trigger_onset),
+        u.set_state(onset_time=u.clock.getTime())
+    )) \
+    .on_timeout(show_duration, lambda u: (
+        u.send_trigger(trigger_offset),
+        u.set_state(close_time=u.clock.getTime())
+    )) \
+    .on_end(lambda u: print('Show ended, state:', u.get_dict())) \
+    .run(terminate_on_response=False)
 ```
 
-Frame-based timing counts the number of screen refreshes, while clock-based timing uses the system clock. Frame-based timing is generally more precise for short durations but requires a stable frame rate.
 
-### Custom Trigger Sequences
-
-You can send custom trigger sequences at any point:
-
+#### Replicating `.capture_response()` with Hooks
 ```python
-@trial.on_start()
-def custom_triggers(unit):
-    # Send a sequence of triggers with delays
-    unit.triggersender.send(101)  # First trigger
-    core.wait(0.05)               # 50ms delay
-    unit.triggersender.send(102)  # Second trigger
-    core.wait(0.05)               # 50ms delay
-    unit.triggersender.send(103)  # Third trigger
+unit = StimUnit('resp_demo', win, kb)
+unit.add_stim(response_stim)
+
+# Start: draw stimuli, flip, send onset trigger, reset clock
+@unit.on_start()
+def start_resp(u):
+    for s in u.stimuli:
+        s.draw()
+    u.win.callOnFlip(u.send_trigger, onset_trigger)
+    u.win.callOnFlip(u.clock.reset)
+
+# Response: for each valid key, send trigger and set state
+@unit.on_response(['f','j'])
+def on_resp(u, key, rt):
+    code = response_triggers[key]
+    u.send_trigger(code)
+    u.set_state(response=key, rt=rt, hit=(key in correct_keys))
+
+# Timeout: if no response within window
+@unit.on_timeout(response_duration)
+def on_timeout(u):
+    u.send_trigger(timeout_trigger)
+    u.set_state(response=None, timeout=True)
+
+# End: log and clean up
+@unit.on_end()
+def end_resp(u):
+    u.log_unit()
+
+# Run the trial (hooks manage drawing and events)
+unit.run()
+```
+Make it in a chainable manner:
+```python
+make_unit('resp_chain', win, kb) \
+    .add_stim(response_stim) \
+    .on_start(lambda u: (
+        [s.draw() for s in u.stimuli],
+        u.win.callOnFlip(u.send_trigger, onset_trigger),
+        u.win.callOnFlip(u.clock.reset)
+    )) \
+    .on_response(['f','j'], lambda u, key, rt: (
+        u.send_trigger(response_triggers[key]),
+        u.set_state(response=key, rt=rt, hit=(key in correct_keys))
+    )) \
+    .on_timeout(response_duration, lambda u: (
+        u.send_trigger(timeout_trigger),
+        u.set_state(response=None, timeout=True)
+    )) \
+    .on_end(lambda u: u.log_unit()) \
+    .run()
+```
+```{Warning}
+In most cases, using `.show()`, `.capture_response()`, and `.wait_and_continue()` covers the vast majority of task requirements and has been extensively tested. Lifecycle hooks offer maximum flexibility, but they are less commonly used and have seen less practical validation. We did not test their usage extensively. Only opt for manual hooks when you need custom behavior beyond the built-in methods—and proceed with caution.
 ```
 
-### Dynamic Stimulus Updates
 
-You can modify stimuli during the trial:
+### 8. State and Data Management
 
+`StimUnit` keeps all unit-related values in its internal `unit.state` dictionary. Use the following methods to keep your StimUnit data organized, easily retrievable, and ready for analysis or export.
+
+#### Recording or Updating Values with `set_state()`
+
+Use `set_state()` to record key–value data into the unit’s state
+
+**Example**
 ```python
-@trial.on_response(["left", "right"])
-def update_stimulus(unit, key, rt):
-    # Get the stimulus from the unit
-    for stim in unit.stimuli:
-        if hasattr(stim, "text"):
-            # Update text based on response
-            stim.text = f"You pressed {key} in {rt:.3f}s"
-```
-
-### Nested Trial Units
-
-You can create complex trial structures by nesting `StimUnit` instances:
-
-```python
-def run_complex_trial():
-    # Fixation phase
-    fix_unit = StimUnit("fixation", win, kb, triggersender=sender)
-    fix_unit.add_stim(fixation).show(duration=0.5, onset_trigger=1)
-    
-    # Cue phase
-    cue_unit = StimUnit("cue", win, kb, triggersender=sender)
-    cue_unit.add_stim(cue).show(duration=0.8, onset_trigger=2)
-    
-    # Target phase with response
-    target_unit = StimUnit("target", win, kb, triggersender=sender)
-    target_unit.add_stim(target).capture_response(
-        keys=["left", "right"],
-        duration=2.0,
-        onset_trigger=3
-    )
-    
-    # Feedback phase
-    feedback_unit = StimUnit("feedback", win, kb, triggersender=sender)
-    if target_unit.state.get("correct", False):
-        feedback_unit.add_stim(feedback_correct)
+    # --- Feedback ---
+if early_response:
+    delta = settings.delta * -1
+    hit=False
+else:
+    hit = target.get_state("hit", False)
+    if condition == "win":
+        delta = settings.delta if hit else 0
+    elif condition == "lose":
+        delta = 0 if hit else settings.delta * -1
     else:
-        feedback_unit.add_stim(feedback_incorrect)
-    feedback_unit.show(duration=1.0, onset_trigger=4)
-    
-    # Combine all data
-    return {
-        "fixation": fix_unit.to_dict(),
-        "cue": cue_unit.to_dict(),
-        "target": target_unit.to_dict(),
-        "feedback": feedback_unit.to_dict()
-    }
+        delta = 0
+
+hit_type = "hit" if hit else "miss"
+fb_stim = stim_bank.get(f"{condition}_{hit_type}_feedback")
+fb = make_unit(unit_label="feedback") \
+    .add_stim(fb_stim) \
+    .show(duration=settings.feedback_duration, onset_trigger=settings.triggers.get(f"{condition}_{hit_type}_fb_onset"))
+fb.set_state(hit=hit, delta=delta).to_dict(trial_data)
+```
+In this snippet, we:
+
+1. **Create and display** a feedback `StimUnit` labeled "feedback" with the correct stimulus and triggers.
+2. **Compute** whether the trial was a hit (`True`/`False`) and determine the `delta` value (+Δ, –Δ, or 0).
+3. **Record** these values into the unit’s internal state using `set_state()` (which prefixes keys by default).
+4. **Export** all stored state entries into your `trial_data` dict for logging or further analysis.
+
+Note: `set_sate()` uses **prefixing** to control how keys are stored
+
+**Default** (unit label): keys stored as `<unit_label>_<key>`
+
+```python
+fb.set_state(hit=True, delta=0.5)
+# stores 'feedback_hit' and 'feedback_delta'
+```
+ 
+**Raw** (`prefix=''`): keys stored as-is
+
+```python
+fb.set_state(prefix='', hit=True, delta=0.5)
+# stores 'hit' and 'delta'
+```
+**Custom** (`prefix='special'`): keys prefixed with 'special\_'
+
+```python
+fb.set_state(prefix='special', hit=True)
+# stores 'special_hit'
 ```
 
-## Best Practices
+**Summary of the prefix behavior**
+| Mode    | Prefix       | Stored keys                    |
+| ------- | ------------ | ------------------------------ |
+| Default | (unit label) | feedback\_hit, feedback\_delta |
+| Raw     | ''           | hit, delta                     |
+| Custom  | 'special'    | special\_hit                   |
 
-1. **Use descriptive labels**: Choose meaningful `unit_label` values to make your state data more readable.
 
-2. **Chain methods**: Take advantage of the chainable API to write concise, readable code.
+```{Tip}
+`set_state` is **Chaining**: it returns the same `StimUnit`, so you can chain calls:`unit.set_state(block=2, trial=5).set_state(condition='win')`
+```
 
-3. **Separate trial phases**: For complex trials, use multiple `StimUnit` instances for different phases.
 
-4. **Predefine stimuli**: Create all stimuli before the trial loop to avoid performance issues.
 
-5. **Test with mock triggers**: Use `TriggerSender(mock=True)` during development and testing.
+**Summary of Automatic State Entries**
 
-6. **Log liberally**: Use `set_state()` to record all relevant trial information.
+Several `StimUnit` methods populate internal state without explicit `set_state()` calls. Here’s a quick reference:
 
-7. **Handle errors gracefully**: Use try/except blocks in your hooks to prevent crashes.
+| Method                 | Keys Set in `.state`                                               | Notes                                      |
+|------------------------|--------------------------------------------------------------------|--------------------------------------------|
+| `run()`                | `global_time`                                                      | Experiment-wide timestamp before start     |
+|                        | `onset_time`, `onset_time_global`, `flip_time`                     | Recorded at first `win.flip()`             |
+|                        | `close_time`, `close_time_global`                                  | At end of trial (response or timeout)      |
+|                        | `timeout_triggered`, `duration`                                     | If a timeout occurs                        |
+| `show()`               | `duration`                                                         | Final chosen duration                      |
+|                        | `onset_time`, `onset_time_global`, `onset_trigger`                 | At stimulus onset                          |
+|                        | `flip_time`                                                        | Time of flip after onset                   |
+|                        | `close_time`, `close_time_global`, `offset_trigger`                | At presentation end                        |
+| `capture_response()`   | `duration`, `onset_time`, `onset_time_global`, `flip_time`          | Response window setup                      |
+|                        | `hit`, `correct_keys`, `response`, `key_press`, `rt`               | On response                                |
+|                        | `response_trigger`, `close_time`, `close_time_global`              | Response trigger and end time              |
+|                        | `timeout_trigger`, `hit=False`, `response=None`, `rt=None`         | On timeout                                 |
+| `wait_and_continue()`  | `wait_keys`, `onset_time`, `onset_time_global`, `flip_time`         | At display onset                           |
+|                        | `response`, `response_time`, `close_time`, `close_time_global`     | When continuation key pressed              |
 
-## Troubleshooting
+Use this table to quickly see what state values are filled in automatically, so you know which additional `set_state()` calls you might still need.
 
-- **Timing issues**: If timing seems off, check if you're using the appropriate timing mode (frame-based vs. clock-based).
+```{Note}
+For `capture_response()`, the `hit` means the response was a correct key press.
+```
 
-- **Missing responses**: Ensure your keyboard is properly initialized and that you're listening for the correct keys.
+#### Retrieving Values with `get_state()`
+When you call `get_state()`, it first looks for the exact key, then for the prefixed form (using your unit_label or a supplied prefix), and if neither is found it returns the default value.
 
-- **Stimulus not appearing**: Check that you've added all stimuli to the unit with `add_stim()`.
+  ```python
+  # Reads either 'response' or 'cue_response' if the unit_label is 'cue'
+  resp = unit.get_state('response', default=None)
+  # Force a different prefix lookup, it reads 'custom_response'
+  resp = unit.get_state('response', default=0, prefix='custom')
+  ```
 
-- **Trigger problems**: Verify your `TriggerSender` is properly configured and test with `mock=True` first.
+#### Exporting All State with `.to_dict()` 
+
+**`to_dict(target=None)`**
+  - If no `target` is given, returns the `StimUnit` instance (for chaining) and leaves you to inspect `unit.state`.
+  - If you pass in a dict, it merges `unit.state` into that dict and returns the `StimUnit`. 
+  
+  ```python
+    # After an anticipation phase:
+    anti = make_unit('anticipation')\
+        .add_stim(stim_bank.get('fixation'))\
+        .capture_response(keys=settings.keys, duration=settings.anticipation_duration)
+    # Check if participant responded early
+    early = anti.get_state('response', default=None)
+    # Record this custom flag and merge into main trial_data
+    anti.set_state(early_response=early)\
+        .to_dict(trial_data)
+
+    # In the target phase:
+    target = make_unit('target')\
+        .add_stim(stim_bank.get(f"{condition}_target"))\
+        .capture_response(keys=settings.keys, duration=duration)
+    # Export results
+    target.to_dict(trial_data)
+  ```
+
+#### Logging State Internally with `.log_unit()`
+
+`log_unit()` writes every key–value pair in `unit.state` to the log score in `data/*.log`.   It uses PsychoPy’s `logging.data()`, which by default appends timestamped entries to the experiment log file or console.
+  It's automatically invoked within the `StimUnit` class, so you usually don’t need to call it manually.
+
+
+**What gets logged?**  All entries currently in `unit.state`, including:
+
+| State key examples            | Description                                  |
+|-------------------------------|----------------------------------------------|
+| `trial_block`, `trial_trial`  | Pre-trial identifiers                        |
+| `onset_time`, `flip_time`     | Timestamps from `.show()` or `.run()`        |
+| `hit`, `response`, `rt`       | Response metrics from `capture_response()`   |
+| `feedback_hit`, `feedback_delta` | Custom values from your `set_state()` calls |
+
+If you need a separate log for debugging at other points, you can call `unit.log_unit()` manually to snapshot current state.
+
+
 
 ## Next Steps
 
