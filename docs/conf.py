@@ -19,6 +19,14 @@ release = read_version()
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 templates_path = ['_templates']
+html_sidebars = {
+    "**": [
+        "sidebar/brand.html",
+        "sidebar/entries.html",  
+        "sidebar/navigation.html",    
+        # any further items here would float on the left again
+    ]
+}
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
@@ -55,6 +63,9 @@ html_theme_options = {
     "sidebar_hide_name": False,
     "light_logo": "logo_white-removebg.png",  # used on white background
     "dark_logo": "logo_black-removebg.png",   # used on dark background
+    "source_repository": "https://github.com/TaskBeacon/psyflow/",
+    "source_branch": "main",
+    "source_directory": "source/",
 }
 
 def setup(app):
