@@ -54,6 +54,5 @@ Start with one of the tutorials below or explore the API reference.
 .. toctree::
    :maxdepth: 1
    :caption: Indices and tables
-
    genindex
    modindex
