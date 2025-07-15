@@ -1,3 +1,5 @@
+# psyflow-init: 命令行界面
+
 ## 概述
 
 `psyflow-init` 是用于使用内置模板搭建新的 PsychoPy 实验的命令行界面 (CLI) 入口点。它在底层使用 Cookiecutter 生成标准化的项目布局，因此您可以专注于任务逻辑而不是样板文件。

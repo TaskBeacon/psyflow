@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="PsyFlow 入门指南" href="getting_started_cn.html" /><link rel="prev" title="Utility Functions" href="utilities.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>Overview - psyflow 0.1.1 documentation</title>
+        <title>LLMClient: Using Large Language Models - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -179,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -211,25 +211,10 @@
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html#key-features">Key Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html#quick-reference">Quick Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html#detailed-usage-guide">Detailed Usage Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html#integration-with-stimunit">5. Integration with <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger.html#next-steps">Next Steps</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html#quick-reference">Quick Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html#creating-a-new-project">1. Creating a New Project</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html#inplace-initialization">2. In‑Place Initialization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html#how-it-works-internally">3. How It Works Internally</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html#next-steps">Next Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Sending Hardware Triggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">psyflow-init: Command-Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Functions</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#supported-providers">Supported Providers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#key-features">Key Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">LLMClient: Using Large Language Models</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">中文教程(Chinese Tutorials)</span></p>
 <ul>
@@ -239,24 +224,9 @@
 <li class="toctree-l1"><a class="reference internal" href="build_blocks_cn.html">BlockUnit: 组织和运行试验</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus_cn.html">StimBank：灵活的刺激管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimunit_cn.html">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html">概述</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html#id2">主要功能</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html#id3">快速参考</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html#id4">详细使用指南</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html#stimunit">5. 与 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 集成</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html#id8">后续步骤</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html">概述</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html#id2">快速参考</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html#id3">1. 创建一个新项目</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html#id4">2. 就地初始化</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html#id5">3. 内部工作原理</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html#id6">后续步骤</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html">概述</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html#id2">支持的提供商</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html#id3">主要功能</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html#id4">快速参考</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html#id5">详细使用指南</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html#id9">后续步骤</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html">TriggerSender: 发送硬件触发器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html">psyflow-init: 命令行界面</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html">LLMClient: 使用大型语言模型</a></li>
 </ul>
 
 </div>
@@ -291,18 +261,20 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h1>
+          <section id="llmclient-using-large-language-models">
+<h1>LLMClient: Using Large Language Models<a class="headerlink" href="#llmclient-using-large-language-models" title="Link to this heading">¶</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> class in <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> offers a lightweight, unified interface for interacting with various Large Language Model (LLM) backends, including Google Gemini, OpenAI, Deepseek, and Moonshot. Instead of relying on heavy frameworks like LangChain, we built a minimal wrapper to keep things simple: no extra dependencies beyond provider SDKs, a clean API (e.g., <code class="docutils literal notranslate"><span class="pre">generate()</span></code>, <code class="docutils literal notranslate"><span class="pre">translate()</span></code>, <code class="docutils literal notranslate"><span class="pre">count_tokens()</span></code>), and fast, low-overhead execution.</p>
 </section>
 <section id="supported-providers">
-<h1>Supported Providers<a class="headerlink" href="#supported-providers" title="Link to this heading">¶</a></h1>
+<h2>Supported Providers<a class="headerlink" href="#supported-providers" title="Link to this heading">¶</a></h2>
 <p>Our library supports flexible, cost-effective access across multiple providers:</p>
 <ul class="simple">
 <li><p><strong>Gemini</strong> (Google GenAI): Free-tier access to powerful models—ideal for getting started at no cost.</p></li>
@@ -312,7 +284,7 @@
 </ul>
 </section>
 <section id="key-features">
-<h1>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h1>
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -347,7 +319,7 @@
 </div>
 </section>
 <section id="quick-reference">
-<h1>Quick Reference<a class="headerlink" href="#quick-reference" title="Link to this heading">¶</a></h1>
+<h2>Quick Reference<a class="headerlink" href="#quick-reference" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -390,11 +362,11 @@
 </div>
 </section>
 <section id="detailed-usage-guide">
-<h1>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h1>
+<h2>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h2>
 <section id="verify-native-sdks">
-<h2>1. Verify Native SDKs<a class="headerlink" href="#verify-native-sdks" title="Link to this heading">¶</a></h2>
+<h3>1. Verify Native SDKs<a class="headerlink" href="#verify-native-sdks" title="Link to this heading">¶</a></h3>
 <section id="google-genai-gemini">
-<h3>1.1 Google-GenAI (Gemini)<a class="headerlink" href="#google-genai-gemini" title="Link to this heading">¶</a></h3>
+<h4>1.1 Google-GenAI (Gemini)<a class="headerlink" href="#google-genai-gemini" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">google</span><span class="w"> </span><span class="kn">import</span> <span class="n">genai</span>
 <span class="c1"># Initialize the Gemini client</span>
 <span class="n">genai</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;…your Gemini API key…&quot;</span><span class="p">)</span>
@@ -416,7 +388,7 @@
 </div>
 </section>
 <section id="openai-deepseek">
-<h3>1.2 OpenAI / Deepseek<a class="headerlink" href="#openai-deepseek" title="Link to this heading">¶</a></h3>
+<h4>1.2 OpenAI / Deepseek<a class="headerlink" href="#openai-deepseek" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">openai</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpenAI</span>
 <span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="s2">&quot;…your key…&quot;</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s2">&quot;https://api.deepseek.com&quot;</span><span class="p">)</span>
 
@@ -438,7 +410,7 @@
 </section>
 </section>
 <section id="use-psyflow-llmclient-wrapper">
-<h2>2. Use Psyflow <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> Wrapper<a class="headerlink" href="#use-psyflow-llmclient-wrapper" title="Link to this heading">¶</a></h2>
+<h3>2. Use Psyflow <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> Wrapper<a class="headerlink" href="#use-psyflow-llmclient-wrapper" title="Link to this heading">¶</a></h3>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">LLMClient</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 
@@ -459,7 +431,7 @@
 </div>
 </section>
 <section id="llms-powered-task-documentation">
-<h2>3. LLMs-Powered Task Documentation<a class="headerlink" href="#llms-powered-task-documentation" title="Link to this heading">¶</a></h2>
+<h3>3. LLMs-Powered Task Documentation<a class="headerlink" href="#llms-powered-task-documentation" title="Link to this heading">¶</a></h3>
 <p>Use <code class="docutils literal notranslate"><span class="pre">task2doc()</span></code> to generate a complete <code class="docutils literal notranslate"><span class="pre">README.md</span></code> for your PsyFlow task:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">LLMClient</span><span class="p">(</span><span class="s2">&quot;gemini&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;GEMINI_KEY&quot;</span><span class="p">),</span> <span class="s2">&quot;gemini-2.5-flash&quot;</span><span class="p">)</span>
 <span class="n">readme</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">task2doc</span><span class="p">(</span>
@@ -480,9 +452,9 @@
 </ul>
 </section>
 <section id="llms-powered-localization">
-<h2>4. LLMs-Powered Localization<a class="headerlink" href="#llms-powered-localization" title="Link to this heading">¶</a></h2>
+<h3>4. LLMs-Powered Localization<a class="headerlink" href="#llms-powered-localization" title="Link to this heading">¶</a></h3>
 <section id="in-memory-translation">
-<h3>4.1 In-Memory Translation<a class="headerlink" href="#in-memory-translation" title="Link to this heading">¶</a></h3>
+<h4>4.1 In-Memory Translation<a class="headerlink" href="#in-memory-translation" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">client</span> <span class="o">=</span> <span class="n">LLMClient</span><span class="p">(</span><span class="s2">&quot;deepseek&quot;</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;DEESEEK_KEY&quot;</span><span class="p">),</span> <span class="s2">&quot;deepseek-chat&quot;</span><span class="p">)</span>
 <span class="n">translated</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">translate_config</span><span class="p">(</span>
     <span class="n">target_language</span><span class="o">=</span><span class="s2">&quot;Japanese&quot;</span>
@@ -492,7 +464,7 @@
 </div>
 </section>
 <section id="translate-and-save">
-<h3>4.2 Translate and Save<a class="headerlink" href="#translate-and-save" title="Link to this heading">¶</a></h3>
+<h4>4.2 Translate and Save<a class="headerlink" href="#translate-and-save" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">translated</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">translate_config</span><span class="p">(</span>
     <span class="n">target_language</span><span class="o">=</span><span class="s2">&quot;Spanish&quot;</span><span class="p">,</span>
     <span class="n">config</span><span class="o">=</span><span class="s2">&quot;./config/config.yaml&quot;</span><span class="p">,</span>
@@ -507,13 +479,14 @@
 </section>
 </section>
 <section id="next-steps">
-<h1>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h1>
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
 <p>Now that you’ve seen how to use LLMs with PsyFlow, you might be interested in:</p>
 <ul class="simple">
 <li><p><strong>Getting Started</strong>: If you’re new to PsyFlow, check out the <a class="reference internal" href="getting_started.html"><span class="std std-doc">Getting Started tutorial</span></a>.</p></li>
 <li><p><strong>Sending Triggers</strong>: Learn how to send hardware triggers in the <a class="reference internal" href="send_trigger.html"><span class="std std-doc">TriggerSender tutorial</span></a>.</p></li>
 <li><p><strong>Building Trials</strong>: Understand how to build complex trials in the <a class="reference internal" href="build_stimunit.html"><span class="std std-doc">StimUnit tutorial</span></a>.</p></li>
 </ul>
+</section>
 </section>
 
         </article>
@@ -559,8 +532,46 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">LLMClient: Using Large Language Models</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#supported-providers">Supported Providers</a></li>
+<li><a class="reference internal" href="#key-features">Key Features</a></li>
+<li><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
+<li><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a><ul>
+<li><a class="reference internal" href="#verify-native-sdks">1. Verify Native SDKs</a><ul>
+<li><a class="reference internal" href="#google-genai-gemini">1.1 Google-GenAI (Gemini)</a></li>
+<li><a class="reference internal" href="#openai-deepseek">1.2 OpenAI / Deepseek</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#use-psyflow-llmclient-wrapper">2. Use Psyflow <code class="docutils literal notranslate"><span class="pre">LLMClient</span></code> Wrapper</a></li>
+<li><a class="reference internal" href="#llms-powered-task-documentation">3. LLMs-Powered Task Documentation</a></li>
+<li><a class="reference internal" href="#llms-powered-localization">4. LLMs-Powered Localization</a><ul>
+<li><a class="reference internal" href="#in-memory-translation">4.1 In-Memory Translation</a></li>
+<li><a class="reference internal" href="#translate-and-save">4.2 Translate and Save</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

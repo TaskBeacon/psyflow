@@ -1,3 +1,5 @@
+# psyflow-init: Command-Line Interface
+
 ## Overview
 
 `psyflow-init` is the command-line interface (CLI) entrypoint for scaffolding new PsychoPy experiments using the built‑in template. It uses Cookiecutter under the hood to generate a standardized project layout, so you can focus on your task logic rather than boilerplate.
