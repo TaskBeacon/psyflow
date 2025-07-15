@@ -50,22 +50,28 @@ def climain(project_name):
         extra_context=extra
     )
 
-    if not in_place:
-        # Standard behavior: create a new ./<name> folder
-        cookiecutter(str(tmpl_dir), output_dir=str(cwd), **cc_kwargs)
-        return
-
     # 5. In-place mode: render to a temp dir, then copy up
     tmp = Path(tempfile.mkdtemp(prefix="psyflow-"))
     try:
         cookiecutter(str(tmpl_dir), output_dir=str(tmp), **cc_kwargs)
         rendered = tmp / name
 
-        # Copy everything from rendered/* → cwd/*
+        overwrite_all = False
         for item in rendered.iterdir():
             dest = cwd / item.name
+
+            # if dest already exists, ask once whether to overwrite everything
+            if dest.exists() and not overwrite_all:
+                resp = input(f"⚠ Existing '{item.name}' detected. Overwrite this and all remaining? [y/N]: ").strip().lower()
+                if resp == 'y':
+                    overwrite_all = True
+                else:
+                    print(f"  Skipping '{item.name}'")
+                    continue
+
+            # Copy the item (dirs_exist_ok only matters for directories)
             if item.is_dir():
-                shutil.copytree(item, dest, dirs_exist_ok=True)
+                shutil.copytree(item, dest, dirs_exist_ok=overwrite_all)
             else:
                 shutil.copy2(item, dest)
 
