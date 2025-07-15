@@ -22,9 +22,9 @@ templates_path = ['_templates']
 html_sidebars = {
     "**": [
         "sidebar/brand.html",
-        "sidebar/entries.html",  
-        "sidebar/navigation.html",    
-        # any further items here would float on the left again
+        "sidebar/search.html",     # ← fixed spelling + added comma
+        "sidebar/entries.html",
+        "sidebar/navigation.html",
     ]
 }
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']

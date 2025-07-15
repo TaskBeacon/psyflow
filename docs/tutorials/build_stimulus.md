@@ -232,7 +232,7 @@ stim_bank.preview_all()                    # display or play every registered st
 stim_bank.preview_selected(["fixation"])   # only the specified stimuli
 stim_bank.preview_group("feedback_")       # all stimuli with the "feedback_" prefix
 ```
-```{Tips}
+```{Tip}
 Use previews to catch layout or styling issues early, rather than during live trials.
 ```
 
