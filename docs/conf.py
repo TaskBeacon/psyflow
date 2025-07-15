@@ -21,12 +21,15 @@ release = read_version()
 templates_path = ['_templates']
 html_sidebars = {
     "**": [
-        "sidebar/brand.html",
-        "sidebar/search.html",     # ← fixed spelling + added comma
-        "sidebar/entries.html",
+        "sidebar/brand.html",        # pinned
+        "sidebar/search.html",       # pinned
+        "sidebar/scroll-start.html", # begin scrollable
+        "sidebar/entries.html",      # now scrolls
         "sidebar/navigation.html",
+        "sidebar/scroll-end.html",   # end scrollable
     ]
 }
+
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 

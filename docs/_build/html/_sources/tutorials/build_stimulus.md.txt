@@ -85,7 +85,7 @@ stim_bank = StimBank(win, config=stim_config)
 | movie   | MovieStim | Video playback                        |
 | sound   | Sound     | Audio playback using PsychoPy Sound   |
 
-```{Note}
+```{note}
 A good place to learn about stimulus parameters is the PsychoPy Visual API page (https://www.psychopy.org/api/visual/). We will add support for additional stimulus types as we encounter them during the development of new tasks.
 ```
 
@@ -232,7 +232,7 @@ stim_bank.preview_all()                    # display or play every registered st
 stim_bank.preview_selected(["fixation"])   # only the specified stimuli
 stim_bank.preview_group("feedback_")       # all stimuli with the "feedback_" prefix
 ```
-```{Tip}
+```{tip}
 Use previews to catch layout or styling issues early, rather than during live trials.
 ```
 

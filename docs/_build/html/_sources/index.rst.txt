@@ -19,8 +19,6 @@ Features
 
 Start with one of the tutorials below or explore the API reference.
 
-Tutorials
----------
 .. toctree::
    :maxdepth: 1
    :caption: Tutorials
@@ -36,8 +34,8 @@ Tutorials
    tutorials/utilities
    tutorials/llm_client
 
-中文教程(Chinese Tutorials)
----------
+
+
 .. toctree::
    :maxdepth: 1
    :caption: 中文教程(Chinese Tutorials)
@@ -52,8 +50,7 @@ Tutorials
    tutorials/cli_usage_cn
    tutorials/llm_client_cn
 
-Indices and tables
----------
+
 .. toctree::
    :maxdepth: 1
    :caption: Indices and tables

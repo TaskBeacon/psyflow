@@ -202,7 +202,7 @@
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
 </form>
-<div id="searchbox"></div><div class="sidebar-cta entries-box">
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-cta entries-box">
   <ul style="list-style: none; padding-left: 0;">
     <li><a href="https://taskbeacon.github.io/">Taskbeacon Home</a></li>
   </ul>
@@ -234,11 +234,14 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Indices and tables</span></p>
 <ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../modules.html">API Reference</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of API Reference</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 
-</div>
+</div></div>
       </div>
       
     </div>
@@ -554,6 +557,12 @@
 <p><img alt="Collecting subinfo using yaml config" src="../_images/subinfo_yaml_kr.png" /></p>
 <p>Following same approach, you can do localization for any language by providing the appropriate translations in the <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code> section.</p>
 <p><img alt="Collecting subinfo using yaml config" src="../_images/subinfo_yaml_cn.png" /></p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>In addition to using the chatbox from LLM models for translation,<br />
+psyflow has a built-in function (<code class="docutils literal notranslate"><span class="pre">translate_config()</span></code>) using LLM APIs for translating the subinfo mapping.<br />
+Make sure the translations are accurate if you use an LLM to generate them. Consult a native speaker if possible.</p>
+</div>
 </section>
 <section id="add-subject-information-to-tasksettings">
 <h3>4. Add subject information to TaskSettings<a class="headerlink" href="#add-subject-information-to-tasksettings" title="Link to this heading">¶</a></h3>
@@ -571,6 +580,10 @@
 <span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">])</span>
 <span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subject_data</span><span class="p">)</span>
 </pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><code class="docutils literal notranslate"><span class="pre">load_config()</span></code> is a handy function for loading the configuration stored in <code class="docutils literal notranslate"><span class="pre">config/config.yaml</span></code>in the default TAPS format.</p>
 </div>
 </section>
 </section>
