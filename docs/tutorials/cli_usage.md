@@ -1,29 +1,33 @@
-# Command-Line Interface (CLI)
+## Overview
 
-`psyflow` includes a command-line interface (CLI) to streamline your project setup. The CLI helps you create a new task with a standardized and recommended project structure, so you can get to the science faster.
+`psyflow-init` is the command-line interface (CLI) entrypoint for scaffolding new PsychoPy experiments using the built‑in template. It uses Cookiecutter under the hood to generate a standardized project layout, so you can focus on your task logic rather than boilerplate.
 
-## Creating a New Project with `psyflow-init`
+Key benefits:
 
-The primary command is `psyflow-init`, which scaffolds a new project directory for you.
+- **Standardization**: Enforce a consistent folder structure across all experiments
+- **Rapid setup**: Create a full project scaffold with one command
+- **Flexible modes**: Support both new-directory and in-place initialization
 
-### Basic Usage
+## Quick Reference
 
-To create a new project, open your terminal, navigate to the directory where you want to create your project, and run:
+| Command                      | Purpose                                         | Example                       |
+| ---------------------------- | ----------------------------------------------- | ----------------------------- |
+| `psyflow-init <name>`        | Create a new folder `<name>` with project files | `psyflow-init my-new-task`    |
+| `psyflow-init` (no argument) | Initialize current directory in-place           | `cd existing && psyflow-init` |
+
+## 1. Creating a New Project
+
+To start from scratch, navigate to the parent directory and run:
 
 ```bash
 psyflow-init my-new-task
 ```
 
-This command will create a new folder named `my-new-task` inside your current directory. This new folder contains all the necessary files and subdirectories to start your experiment.
-
-### Project Structure
-
-After running the command, you will see the following structure:
+This will create a new folder `my-new-task/` containing all the necessary files and subdirectories:
 
 ```
 my-new-task/
 ├── main.py
-├── meta.json
 ├── README.md
 ├── assets/
 ├── config/
@@ -35,16 +39,34 @@ my-new-task/
     └── utils.py
 ```
 
-This structure helps organize your code, configuration, and data from the very beginning.
+## 2. In‑Place Initialization
 
-### In-Place Initialization
-
-Sometimes, you might have already created a directory for your project and want to initialize it with the `psyflow` structure. You can do this by running `psyflow-init` without any arguments inside that directory:
+If you already have (or have just created) an empty directory and wish to populate it with the `psyflow` scaffold, run the command without any arguments:
 
 ```bash
-mkdir my-existing-folder
-cd my-existing-folder
+mkdir my-existing-project
+cd my-existing-project
 psyflow-init
 ```
 
-This will populate the `my-existing-folder` with the same project structure without creating a new subdirectory. This is useful for integrating `psyflow` into an existing project structure.
+Before copying template files, the CLI checks for existing files or folders with the same names. If any conflicts are found, you will be prompted:
+
+```
+⚠ Existing file 'main.py' detected. Overwrite? [y/N]:
+```
+
+- Enter `y` to proceed and replace the file.
+- Enter `n` (or press Enter) to skip that file and continue with others.
+
+This interactive confirmation prevents unintentional data loss during in-place initialization.
+
+## 3. How It Works Internally
+
+1. **Locate template**: Uses `importlib.resources` to find the `psyflow.templates` package and the `cookiecutter-psyflow` folder.
+2. **Cookiecutter render**:
+   - **New‑directory mode**: Directly runs Cookiecutter into `./<project_name>`.
+   - **In‑place mode**: Renders into a temporary directory, then copies files into the current folder.
+3. **Cleanup**: In-place mode deletes the temporary render directory when finished.
+
+> *Tip*: All rendering is done with `no_input=True` so the command never pauses for prompts.
+
