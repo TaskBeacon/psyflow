@@ -771,6 +771,6 @@ If you need a separate log for debugging at other points, you can call `unit.log
 
 Now that you understand how to use `StimUnit`, you can:
 
-- Explore the [BlockUnit tutorial](build_blocks.md) to organize trials into blocks
-- Learn about [StimBank](build_stimulus.md) for flexible stimulus management
-- Check out [trigger sending](send_trigger.md) for EEG/MEG experiments
+- **Organize Blocks**: Explore the [BlockUnit tutorial](build_blocks.md) to organize trials into blocks
+- **Manage Stimuli**: Learn about [StimBank](build_stimulus.md) for flexible stimulus management
+- **Send Triggers**: Check out [trigger sending](send_trigger.md) for EEG/MEG experiments

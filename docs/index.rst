@@ -1,7 +1,7 @@
-.. .. image:: _static/logo.png
-..    :alt: psyflow logo
-..    :height: 100px
-..    :align: center
+.. image:: _static/flowchart.png
+   :alt: flowchart
+   :height: 300px
+   :align: center
 
 Welcome to psyflow
 ===================================
@@ -32,6 +32,20 @@ Start with one of the tutorials below or explore the API reference.
    tutorials/cli_usage
    tutorials/utilities
    tutorials/llm_client
+
+.. toctree::
+   :maxdepth: 1
+   :caption: 中文教程(Chinese Tutorials)
+
+   tutorials/getting_started_cn
+   tutorials/get_subinfo_cn
+   tutorials/task_settings_cn
+   tutorials/build_blocks_cn
+   tutorials/build_stimulus_cn
+   tutorials/build_stimunit_cn
+   tutorials/send_trigger_cn
+   tutorials/cli_usage_cn
+   tutorials/llm_client_cn
 
 
 .. toctree::

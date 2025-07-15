@@ -67,3 +67,10 @@ This interactive confirmation prevents unintentional data loss during in-place i
    - **In‑place mode**: Renders into a temporary directory, then copies files into the current folder.
 3. **Cleanup**: In-place mode deletes the temporary render directory when finished.
 
+## Next Steps
+
+Now that you know how to initialize a project, you're ready to start building your experiment:
+
+- **Getting Started**: Follow the [Getting Started tutorial](getting_started.md) to build a simple task from scratch.
+- **Learn the Core Concepts**: Dive into the [StimBank](build_stimulus.md), [StimUnit](build_stimunit.md), and [BlockUnit](build_blocks.md) tutorials to understand the key components of PsyFlow.
+

@@ -151,7 +151,10 @@ print("Saved to ./config/config.es.yaml")
 
 This updates your YAML fields (labels, stimuli text) and writes a `.translated.yaml` file.
 
-```{Note}
-I am trying to implement a more robust doc2task pipeline for PsyFlow tasks.
-Stay tuned for updates!
-```
+## Next Steps
+
+Now that you've seen how to use LLMs with PsyFlow, you might be interested in:
+
+- **Getting Started**: If you're new to PsyFlow, check out the [Getting Started tutorial](getting_started.md).
+- **Sending Triggers**: Learn how to send hardware triggers in the [TriggerSender tutorial](send_trigger.md).
+- **Building Trials**: Understand how to build complex trials in the [StimUnit tutorial](build_stimunit.md).

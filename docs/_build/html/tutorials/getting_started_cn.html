@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="SubInfo: Collecting Participant Information" href="get_subinfo.html" /><link rel="prev" title="Welcome to psyflow" href="../index.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="SubInfo: 收集被试信息" href="get_subinfo_cn.html" /><link rel="prev" title="Overview" href="llm_client.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>Getting Started with PsyFlow - psyflow 0.1.1 documentation</title>
+        <title>PsyFlow 入门指南 - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -204,8 +204,8 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Getting Started with PsyFlow</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started with PsyFlow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
@@ -232,8 +232,8 @@
 <li class="toctree-l1"><a class="reference internal" href="llm_client.html#next-steps">Next Steps</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">中文教程(Chinese Tutorials)</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="getting_started_cn.html">PsyFlow 入门指南</a></li>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">PsyFlow 入门指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo_cn.html">SubInfo: 收集被试信息</a></li>
 <li class="toctree-l1"><a class="reference internal" href="task_settings_cn.html">TaskSettings: 管理实验配置</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_blocks_cn.html">BlockUnit: 组织和运行试验</a></li>
@@ -277,7 +277,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="../_sources/tutorials/getting_started.md.txt" title="View this page">
+  <a class="muted-link" href="../_sources/tutorials/getting_started_cn.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -297,45 +297,45 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="getting-started-with-psyflow">
-<h1>Getting Started with PsyFlow<a class="headerlink" href="#getting-started-with-psyflow" title="Link to this heading">¶</a></h1>
-<section id="what-is-psyflow">
-<h2>What is PsyFlow?<a class="headerlink" href="#what-is-psyflow" title="Link to this heading">¶</a></h2>
-<p>PsyFlow is a high-level wrapper for PsychoPy designed to streamline the development of cognitive neuroscience experiments. It promotes a <strong>declarative</strong> and <strong>organized</strong> workflow, allowing you to focus more on your experimental logic and less on boilerplate code.</p>
-<p>Key features include:</p>
+          <section id="psyflow">
+<h1>PsyFlow 入门指南<a class="headerlink" href="#psyflow" title="Link to this heading">¶</a></h1>
+<section id="id1">
+<h2>什么是 PsyFlow？<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>PsyFlow 是一个为 PsychoPy 设计的高级包装器，旨在简化认知神经科学实验的开发。它提倡一种<strong>声明式</strong>和<strong>有组织</strong>的工作流程，让您更专注于实验逻辑，而不是样板代码。</p>
+<p>主要功能包括：</p>
 <ul class="simple">
-<li><p><strong>Declarative Syntax</strong>: Define stimuli, timings, and task structure in easy-to-read YAML files.</p></li>
-<li><p><strong>Structured Project Layout</strong>: A command-line tool (<code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code>) generates a standardized, organized folder structure for your projects.</p></li>
-<li><p><strong>Simplified API</strong>: High-level classes like <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> and <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> handle the complexities of stimulus presentation, response capturing, and data logging.</p></li>
-<li><p><strong>Extensibility</strong>: Easily integrate hardware triggers (EEG, fMRI), eye-trackers, and even Large Language Models (LLMs) for advanced use cases.</p></li>
+<li><p><strong>声明式语法</strong>：在易于阅读的 YAML 文件中定义刺激、计时和任务结构。</p></li>
+<li><p><strong>结构化项目布局</strong>：命令行工具 (<code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code>) 为您的项目生成一个标准化的、有组织的文件夹结构。</p></li>
+<li><p><strong>简化的 API</strong>：像 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 和 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 这样的高级类处理刺激呈现、响应捕获和数据记录的复杂性。</p></li>
+<li><p><strong>可扩展性</strong>：轻松集成硬件触发器（EEG、fMRI）、眼动仪，甚至大型语言模型（LLM）以用于高级用例。</p></li>
 </ul>
-<p>This guide will walk you through creating a simple reaction time task from scratch, demonstrating the core concepts of PsyFlow.</p>
+<p>本指南将引导您从头开始创建一个简单的反应时任务，演示 PsyFlow 的核心概念。</p>
 </section>
-<section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
-<p>You can install PsyFlow using <code class="docutils literal notranslate"><span class="pre">pip</span></code>.</p>
-<section id="from-pypi-recommended">
-<h3>From PyPI (Recommended)<a class="headerlink" href="#from-pypi-recommended" title="Link to this heading">¶</a></h3>
-<p>For the latest stable version, run:</p>
+<section id="id2">
+<h2>安装<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<p>您可以使用 <code class="docutils literal notranslate"><span class="pre">pip</span></code> 安装 PsyFlow。</p>
+<section id="pypi">
+<h3>从 PyPI (推荐)<a class="headerlink" href="#pypi" title="Link to this heading">¶</a></h3>
+<p>对于最新的稳定版本，请运行：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>psyflow
 </pre></div>
 </div>
 </section>
-<section id="from-github-development-version">
-<h3>From GitHub (Development Version)<a class="headerlink" href="#from-github-development-version" title="Link to this heading">¶</a></h3>
-<p>To get the very latest features and updates, you can install directly from the GitHub repository:</p>
+<section id="github">
+<h3>从 GitHub (开发版本)<a class="headerlink" href="#github" title="Link to this heading">¶</a></h3>
+<p>要获取最新的功能和更新，您可以直接从 GitHub 存储库安装：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/Xiong-Hao-MHC/psyflow.git
 </pre></div>
 </div>
 </section>
 </section>
-<section id="step-1-create-a-new-project">
-<h2>Step 1: Create a New Project<a class="headerlink" href="#step-1-create-a-new-project" title="Link to this heading">¶</a></h2>
-<p>First, let’s create a standardized project structure using the <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code> command-line tool. Open your terminal, navigate to where you want your project to live, and run:</p>
+<section id="id3">
+<h2>第 1 步：创建一个新项目<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>首先，让我们使用 <code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code> 命令行工具创建一个标准化的项目结构。打开您的终端，导航到您希望项目所在的位置，然后运行：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>psyflow-init<span class="w"> </span>my-simple-task
 </pre></div>
 </div>
-<p>This command creates a new folder named <code class="docutils literal notranslate"><span class="pre">my-simple-task</span></code> with the following layout:</p>
+<p>此命令会创建一个名为 <code class="docutils literal notranslate"><span class="pre">my-simple-task</span></code> 的新文件夹，其布局如下：</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>my-simple-task/
 ├── main.py
 ├── README.md
@@ -348,15 +348,15 @@
     └── utils.py
 </pre></div>
 </div>
-<p>This structure separates your configuration (<code class="docutils literal notranslate"><span class="pre">config/</span></code>), core logic (<code class="docutils literal notranslate"><span class="pre">src/</span></code>), and data (<code class="docutils literal notranslate"><span class="pre">data/</span></code>), keeping your project organized.</p>
+<p>这种结构将您的配置 (<code class="docutils literal notranslate"><span class="pre">config/</span></code>)、核心逻辑 (<code class="docutils literal notranslate"><span class="pre">src/</span></code>) 和数据 (<code class="docutils literal notranslate"><span class="pre">data/</span></code>) 分开，使您的项目保持井然有序。</p>
 </section>
-<section id="step-2-define-your-experiment-in-config-yaml">
-<h2>Step 2: Define Your Experiment in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code><a class="headerlink" href="#step-2-define-your-experiment-in-config-yaml" title="Link to this heading">¶</a></h2>
-<p>PsyFlow is designed around a declarative approach: you <em>define</em> your experiment’s components in a YAML file instead of hard-coding them in Python. This makes your experiment easier to read, modify, and share.</p>
-<p>Open <code class="docutils literal notranslate"><span class="pre">config/config.yaml</span></code> and replace its contents with the following:</p>
+<section id="config-yaml">
+<h2>第 2 步：在 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 中定义您的实验<a class="headerlink" href="#config-yaml" title="Link to this heading">¶</a></h2>
+<p>PsyFlow 围绕声明式方法设计：您在 YAML 文件中<em>定义</em>实验的组件，而不是在 Python 中硬编码。这使得您的实验更易于阅读、修改和共享。</p>
+<p>打开 <code class="docutils literal notranslate"><span class="pre">config/config.yaml</span></code> 并将其内容替换为以下内容：</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config/config.yaml</span>
 
-<span class="c1"># === Subject info form ===</span>
+<span class="c1"># === 被试信息表单 ===</span>
 <span class="nt">subinfo_fields</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subject_id</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span>
@@ -367,29 +367,29 @@
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">choice</span>
 <span class="w">    </span><span class="nt">choices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Male</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Female</span><span class="p p-Indicator">]</span>
 
-<span class="c1"># === Window settings ===</span>
+<span class="c1"># === 窗口设置 ===</span>
 <span class="nt">window</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1280</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">720</span><span class="p p-Indicator">]</span>
 <span class="w">  </span><span class="nt">bg_color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gray</span>
 <span class="w">  </span><span class="nt">fullscreen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span>
 
-<span class="c1"># === Task-level settings ===</span>
+<span class="c1"># === 任务级别设置 ===</span>
 <span class="nt">task</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">task_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;simple_rt&quot;</span>
 <span class="w">  </span><span class="nt">total_blocks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
 <span class="w">  </span><span class="nt">trial_per_block</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
-<span class="w">  </span><span class="nt">conditions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">go</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># We only have one condition in this simple task</span>
+<span class="w">  </span><span class="nt">conditions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">go</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># 在这个简单的任务中，我们只有一个条件</span>
 <span class="w">  </span><span class="nt">key_list</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">space</span><span class="p p-Indicator">]</span>
 
-<span class="c1"># === Stimuli Definitions ===</span>
+<span class="c1"># === 刺激定义 ===</span>
 <span class="nt">stimuli</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">instruction</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">textbox</span>
 <span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-<span class="w">      </span><span class="no">Welcome!</span>
-<span class="w">      </span><span class="no">Press the spacebar as fast as you can</span>
-<span class="w">      </span><span class="no">when you see the green circle.</span>
-<span class="w">      </span><span class="no">Press space to begin.</span>
+<span class="w">      </span><span class="no">欢迎！</span>
+<span class="w">      </span><span class="no">当您看到绿色圆圈时，</span>
+<span class="w">      </span><span class="no">请尽快按下空格键。</span>
+<span class="w">      </span><span class="no">按空格键开始。</span>
 <span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
 <span class="w">    </span><span class="nt">font</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Arial</span>
 <span class="w">    </span><span class="nt">letterHeight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
@@ -406,24 +406,24 @@
 <span class="w">    </span><span class="nt">fillColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">green</span>
 <span class="w">    </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">black</span>
 
-<span class="c1"># === Timing ===</span>
+<span class="c1"># === 计时 ===</span>
 <span class="nt">timing</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">fixation_duration</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># Random duration between 500ms and 1000ms</span>
-<span class="w">  </span><span class="nt">response_window</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span><span class="w"> </span><span class="c1"># 2 seconds to respond</span>
+<span class="w">  </span><span class="nt">fixation_duration</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1.0</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># 500ms 到 1000ms 之间的随机持续时间</span>
+<span class="w">  </span><span class="nt">response_window</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.0</span><span class="w"> </span><span class="c1"># 2 秒响应时间</span>
 </pre></div>
 </div>
-<p>In this file, we’ve defined:</p>
+<p>在此文件中，我们定义了：</p>
 <ul class="simple">
-<li><p>A simple subject info form.</p></li>
-<li><p>Basic window settings.</p></li>
-<li><p>High-level task parameters (2 blocks of 10 trials).</p></li>
-<li><p>All our visual stimuli (<code class="docutils literal notranslate"><span class="pre">instruction</span></code>, <code class="docutils literal notranslate"><span class="pre">fixation</span></code>, <code class="docutils literal notranslate"><span class="pre">target</span></code>).</p></li>
-<li><p>Timing parameters for the trial.</p></li>
+<li><p>一个简单的被试信息表单。</p></li>
+<li><p>基本的窗口设置。</p></li>
+<li><p>高级任务参数（2 个组块，每个组块 10 个试验）。</p></li>
+<li><p>我们所有的视觉刺激（<code class="docutils literal notranslate"><span class="pre">instruction</span></code>、<code class="docutils literal notranslate"><span class="pre">fixation</span></code>、<code class="docutils literal notranslate"><span class="pre">target</span></code>）。</p></li>
+<li><p>试验的计时参数。</p></li>
 </ul>
 </section>
-<section id="step-3-write-the-trial-logic">
-<h2>Step 3: Write the Trial Logic<a class="headerlink" href="#step-3-write-the-trial-logic" title="Link to this heading">¶</a></h2>
-<p>Now, let’s define what happens in a single trial. Open <code class="docutils literal notranslate"><span class="pre">src/run_trial.py</span></code> and add the following code. This function will be called for every trial in your experiment.</p>
+<section id="id4">
+<h2>第 3 步：编写试验逻辑<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
+<p>现在，让我们定义单个试验中发生的事情。打开 <code class="docutils literal notranslate"><span class="pre">src/run_trial.py</span></code> 并添加以下代码。此函数将为您的实验中的每个试验调用。</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># src/run_trial.py</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span>
@@ -431,21 +431,21 @@
 
 <span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Runs a single trial of the reaction time task.</span>
+<span class="sd">    运行反应时任务的单个试验。</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Create a dictionary to store data for this trial</span>
+    <span class="c1"># 为此试验创建一个字典来存储数据</span>
     <span class="n">trial_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="n">condition</span><span class="p">}</span>
 
-    <span class="c1"># Use a partial function to pre-fill common StimUnit arguments</span>
+    <span class="c1"># 使用偏函数预填充常见的 StimUnit 参数</span>
     <span class="n">make_unit</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">StimUnit</span><span class="p">,</span> <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="n">kb</span><span class="p">)</span>
 
-    <span class="c1"># 1. Show fixation cross</span>
+    <span class="c1"># 1. 显示注视十字</span>
     <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s1">&#39;fixation&#39;</span><span class="p">)</span> \
         <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">))</span> \
         <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">fixation_duration</span><span class="p">)</span> \
         <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
 
-    <span class="c1"># 2. Show target and capture response</span>
+    <span class="c1"># 2. 显示目标并捕获响应</span>
     <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s1">&#39;target&#39;</span><span class="p">)</span> \
         <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">))</span> \
         <span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
@@ -457,12 +457,12 @@
     <span class="k">return</span> <span class="n">trial_data</span>
 </pre></div>
 </div>
-<p>Here, we use <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> to chain together the events of a trial: show a fixation, then show a target and wait for a keypress. All data (like reaction time) is automatically collected and stored in <code class="docutils literal notranslate"><span class="pre">trial_data</span></code>.</p>
+<p>在这里，我们使用 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 将试验的事件链接在一起：显示一个注视点，然后显示一个目标并等待按键。所有数据（如反应时）都会自动收集并存储在 <code class="docutils literal notranslate"><span class="pre">trial_data</span></code> 中。</p>
 </section>
-<section id="step-4-the-main-script">
-<h2>Step 4: The Main Script<a class="headerlink" href="#step-4-the-main-script" title="Link to this heading">¶</a></h2>
-<p>Finally, let’s tie everything together in <code class="docutils literal notranslate"><span class="pre">main.py</span></code>. This script will load the configuration, set up the experiment, run the blocks of trials, and save the data.</p>
-<p>Replace the contents of <code class="docutils literal notranslate"><span class="pre">main.py</span></code> with this:</p>
+<section id="id5">
+<h2>第 4 步：主脚本<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h2>
+<p>最后，让我们在 <code class="docutils literal notranslate"><span class="pre">main.py</span></code> 中将所有内容整合在一起。此脚本将加载配置、设置实验、运行试验组块并保存数据。</p>
+<p>将 <code class="docutils literal notranslate"><span class="pre">main.py</span></code> 的内容替换为：</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># main.py</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
@@ -474,32 +474,32 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">src.run_trial</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_trial</span>
 
-<span class="c1"># 1. Load all configurations from the YAML file</span>
+<span class="c1"># 1. 从 YAML 文件加载所有配置</span>
 <span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
 
-<span class="c1"># 2. Collect subject information</span>
+<span class="c1"># 2. 收集被试信息</span>
 <span class="n">subform</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;subinfo_config&#39;</span><span class="p">])</span>
 <span class="n">subject_data</span> <span class="o">=</span> <span class="n">subform</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
 
-<span class="c1"># 3. Set up task settings</span>
+<span class="c1"># 3. 设置任务设置</span>
 <span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">])</span>
 <span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subject_data</span><span class="p">)</span>
 
-<span class="c1"># 4. Set up window and keyboard</span>
+<span class="c1"># 4. 设置窗口和键盘</span>
 <span class="n">win</span><span class="p">,</span> <span class="n">kb</span> <span class="o">=</span> <span class="n">initialize_exp</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
 
-<span class="c1"># 5. Load all stimuli defined in the config</span>
+<span class="c1"># 5. 加载配置中定义的所有刺激</span>
 <span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;stim_config&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>
 
-<span class="c1"># 6. Display instructions and wait to start</span>
+<span class="c1"># 6. 显示说明并等待开始</span>
 <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;instruction&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span> \
     <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;instruction&#39;</span><span class="p">))</span> \
     <span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
 
-<span class="c1"># 7. Run all blocks and trials</span>
+<span class="c1"># 7. 运行所有组块和试验</span>
 <span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">block_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">):</span>
-    <span class="n">count_down</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="c1"># Show a 3-second countdown before the block</span>
+    <span class="n">count_down</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span> <span class="c1"># 在组块前显示 3 秒倒计时</span>
     <span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
         <span class="n">block_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;block_</span><span class="si">{</span><span class="n">block_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
@@ -509,33 +509,33 @@
      <span class="o">.</span><span class="n">run_trial</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">run_trial</span><span class="p">,</span> <span class="n">stim_bank</span><span class="o">=</span><span class="n">stim_bank</span><span class="p">))</span> \
      <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
 
-<span class="c1"># 8. Save the collected data</span>
+<span class="c1"># 8. 保存收集的数据</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
 <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data saved to </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;数据已保存到 </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-<span class="c1"># 9. Clean up and exit</span>
+<span class="c1"># 9. 清理并退出</span>
 <span class="n">core</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
-<section id="step-5-run-your-experiment">
-<h2>Step 5: Run Your Experiment!<a class="headerlink" href="#step-5-run-your-experiment" title="Link to this heading">¶</a></h2>
-<p>That’s it! Your simple reaction time task is complete. To run it, open your terminal, navigate to the <code class="docutils literal notranslate"><span class="pre">my-simple-task</span></code> directory, and execute:</p>
+<section id="id6">
+<h2>第 5 步：运行您的实验！<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h2>
+<p>就是这样！您的简单反应时任务已完成。要运行它，请打开终端，导航到 <code class="docutils literal notranslate"><span class="pre">my-simple-task</span></code> 目录，然后执行：</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>main.py
 </pre></div>
 </div>
-<p>PsychoPy will start, display the subject info form, show the instructions, and then run your task.</p>
+<p>PsychoPy 将启动，显示被试信息表单，显示说明，然后运行您的任务。</p>
 </section>
-<section id="next-steps">
-<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
-<p>You’ve now built a basic experiment using PsyFlow’s core components. From here, you can explore more advanced features:</p>
+<section id="id7">
+<h2>后续步骤<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h2>
+<p>您现在已经使用 PsyFlow 的核心组件构建了一个基本的实验。从这里，您可以探索更高级的功能：</p>
 <ul class="simple">
-<li><p><strong>Define Stimuli</strong>: Learn how to define all your stimuli in one place in the <a class="reference internal" href="build_stimulus.html"><span class="std std-doc">StimBank tutorial</span></a>.</p></li>
-<li><p><strong>Build Complex Trials</strong>: Learn how to create more complex trials with multiple stimuli and response types in the <a class="reference internal" href="build_stimunit.html"><span class="std std-doc">StimUnit tutorial</span></a>.</p></li>
-<li><p><strong>Organize Blocks</strong>: See the <a class="reference internal" href="build_blocks.html"><span class="std std-doc">BlockUnit tutorial</span></a> to learn how to organize trials into blocks.</p></li>
-<li><p><strong>Send Hardware Triggers</strong>: See the <a class="reference internal" href="send_trigger.html"><span class="std std-doc">TriggerSender tutorial</span></a> to learn how to integrate EEG, fMRI, or eye-tracking triggers.</p></li>
-<li><p><strong>Use LLMs</strong>: Discover how to use Large Language Models to generate documentation or translate your task with the <a class="reference internal" href="llm_client.html"><span class="std std-doc">LLMClient tutorial</span></a>.</p></li>
+<li><p><strong>定义刺激</strong>：在<a class="reference internal" href="build_stimulus_cn.html"><span class="std std-doc">StimBank 教程</span></a>中学习如何在一个地方定义所有刺激。</p></li>
+<li><p><strong>构建复杂的试验</strong>：在<a class="reference internal" href="build_stimunit_cn.html"><span class="std std-doc">StimUnit 教程</span></a>中学习如何创建具有多种刺激和响应类型的更复杂的试验。</p></li>
+<li><p><strong>组织组块</strong>：请参阅<a class="reference internal" href="build_blocks_cn.html"><span class="std std-doc">BlockUnit 教程</span></a>以了解如何将试验组织成组块。</p></li>
+<li><p><strong>发送硬件触发器</strong>：请参阅<a class="reference internal" href="send_trigger_cn.html"><span class="std std-doc">TriggerSender 教程</span></a>以了解如何集成 EEG、fMRI 或眼动追踪触发器。</p></li>
+<li><p><strong>使用 LLM</strong>：在<a class="reference internal" href="llm_client_cn.html"><span class="std std-doc">LLMClient 教程</span></a>中发现如何使用大型语言模型生成文档或翻译您的任务。</p></li>
 </ul>
 </section>
 </section>
@@ -545,23 +545,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="get_subinfo.html">
+          <a class="next-page" href="get_subinfo_cn.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">SubInfo: Collecting Participant Information</div>
+                <div class="title">SubInfo: 收集被试信息</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="../index.html">
+          <a class="prev-page" href="llm_client.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Home</div>
+                <div class="title">Overview</div>
                 
               </div>
             </a>
@@ -595,19 +595,19 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Getting Started with PsyFlow</a><ul>
-<li><a class="reference internal" href="#what-is-psyflow">What is PsyFlow?</a></li>
-<li><a class="reference internal" href="#installation">Installation</a><ul>
-<li><a class="reference internal" href="#from-pypi-recommended">From PyPI (Recommended)</a></li>
-<li><a class="reference internal" href="#from-github-development-version">From GitHub (Development Version)</a></li>
+<li><a class="reference internal" href="#">PsyFlow 入门指南</a><ul>
+<li><a class="reference internal" href="#id1">什么是 PsyFlow？</a></li>
+<li><a class="reference internal" href="#id2">安装</a><ul>
+<li><a class="reference internal" href="#pypi">从 PyPI (推荐)</a></li>
+<li><a class="reference internal" href="#github">从 GitHub (开发版本)</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#step-1-create-a-new-project">Step 1: Create a New Project</a></li>
-<li><a class="reference internal" href="#step-2-define-your-experiment-in-config-yaml">Step 2: Define Your Experiment in <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code></a></li>
-<li><a class="reference internal" href="#step-3-write-the-trial-logic">Step 3: Write the Trial Logic</a></li>
-<li><a class="reference internal" href="#step-4-the-main-script">Step 4: The Main Script</a></li>
-<li><a class="reference internal" href="#step-5-run-your-experiment">Step 5: Run Your Experiment!</a></li>
-<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+<li><a class="reference internal" href="#id3">第 1 步：创建一个新项目</a></li>
+<li><a class="reference internal" href="#config-yaml">第 2 步：在 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 中定义您的实验</a></li>
+<li><a class="reference internal" href="#id4">第 3 步：编写试验逻辑</a></li>
+<li><a class="reference internal" href="#id5">第 4 步：主脚本</a></li>
+<li><a class="reference internal" href="#id6">第 5 步：运行您的实验！</a></li>
+<li><a class="reference internal" href="#id7">后续步骤</a></li>
 </ul>
 </li>
 </ul>

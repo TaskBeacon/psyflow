@@ -469,6 +469,6 @@ Alternatively, view the full list in this [Gist of supported voices](https://gis
 
 Now that you understand how to use `StimBank`, you can:
 
-- Explore the [StimUnit tutorial](build_stimunit.md) to learn how to create trial sequences
-- Check out the [BlockUnit tutorial](build_blocks.md) to organize trials into blocks
-- Learn about [trigger sending](send_trigger.md) for EEG/MEG experiments
+- **Build Trials**: Explore the [StimUnit tutorial](build_stimunit.md) to learn how to create trial sequences
+- **Organize Blocks**: Check out the [BlockUnit tutorial](build_blocks.md) to organize trials into blocks
+- **Send Triggers**: Learn about [trigger sending](send_trigger.md) for EEG/MEG experiments

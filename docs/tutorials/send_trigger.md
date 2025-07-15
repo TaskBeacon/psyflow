@@ -341,3 +341,11 @@ This example demonstrates:
 
 If you choose not to pass a `triggersender`, the exact same code will run as a behavioral-only task, emitting logs but without hardware triggers.
 
+## Next Steps
+
+Now that you know how to send triggers, you can explore other parts of PsyFlow:
+
+- **Getting Started**: If you're new to PsyFlow, check out the [Getting Started tutorial](getting_started.md).
+- **Building Trials**: Learn how to build complex trials in the [StimUnit tutorial](build_stimunit.md).
+- **Organizing Blocks**: See the [BlockUnit tutorial](build_blocks.md) to learn how to organize trials into blocks.
+

@@ -571,7 +571,6 @@ df.to_csv(settings.res_file, index=False)
 
 Now that you understand how to use `BlockUnit`, you can:
 
-- Learn about [StimUnit](build_trialunit.md) for more control over individual trials
-- Explore [StimBank](build_stimulus.md) for efficient stimulus management
-- Check out [TriggerSender](send_trigger.md) for EEG/MEG experiment integration
-- See [TaskSettings](getting_started.md) for experiment-wide configuration
+- **Build Trials**: Learn about [StimUnit](build_stimunit.md) for more control over individual trials
+- **Manage Stimuli**: Explore [StimBank](build_stimulus.md) for efficient stimulus management
+- **Send Triggers**: Check out [TriggerSender](send_trigger.md) for EEG/MEG experiment integration
