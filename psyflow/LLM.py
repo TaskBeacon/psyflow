@@ -33,6 +33,7 @@ class LLMClient:
       - ``gemini``  : Google GenAI SDK
       - ``openai``  : Official OpenAI SDK
       - ``deepseek``: OpenAI SDK with custom base_url
+      - ``moonshot`` : OpenAI SDK with custom base_url
 
     Attributes:
         provider:        Lowercase provider name.
@@ -64,14 +65,20 @@ class LLMClient:
         self.last_response_token_count: Optional[int] = None
 
         if self.provider == "gemini":
-            from google import genai  # noqa: F401
-            from google.genai.types import GenerateContentConfig  # noqa: F401
+            from google import genai  
+            from google.genai.types import GenerateContentConfig  
             self._sdk_client = genai.Client(api_key=self.api_key)
             self._GenerateContentConfig = GenerateContentConfig
 
-        elif self.provider in ("openai", "deepseek"):
-            from openai import OpenAI  # noqa: F401
-            base_url = "https://api.deepseek.com/v1" if self.provider == "deepseek" else None
+        elif self.provider in ("openai", "deepseek", "moonshot"):
+            from openai import OpenAI  # OpenAI-compatible SDK
+
+            base_urls = {
+                "openai": None,  # Default for OpenAI
+                "deepseek": "https://api.deepseek.com/v1",
+                "moonshot": "https://api.moonshot.cn/v1",
+            }
+            base_url = base_urls.get(self.provider)
             self._sdk_client = OpenAI(api_key=self.api_key, base_url=base_url)
 
         else:
