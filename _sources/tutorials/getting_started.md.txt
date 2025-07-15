@@ -1,394 +1,252 @@
-# Getting Started with psyflow
+# Getting Started with PsyFlow
 
-Welcome to **psyflow**, a powerful yet lightweight framework for building PsychoPy experiments with modular, chainable components. This guide will walk you through installation, basic setup, and running your first experiment.
+## What is PsyFlow?
 
-## What is psyflow?
+PsyFlow is a high-level wrapper for PsychoPy designed to streamline the development of cognitive neuroscience experiments. It promotes a **declarative** and **organized** workflow, allowing you to focus more on your experimental logic and less on boilerplate code.
 
-Psyflow is a framework that simplifies the creation of cognitive and behavioral experiments by providing:
+Key features include:
 
-- **Modular components** that can be easily combined and reused
-- **Chainable methods** for intuitive experiment construction
-- **EEG/MEG-friendly** trigger handling for precise timing
-- **Flexible stimulus management** through code or configuration files
-- **Structured data collection** for consistent experimental design
+- **Declarative Syntax**: Define stimuli, timings, and task structure in easy-to-read YAML files.
+- **Structured Project Layout**: A command-line tool (`psyflow-init`) generates a standardized, organized folder structure for your projects.
+- **Simplified API**: High-level classes like `StimUnit` and `BlockUnit` handle the complexities of stimulus presentation, response capturing, and data logging.
+- **Extensibility**: Easily integrate hardware triggers (EEG, fMRI), eye-trackers, and even Large Language Models (LLMs) for advanced use cases.
+
+This guide will walk you through creating a simple reaction time task from scratch, demonstrating the core concepts of PsyFlow.
 
 ## Installation
 
-### Prerequisites
+You can install PsyFlow using `pip`.
 
-Before installing psyflow, make sure you have PsychoPy installed:
+#### From PyPI (Recommended)
 
-```bash
-pip install psychopy
-```
-
-### Installing psyflow
-
-You can install psyflow directly from PyPI:
+For the latest stable version, run:
 
 ```bash
-pip install psyflow==0.1.1
+pip install psyflow
 ```
 
-Or if you prefer to work with the source code:
+#### From GitHub (Development Version)
+
+To get the very latest features and updates, you can install directly from the GitHub repository:
 
 ```bash
-git clone https://github.com/TaskBeacon/psyflow.git
-cd psyflow
-pip install -e .
+pip install git+https://github.com/Xiong-Hao-MHC/psyflow.git
 ```
 
-## Basic Experiment Structure
+## Step 1: Create a New Project
 
-A typical psyflow experiment follows these core steps:
+First, let's create a standardized project structure using the `psyflow-init` command-line tool. Open your terminal, navigate to where you want your project to live, and run:
 
-1. **Configure experiment settings** using `TaskSettings`
-   - Define blocks, trials, conditions, and randomization
-   - Set up display parameters and response keys
-
-2. **Collect participant information** with `SubInfo`
-   - Create customizable input forms
-   - Validate participant data
-
-3. **Build stimuli** using `StimBank`
-   - Register visual and auditory stimuli
-   - Load stimuli from configuration files or code
-
-4. **Define triggers** with `TriggerSender`
-   - Set up EEG/MEG compatible triggers
-   - Configure timing and callbacks
-
-5. **Create trials** with `StimUnit`
-   - Combine stimuli into trial sequences
-   - Add response handling and timing control
-
-6. **Organize blocks** using `BlockUnit`
-   - Group trials into experimental blocks
-   - Manage condition balancing and randomization
-
-7. **Run the experiment and collect data**
-   - Execute trials and blocks
-   - Save results in structured formats
-
-## Step-by-Step Guide
-
-### 1. Configure Your Task
-
-The `TaskSettings` class provides a centralized way to manage experiment parameters:
-
-```python
-from psyflow import TaskSettings
-
-# Create settings from a dictionary
-config = {
-    "total_blocks": 2,                  # Number of experimental blocks
-    "total_trials": 20,                # Total trials across all blocks
-    "seed_mode": "same_within_sub",    # Randomization strategy
-    "key_list": ["left", "right"],     # Response keys
-    "conditions": ["reward", "neutral"], # Experimental conditions
-    "bg_color": "black",               # Window background color
-    "size": [1920, 1080],              # Window size in pixels
-    "fullscreen": True                 # Fullscreen mode
-}
-settings = TaskSettings.from_dict(config)
+```bash
+psyflow-init my-simple-task
 ```
 
-After collecting participant information, you can add it to your settings:
+This command creates a new folder named `my-simple-task` with the following layout:
 
-```python
-# Add subject information to generate file paths and seeds
-settings.add_subinfo({"subject_id": "001", "session_name": "A"})
+```
+my-simple-task/
+├── main.py
+├── README.md
+├── config/
+│   └── config.yaml
+├── data/
+└── src/
+    ├── __init__.py
+    ├── run_trial.py
+    └── utils.py
 ```
 
-This automatically creates:
-- `settings.block_seed`: Random seeds for each block
-- `settings.log_file`: Path for PsychoPy log file
-- `settings.res_file`: Path for results data file
+This structure separates your configuration (`config/`), core logic (`src/`), and data (`data/`), keeping your project organized.
 
-### 2. Collect Participant Information
+## Step 2: Define Your Experiment in `config.yaml`
 
-The `SubInfo` class creates customizable GUI dialogs for collecting participant data:
+PsyFlow is designed around a declarative approach: you *define* your experiment's components in a YAML file instead of hard-coding them in Python. This makes your experiment easier to read, modify, and share.
 
-```python
-import yaml
-from psyflow import SubInfo
+Open `config/config.yaml` and replace its contents with the following:
 
-# Load configuration from YAML file
-with open("subinfo.yaml") as f:
-    config = yaml.safe_load(f)
+```yaml
+# config/config.yaml
 
-# Example YAML configuration:
-# subinfo_fields:
-#   - name: subject_id
-#     type: int
-#     constraints: {min: 101, max: 999, digits: 3}
-#   - name: age
-#     type: int
-#     constraints: {min: 18, max: 100}
-#   - name: condition
-#     type: choice
-#     choices: [control, experimental]
-# subinfo_mapping:
-#   subject_id: "Participant ID"
-#   age: "Age (years)"
-#   condition: "Condition Group"
+# === Subject info form ===
+subinfo_fields:
+  - name: subject_id
+    type: int
+    constraints:
+      min: 1
+      max: 999
+  - name: gender
+    type: choice
+    choices: [Male, Female]
 
-# Create collector and show dialog
-collector = SubInfo(config)
-subinfo = collector.collect()  # Opens GUI dialog
+# === Window settings ===
+window:
+  size: [1280, 720]
+  bg_color: gray
+  fullscreen: False
 
-# Result example: {'subject_id': '001', 'age': 25, 'condition': 'control'}
+# === Task-level settings ===
+task:
+  task_name: "simple_rt"
+  total_blocks: 2
+  trial_per_block: 10
+  conditions: [go] # We only have one condition in this simple task
+  key_list: [space]
+
+# === Stimuli Definitions ===
+stimuli:
+  instruction:
+    type: textbox
+    text: |
+      Welcome!
+      Press the spacebar as fast as you can
+      when you see the green circle.
+      Press space to begin.
+    color: white
+    font: Arial
+    letterHeight: 0.8
+
+  fixation:
+    type: text
+    text: "+"
+    color: white
+    height: 2
+
+  target:
+    type: circle
+    radius: 3
+    fillColor: green
+    lineColor: black
+
+# === Timing ===
+timing:
+  fixation_duration: [0.5, 1.0] # Random duration between 500ms and 1000ms
+  response_window: 2.0 # 2 seconds to respond
 ```
 
-Pass this information to your settings:
+In this file, we've defined:
+- A simple subject info form.
+- Basic window settings.
+- High-level task parameters (2 blocks of 10 trials).
+- All our visual stimuli (`instruction`, `fixation`, `target`).
+- Timing parameters for the trial.
+
+## Step 3: Write the Trial Logic
+
+Now, let's define what happens in a single trial. Open `src/run_trial.py` and add the following code. This function will be called for every trial in your experiment.
 
 ```python
-settings.add_subinfo(subinfo)
-```
+# src/run_trial.py
 
-### 3. Build Your Stimuli
-
-The `StimBank` class provides a flexible way to manage stimuli:
-
-```python
-from psyflow import StimBank
-from psychopy.visual import TextStim, Circle, Window
-
-# Create PsychoPy window
-win = Window(size=settings.size, fullscr=settings.fullscreen, 
-             color=settings.bg_color, units=settings.units)
-
-# Create stimulus bank
-stim_bank = StimBank(win)
-
-# Method 1: Register stimuli using decorators
-@stim_bank.define("fixation")
-def make_fixation(win):
-    return TextStim(win, text="+", color="white", height=1.0)
-
-@stim_bank.define("feedback_correct")
-def make_feedback(win):
-    return TextStim(win, text="Correct!", color="green", height=0.8)
-
-# Method 2: Register stimuli from dictionary/YAML
-stim_bank.add_from_dict({
-    "target": {
-        "type": "circle",
-        "radius": 0.5,
-        "fillColor": "red",
-        "lineColor": "white"
-    },
-    "cue": {
-        "type": "text",
-        "text": ">",
-        "color": "yellow",
-        "height": 1.2
-    }
-})
-
-# Preload all stimuli (optional but recommended)
-stim_bank.preload_all()
-
-# Retrieve stimuli when needed
-fixation = stim_bank.get("fixation")
-target = stim_bank.get("target")
-```
-
-### 4. Set Up Triggers
-
-The `TriggerSender` class handles EEG/MEG trigger codes:
-
-```python
-import yaml
-from psyflow import TriggerSender
-
-# Load trigger codes from YAML
-with open("triggers.yaml") as f:
-    triggers = yaml.safe_load(f)
-
-# Example YAML content:
-# fix_onset: 1
-# target_onset: 2
-# resp_L: 11
-# resp_R: 12
-# timeout: 99
-
-# For real hardware (e.g., parallel port)
-# import parallel
-# port = parallel.ParallelPort(address=0x0378)  # Adjust address as needed
-# sender = TriggerSender(lambda code: port.write(bytes([code])))
-
-# For development/testing (mock mode)
-sender = TriggerSender(mock=True)
-
-# Test trigger
-sender.send(triggers["fix_onset"])  # Prints: [MockTrigger] Sent code: 1
-```
-
-### 5. Create & Run a Trial
-
-The `StimUnit` class manages individual trials:
-
-```python
-from psychopy.hardware.keyboard import Keyboard
 from psyflow import StimUnit
+from functools import partial
 
-# Create keyboard for responses
-kb = Keyboard()
+def run_trial(win, kb, settings, condition, stim_bank):
+    """
+    Runs a single trial of the reaction time task.
+    """
+    # Create a dictionary to store data for this trial
+    trial_data = {"condition": condition}
 
-# Create trial unit
-trial = StimUnit("trial_1", win, kb, triggersender=sender)
+    # Use a partial function to pre-fill common StimUnit arguments
+    make_unit = partial(StimUnit, win=win, kb=kb)
 
-# Configure trial using chainable methods
-trial \
-    .add_stim(fixation, target) \
-    .on_start(lambda unit: unit.send_trigger(triggers["fix_onset"])) \
-    .show(fixation, duration=0.5) \
-    .show(target, duration=1.0, trigger=triggers["target_onset"]) \
-    .capture_response(
-        keys=["left", "right"],
-        duration=2.0,
-        onset_trigger=triggers["target_onset"],
-        response_trigger={
-            "left": triggers["resp_L"], 
-            "right": triggers["resp_R"]
-        },
-        timeout_trigger=triggers["timeout"],
-        correct_keys=["left"],
-    ) \
-    .on_end(lambda unit: print(f"Response: {unit.state}")) \
-    .run()
+    # 1. Show fixation cross
+    make_unit(unit_label='fixation') \
+        .add_stim(stim_bank.get("fixation")) \
+        .show(duration=settings.fixation_duration) \
+        .to_dict(trial_data)
 
-# Access trial results
-print(f"RT: {trial.state.get('rt')}")
-print(f"Correct: {trial.state.get('correct')}")
+    # 2. Show target and capture response
+    make_unit(unit_label='target') \
+        .add_stim(stim_bank.get("target")) \
+        .capture_response(
+            keys=settings.key_list,
+            duration=settings.response_window
+        ) \
+        .to_dict(trial_data)
+
+    return trial_data
 ```
+Here, we use `StimUnit` to chain together the events of a trial: show a fixation, then show a target and wait for a keypress. All data (like reaction time) is automatically collected and stored in `trial_data`.
 
-### 6. Organizing Blocks
+## Step 4: The Main Script
 
-The `BlockUnit` class helps manage multiple trials:
+Finally, let's tie everything together in `main.py`. This script will load the configuration, set up the experiment, run the blocks of trials, and save the data.
+
+Replace the contents of `main.py` with this:
 
 ```python
-from psyflow import BlockUnit
+# main.py
 
-# Create a block
-block = BlockUnit(
-    block_id="block_1",
-    block_idx=0,
-    settings=settings,
-    window=win,
-    keyboard=kb
+from psyflow import (
+    BlockUnit, StimBank, SubInfo, TaskSettings,
+    load_config, initialize_exp, count_down
 )
+import pandas as pd
+from psychopy import core
+from functools import partial
+from src.run_trial import run_trial
 
-# Generate balanced conditions
-block.generate_conditions(
-    condition_labels=settings.conditions,
-    order="random"
-)
+# 1. Load all configurations from the YAML file
+cfg = load_config()
 
-# Define trial execution function
-def run_trial(condition, trial_idx, block):
-    # Create trial
-    trial = StimUnit(f"trial_{trial_idx}", win, kb, triggersender=sender)
-    
-    # Configure based on condition
-    if condition == "reward":
-        target_color = "gold"
-    else:  # neutral
-        target_color = "blue"
-    
-    # Update stimulus
-    target = stim_bank.rebuild("target", fillColor=target_color)
-    
-    # Run trial (simplified)
-    trial \
-        .add_stim(fixation, target) \
-        .show(fixation, duration=0.5) \
-        .show(target, duration=1.0) \
-        .capture_response(keys=settings.key_list, duration=2.0) \
-        .run()
-    
-    # Return trial data
-    return trial.to_dict()
+# 2. Collect subject information
+subform = SubInfo(cfg['subinfo_config'])
+subject_data = subform.collect()
 
-# Run all trials in the block
-block.run_trials(run_trial)
+# 3. Set up task settings
+settings = TaskSettings.from_dict(cfg['task_config'])
+settings.add_subinfo(subject_data)
 
-# Get block results
-block_results = block.to_dict()
-```
+# 4. Set up window and keyboard
+win, kb = initialize_exp(settings)
 
-### 7. Putting It All Together
+# 5. Load all stimuli defined in the config
+stim_bank = StimBank(win, cfg['stim_config']).preload_all()
 
-Here's how to combine everything into a complete experiment:
+# 6. Display instructions and wait to start
+StimUnit('instruction', win, kb) \
+    .add_stim(stim_bank.get('instruction')) \
+    .wait_and_continue()
 
-```python
-# Initialize experiment components
-settings = TaskSettings.from_dict(config)
-subinfo = SubInfo(subinfo_config).collect()
-settings.add_subinfo(subinfo)
-
-win = Window(size=settings.size, fullscr=settings.fullscreen, 
-             color=settings.bg_color, units=settings.units)
-kb = Keyboard()
-
-stim_bank = StimBank(win)
-# ... register stimuli ...
-
-sender = TriggerSender(mock=True)
-
-# Run blocks
-all_results = []
-for b_idx in range(settings.total_blocks):
-    # Create block
+# 7. Run all blocks and trials
+all_data = []
+for block_i in range(settings.total_blocks):
+    count_down(win, 3) # Show a 3-second countdown before the block
     block = BlockUnit(
-        block_id=f"block_{b_idx+1}",
-        block_idx=b_idx,
+        block_id=f"block_{block_i}",
         settings=settings,
         window=win,
         keyboard=kb
-    )
-    
-    # Generate conditions
-    block.generate_conditions(condition_labels=settings.conditions)
-    
-    # Add block start/end hooks
-    block.on_start(lambda b: win.flip())
-    block.on_end(lambda b: win.flip())
-    
-    # Run all trials
-    block.run_trials(run_trial)
-    
-    # Save block results
-    block.to_dict(target_list=all_results)
-    
-    # Show break between blocks (except after last block)
-    if b_idx < settings.total_blocks - 1:
-        break_text = TextStim(win, text="Take a break. Press space to continue.", 
-                             color="white", height=0.8)
-        break_text.draw()
-        win.flip()
-        kb.waitKeys(keyList=["space"])
+    ).generate_conditions() \
+     .run_trial(partial(run_trial, stim_bank=stim_bank)) \
+     .to_dict(all_data)
 
-# Save all results
-import pandas as pd
-df = pd.DataFrame(all_results)
+# 8. Save the collected data
+df = pd.DataFrame(all_data)
 df.to_csv(settings.res_file, index=False)
+print(f"Data saved to {settings.res_file}")
 
-# Clean up
-win.close()
+# 9. Clean up and exit
+core.quit()
 ```
+
+## Step 5: Run Your Experiment!
+
+That's it! Your simple reaction time task is complete. To run it, open your terminal, navigate to the `my-simple-task` directory, and execute:
+
+```bash
+python main.py
+```
+
+PsychoPy will start, display the subject info form, show the instructions, and then run your task.
 
 ## Next Steps
 
-Congratulations! You've learned the basics of creating experiments with psyflow. To dive deeper into specific components, check out these tutorials:
+You've now built a basic experiment using PsyFlow's core components. From here, you can explore more advanced features:
 
-- [Collecting Participant Information](get_subinfo.md)
-- [Configuring Task Settings](task_settings.md)
-- [Building Experimental Blocks](build_blocks.md)
-- [Creating Trial Units](build_trialunit.md)
-- [Managing Stimuli](build_stimulus.md)
-- [Sending EEG/MEG Triggers](send_trigger.md)
-- [Using the Command Line Interface](cli_usage.md)
-
-Happy experimenting!
+- **Define Stimuli**: Learn how to define all your stimuli in one place in the [StimBank tutorial](build_stimulus.md).
+- **Build Complex Trials**: Learn how to create more complex trials with multiple stimuli and response types in the [StimUnit tutorial](build_stimunit.md).
+- **Organize Blocks**: See the [BlockUnit tutorial](build_blocks.md) to learn how to organize trials into blocks.
+- **Send Hardware Triggers**: See the [TriggerSender tutorial](send_trigger.md) to learn how to integrate EEG, fMRI, or eye-tracking triggers.
+- **Use LLMs**: Discover how to use Large Language Models to generate documentation or translate your task with the [LLMClient tutorial](llm_client.md).

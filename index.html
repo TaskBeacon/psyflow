@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Getting Started with psyflow" href="tutorials/getting_started.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Getting Started with PsyFlow" href="tutorials/getting_started.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
         <title>psyflow 0.1.1 documentation</title>
@@ -205,16 +205,58 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/getting_started.html">Getting Started with psyflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/getting_started.html">Getting Started with PsyFlow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_blocks.html">BlockUnit: Managing Trials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">Sending Hardware Triggers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html#key-features">Key Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html#quick-reference">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html#detailed-usage-guide">Detailed Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html#integration-with-stimunit">5. Integration with <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html#next-steps">Next Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html#quick-reference">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html#creating-a-new-project">1. Creating a New Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html#inplace-initialization">2. In‑Place Initialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html#how-it-works-internally">3. How It Works Internally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html#next-steps">Next Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/utilities.html">Utility Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html#supported-providers">Supported Providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html#key-features">Key Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html#quick-reference">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html#detailed-usage-guide">Detailed Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html#next-steps">Next Steps</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">中文教程(Chinese Tutorials)</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/getting_started_cn.html">PsyFlow 入门指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/get_subinfo_cn.html">SubInfo: 收集被试信息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/task_settings_cn.html">TaskSettings: 管理实验配置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_blocks_cn.html">BlockUnit: 组织和运行试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus_cn.html">StimBank：灵活的刺激管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimunit_cn.html">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html">概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html#id2">主要功能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html#id3">快速参考</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html#id4">详细使用指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html#stimunit">5. 与 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 集成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html#id8">后续步骤</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html">概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html#id2">快速参考</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html#id3">1. 创建一个新项目</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html#id4">2. 就地初始化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html#id5">3. 内部工作原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html#id6">后续步骤</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html">概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html#id2">支持的提供商</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html#id3">主要功能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html#id4">快速参考</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html#id5">详细使用指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html#id9">后续步骤</a></li>
 </ul>
 
 </div>
@@ -255,7 +297,8 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="welcome-to-psyflow">
+          <a class="reference internal image-reference" href="_images/flowchart.png"><img alt="flowchart" class="align-center" src="_images/flowchart.png" style="height: 300px;" /></a>
+<section id="welcome-to-psyflow">
 <h1>Welcome to psyflow<a class="headerlink" href="#welcome-to-psyflow" title="Link to this heading">¶</a></h1>
 <p><strong>psyflow</strong> is a modular framework for building cognitive and behavioral tasks using PsychoPy and Python code.</p>
 <section id="features">
@@ -270,16 +313,60 @@
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/getting_started.html">Getting Started with psyflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/getting_started.html">Getting Started with PsyFlow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/get_subinfo.html">SubInfo: Collecting Participant Information</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/task_settings.html">TaskSettings: Configuring Your Experiment</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_blocks.html">BlockUnit: Managing Trials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">Sending Hardware Triggers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">Command-Line Interface (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html#key-features">Key Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html#quick-reference">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html#detailed-usage-guide">Detailed Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html#integration-with-stimunit">5. Integration with <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger.html#next-steps">Next Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html#quick-reference">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html#creating-a-new-project">1. Creating a New Project</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html#inplace-initialization">2. In‑Place Initialization</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html#how-it-works-internally">3. How It Works Internally</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage.html#next-steps">Next Steps</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/utilities.html">Utility Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html">Interacting with Large Language Models (LLMs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html#supported-providers">Supported Providers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html#key-features">Key Features</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html#quick-reference">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html#detailed-usage-guide">Detailed Usage Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client.html#next-steps">Next Steps</a></li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">中文教程(Chinese Tutorials)</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/getting_started_cn.html">PsyFlow 入门指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/get_subinfo_cn.html">SubInfo: 收集被试信息</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/task_settings_cn.html">TaskSettings: 管理实验配置</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_blocks_cn.html">BlockUnit: 组织和运行试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimulus_cn.html">StimBank：灵活的刺激管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/build_stimunit_cn.html">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html">概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html#id2">主要功能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html#id3">快速参考</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html#id4">详细使用指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html#stimunit">5. 与 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 集成</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/send_trigger_cn.html#id8">后续步骤</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html">概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html#id2">快速参考</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html#id3">1. 创建一个新项目</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html#id4">2. 就地初始化</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html#id5">3. 内部工作原理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/cli_usage_cn.html#id6">后续步骤</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html">概述</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html#id2">支持的提供商</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html#id3">主要功能</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html#id4">快速参考</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html#id5">详细使用指南</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/llm_client_cn.html#id9">后续步骤</a></li>
 </ul>
 </div>
 <ul class="simple">
@@ -299,7 +386,7 @@
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Getting Started with psyflow</div>
+                <div class="title">Getting Started with PsyFlow</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -335,7 +422,9 @@
           <div class="toc-tree">
             <ul>
 <li><a class="reference internal" href="#">Welcome to psyflow</a><ul>
-<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#features">Features</a><ul>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
