@@ -52,7 +52,7 @@ trigger_sender.send(255)
 
 ### 2. Connecting to Real Hardware
 
-```{Warning}
+```{warning}
  Of the examples below, only the Serial (UART) Port example has been tested by the authors. The EGI, Neuroscan, Brain Products (RDA) and other device snippets were gathered from online sources and have not been validated on actual hardware. If you test these or implement triggers for additional devices (e.g., eye‑trackers), please share your code so we can keep this documentation up to date.
 ```
 

@@ -430,7 +430,7 @@ cue.to_dict(trial_data)
 - `highlight_stim` maps each key to a visual cue (e.g., a frame or dot).
 - If `dynamic_highlight=True`, each new key press updates the highlight until the window ends.
 
-```{Tip}
+```{tip}
 You can also pass a `dict` to `response_trigger` to send different trigger codes per key.
 ```
 
@@ -608,7 +608,7 @@ make_unit('resp_chain', win, kb) \
     .on_end(lambda u: u.log_unit()) \
     .run()
 ```
-```{Warning}
+```{warning}
 In most cases, using `.show()`, `.capture_response()`, and `.wait_and_continue()` covers the vast majority of task requirements and has been extensively tested. Lifecycle hooks offer maximum flexibility, but they are less commonly used and have seen less practical validation. We did not test their usage extensively. Only opt for manual hooks when you need custom behavior beyond the built-in methods—and proceed with caution.
 ```
 
@@ -680,7 +680,7 @@ fb.set_state(prefix='special', hit=True)
 | Custom  | 'special'    | special\_hit                   |
 
 
-```{Tip}
+```{tip}
 `set_state` is **Chaining**: it returns the same `StimUnit`, so you can chain calls:`unit.set_state(block=2, trial=5).set_state(condition='win')`
 ```
 
@@ -709,7 +709,7 @@ Several `StimUnit` methods populate internal state without explicit `set_state()
 
 Use this table to quickly see what state values are filled in automatically, so you know which additional `set_state()` calls you might still need.
 
-```{Note}
+```{note}
 For `capture_response()`, the `hit` means the response was a correct key press.
 ```
 

@@ -415,7 +415,7 @@ cue.to_dict(trial_data)
 - `highlight_stim` 将每个按键映射到一个视觉提示（例如，一个框或一个点）。
 - 如果 `dynamic_highlight=True`，每次新的按键都会更新高亮，直到窗口结束。
 
-```{Tip}
+```{tip}
 您还可以将一个 `dict` 传递给 `response_trigger`，以便为每个按键发送不同的触发码。
 ```
 
@@ -593,7 +593,7 @@ make_unit('resp_chain', win, kb) \
     .on_end(lambda u: u.log_unit()) \
     .run()
 ```
-```{Warning}
+```{warning}
 在大多数情况下，使用 `.show()`、`.capture_response()` 和 `.wait_and_continue()` 涵盖了绝大多数任务需求，并经过了广泛测试。生命周期钩子提供了最大的灵活性，但它们不太常用，并且实际验证较少。我们没有广泛测试它们的用法。只有当您需要超出内置方法的自定义行为时才选择手动钩子——并谨慎行事。
 ```
 
@@ -663,7 +663,7 @@ fb.set_state(prefix='special', hit=True)
 | 原始 | '' | hit, delta |
 | 自定义 | 'special' | special_hit |
 
-```{Tip}
+```{tip}
 `set_state` 是 **可链式调用的**：它返回同一个 `StimUnit`，所以您可以链式调用：`unit.set_state(block=2, trial=5).set_state(condition='win')`
 ```
 
@@ -690,7 +690,7 @@ fb.set_state(prefix='special', hit=True)
 
 使用此表可以快速查看哪些状态值是自动填充的，这样您就知道可能还需要哪些额外的 `set_state()` 调用。
 
-```{Note}
+```{note}
 对于 `capture_response()`，`hit` 表示反应是正确的按键。
 ```
 
