@@ -9,11 +9,13 @@
 project = 'psyflow'
 copyright = '2025, Zhipeng Cao'
 author = 'Zhipeng Cao'
+
 import os
 import sys
 sys.path.insert(0, os.path.abspath(".."))  # so Sphinx can find your package
 from psyflow._version import read_version
 release = read_version()
+html_title = "psyflow" + " " + release
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
