@@ -52,21 +52,18 @@ psyflow-init
 Before copying template files, the CLI checks for existing files or folders with the same names. If any conflicts are found, you will be prompted:
 
 ```
-⚠ Existing file 'main.py' detected. Overwrite? [y/N]:
+⚠ Existing file 'main.py' detected. Overwrite this and all remaining? [y/N]:
 ```
 
-- Enter `y` to proceed and replace the file.
+- Enter `y` to proceed and replace all existing files.
 - Enter `n` (or press Enter) to skip that file and continue with others.
 
 This interactive confirmation prevents unintentional data loss during in-place initialization.
 
 ## 3. How It Works Internally
-
 1. **Locate template**: Uses `importlib.resources` to find the `psyflow.templates` package and the `cookiecutter-psyflow` folder.
 2. **Cookiecutter render**:
    - **New‑directory mode**: Directly runs Cookiecutter into `./<project_name>`.
    - **In‑place mode**: Renders into a temporary directory, then copies files into the current folder.
 3. **Cleanup**: In-place mode deletes the temporary render directory when finished.
-
-> *Tip*: All rendering is done with `no_input=True` so the command never pauses for prompts.
 
