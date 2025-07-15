@@ -1,12 +1,13 @@
+Welcome to psyflow
+===================================
+
+**psyflow** is a modular framework for building cognitive and behavioral tasks using PsychoPy and Python code.
+
 .. image:: _static/flowchart.png
    :alt: flowchart
    :height: 300px
    :align: center
 
-Welcome to psyflow
-===================================
-
-**psyflow** is a modular framework for building cognitive and behavioral tasks using PsychoPy and Python code.
 
 Features
 --------

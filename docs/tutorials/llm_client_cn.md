@@ -1,3 +1,5 @@
+# LLMClient: 使用大型语言模型
+
 ## 概述
 
 `psyflow` 中的 `LLMClient` 类提供了一个轻量级、统一的界面，用于与各种大型语言模型（LLM）后端进行交互，包括 Google Gemini、OpenAI、Deepseek 和 Moonshot。我们没有依赖像 LangChain 这样沉重的框架，而是构建了一个最小化的包装器来保持简单：除了提供商的 SDK 之外，没有额外的依赖项，一个干净的 API（例如 `generate()`、`translate()`、`count_tokens()`），以及快速、低开销的执行。

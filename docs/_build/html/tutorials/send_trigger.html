@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="Overview" href="cli_usage.html" /><link rel="prev" title="StimUnit: Modular Stimulus &amp; Response Handler" href="build_stimunit.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="psyflow-init: Command-Line Interface" href="cli_usage.html" /><link rel="prev" title="StimUnit: Modular Stimulus &amp; Response Handler" href="build_stimunit.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>Overview - psyflow 0.1.1 documentation</title>
+        <title>TriggerSender: Sending Hardware Triggers - psyflow 0.1.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -179,7 +179,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -211,25 +211,10 @@
 <li class="toctree-l1"><a class="reference internal" href="build_blocks.html">BlockUnit: Managing Trials</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus.html">StimBank: Flexible Stimulus Management</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimunit.html">StimUnit: Modular Stimulus &amp; Response Handler</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#key-features">Key Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#integration-with-stimunit">5. Integration with <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="#next-steps">Next Steps</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html#quick-reference">Quick Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html#creating-a-new-project">1. Creating a New Project</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html#inplace-initialization">2. In‑Place Initialization</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html#how-it-works-internally">3. How It Works Internally</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage.html#next-steps">Next Steps</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">TriggerSender: Sending Hardware Triggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage.html">psyflow-init: Command-Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client.html#supported-providers">Supported Providers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client.html#key-features">Key Features</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client.html#quick-reference">Quick Reference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client.html#detailed-usage-guide">Detailed Usage Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client.html#next-steps">Next Steps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client.html">LLMClient: Using Large Language Models</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">中文教程(Chinese Tutorials)</span></p>
 <ul>
@@ -239,24 +224,9 @@
 <li class="toctree-l1"><a class="reference internal" href="build_blocks_cn.html">BlockUnit: 组织和运行试验</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimulus_cn.html">StimBank：灵活的刺激管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimunit_cn.html">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html">概述</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html#id2">主要功能</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html#id3">快速参考</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html#id4">详细使用指南</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html#stimunit">5. 与 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 集成</a></li>
-<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html#id8">后续步骤</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html">概述</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html#id2">快速参考</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html#id3">1. 创建一个新项目</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html#id4">2. 就地初始化</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html#id5">3. 内部工作原理</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html#id6">后续步骤</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html">概述</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html#id2">支持的提供商</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html#id3">主要功能</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html#id4">快速参考</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html#id5">详细使用指南</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html#id9">后续步骤</a></li>
+<li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html">TriggerSender: 发送硬件触发器</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html">psyflow-init: 命令行界面</a></li>
+<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html">LLMClient: 使用大型语言模型</a></li>
 </ul>
 
 </div>
@@ -291,14 +261,16 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h1>
+          <section id="triggersender-sending-hardware-triggers">
+<h1>TriggerSender: Sending Hardware Triggers<a class="headerlink" href="#triggersender-sending-hardware-triggers" title="Link to this heading">¶</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> class provides a flexible, device-independent way to send event codes (triggers) to external recording equipment (e.g., EEG, MEG, eye‐trackers). By wrapping your device-specific send function, it keeps experiment code clean, adds optional pre- and post-hooks, enforces precise timing delays, and even supports a mock mode for development without hardware.</p>
 <p><code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> solves several common challenges in neuroscience experiments:</p>
 <ul class="simple">
@@ -310,7 +282,7 @@
 </ul>
 </section>
 <section id="key-features">
-<h1>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h1>
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -342,7 +314,7 @@
 </div>
 </section>
 <section id="quick-reference">
-<h1>Quick Reference<a class="headerlink" href="#quick-reference" title="Link to this heading">¶</a></h1>
+<h2>Quick Reference<a class="headerlink" href="#quick-reference" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -369,9 +341,9 @@
 </div>
 </section>
 <section id="detailed-usage-guide">
-<h1>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h1>
+<h2>Detailed Usage Guide<a class="headerlink" href="#detailed-usage-guide" title="Link to this heading">¶</a></h2>
 <section id="getting-started-mock-mode-for-development">
-<h2>1. Getting Started: Mock Mode for Development<a class="headerlink" href="#getting-started-mock-mode-for-development" title="Link to this heading">¶</a></h2>
+<h3>1. Getting Started: Mock Mode for Development<a class="headerlink" href="#getting-started-mock-mode-for-development" title="Link to this heading">¶</a></h3>
 <p>Use mock mode to build and test your experiment logic without any hardware:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
 
@@ -387,14 +359,14 @@
 </div>
 </section>
 <section id="connecting-to-real-hardware">
-<h2>2. Connecting to Real Hardware<a class="headerlink" href="#connecting-to-real-hardware" title="Link to this heading">¶</a></h2>
+<h3>2. Connecting to Real Hardware<a class="headerlink" href="#connecting-to-real-hardware" title="Link to this heading">¶</a></h3>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Of the examples below, only the Serial (UART) Port example has been tested by the authors. The EGI, Neuroscan, Brain Products (RDA) and other device snippets were gathered from online sources and have not been validated on actual hardware. If you test these or implement triggers for additional devices (e.g., eye‑trackers), please share your code so we can keep this documentation up to date.</p>
 </div>
 <p>When your rig is ready, supply a function to send integer codes to your device via the <code class="docutils literal notranslate"><span class="pre">trigger_func</span></code> argument. You can adapt this pattern for serial ports, USB interfaces, LabJack devices, or any other hardware: just supply a function that takes an integer and transmits it.</p>
 <section id="example-serial-uart-port-tested">
-<h3>Example: Serial (UART) Port (tested)<a class="headerlink" href="#example-serial-uart-port-tested" title="Link to this heading">¶</a></h3>
+<h4>Example: Serial (UART) Port (tested)<a class="headerlink" href="#example-serial-uart-port-tested" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">serial</span>
 <span class="c1">#ser = serial.serial_for_url(&quot;loop://&quot;, baudrate=115200, timeout=1)</span>
@@ -429,7 +401,7 @@
 </div>
 </section>
 <section id="example-parallel-lpt-port-not-tested-yet">
-<h3>Example: Parallel (LPT) Port (Not tested yet)<a class="headerlink" href="#example-parallel-lpt-port-not-tested-yet" title="Link to this heading">¶</a></h3>
+<h4>Example: Parallel (LPT) Port (Not tested yet)<a class="headerlink" href="#example-parallel-lpt-port-not-tested-yet" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">parallel</span><span class="p">,</span> <span class="n">logging</span><span class="p">,</span> <span class="n">core</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
 
@@ -449,7 +421,7 @@
 </div>
 </section>
 <section id="example-egi-netstation-not-tested-yet">
-<h3>Example: EGI NetStation (Not tested yet)<a class="headerlink" href="#example-egi-netstation-not-tested-yet" title="Link to this heading">¶</a></h3>
+<h4>Example: EGI NetStation (Not tested yet)<a class="headerlink" href="#example-egi-netstation-not-tested-yet" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">egi_pynetstation.NetStation</span><span class="w"> </span><span class="kn">import</span> <span class="n">NetStation</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
 
@@ -483,7 +455,7 @@
 </div>
 </section>
 <section id="example-neuroscan-via-parallel-port-not-tested-yet">
-<h3>Example: Neuroscan via Parallel Port (Not tested yet)<a class="headerlink" href="#example-neuroscan-via-parallel-port-not-tested-yet" title="Link to this heading">¶</a></h3>
+<h4>Example: Neuroscan via Parallel Port (Not tested yet)<a class="headerlink" href="#example-neuroscan-via-parallel-port-not-tested-yet" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">parallel</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
 
@@ -502,7 +474,7 @@
 </div>
 </section>
 <section id="example-brain-products-via-rda-server-tcp-not-tested-yet">
-<h3>Example: Brain Products via RDA Server (TCP) (Not tested yet)<a class="headerlink" href="#example-brain-products-via-rda-server-tcp-not-tested-yet" title="Link to this heading">¶</a></h3>
+<h4>Example: Brain Products via RDA Server (TCP) (Not tested yet)<a class="headerlink" href="#example-brain-products-via-rda-server-tcp-not-tested-yet" title="Link to this heading">¶</a></h4>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">socket</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TriggerSender</span>
 
@@ -528,7 +500,7 @@
 </section>
 </section>
 <section id="advanced-timing-and-hooks">
-<h2>3. Advanced: Timing and Hooks<a class="headerlink" href="#advanced-timing-and-hooks" title="Link to this heading">¶</a></h2>
+<h3>3. Advanced: Timing and Hooks<a class="headerlink" href="#advanced-timing-and-hooks" title="Link to this heading">¶</a></h3>
 <p>For finer control, <code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> lets you:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">post_delay</span></code>: Insert a pause (in seconds) after each send (default <code class="docutils literal notranslate"><span class="pre">0.001</span></code>).</p></li>
@@ -556,11 +528,11 @@
 </pre></div>
 </div>
 <p>Use hooks to timestamp events, synchronize with other systems, or run custom diagnostics around each trigger.</p>
+</section>
+</section>
 <hr class="docutils" />
-</section>
-</section>
 <section id="integration-with-stimunit">
-<h1>5. Integration with <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code><a class="headerlink" href="#integration-with-stimunit" title="Link to this heading">¶</a></h1>
+<h2>5. Integration with <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code><a class="headerlink" href="#integration-with-stimunit" title="Link to this heading">¶</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">TriggerSender</span></code> can be passed into <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> to automate sending triggers at key points in a trial with minimal code.</p>
 <ol class="arabic">
 <li><p><strong>Initialize and inject</strong>:</p>
@@ -677,13 +649,14 @@
 <p>If you choose not to pass a <code class="docutils literal notranslate"><span class="pre">triggersender</span></code>, the exact same code will run as a behavioral-only task, emitting logs but without hardware triggers.</p>
 </section>
 <section id="next-steps">
-<h1>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h1>
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
 <p>Now that you know how to send triggers, you can explore other parts of PsyFlow:</p>
 <ul class="simple">
 <li><p><strong>Getting Started</strong>: If you’re new to PsyFlow, check out the <a class="reference internal" href="getting_started.html"><span class="std std-doc">Getting Started tutorial</span></a>.</p></li>
 <li><p><strong>Building Trials</strong>: Learn how to build complex trials in the <a class="reference internal" href="build_stimunit.html"><span class="std std-doc">StimUnit tutorial</span></a>.</p></li>
 <li><p><strong>Organizing Blocks</strong>: See the <a class="reference internal" href="build_blocks.html"><span class="std std-doc">BlockUnit tutorial</span></a> to learn how to organize trials into blocks.</p></li>
 </ul>
+</section>
 </section>
 
         </article>
@@ -696,7 +669,7 @@
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Overview</div>
+                <div class="title">psyflow-init: Command-Line Interface</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -729,8 +702,44 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">TriggerSender: Sending Hardware Triggers</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#key-features">Key Features</a></li>
+<li><a class="reference internal" href="#quick-reference">Quick Reference</a></li>
+<li><a class="reference internal" href="#detailed-usage-guide">Detailed Usage Guide</a><ul>
+<li><a class="reference internal" href="#getting-started-mock-mode-for-development">1. Getting Started: Mock Mode for Development</a></li>
+<li><a class="reference internal" href="#connecting-to-real-hardware">2. Connecting to Real Hardware</a><ul>
+<li><a class="reference internal" href="#example-serial-uart-port-tested">Example: Serial (UART) Port (tested)</a></li>
+<li><a class="reference internal" href="#example-parallel-lpt-port-not-tested-yet">Example: Parallel (LPT) Port (Not tested yet)</a></li>
+<li><a class="reference internal" href="#example-egi-netstation-not-tested-yet">Example: EGI NetStation (Not tested yet)</a></li>
+<li><a class="reference internal" href="#example-neuroscan-via-parallel-port-not-tested-yet">Example: Neuroscan via Parallel Port (Not tested yet)</a></li>
+<li><a class="reference internal" href="#example-brain-products-via-rda-server-tcp-not-tested-yet">Example: Brain Products via RDA Server (TCP) (Not tested yet)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#advanced-timing-and-hooks">3. Advanced: Timing and Hooks</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#integration-with-stimunit">5. Integration with <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code></a></li>
+<li><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

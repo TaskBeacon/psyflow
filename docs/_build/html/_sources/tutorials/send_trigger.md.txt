@@ -1,3 +1,5 @@
+# TriggerSender: Sending Hardware Triggers
+
 ## Overview
 
 The `TriggerSender` class provides a flexible, device-independent way to send event codes (triggers) to external recording equipment (e.g., EEG, MEG, eye‐trackers). By wrapping your device-specific send function, it keeps experiment code clean, adds optional pre- and post-hooks, enforces precise timing delays, and even supports a mock mode for development without hardware.
