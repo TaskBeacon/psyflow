@@ -20,26 +20,7 @@ The package also provides a command line tool `psyflow-init` which
 scaffolds a new project using the bundled cookiecutter template.
 
 Comprehensive documentation and tutorials are available on the
-[GitHub&nbsp;Pages site](https://taskbeacon.github.io/psyflow/).
+[psyflow website](https://taskbeacon.github.io/psyflow/).
 
-### Building the documentation
-
-To generate the HTML docs locally:
-
-```bash
-pip install -r docs/requirements.txt
-sphinx-build -b html docs docs/_build/html
-```
-
-Open `docs/_build/html/index.html` in a browser to view them.
-
-## Publishing to PyPI
-
-Releases are automated with GitHub Actions. Any push to the `main` branch
-that contains `[publish]` in the commit message will trigger the
-[`publish`](.github/workflows/publish.yml) workflow. The workflow builds
-sdist and wheel via `python -m build` and uploads them to PyPI using the
-`pypa/gh-action-pypi-publish` action. The upload requires a
-`PYPI_API_TOKEN` secret configured in the repository. 
 
 
