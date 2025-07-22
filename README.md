@@ -23,4 +23,6 @@ Comprehensive documentation and tutorials are available on the
 [psyflow website](https://taskbeacon.github.io/psyflow/).
 
 
+## License
 
+This project is licensed under the [MIT License](./LICENSE).
