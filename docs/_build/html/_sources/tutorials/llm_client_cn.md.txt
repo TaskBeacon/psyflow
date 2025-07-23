@@ -157,6 +157,6 @@ print("保存到 ./config/config.es.yaml")
 
 现在您已经了解了如何在 PsyFlow 中使用 LLM，您可能对以下内容感兴趣：
 
-- **入门**：如果您是 PsyFlow 的新手，请查看[入门教程](getting_started.md)。
-- **发送触发器**：在[TriggerSender 教程](send_trigger.md)中了解如何发送硬件触发器。
-- **构建试验**：在[StimUnit 教程](build_stimunit.md)中了解如何构建复杂的试验。
+- **入门**：如果您是 PsyFlow 的新手，请查看[入门教程](getting_started_cn.md)。
+- **发送触发器**：在[TriggerSender 教程](send_trigger_cn.md)中了解如何发送硬件触发器。
+- **构建试验**：在[StimUnit 教程](build_stimunit_cn.md)中了解如何构建复杂的试验。

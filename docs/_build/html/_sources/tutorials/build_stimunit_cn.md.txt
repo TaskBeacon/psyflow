@@ -749,6 +749,6 @@ fb.set_state(prefix='special', hit=True)
 
 现在您已经了解了如何使用 `StimUnit`，您可以：
 
-- 探索 [BlockUnit 教程](build_blocks.md) 来将试次组织成组块
-- 了解 [StimBank](build_stimulus.md) 以进行灵活的刺激管理
-- 查看 [发送触发器](send_trigger.md) 以用于 EEG/MEG 实验
+- 探索 [BlockUnit 教程](build_blocks_cn.md) 来将试次组织成组块
+- 了解 [StimBank](build_stimulus_cn.md) 以进行灵活的刺激管理
+- 查看 [发送触发器](send_trigger_cn.md) 以用于 EEG/MEG 实验

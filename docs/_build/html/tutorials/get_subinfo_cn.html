@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="TaskSettings: 管理实验配置" href="task_settings_cn.html" /><link rel="prev" title="PsyFlow 入门指南" href="getting_started_cn.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="TaskSettings: 配置您的实验" href="task_settings_cn.html" /><link rel="prev" title="PsyFlow 入门指南" href="getting_started_cn.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
         <title>SubInfo: 收集被试信息 - psyflow 0.1.1</title>
@@ -224,9 +224,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started_cn.html">PsyFlow 入门指南</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">SubInfo: 收集被试信息</a></li>
-<li class="toctree-l1"><a class="reference internal" href="task_settings_cn.html">TaskSettings: 管理实验配置</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_blocks_cn.html">BlockUnit: 组织和运行试验</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus_cn.html">StimBank：灵活的刺激管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_settings_cn.html">TaskSettings: 配置您的实验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks_cn.html">BlockUnit: 管理试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus_cn.html">StimBank: 灵活的刺激管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimunit_cn.html">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html">TriggerSender: 发送硬件触发器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html">psyflow-init: 命令行界面</a></li>
@@ -277,146 +277,317 @@
 <h1>SubInfo: 收集被试信息<a class="headerlink" href="#subinfo" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>概述<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> 是 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 中用于在实验开始前通过一个简单的图形用户界面（GUI）表单收集被试信息的模块。它被设计用来：</p>
+<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> 类提供了一种灵活且用户友好的方式，在实验开始时收集被试信息。它创建了标准化的 GUI 对话框，可以通过配置文件进行自定义，支持多种字段类型和国际研究的本地化。</p>
+<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> 解决了被试注册中的几个常见挑战：</p>
 <ul class="simple">
-<li><p>动态地从 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 文件生成一个输入表单。</p></li>
-<li><p>支持多种语言的标签和字段。</p></li>
-<li><p>验证输入以确保数据完整性。</p></li>
-<li><p>将收集到的信息作为字典返回，以便于保存和使用。</p></li>
+<li><p><strong>标准化</strong>：在不同实验中创建一致的被试信息表单</p></li>
+<li><p><strong>验证</strong>：根据字段约束自动验证输入</p></li>
+<li><p><strong>本地化</strong>：以被试的语言显示表单</p></li>
+<li><p><strong>配置</strong>：使用 YAML 或字典定义表单，便于修改</p></li>
+<li><p><strong>集成</strong>：与其他 psyflow 组件无缝连接</p></li>
 </ul>
-<p>这个模块取代了 PsychoPy 内置的 <code class="docutils literal notranslate"><span class="pre">gui.DlgFromDict</span></code>，提供了一个更现代化、更灵活且与 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 生态系统完全集成的解决方案。</p>
 </section>
 <section id="id2">
-<h2>核心概念<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> 的工作流程很简单：</p>
-<ol class="arabic simple">
-<li><p><strong>配置</strong>: 您在 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 中定义表单的字段和它们在不同语言中的标签。</p></li>
-<li><p><strong>调用</strong>: 您调用 <code class="docutils literal notranslate"><span class="pre">SubInfo.get()</span></code> 函数，它会显示 GUI 表单。</p></li>
-<li><p><strong>收集</strong>: 被试填写表单并点击“确定”。</p></li>
-<li><p><strong>返回</strong>: 函数返回一个包含被试信息的字典。如果被试点击“取消”，实验将优雅地退出。</p></li>
-</ol>
+<h2>主要功能<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>功能</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>多种字段类型</p></td>
+<td><p>支持字符串、整数和选择（下拉）字段</p></td>
+</tr>
+<tr class="row-odd"><td><p>输入验证</p></td>
+<td><p>强制执行最小/最大值和数字长度等约束</p></td>
+</tr>
+<tr class="row-even"><td><p>本地化</p></td>
+<td><p>以任何语言显示字段标签和消息</p></td>
+</tr>
+<tr class="row-odd"><td><p>YAML 配置</p></td>
+<td><p>使用人类可读的配置文件定义表单</p></td>
+</tr>
+<tr class="row-even"><td><p>自动默认值</p></td>
+<td><p>如果未指定，则添加 subject_id 等标准字段</p></td>
+</tr>
+<tr class="row-odd"><td><p>错误处理</p></td>
+<td><p>为无效输入提供清晰的错误消息</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="id3">
-<h2>详细使用指南<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
-<section id="config-yaml">
-<h3>1. 在 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 中配置表单<a class="headerlink" href="#config-yaml" title="Link to this heading">¶</a></h3>
-<p>GUI 表单是在您的 <code class="docutils literal notranslate"><span class="pre">config/config.yaml</span></code> 文件中定义的。您需要指定两个部分：<code class="docutils literal notranslate"><span class="pre">subinfo_fields</span></code> 和 <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code>。</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">subinfo_fields</span></code>: 一个您想要在表单中包含的字段名称的列表。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code>: 一个字典，将这些字段名称映射到您想要为每种支持的语言显示的标签。</p></li>
-</ul>
-<p><strong>示例 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>:</strong></p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># ---------------------------------------------------------------------------- #</span>
-<span class="c1">#                              被试信息表单配置                              #</span>
-<span class="c1"># ---------------------------------------------------------------------------- #</span>
-<span class="nt">subinfo_fields</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">id</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">age</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gender</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">session</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">language</span>
-
-<span class="nt">subinfo_mapping</span><span class="p">:</span>
-<span class="w">  </span><span class="c1"># 英语标签</span>
-<span class="w">  </span><span class="nt">en</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Participant</span><span class="nv"> </span><span class="s">ID&quot;</span>
-<span class="w">    </span><span class="nt">age</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Age&quot;</span>
-<span class="w">    </span><span class="nt">gender</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Gender&quot;</span>
-<span class="w">    </span><span class="nt">session</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Session&quot;</span>
-<span class="w">    </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Language&quot;</span>
-<span class="w">  </span><span class="c1"># 中文标签</span>
-<span class="w">  </span><span class="nt">cn</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;被试ID&quot;</span>
-<span class="w">    </span><span class="nt">age</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;年龄&quot;</span>
-<span class="w">    </span><span class="nt">gender</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;性别&quot;</span>
-<span class="w">    </span><span class="nt">session</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;阶段&quot;</span>
-<span class="w">    </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;语言&quot;</span>
-<span class="w">  </span><span class="c1"># 韩语标签</span>
-<span class="w">  </span><span class="nt">kr</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;참가자</span><span class="nv"> </span><span class="s">ID&quot;</span>
-<span class="w">    </span><span class="nt">age</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;나이&quot;</span>
-<span class="w">    </span><span class="nt">gender</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;성별&quot;</span>
-<span class="w">    </span><span class="nt">session</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;세션&quot;</span>
-<span class="w">    </span><span class="nt">language</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;언어&quot;</span>
-</pre></div>
-</div>
-<p>在这个例子中，表单将有五个字段。根据选择的语言，标签将相应地改变。</p>
-</section>
-<section id="subinfo-get">
-<h3>2. 调用 <code class="docutils literal notranslate"><span class="pre">SubInfo.get()</span></code><a class="headerlink" href="#subinfo-get" title="Link to this heading">¶</a></h3>
-<p>在您的主实验脚本中，在任何其他操作之前调用 <code class="docutils literal notranslate"><span class="pre">SubInfo.get()</span></code>。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.subinfo</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
-
-<span class="c1"># 通常，您会从您的 config.yaml 加载这些</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config/config.yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
-
-<span class="n">fields</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;subinfo_fields&#39;</span><span class="p">]</span>
-<span class="n">mapping</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;subinfo_mapping&#39;</span><span class="p">]</span>
-
-<span class="c1"># 调用 get() 来显示表单</span>
-<span class="c1"># 它会首先询问语言</span>
-<span class="n">sub_info</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">mapping</span><span class="p">)</span>
-
-<span class="c1"># 如果被试点击“取消”，sub_info 将是 None，程序将退出。</span>
-<span class="c1"># 否则，它是一个包含他们输入的字典。</span>
-<span class="c1"># {&#39;id&#39;: &#39;001&#39;, &#39;age&#39;: &#39;25&#39;, &#39;gender&#39;: &#39;Female&#39;, &#39;session&#39;: &#39;1&#39;, &#39;language&#39;: &#39;en&#39;}</span>
-</pre></div>
+<h2>快速参考<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>目的</p></th>
+<th class="head"><p>方法</p></th>
+<th class="head"><p>示例</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>初始化</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">SubInfo(config)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">subinfo</span> <span class="pre">=</span> <span class="pre">SubInfo(config)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>收集信息</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.collect()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data</span> <span class="pre">=</span> <span class="pre">subinfo.collect()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>访问数据</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.subject_data</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">subject_id</span> <span class="pre">=</span> <span class="pre">subinfo.subject_data['subject_id']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>验证输入</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.validate()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">is_valid</span> <span class="pre">=</span> <span class="pre">subinfo.validate()</span></code></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </section>
 <section id="id4">
-<h3>3. 语言选择<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">SubInfo.get()</span></code> 的一个关键特性是它内置的语言选择。</p>
-<ol class="arabic">
-<li><p>当您调用 <code class="docutils literal notranslate"><span class="pre">SubInfo.get()</span></code> 时，它首先会显示一个语言选择对话框。这个对话框的选项是根据您在 <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code> 中定义的语言（<code class="docutils literal notranslate"><span class="pre">en</span></code>, <code class="docutils literal notranslate"><span class="pre">cn</span></code>, <code class="docutils literal notranslate"><span class="pre">kr</span></code> 等）自动生成的。</p>
-<p><img alt="语言选择对话框" src="https://raw.githubusercontent.com/Xh-Hypnos/psyflow/main/docs/tutorials/figures/subinfo_yaml.png" /></p>
-</li>
-<li><p>一旦被试选择了一种语言并点击“确定”，<code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> 就会使用该语言的相应标签来呈现主输入表单。</p>
-<p><img alt="英文表单" src="https://raw.githubusercontent.com/Xh-Hypnos/psyflow/main/docs/tutorials/figures/subinfo_yaml.png" />
-<img alt="中文表单" src="https://raw.githubusercontent.com/Xh-Hypnos/psyflow/main/docs/tutorials/figures/subinfo_yaml_cn.png" /></p>
-</li>
-</ol>
-</section>
+<h2>详细使用指南<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
 <section id="id5">
-<h3>4. 输入验证<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> 会执行基本的输入验证。在上面的例子中，<code class="docutils literal notranslate"><span class="pre">id</span></code> 和 <code class="docutils literal notranslate"><span class="pre">session</span></code> 字段是必需的。如果被试将它们留空并尝试点击“确定”，这些字段将以红色高亮显示，提示他们需要填写这些字段。</p>
-<p><img alt="验证失败" src="https://raw.githubusercontent.com/Xh-Hypnos/psyflow/main/docs/tutorials/figures/subinfo_failed.png" /></p>
-<p>验证是基于字段名称的：</p>
-<ul class="simple">
-<li><p>如果一个字段的名称包含 <code class="docutils literal notranslate"><span class="pre">id</span></code> 或 <code class="docutils literal notranslate"><span class="pre">session</span></code>，它被认为是必需的。</p></li>
-<li><p>所有其他字段都是可选的。</p></li>
-</ul>
-</section>
-<section id="id6">
-<h3>5. 使用返回的数据<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">SubInfo.get()</span></code> 返回一个字典，其中键是 <code class="docutils literal notranslate"><span class="pre">subinfo_fields</span></code> 中的字段名称，值是被试的输入。您可以使用这个字典来：</p>
-<ul class="simple">
-<li><p>为您的数据文件创建一个唯一的、信息丰富的文件名。</p></li>
-<li><p>在您的实验中存储被试的人口统计信息。</p></li>
-<li><p>根据会话编号或语言改变实验逻辑。</p></li>
-</ul>
-<p><strong>示例用法:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 从 SubInfo 获取被试信息</span>
-<span class="n">sub_info</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fields</span><span class="p">,</span> <span class="n">mapping</span><span class="p">)</span>
+<h3>1. 配置表单和收集信息<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<section id="a-yaml">
+<h4>选项 A：使用 YAML 配置<a class="headerlink" href="#a-yaml" title="Link to this heading">¶</a></h4>
+<p>YAML 提供了一种清晰、可读的方式来定义您的表单结构：</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># subinfo_config.yaml</span>
+<span class="nt">subinfo_fields</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subject_id</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span>
+<span class="w">    </span><span class="nt">constraints</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">101</span>
+<span class="w">      </span><span class="nt">max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">999</span>
+<span class="w">      </span><span class="nt">digits</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
 
-<span class="c1"># 如果用户点击了取消，则 sub_info 将为 None</span>
-<span class="k">if</span> <span class="n">sub_info</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;实验被用户取消。&quot;</span><span class="p">)</span>
-    <span class="c1"># core.quit() 会被自动调用</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">age</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span>
+<span class="w">    </span><span class="nt">constraints</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">18</span>
+<span class="w">      </span><span class="nt">max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
 
-<span class="c1"># 创建一个文件名</span>
-<span class="n">output_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;sub-</span><span class="si">{</span><span class="n">sub_info</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_ses-</span><span class="si">{</span><span class="n">sub_info</span><span class="p">[</span><span class="s1">&#39;session&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">_task-stroop_data.csv&quot;</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gender</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">choice</span>
+<span class="w">    </span><span class="nt">choices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Male</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Female</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Non-binary</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Prefer not to say</span><span class="p p-Indicator">]</span>
 
-<span class="c1"># 将被试信息添加到您的数据记录中</span>
-<span class="n">trial_data</span><span class="p">[</span><span class="s1">&#39;participant_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_info</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span>
-<span class="n">trial_data</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sub_info</span><span class="p">[</span><span class="s1">&#39;age&#39;</span><span class="p">]</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">handedness</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">choice</span>
+<span class="w">    </span><span class="nt">choices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Right</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Left</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Ambidextrous</span><span class="p p-Indicator">]</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;数据将保存到: </span><span class="si">{</span><span class="n">output_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vision</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">choice</span>
+<span class="w">    </span><span class="nt">choices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Normal</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Corrected-to-normal</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Impaired</span><span class="p p-Indicator">]</span>
+
+<span class="c1"># 可选的本地化映射</span>
+<span class="nt">subinfo_mapping</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">subject_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Participant</span><span class="nv"> </span><span class="s">ID&quot;</span>
+<span class="w">  </span><span class="nt">age</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Age&quot;</span>
+<span class="w">  </span><span class="nt">gender</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Gender&quot;</span>
+<span class="w">  </span><span class="nt">handedness</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Handedness&quot;</span>
+<span class="w">  </span><span class="nt">vision</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Vision&quot;</span>
+<span class="w">  </span><span class="nt">Male</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Male&quot;</span>
+<span class="w">  </span><span class="nt">Female</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Female&quot;</span>
+<span class="w">  </span><span class="nt">Non-binary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Non-binary&quot;</span>
+<span class="w">  </span><span class="nt">Prefer not to say</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Prefer</span><span class="nv"> </span><span class="s">not</span><span class="nv"> </span><span class="s">to</span><span class="nv"> </span><span class="s">say&quot;</span>
+<span class="w">  </span><span class="nt">Right</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Right&quot;</span>
+<span class="w">  </span><span class="nt">Left</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Left&quot;</span>
+<span class="w">  </span><span class="nt">Ambidextrous</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Ambidextrous&quot;</span>
+<span class="w">  </span><span class="nt">Normal</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Normal&quot;</span>
+<span class="w">  </span><span class="nt">Corrected-to-normal</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Corrected-to-normal&quot;</span>
+<span class="w">  </span><span class="nt">Impaired</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Impaired&quot;</span>
+<span class="w">  </span><span class="nt">registration_successful</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Registration</span><span class="nv"> </span><span class="s">successful!&quot;</span>
+<span class="w">  </span><span class="nt">registration_failed</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Registration</span><span class="nv"> </span><span class="s">cancelled.&quot;</span>
+<span class="w">  </span><span class="nt">invalid_input</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Invalid</span><span class="nv"> </span><span class="s">input</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">{field}&quot;</span>
 </pre></div>
 </div>
-<p>通过使用 <code class="docutils literal notranslate"><span class="pre">SubInfo</span></code>，您可以确保在实验开始时以一种用户友好和健壮的方式收集到干净、结构化的被试信息。</p>
+<p>定义配置后，收集信息就很简单了：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="c1"># 从 YAML 加载配置</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;subinfo_config.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="c1"># 创建 SubInfo 实例</span>
+<span class="n">subinfo</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="c1"># 显示对话框并收集信息</span>
+<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subinfo</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="使用 yaml 配置收集 subinfo" src="../_images/subinfo_yaml.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>打开 YAML 文件时，请确保使用 <code class="docutils literal notranslate"><span class="pre">encoding='utf-8'</span></code> 以支持本地化中的非 ASCII 字符。</p>
+</div>
 </section>
+<section id="b-python">
+<h4>选项 B：使用 Python 字典<a class="headerlink" href="#b-python" title="Link to this heading">¶</a></h4>
+<p>您也可以直接在 Python 中定义表单：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;subinfo_fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;subject_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;constraints&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">101</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">999</span><span class="p">,</span> <span class="s2">&quot;digits&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;age&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;int&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;constraints&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="mi">18</span><span class="p">,</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gender&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;choice&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Male&quot;</span><span class="p">,</span> <span class="s2">&quot;Female&quot;</span><span class="p">,</span> <span class="s2">&quot;Non-binary&quot;</span><span class="p">,</span> <span class="s2">&quot;Prefer not to say&quot;</span><span class="p">]</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;handedness&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;choice&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;choices&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Right&quot;</span><span class="p">,</span> <span class="s2">&quot;Left&quot;</span><span class="p">,</span> <span class="s2">&quot;Ambidextrous&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+    <span class="s2">&quot;subinfo_mapping&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;subject_id&quot;</span><span class="p">:</span> <span class="s2">&quot;Participant ID&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;age&quot;</span><span class="p">:</span> <span class="s2">&quot;Age&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;gender&quot;</span><span class="p">:</span> <span class="s2">&quot;Gender&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;handedness&quot;</span><span class="p">:</span> <span class="s2">&quot;Handedness&quot;</span>
+        <span class="c1"># 根据需要添加更多映射</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>定义配置后，收集信息就很简单了：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span>
+<span class="n">subinfo</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="c1"># 显示对话框并收集信息</span>
+<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subinfo</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="使用 python dict 收集 subinfo" src="../_images/subinfo_dict.png" /></p>
+<p>如果注册（收集）失败，实验将退出，Python 环境将关闭。</p>
+<p><img alt="registration_failed" src="../_images/subinfo_failed.png" /></p>
+</section>
+</section>
+<section id="id6">
+<h3>2. 字段类型和约束<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SubInfo</span></code> 支持三种字段类型：</p>
+<section id="id7">
+<h4>字符串字段<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subject_name</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+</pre></div>
+</div>
+<p>字符串字段接受任何文本输入，无需验证。</p>
+</section>
+<section id="id8">
+<h4>整数字段<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subject_id</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">int</span>
+<span class="w">  </span><span class="nt">constraints</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">min</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">101</span><span class="w">      </span><span class="c1"># 允许的最小值</span>
+<span class="w">    </span><span class="nt">max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">999</span><span class="w">      </span><span class="c1"># 允许的最大值</span>
+<span class="w">    </span><span class="nt">digits</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w">     </span><span class="c1"># 所需的数字位数</span>
+</pre></div>
+</div>
+<p>整数字段验证：</p>
+<ul class="simple">
+<li><p>输入可以转换为整数</p></li>
+<li><p>值在最小/最大范围内（如果指定）</p></li>
+<li><p>数字具有指定的确切位数（如果指定）</p></li>
+</ul>
+</section>
+<section id="id9">
+<h4>选择字段（下拉菜单）<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h4>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">condition</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">choice</span>
+<span class="w">  </span><span class="nt">choices</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">Control</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">Experimental</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<p>选择字段提供一个包含指定选项的下拉菜单。</p>
+</section>
+</section>
+<section id="id10">
+<h3>3. 本地化<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
+<p>对于国际研究，您可以通过在 <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code> 部分提供翻译来本地化表单：</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># subinfo_config.yaml 本地化示例</span>
+<span class="nt">subinfo_mapping</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">subject_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;참가자</span><span class="nv"> </span><span class="s">ID&quot;</span>
+<span class="w">  </span><span class="nt">age</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;나이&quot;</span>
+<span class="w">  </span><span class="nt">gender</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;성별&quot;</span>
+<span class="w">  </span><span class="nt">handedness</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;주사용</span><span class="nv"> </span><span class="s">손&quot;</span>
+<span class="w">  </span><span class="nt">vision</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;시력&quot;</span>
+<span class="w">  </span><span class="nt">Male</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;남성&quot;</span>
+<span class="w">  </span><span class="nt">Female</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;여성&quot;</span>
+<span class="w">  </span><span class="nt">Non-binary</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;논바이너리&quot;</span>
+<span class="w">  </span><span class="nt">Prefer not to say</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;응답하지</span><span class="nv"> </span><span class="s">않음&quot;</span>
+<span class="w">  </span><span class="nt">Right</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;오른손잡이&quot;</span>
+<span class="w">  </span><span class="nt">Left</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;왼손잡이&quot;</span>
+<span class="w">  </span><span class="nt">Ambidextrous</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;양손잡이&quot;</span>
+<span class="w">  </span><span class="nt">Normal</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;정상&quot;</span>
+<span class="w">  </span><span class="nt">Corrected-to-normal</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;교정된</span><span class="nv"> </span><span class="s">정상&quot;</span>
+<span class="w">  </span><span class="nt">Impaired</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;손상된&quot;</span>
+<span class="w">  </span><span class="nt">registration_successful</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;등록</span><span class="nv"> </span><span class="s">성공!&quot;</span>
+<span class="w">  </span><span class="nt">registration_failed</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;등록이</span><span class="nv"> </span><span class="s">취소되었습니다.&quot;</span>
+<span class="w">  </span><span class="nt">invalid_input</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;{field}에</span><span class="nv"> </span><span class="s">대한</span><span class="nv"> </span><span class="s">잘못된</span><span class="nv"> </span><span class="s">입력입니다.&quot;</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="c1"># 从 YAML 加载配置</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;subinfo_config.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<span class="c1"># 创建 SubInfo 实例</span>
+<span class="n">subinfo</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+<span class="c1"># 显示对话框并收集信息</span>
+<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subinfo</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><img alt="使用 yaml 配置收集 subinfo" src="../_images/subinfo_yaml_kr.png" /></p>
+<p>采用相同的方法，您可以通过在 <code class="docutils literal notranslate"><span class="pre">subinfo_mapping</span></code> 部分提供适当的翻译来为任何语言进行本地化。</p>
+<p><img alt="使用 yaml 配置收集 subinfo" src="../_images/subinfo_yaml_cn.png" /></p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>除了使用 LLM 模型的聊天框进行翻译外，
+psyflow 还内置了一个函数（<code class="docutils literal notranslate"><span class="pre">translate_config()</span></code>），使用 LLM API 翻译 subinfo 映射。
+如果使用 LLM 生成翻译，请确保翻译准确。如果可能，请咨询母语人士。</p>
+</div>
+</section>
+<section id="tasksettings">
+<h3>4. 将被试信息添加到 TaskSettings<a class="headerlink" href="#tasksettings" title="Link to this heading">¶</a></h3>
+<p>收集后，需要将被试信息传递给 TaskSettings 以完成实验配置。然后，该信息将通过 TaskSettings 与其他任务参数一起自动保存。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">SubInfo</span><span class="p">,</span> <span class="n">TaskSettings</span><span class="p">,</span> <span class="n">load_config</span>
+
+<span class="c1"># 1. 加载配置</span>
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
+
+<span class="c1"># 2. 收集被试信息</span>
+<span class="n">subform</span> <span class="o">=</span> <span class="n">SubInfo</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;subform_config&#39;</span><span class="p">])</span>
+<span class="n">subject_data</span> <span class="o">=</span> <span class="n">subform</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+
+<span class="c1"># 3. 加载任务设置</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">])</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subject_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><code class="docutils literal notranslate"><span class="pre">load_config()</span></code> 是一个方便的函数，用于加载存储在默认 TAPS 格式的 <code class="docutils literal notranslate"><span class="pre">config/config.yaml</span></code> 中的配置。</p>
+</div>
+</section>
+</section>
+<section id="id11">
+<h2>后续步骤<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h2>
+<p>现在您已经了解了如何使用 <code class="docutils literal notranslate"><span class="pre">SubInfo</span></code>，您可以：</p>
+<ul class="simple">
+<li><p>了解 <a class="reference internal" href="task_settings_cn.html"><span class="std std-doc">TaskSettings</span></a> 以配置您的实验</p></li>
+<li><p>探索 <a class="reference internal" href="build_stimulus_cn.html"><span class="std std-doc">StimBank</span></a> 以管理刺激</p></li>
+<li><p>查看 <a class="reference internal" href="build_blocks_cn.html"><span class="std std-doc">BlockUnit</span></a> 以将试验组织成块</p></li>
+<li><p>查看 <a class="reference internal" href="#build_trialunit_cn.md"><span class="xref myst">StimUnit</span></a> 以创建单个试验</p></li>
+</ul>
 </section>
 </section>
 
@@ -430,7 +601,7 @@
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">TaskSettings: 管理实验配置</div>
+                <div class="title">TaskSettings: 配置您的实验</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -477,15 +648,25 @@
             <ul>
 <li><a class="reference internal" href="#">SubInfo: 收集被试信息</a><ul>
 <li><a class="reference internal" href="#id1">概述</a></li>
-<li><a class="reference internal" href="#id2">核心概念</a></li>
-<li><a class="reference internal" href="#id3">详细使用指南</a><ul>
-<li><a class="reference internal" href="#config-yaml">1. 在 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 中配置表单</a></li>
-<li><a class="reference internal" href="#subinfo-get">2. 调用 <code class="docutils literal notranslate"><span class="pre">SubInfo.get()</span></code></a></li>
-<li><a class="reference internal" href="#id4">3. 语言选择</a></li>
-<li><a class="reference internal" href="#id5">4. 输入验证</a></li>
-<li><a class="reference internal" href="#id6">5. 使用返回的数据</a></li>
+<li><a class="reference internal" href="#id2">主要功能</a></li>
+<li><a class="reference internal" href="#id3">快速参考</a></li>
+<li><a class="reference internal" href="#id4">详细使用指南</a><ul>
+<li><a class="reference internal" href="#id5">1. 配置表单和收集信息</a><ul>
+<li><a class="reference internal" href="#a-yaml">选项 A：使用 YAML 配置</a></li>
+<li><a class="reference internal" href="#b-python">选项 B：使用 Python 字典</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#id6">2. 字段类型和约束</a><ul>
+<li><a class="reference internal" href="#id7">字符串字段</a></li>
+<li><a class="reference internal" href="#id8">整数字段</a></li>
+<li><a class="reference internal" href="#id9">选择字段（下拉菜单）</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id10">3. 本地化</a></li>
+<li><a class="reference internal" href="#tasksettings">4. 将被试信息添加到 TaskSettings</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id11">后续步骤</a></li>
 </ul>
 </li>
 </ul>

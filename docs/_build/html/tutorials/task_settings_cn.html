@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="BlockUnit: 组织和运行试验" href="build_blocks_cn.html" /><link rel="prev" title="SubInfo: 收集被试信息" href="get_subinfo_cn.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="BlockUnit: 管理试验" href="build_blocks_cn.html" /><link rel="prev" title="SubInfo: 收集被试信息" href="get_subinfo_cn.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>TaskSettings: 管理实验配置 - psyflow 0.1.1</title>
+        <title>TaskSettings: 配置您的实验 - psyflow 0.1.1</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -224,9 +224,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started_cn.html">PsyFlow 入门指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo_cn.html">SubInfo: 收集被试信息</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">TaskSettings: 管理实验配置</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_blocks_cn.html">BlockUnit: 组织和运行试验</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus_cn.html">StimBank：灵活的刺激管理</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">TaskSettings: 配置您的实验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks_cn.html">BlockUnit: 管理试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus_cn.html">StimBank: 灵活的刺激管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimunit_cn.html">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html">TriggerSender: 发送硬件触发器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html">psyflow-init: 命令行界面</a></li>
@@ -274,173 +274,461 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="tasksettings">
-<h1>TaskSettings: 管理实验配置<a class="headerlink" href="#tasksettings" title="Link to this heading">¶</a></h1>
+<h1>TaskSettings: 配置您的实验<a class="headerlink" href="#tasksettings" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>概述<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 是 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 中的一个实用类，旨在简化对实验设置的管理。它将一个字典（通常是从 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 加载的）转换为一个 Python 对象，其属性可以通过点符号（.）轻松访问，从而使您的代码更具可读性和更不易出错。</p>
-<p>使用 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code>，您可以：</p>
+<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 类提供了一种集中管理实验配置的方式，包括收集的被试信息、数据路径、计时参数、窗口设置等。它有助于标准化实验设置，并确保在实验的不同部分配置一致。</p>
+<p>在底层，<code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 在您的代码中随处可见，无论您需要读取还是写入实验参数。例如：</p>
 <ul class="simple">
-<li><p>将嵌套的配置字典转换为易于使用的对象。</p></li>
-<li><p>使用点符号（例如 <code class="docutils literal notranslate"><span class="pre">settings.screen_width</span></code>）而不是字典语法（<code class="docutils literal notranslate"><span class="pre">settings['screen_width']</span></code>）来访问设置。</p></li>
-<li><p>为不存在的设置提供默认值，以避免 <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>。</p></li>
-<li><p>在运行时动态更新或添加新设置。</p></li>
+<li><p>在 <code class="docutils literal notranslate"><span class="pre">run_trial.py</span></code> 中，检索特定刺激的持续时间</p></li>
+<li><p>在 <code class="docutils literal notranslate"><span class="pre">main.py</span></code> 中创建块时，确定块和试验的数量，并为条件的随机化提供种子</p></li>
 </ul>
 </section>
 <section id="id2">
-<h2>核心概念<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 的主要思想是将字典键转换为对象属性。</p>
-<p>您给它一个字典：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;window&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
-        <span class="s1">&#39;fullscreen&#39;</span><span class="p">:</span> <span class="kc">True</span>
-    <span class="p">},</span>
-    <span class="s1">&#39;timing&#39;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s1">&#39;fixation_duration&#39;</span><span class="p">:</span> <span class="mf">0.5</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
+<h2>主要功能<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>功能</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>字典初始化</p></td>
+<td><p>从 Python 字典或 YAML 文件创建设置</p></td>
+</tr>
+<tr class="row-odd"><td><p>被试整合</p></td>
+<td><p>整合收集的被试信息，用于每个被试的种子、文件名和路径</p></td>
+</tr>
+<tr class="row-even"><td><p>路径和目录生成</p></td>
+<td><p>自动创建输出目录并构建带时间戳的日志/CSV/JSON 路径</p></td>
+</tr>
+<tr class="row-odd"><td><p>种子管理</p></td>
+<td><p>灵活的种子策略（<code class="docutils literal notranslate"><span class="pre">same_across_sub</span></code> 或 <code class="docutils literal notranslate"><span class="pre">same_within_sub</span></code>），并自动生成每个块的种子</p></td>
+</tr>
+<tr class="row-even"><td><p>动态扩展</p></td>
+<td><p>通过 <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> 加载额外的、未知的配置键</p></td>
+</tr>
+<tr class="row-odd"><td><p>JSON 导出</p></td>
+<td><p>将完整的 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 保存到 JSON（<code class="docutils literal notranslate"><span class="pre">save_to_json()</span></code>）以进行归档或分析</p></td>
+</tr>
+<tr class="row-even"><td><p>人类可读的 repr</p></td>
+<td><p>清晰的 <code class="docutils literal notranslate"><span class="pre">__repr__()</span></code>，便于检查或记录所有当前设置</p></td>
+</tr>
+<tr class="row-odd"><td><p>默认值</p></td>
+<td><p>为窗口、计时、块/试验、按键等提供合理的内置默认值</p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<p>它会给您一个可以这样使用的对象：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="p">(</span><span class="n">config_dict</span><span class="p">)</span>
-
-<span class="c1"># 使用点符号访问设置</span>
-<span class="n">win_size</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">size</span>  <span class="c1"># -&gt; [1920, 1080]</span>
-<span class="n">is_fullscreen</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span>  <span class="c1"># -&gt; True</span>
-<span class="n">fix_time</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">fixation_duration</span>  <span class="c1"># -&gt; 0.5</span>
-</pre></div>
-</div>
-<p>注意 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 如何自动“扁平化”嵌套的字典（<code class="docutils literal notranslate"><span class="pre">window</span></code> 和 <code class="docutils literal notranslate"><span class="pre">timing</span></code>），使得所有设置都可以直接在顶层访问。</p>
 </section>
 <section id="id3">
-<h2>详细使用指南<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<h2>快速参考<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>目的</p></th>
+<th class="head"><p>方法</p></th>
+<th class="head"><p>示例</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>从字典初始化</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">TaskSettings.from_dict(config)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">settings</span> <span class="pre">=</span> <span class="pre">TaskSettings.from_dict(config)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>添加被试信息</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.add_subinfo(subject_data)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">settings.add_subinfo(subject_data)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>访问设置</p></td>
+<td><p>点表示法</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">settings.size</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>获取所有设置</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">all_settings</span> <span class="pre">=</span> <span class="pre">settings.to_dict()</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
 <section id="id4">
-<h3>1. 初始化 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code><a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 通常在您的主实验脚本的开头，在您加载了您的 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 文件之后被初始化。<code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 的 <code class="docutils literal notranslate"><span class="pre">load_config</span></code> 函数与 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 配合得很好。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.task_settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
-
-<span class="c1"># 1. 使用 psyflow 的辅助函数加载您的 YAML 配置</span>
-<span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s1">&#39;config/config.yaml&#39;</span><span class="p">)</span>
-
-<span class="c1"># config[&#39;task_config&#39;] 包含所有与任务相关的设置</span>
-<span class="c1"># (例如，来自 &#39;window&#39; 和 &#39;timing&#39; 部分)</span>
-<span class="c1"># {&#39;size&#39;: [800, 600], &#39;fullscreen&#39;: False, &#39;fixation_duration&#39;: 0.5, ...}</span>
-
-<span class="c1"># 2. 从任务配置字典创建 TaskSettings 对象</span>
-<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">])</span>
-
-<span class="c1"># 现在您可以使用点符号访问了</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;窗口大小: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;全屏模式: </span><span class="si">{</span><span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
+<h2>详细使用指南<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
 <section id="id5">
-<h3>2. 访问设置<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
-<p>您可以使用标准的 Python 点符号来访问任何设置。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 获取背景颜色</span>
-<span class="n">bg_color</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">bg_color</span>
+<h3>1. 创建 TaskSettings<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<section id="a-yaml">
+<h4>选项 A：从 YAML 文件<a class="headerlink" href="#a-yaml" title="Link to this heading">¶</a></h4>
+<ol class="arabic simple">
+<li><p>在 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 中<strong>定义</strong>单独的部分：</p></li>
+</ol>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">window</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1920</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1080</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">fullscreen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">units</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deg&quot;</span>
+<span class="w">  </span><span class="nt">bg_color</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gray&quot;</span>
 
-<span class="c1"># 在创建 PsychoPy 窗口时使用它</span>
-<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
-    <span class="n">size</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
-    <span class="n">fullscr</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">bg_color</span>
-<span class="p">)</span>
+<span class="nt">task</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">task_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;stroop&quot;</span>
+<span class="w">  </span><span class="nt">total_blocks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">total_trials</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40</span>
+<span class="w">  </span><span class="nt">conditions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;congruent&quot;</span><span class="p p-Indicator">,</span><span class="s">&quot;incongruent&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">key_list</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;space&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">seed_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;same_across_sub&quot;</span>
+
+<span class="nt">timing</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">fixation_duration</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.7</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">cue_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.3</span>
+<span class="w">  </span><span class="nt">stimulus_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+<span class="w">  </span><span class="nt">feedback_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
 </pre></div>
 </div>
+<ol class="arabic simple" start="2">
+<li><p><strong>加载</strong>并<strong>扁平化</strong>：</p></li>
+</ol>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;config.yaml&#39;</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+<span class="n">merged</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;window&#39;</span><span class="p">,</span> <span class="p">{}),</span> <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;task&#39;</span><span class="p">,</span> <span class="p">{}),</span> <span class="o">**</span><span class="n">cfg</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;timing&#39;</span><span class="p">,</span> <span class="p">{})}</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">merged</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>注意：</strong> <code class="docutils literal notranslate"><span class="pre">window</span></code>、<code class="docutils literal notranslate"><span class="pre">task</span></code> 和 <code class="docutils literal notranslate"><span class="pre">timing</span></code> 是 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 的主要部分。它们必须被扁平化为一个传递给 <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> 的字典。其他配置（例如 <code class="docutils literal notranslate"><span class="pre">triggers</span></code>、<code class="docutils literal notranslate"><span class="pre">controllers</span></code>）可以作为嵌套属性添加：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;trigger_config&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">load_config()</span></code> 实用程序通常会自动将 <code class="docutils literal notranslate"><span class="pre">window</span></code>、<code class="docutils literal notranslate"><span class="pre">task</span></code> 和 <code class="docutils literal notranslate"><span class="pre">timing</span></code> 扁平化到 <code class="docutils literal notranslate"><span class="pre">cfg['task_config']</span></code> 中，因此您可以直接初始化：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s1">&#39;config.yaml&#39;</span><span class="p">)</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div></blockquote>
 </section>
-<section id="id6">
-<h3>3. 提供默认值<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
-<p>如果您尝试访问一个不存在的属性，<code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 将返回 <code class="docutils literal notranslate"><span class="pre">None</span></code> 而不是引发 <code class="docutils literal notranslate"><span class="pre">AttributeError</span></code> 或 <code class="docutils literal notranslate"><span class="pre">KeyError</span></code>。这使得处理可选设置更加安全。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 假设 &#39;response_keys&#39; 没有在您的 config.yaml 中定义</span>
-<span class="n">keys</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">response_keys</span>
+<section id="b">
+<h4>选项 B：从字典<a class="headerlink" href="#b" title="Link to this heading">¶</a></h4>
+<p>您可以通过两种方式直接从 Python 字典初始化 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code>：</p>
+<ol class="arabic simple">
+<li><p><strong>扁平字典</strong>：将所有参数（包括自定义字段）合并到一个字典中。</p></li>
+<li><p><strong>嵌套部分</strong>：将逻辑子部分（例如 <code class="docutils literal notranslate"><span class="pre">window</span></code>、<code class="docutils literal notranslate"><span class="pre">task</span></code>、<code class="docutils literal notranslate"><span class="pre">timing</span></code>）保留为嵌套字典，然后在调用时扁平化。</p></li>
+</ol>
+<p><strong>示例 YAML 部分</strong>（作为参考）：</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">window</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">1920</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">1080</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">fullscreen</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">units</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deg&quot;</span>
+<span class="w">  </span><span class="nt">bg_color</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gray&quot;</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>  <span class="c1"># -&gt; None</span>
+<span class="nt">task</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">task_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;stroop&quot;</span>
+<span class="w">  </span><span class="nt">total_blocks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">total_trials</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40</span>
+<span class="w">  </span><span class="nt">conditions</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;congruent&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;incongruent&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">key_list</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;space&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">seed_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;same_across_sub&quot;</span>
+
+<span class="nt">timing</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">fixation_duration</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0.5</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">0.7</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">cue_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.3</span>
+<span class="w">  </span><span class="nt">stimulus_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.0</span>
+<span class="w">  </span><span class="nt">feedback_duration</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.5</span>
 </pre></div>
 </div>
-<p>您可以使用标准的 Python 技术来提供您自己的默认值：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 如果 settings.response_keys 是 None，则使用 [&#39;f&#39;, &#39;j&#39;]</span>
-<span class="n">valid_keys</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">response_keys</span> <span class="ow">or</span> <span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;j&#39;</span><span class="p">]</span>
+<section id="id6">
+<h5>1. 扁平字典方法<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h5>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
+
+<span class="c1"># 将所有设置合并到一个字典中</span>
+<span class="n">config_flat</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># 窗口设置</span>
+    <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
+    <span class="s1">&#39;fullscreen&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;deg&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;bg_color&#39;</span><span class="p">:</span> <span class="s1">&#39;gray&#39;</span><span class="p">,</span>
+
+    <span class="c1"># 任务设置</span>
+    <span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="s1">&#39;stroop&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;total_blocks&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="s1">&#39;total_trials&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+    <span class="s1">&#39;conditions&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;congruent&#39;</span><span class="p">,</span> <span class="s1">&#39;incongruent&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;key_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;seed_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;same_across_sub&#39;</span><span class="p">,</span>
+
+    <span class="c1"># 计时设置</span>
+    <span class="s1">&#39;fixation_duration&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+    <span class="s1">&#39;cue_duration&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+    <span class="s1">&#39;stimulus_duration&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="s1">&#39;feedback_duration&#39;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+
+    <span class="c1"># 自定义嵌套字段</span>
+    <span class="s1">&#39;trigger_config&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;onset&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config_flat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Trigger:&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">trigger_config</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
 <section id="id7">
-<h3>4. 更新和添加设置<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
-<p>您可以在运行时像对待任何常规 Python 对象一样更新现有设置或添加新设置。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 更新一个现有的设置</span>
-<span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span> <span class="o">=</span> <span class="kc">False</span>
+<h5>2. 嵌套字典方法<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h5>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
 
-<span class="c1"># 添加一个在实验期间计算出的新设置</span>
-<span class="c1"># (例如，基于显示器规格的每帧时间)</span>
-<span class="n">settings</span><span class="o">.</span><span class="n">frame_duration_ms</span> <span class="o">=</span> <span class="n">win</span><span class="o">.</span><span class="n">getMsPerFrame</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1"># 为可读性保留嵌套部分</span>
+<span class="n">config_nested</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;window&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">],</span>
+        <span class="s1">&#39;fullscreen&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="s1">&#39;units&#39;</span><span class="p">:</span> <span class="s1">&#39;deg&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;bg_color&#39;</span><span class="p">:</span> <span class="s1">&#39;gray&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;task&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;task_name&#39;</span><span class="p">:</span> <span class="s1">&#39;stroop&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;total_blocks&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;total_trials&#39;</span><span class="p">:</span> <span class="mi">40</span><span class="p">,</span>
+        <span class="s1">&#39;conditions&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;congruent&#39;</span><span class="p">,</span> <span class="s1">&#39;incongruent&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;key_list&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;space&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;seed_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;same_across_sub&#39;</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;timing&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;fixation_duration&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">],</span>
+        <span class="s1">&#39;cue_duration&#39;</span><span class="p">:</span> <span class="mf">0.3</span><span class="p">,</span>
+        <span class="s1">&#39;stimulus_duration&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="s1">&#39;feedback_duration&#39;</span><span class="p">:</span> <span class="mf">0.5</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;trigger_config&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;onset&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+        <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="mi">6</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1"># 初始化时扁平化嵌套部分</span>
+<span class="n">config_flat</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="o">**</span><span class="n">config_nested</span><span class="p">[</span><span class="s1">&#39;window&#39;</span><span class="p">],</span>
+    <span class="o">**</span><span class="n">config_nested</span><span class="p">[</span><span class="s1">&#39;task&#39;</span><span class="p">],</span>
+    <span class="o">**</span><span class="n">config_nested</span><span class="p">[</span><span class="s1">&#39;timing&#39;</span><span class="p">],</span>
+    <span class="s1">&#39;trigger_config&#39;</span><span class="p">:</span> <span class="n">config_nested</span><span class="p">[</span><span class="s1">&#39;trigger_config&#39;</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config_flat</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">conditions</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">fixation_duration</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">trigger_config</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>这对于存储在实验过程中确定或计算的值非常有用。</p>
+<p>在这两种情况下，<code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> 都会应用已知字段，并将未知键（如 <code class="docutils literal notranslate"><span class="pre">trigger_config</span></code>）作为 <code class="docutils literal notranslate"><span class="pre">settings</span></code> 对象的属性附加。</p>
+</section>
+</section>
 </section>
 <section id="id8">
-<h3>5. 转换为字典<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
-<p>如果您需要将设置转换回字典（例如，用于保存或记录），您可以使用 <code class="docutils literal notranslate"><span class="pre">to_dict()</span></code> 方法。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 获取包含所有当前设置的字典</span>
-<span class="n">settings_dict</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
-
-<span class="c1"># 保存到 JSON 文件</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;used_settings.json&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">settings_dict</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<h3>2. 添加被试信息<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<p>提供一个至少包含 <code class="docutils literal notranslate"><span class="pre">subject_id</span></code>（其他可选）的字典，以：</p>
+<ul class="simple">
+<li><p>验证输入</p></li>
+<li><p>派生特定于被试的种子（在 <code class="docutils literal notranslate"><span class="pre">same_within_sub</span></code> 模式下）</p></li>
+<li><p>创建输出目录</p></li>
+<li><p>构建带时间戳的文件名</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">subinfo</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;subject_id&#39;</span><span class="p">:</span> <span class="s1">&#39;S01&#39;</span><span class="p">,</span> <span class="s1">&#39;age&#39;</span><span class="p">:</span> <span class="mi">24</span><span class="p">,</span> <span class="s1">&#39;gender&#39;</span><span class="p">:</span> <span class="s1">&#39;F&#39;</span><span class="p">}</span>
+<span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subinfo</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
 </section>
 <section id="id9">
-<h2>推荐的工作流程<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
-<p>在 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 项目中，推荐的工作流程如下：</p>
-<ol class="arabic simple">
-<li><p>在您的 <code class="docutils literal notranslate"><span class="pre">config/config.yaml</span></code> 文件中定义所有静态实验参数。</p></li>
-<li><p>在您的 <code class="docutils literal notranslate"><span class="pre">main.py</span></code> 脚本的开头，使用 <code class="docutils literal notranslate"><span class="pre">load_config()</span></code> 来加载这个文件。</p></li>
-<li><p>立即从加载的配置中创建一个 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 实例。</p></li>
-<li><p>将这个 <code class="docutils literal notranslate"><span class="pre">settings</span></code> 对象传递给需要访问配置参数的任何函数（例如 <code class="docutils literal notranslate"><span class="pre">run_trial</span></code>）和 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>。</p></li>
-</ol>
-<p><strong><code class="docutils literal notranslate"><span class="pre">main.py</span></code> 示例:</strong></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span><span class="p">,</span> <span class="n">initialize_exp</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.task_settings</span><span class="w"> </span><span class="kn">import</span> <span class="n">TaskSettings</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.block_unit</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockUnit</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">src.run_trial</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_trial</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<h3>3. 路径管理<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<p>在 <code class="docutils literal notranslate"><span class="pre">add_subinfo()</span></code> 之后，将设置以下属性：</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>属性</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">save_path</span></code></p></td>
+<td><p>基本目录（默认为 <code class="docutils literal notranslate"><span class="pre">./data</span></code>）</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">log_file</span></code></p></td>
+<td><p>PsychoPy 日志的 <code class="docutils literal notranslate"><span class="pre">.log</span></code> 文件的完整路径</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">res_file</span></code></p></td>
+<td><p>包含试验级结果的 <code class="docutils literal notranslate"><span class="pre">.csv</span></code> 文件的完整路径</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">json_file</span></code></p></td>
+<td><p>转储所有设置的 <code class="docutils literal notranslate"><span class="pre">.json</span></code> 文件的完整路径</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>调用 <code class="docutils literal notranslate"><span class="pre">settings.add_subinfo(subinfo)</span></code> 后，您将看到控制台输出和生成的文件路径：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">settings</span><span class="o">.</span><span class="n">add_subinfo</span><span class="p">(</span><span class="n">subinfo</span><span class="p">)</span>
+<span class="c1"># [INFO] Created output directory: ./data</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-    <span class="c1"># 1. 加载配置</span>
-    <span class="n">config</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="s1">&#39;config/config.yaml&#39;</span><span class="p">)</span>
-    
-    <span class="c1"># 2. 创建 TaskSettings</span>
-    <span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;task_config&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Log file:&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">log_file</span><span class="p">)</span>
+<span class="c1"># Log file: ./data/sub-S01_task_flanker_20250706_094730.log</span>
 
-    <span class="c1"># 3. 初始化 PsychoPy</span>
-    <span class="n">win</span><span class="p">,</span> <span class="n">kb</span> <span class="o">=</span> <span class="n">initialize_exp</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Results file:&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="p">)</span>
+<span class="c1"># Results file: ./data/sub-S01_task_flanker_20250706_094730.csv</span>
 
-    <span class="c1"># 4. 加载试验</span>
-    <span class="n">trial_list</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;trials.csv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
-
-    <span class="c1"># 5. 将 settings 对象传递给 BlockUnit</span>
-    <span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
-        <span class="n">trial_list</span><span class="o">=</span><span class="n">trial_list</span><span class="p">,</span>
-        <span class="n">run_func</span><span class="o">=</span><span class="n">run_trial</span><span class="p">,</span>
-        <span class="n">fixed_params</span><span class="o">=</span><span class="p">{</span>
-            <span class="s1">&#39;win&#39;</span><span class="p">:</span> <span class="n">win</span><span class="p">,</span>
-            <span class="s1">&#39;kb&#39;</span><span class="p">:</span> <span class="n">kb</span><span class="p">,</span>
-            <span class="s1">&#39;settings&#39;</span><span class="p">:</span> <span class="n">settings</span> <span class="c1"># 在这里传递</span>
-        <span class="p">}</span>
-    <span class="p">)</span>
-
-    <span class="c1"># 6. 运行实验</span>
-    <span class="n">block</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">main</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Config JSON file:&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">json_file</span><span class="p">)</span>
+<span class="c1"># Config JSON file: ./data/sub-S01_task_flanker_20250706_094730.json</span>
 </pre></div>
 </div>
-<p>通过遵循这种模式，您可以确保在整个项目中对设置进行一致、可读和健壮的管理。</p>
+<p><strong>示例目录布局</strong>：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>./data/
+└─ S01/
+   ├─ sub-S01_task-stroop_20250706_091500.log
+   ├─ sub-S01_task-stroop_20250706_091500.csv
+   └─ sub-S01_task-stroop_20250706_091500.json
+</pre></div>
+</div>
+</section>
+<section id="id10">
+<h3>4. 种子管理<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 使用三个相关字段来控制随机化和可复现性：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">overall_seed</span></code>（整数，默认 2025）：用于生成特定于块的种子的基本种子。在您的配置中或在运行时更改此值以改变整体随机化模式。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">block_seed</span></code>（整数列表或 <code class="docutils literal notranslate"><span class="pre">None</span></code>）：每个块一个种子，用于初始化块级随机化（例如，洗牌条件顺序）。如果未设置，则根据 <code class="docutils literal notranslate"><span class="pre">overall_seed</span></code> 和 <code class="docutils literal notranslate"><span class="pre">seed_mode</span></code> 自动生成种子。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seed_mode</span></code>（<code class="docutils literal notranslate"><span class="pre">&quot;same_across_sub&quot;</span></code> 或 <code class="docutils literal notranslate"><span class="pre">&quot;same_within_sub&quot;</span></code>）：确定块种子是在参与者之间共享还是为每个被试个性化。</p></li>
+</ul>
+<section id="id11">
+<h4>控制每个块的条件顺序<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">block_seed</span></code> 中的每个条目都为该块的随机数生成器（RNG）提供种子。通过为每个块分配一个特定的种子，您可以确保：</p>
+<ol class="arabic simple">
+<li><p><strong>确定性洗牌：</strong> 在块 <em>n</em> 中洗牌 <code class="docutils literal notranslate"><span class="pre">settings.conditions</span></code> 的顺序完全由 <code class="docutils literal notranslate"><span class="pre">block_seed[n]</span></code> 决定。</p></li>
+<li><p><strong>可复现的块：</strong> 使用相同的种子重新运行实验将重新创建相同的块级条件顺序。</p></li>
+</ol>
+<p>示例：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">seed</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">block_seed</span><span class="p">):</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">block_order</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">conditions</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">block_order</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Block </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2"> order:&quot;</span><span class="p">,</span> <span class="n">block_order</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h4>如何覆盖种子<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h4>
+<ul>
+<li><p><strong>通过配置</strong>：在初始化之前在您的字典或 YAML 中设置 <code class="docutils literal notranslate"><span class="pre">overall_seed</span></code>：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;overall_seed&#39;</span><span class="p">:</span> <span class="mi">9999</span><span class="p">,</span> <span class="s1">&#39;seed_mode&#39;</span><span class="p">:</span> <span class="s1">&#39;same_across_sub&#39;</span><span class="p">,</span> <span class="o">...</span><span class="p">}</span>
+<span class="n">settings</span> <span class="o">=</span> <span class="n">TaskSettings</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>在运行时</strong>：从新的基础重新生成块种子：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">settings</span><span class="o">.</span><span class="n">set_block_seed</span><span class="p">(</span><span class="mi">123456</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;New block seeds:&#39;</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">block_seed</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="id13">
+<h4>选择种子模式<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">same_across_sub</span></code>（默认）
+所有参与者共享从 <code class="docutils literal notranslate"><span class="pre">overall_seed</span></code> 生成的相同 <code class="docutils literal notranslate"><span class="pre">block_seed</span></code> 列表。当您需要在整个组中进行相同的块随机化时（例如，在队列级别进行平衡），请使用此模式。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">same_within_sub</span></code>
+每个被试都会收到一组从其 <code class="docutils literal notranslate"><span class="pre">subject_id</span></code> 派生的唯一块种子，从而确保可复现但个性化的随机化。此方法：</p>
+<ul>
+<li><p><strong>可复现性：</strong> 允许从任何被试的 ID 精确重建其实验序列。</p></li>
+<li><p><strong>分布式顺序效应：</strong> 当不需要组级一致性时，在参与者之间改变块顺序。</p></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<div><p><strong>注意：</strong> 最终的 <code class="docutils literal notranslate"><span class="pre">block_seed</span></code> 列表存储在 <code class="docutils literal notranslate"><span class="pre">settings</span></code> 对象中，并包含在 <code class="docutils literal notranslate"><span class="pre">save_to_json()</span></code> 生成的 JSON 文件中。这使得调试和事后分析变得透明，因为您可以确切地看到每个块使用了哪些种子。</p>
+</div></blockquote>
+</section>
+</section>
+<section id="id14">
+<h3>5. 访问设置<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
+<p>许多 psyflow 实用程序和您的自定义试验函数将直接从 <code class="docutils literal notranslate"><span class="pre">settings</span></code> 对象中读取值。使用 Python 的属性访问（或 <code class="docutils literal notranslate"><span class="pre">getattr</span></code>）来获取显示参数、计时值和自定义触发器，而无需样板代码。</p>
+<section id="id15">
+<h4>窗口和监视器设置<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h4>
+<p>许多实验使用相同的监视器和窗口设置。以下是从 <code class="docutils literal notranslate"><span class="pre">settings</span></code> 应用这些值的两种方法：</p>
+<p><strong>示例 1：直接点属性访问</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">monitors</span><span class="p">,</span> <span class="n">visual</span>
+
+<span class="c1"># 点访问假定属性存在</span>
+<span class="n">mon</span> <span class="o">=</span> <span class="n">monitors</span><span class="o">.</span><span class="n">Monitor</span><span class="p">(</span><span class="s1">&#39;tempMonitor&#39;</span><span class="p">)</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">monitor_width_cm</span><span class="p">)</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setDistance</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">monitor_distance_cm</span><span class="p">)</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setSizePix</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
+    <span class="n">size</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>
+    <span class="n">fullscr</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">fullscreen</span><span class="p">,</span>
+    <span class="n">screen</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">screen</span><span class="p">,</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="n">mon</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">units</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">bg_color</span><span class="p">,</span>
+    <span class="n">gammaErrorPolicy</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>示例 2：使用 <code class="docutils literal notranslate"><span class="pre">getattr</span></code> 安全访问</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">monitors</span><span class="p">,</span> <span class="n">visual</span>
+
+<span class="c1"># getattr 在字段丢失时提供回退</span>
+<span class="n">mon</span> <span class="o">=</span> <span class="n">monitors</span><span class="o">.</span><span class="n">Monitor</span><span class="p">(</span><span class="s1">&#39;tempMonitor&#39;</span><span class="p">)</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setWidth</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;monitor_width_cm&#39;</span><span class="p">,</span> <span class="mi">60</span><span class="p">))</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setDistance</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;monitor_distance_cm&#39;</span><span class="p">,</span> <span class="mi">65</span><span class="p">))</span>
+<span class="n">mon</span><span class="o">.</span><span class="n">setSizePix</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">]))</span>
+
+<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span>
+    <span class="n">size</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">]),</span>
+    <span class="n">fullscr</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;fullscreen&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+    <span class="n">screen</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;screen&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="n">monitor</span><span class="o">=</span><span class="n">mon</span><span class="p">,</span>
+    <span class="n">units</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;units&#39;</span><span class="p">,</span> <span class="s1">&#39;pix&#39;</span><span class="p">),</span>
+    <span class="n">color</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="s1">&#39;bg_color&#39;</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+    <span class="n">gammaErrorPolicy</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>提示：</strong> 使用 <code class="docutils literal notranslate"><span class="pre">getattr(settings,</span> <span class="pre">'attr',</span> <span class="pre">default)</span></code> 允许您在设置可能不存在时指定回退。</p>
+</div></blockquote>
+</section>
+<section id="run-trial-py">
+<h4>在 <code class="docutils literal notranslate"><span class="pre">run_trial.py</span></code> 中访问计时和触发器<a class="headerlink" href="#run-trial-py" title="Link to this heading">¶</a></h4>
+<p>以下是一个简洁的代码片段，展示了如何在您的试验代码中从 <code class="docutils literal notranslate"><span class="pre">settings</span></code> 中获取计时值和起始触发器：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># run_trial.py (简洁)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">,</span> <span class="n">condition</span><span class="p">):</span>
+    <span class="c1"># 检索提示持续时间和起始触发器</span>
+    <span class="n">duration</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">cue_duration</span>
+    <span class="n">trigger</span>  <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_cue_onset&quot;</span><span class="p">)</span>
+
+    <span class="c1"># 呈现提示刺激</span>
+    <span class="n">cue_stim</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_cue&quot;</span><span class="p">)</span>
+    <span class="n">cue_stim</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">duration</span><span class="p">,</span> <span class="n">onset_trigger</span><span class="o">=</span><span class="n">trigger</span><span class="p">)</span>
+
+    <span class="c1"># ... 其他试验单元类似地跟随 ...</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="id16">
+<h2>此类的设计注意事项<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h2>
+<p>TaskSettings 将最重要的实验参数——显示（<code class="docutils literal notranslate"><span class="pre">window</span></code>）、结构（<code class="docutils literal notranslate"><span class="pre">task</span></code>）和计时——分组到顶级属性中，以便直接、可预测地访问和提供合理的默认值。不经常使用的参数（例如 <code class="docutils literal notranslate"><span class="pre">triggers</span></code> 或控制器设置）可以作为嵌套字典提供，并且仅在需要时检索，从而保持核心设置的整洁。特定于刺激的配置（例如图像、声音）由 <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 单独管理，使设置类能够专注于整体实验流程，而不是单个资产的详细信息。</p>
+<p><code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 旨在实现可扩展性和可复现性。传递给 <code class="docutils literal notranslate"><span class="pre">from_dict()</span></code> 的未知键会成为动态属性，因此您可以在不修改类源代码的情况下定制设置。双重种子模式（<code class="docutils literal notranslate"><span class="pre">same_across_sub</span></code>、<code class="docutils literal notranslate"><span class="pre">same_within_sub</span></code>）让您可以在组级一致性或特定于被试的随机性之间进行选择。最后，简洁的 <code class="docutils literal notranslate"><span class="pre">__repr__()</span></code>、所有设置的 JSON 导出以及内置的目录/文件管理的结合，确保您的实验配置是透明的、易于记录的和直接调试的。</p>
+</section>
+<section id="id17">
+<h2>后续步骤<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h2>
+<p>现在您已经了解了如何使用 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code>，您可以：</p>
+<ul class="simple">
+<li><p>了解 <a class="reference internal" href="get_subinfo_cn.html"><span class="std std-doc">SubInfo</span></a> 以收集被试信息</p></li>
+<li><p>探索 <a class="reference internal" href="build_stimulus_cn.html"><span class="std std-doc">StimBank</span></a> 以管理刺激</p></li>
+<li><p>查看 <a class="reference internal" href="build_blocks_cn.html"><span class="std std-doc">BlockUnit</span></a> 以将试验组织成块</p></li>
+<li><p>查看 <a class="reference internal" href="#build_trialunit_cn.md"><span class="xref myst">StimUnit</span></a> 以创建单个试验</p></li>
+</ul>
 </section>
 </section>
 
@@ -454,7 +742,7 @@
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">BlockUnit: 组织和运行试验</div>
+                <div class="title">BlockUnit: 管理试验</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -499,18 +787,37 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">TaskSettings: 管理实验配置</a><ul>
+<li><a class="reference internal" href="#">TaskSettings: 配置您的实验</a><ul>
 <li><a class="reference internal" href="#id1">概述</a></li>
-<li><a class="reference internal" href="#id2">核心概念</a></li>
-<li><a class="reference internal" href="#id3">详细使用指南</a><ul>
-<li><a class="reference internal" href="#id4">1. 初始化 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code></a></li>
-<li><a class="reference internal" href="#id5">2. 访问设置</a></li>
-<li><a class="reference internal" href="#id6">3. 提供默认值</a></li>
-<li><a class="reference internal" href="#id7">4. 更新和添加设置</a></li>
-<li><a class="reference internal" href="#id8">5. 转换为字典</a></li>
+<li><a class="reference internal" href="#id2">主要功能</a></li>
+<li><a class="reference internal" href="#id3">快速参考</a></li>
+<li><a class="reference internal" href="#id4">详细使用指南</a><ul>
+<li><a class="reference internal" href="#id5">1. 创建 TaskSettings</a><ul>
+<li><a class="reference internal" href="#a-yaml">选项 A：从 YAML 文件</a></li>
+<li><a class="reference internal" href="#b">选项 B：从字典</a><ul>
+<li><a class="reference internal" href="#id6">1. 扁平字典方法</a></li>
+<li><a class="reference internal" href="#id7">2. 嵌套字典方法</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id9">推荐的工作流程</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id8">2. 添加被试信息</a></li>
+<li><a class="reference internal" href="#id9">3. 路径管理</a></li>
+<li><a class="reference internal" href="#id10">4. 种子管理</a><ul>
+<li><a class="reference internal" href="#id11">控制每个块的条件顺序</a></li>
+<li><a class="reference internal" href="#id12">如何覆盖种子</a></li>
+<li><a class="reference internal" href="#id13">选择种子模式</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id14">5. 访问设置</a><ul>
+<li><a class="reference internal" href="#id15">窗口和监视器设置</a></li>
+<li><a class="reference internal" href="#run-trial-py">在 <code class="docutils literal notranslate"><span class="pre">run_trial.py</span></code> 中访问计时和触发器</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id16">此类的设计注意事项</a></li>
+<li><a class="reference internal" href="#id17">后续步骤</a></li>
 </ul>
 </li>
 </ul>

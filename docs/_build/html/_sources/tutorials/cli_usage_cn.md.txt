@@ -73,5 +73,5 @@ psyflow-init
 
 现在您知道如何初始化项目，您已准备好开始构建您的实验：
 
-- **入门**：按照[入门教程](getting_started.md)从头开始构建一个简单的任务。
-- **学习核心概念**：深入了解[StimBank](build_stimulus.md)、[StimUnit](build_stimunit.md)和[BlockUnit](build_blocks.md)教程，以了解 PsyFlow 的关键组件。
+- **入门**：按照[入门教程](getting_started_cn.md)从头开始构建一个简单的任务。
+- **学习核心概念**：深入了解[StimBank](build_stimulus_cn.md)、[StimUnit](build_stimunit_cn.md)和[BlockUnit](build_blocks_cn.md)教程，以了解 PsyFlow 的关键组件。
