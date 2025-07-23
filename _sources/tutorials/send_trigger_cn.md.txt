@@ -345,6 +345,6 @@ def run_trial(win, kb, settings, condition, stim_bank, controller, trigger_sende
 
 现在您知道如何发送触发器，您可以探索 PsyFlow 的其他部分：
 
-- **入门**：如果您是 PsyFlow 的新手，请查看[入门教程](getting_started.md)。
-- **构建试验**：在[StimUnit 教程](build_stimunit.md)中了解如何构建复杂的试验。
-- **组织模块**：在[BlockUnit 教程](build_blocks.md)中了解如何将试验组织成模块。
+- **入门**：如果您是 PsyFlow 的新手，请查看[入门教程](getting_started_cn.md)。
+- **构建试验**：在[StimUnit 教程](build_stimunit_cn.md)中了解如何构建复杂的试验。
+- **组织模块**：在[BlockUnit 教程](build_blocks_cn.md)中了解如何将试验组织成模块。
