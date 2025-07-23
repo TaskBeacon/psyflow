@@ -15,7 +15,7 @@ class Controller:
     def __init__(
         self,
         initial_duration: float = 0.25,
-        min_duration: float = 0.1,
+        min_duration: float = 0.08,
         max_duration: float = 0.4,
         step: float = 0.02,
         target_accuracy: float = 0.66,
