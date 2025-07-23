@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="StimBank：灵活的刺激管理" href="build_stimulus_cn.html" /><link rel="prev" title="TaskSettings: 管理实验配置" href="task_settings_cn.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="StimBank: 灵活的刺激管理" href="build_stimulus_cn.html" /><link rel="prev" title="TaskSettings: 配置您的实验" href="task_settings_cn.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>BlockUnit: 组织和运行试验 - psyflow 0.1.1</title>
+        <title>BlockUnit: 管理试验 - psyflow 0.1.1</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -224,9 +224,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started_cn.html">PsyFlow 入门指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo_cn.html">SubInfo: 收集被试信息</a></li>
-<li class="toctree-l1"><a class="reference internal" href="task_settings_cn.html">TaskSettings: 管理实验配置</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">BlockUnit: 组织和运行试验</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_stimulus_cn.html">StimBank：灵活的刺激管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_settings_cn.html">TaskSettings: 配置您的实验</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">BlockUnit: 管理试验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_stimulus_cn.html">StimBank: 灵活的刺激管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimunit_cn.html">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html">TriggerSender: 发送硬件触发器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html">psyflow-init: 命令行界面</a></li>
@@ -274,186 +274,578 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="blockunit">
-<h1>BlockUnit: 组织和运行试验<a class="headerlink" href="#blockunit" title="Link to this heading">¶</a></h1>
+<h1>BlockUnit: 管理试验<a class="headerlink" href="#blockunit" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>概述<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 是 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 中用于将单个试验（trials）组织成块（blocks）并以可重复、可随机化的方式运行它们的控制器。它简化了常见的实验设计模式，如试验循环、条件随机化和在块之间传递数据。</p>
-<p>使用 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>，您可以：</p>
+<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 类是在心理学实验中组织试验的强大工具。它提供了一种结构化的方式来管理试验序列、生成平衡的条件、跟踪结果并总结性能指标。本教程将指导您使用 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 来创建结构良好的实验块。</p>
+<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 解决了实验设计中的几个常见挑战：</p>
 <ul class="simple">
-<li><p>从试验规格列表（例如，从 CSV 文件或 <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> 加载）创建一个块。</p></li>
-<li><p>在将试验传递给您的运行函数之前，自动对它们进行随机化（加洗牌）。</p></li>
-<li><p>在块的开始和结束时显示指令或休息屏幕。</p></li>
-<li><p>在块内的所有试验中轻松传递常量参数。</p></li>
-<li><p>将每个试验的数据聚合到一个单一的、有组织的列表中，以便于保存。</p></li>
+<li><p><strong>条件平衡：</strong> 生成具有适当随机化和平衡的试验条件</p></li>
+<li><p><strong>试验排序：</strong> 管理一个块内的试验流程</p></li>
+<li><p><strong>数据组织：</strong> 自动跟踪试验级别的数据和块元数据</p></li>
+<li><p><strong>块生命周期：</strong> 在块边界执行设置和清理操作</p></li>
+<li><p><strong>结果总结：</strong> 计算跨试验和条件的性能指标</p></li>
 </ul>
 </section>
 <section id="id2">
-<h2>核心概念<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 的工作流程围绕以下三个步骤：</p>
-<ol class="arabic simple">
-<li><p><strong>定义试验</strong>: 您创建一个字典列表，其中每个字典代表一个试验并包含该试验所需的所有信息（例如，条件、刺激名称、正确答案）。这通常是通过加载一个 CSV 文件并将其转换为 <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> 来完成的。</p></li>
-<li><p><strong>初始化 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code></strong>: 您使用您的试验列表、一个运行单个试验的函数以及任何固定的参数来创建一个 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 实例。</p></li>
-<li><p><strong>运行块</strong>: 您调用 <code class="docutils literal notranslate"><span class="pre">.run()</span></code> 方法，该方法会迭代您的试验，根据需要对它们进行随机化，并为每个试验执行您的运行函数。</p></li>
-</ol>
+<h2>主要功能<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>功能</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>条件生成</p></td>
+<td><p>创建平衡、随机化的试验序列</p></td>
+</tr>
+<tr class="row-odd"><td><p>块生命周期钩子</p></td>
+<td><p>在块执行之前/之后执行代码</p></td>
+</tr>
+<tr class="row-even"><td><p>结果跟踪</p></td>
+<td><p>自动收集和组织试验数据</p></td>
+</tr>
+<tr class="row-odd"><td><p>总结</p></td>
+<td><p>按条件计算性能指标</p></td>
+</tr>
+<tr class="row-even"><td><p>元数据</p></td>
+<td><p>跟踪计时、试验计数和块信息</p></td>
+</tr>
+<tr class="row-odd"><td><p>集成</p></td>
+<td><p>与其他 psyflow 组件无缝协作</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="id3">
-<h2>详细使用指南<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
-<section id="id4">
-<h3>1. 定义您的试验<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
-<p>一个块是由一个试验列表定义的。在 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 中，这通常是一个 <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>，其中每一行代表一个试验，每一列代表一个参数。</p>
-<p>假设您有一个名为 <code class="docutils literal notranslate"><span class="pre">trials.csv</span></code> 的文件，内容如下：</p>
-<div class="highlight-csv notranslate"><div class="highlight"><pre><span></span>condition,target_stim,correct_key
-win,win_stim_A,f
-win,win_stim_B,j
-loss,loss_stim_A,f
-loss,loss_stim_B,j
-</pre></div>
-</div>
-<p>您可以使用 <code class="docutils literal notranslate"><span class="pre">pandas</span></code> 来加载这个文件：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-
-<span class="n">trial_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;trials.csv&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 期望这个 DataFrame 被转换成一个字典列表，其中每个字典代表一行。您可以使用 <code class="docutils literal notranslate"><span class="pre">.to_dict('records')</span></code> 来轻松完成这个转换：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">trial_list</span> <span class="o">=</span> <span class="n">trial_df</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
-<span class="c1"># trial_list 现在是:</span>
-<span class="c1"># [</span>
-<span class="c1">#   {&#39;condition&#39;: &#39;win&#39;, &#39;target_stim&#39;: &#39;win_stim_A&#39;, &#39;correct_key&#39;: &#39;f&#39;},</span>
-<span class="c1">#   {&#39;condition&#39;: &#39;win&#39;, &#39;target_stim&#39;: &#39;win_stim_B&#39;, &#39;correct_key&#39;: &#39;j&#39;},</span>
-<span class="c1">#   ...</span>
-<span class="c1"># ]</span>
-</pre></div>
-</div>
+<h2>快速参考<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<p>| 目的 | 方法 | 示例 |
+| — | — |
+| 初始化块 | <code class="docutils literal notranslate"><span class="pre">BlockUnit(block_id,</span> <span class="pre">block_idx,</span> <span class="pre">...)</span></code> | <code class="docutils literal notranslate"><span class="pre">block</span> <span class="pre">=</span> <span class="pre">BlockUnit(&quot;block1&quot;,</span> <span class="pre">0,</span> <span class="pre">settings)</span></code> |
+| 生成条件 | <code class="docutils literal notranslate"><span class="pre">.generate_conditions(func,</span> <span class="pre">labels)</span></code> | <code class="docutils literal notranslate"><span class="pre">block.generate_conditions(generate_func,</span> <span class="pre">[&quot;A&quot;,&quot;B&quot;])</span></code> |
+| 手动添加条件 | <code class="docutils literal notranslate"><span class="pre">.add_condition(condition_list)</span></code> | <code class="docutils literal notranslate"><span class="pre">block.add_condition([&quot;A&quot;,&quot;B&quot;,&quot;A&quot;])</span></code> |
+| 注册开始钩子 | <code class="docutils literal notranslate"><span class="pre">.on_start(func)</span></code> | <code class="docutils literal notranslate"><span class="pre">&#64;block.on_start()</span></code> 或 <code class="docutils literal notranslate"><span class="pre">block.on_start(func)</span></code> |
+| 注册结束钩子 | <code class="docutils literal notranslate"><span class="pre">.on_end(func)</span></code> | <code class="docutils literal notranslate"><span class="pre">&#64;block.on_end()</span></code> 或 <code class="docutils literal notranslate"><span class="pre">block.on_end(func)</span></code> |
+| 运行所有试验 | <code class="docutils literal notranslate"><span class="pre">.run_trial(trial_func,</span> <span class="pre">**kwargs)</span></code> | <code class="docutils literal notranslate"><span class="pre">block.run_trial(run_trial_function)</span></code> |
+| 获取结果 | <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code> | <code class="docutils literal notranslate"><span class="pre">results</span> <span class="pre">=</span> <span class="pre">block.to_dict()</span></code> |
+| 附加结果 | <code class="docutils literal notranslate"><span class="pre">.to_dict(target_list)</span></code> | <code class="docutils literal notranslate"><span class="pre">block.to_dict(all_results)</span></code> |
+| 总结结果 | <code class="docutils literal notranslate"><span class="pre">.summarize()</span></code> | <code class="docutils literal notranslate"><span class="pre">summary</span> <span class="pre">=</span> <span class="pre">block.summarize()</span></code> |
+| 自定义总结 | <code class="docutils literal notranslate"><span class="pre">.summarize(func)</span></code> | <code class="docutils literal notranslate"><span class="pre">summary</span> <span class="pre">=</span> <span class="pre">block.summarize(custom_func)</span></code> |
+| 记录块信息 | <code class="docutils literal notranslate"><span class="pre">.logging_block_info()</span></code> | <code class="docutils literal notranslate"><span class="pre">block.logging_block_info()</span></code> |</p>
 </section>
+<section id="id4">
+<h2>详细使用指南<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
 <section id="id5">
-<h3>2. 创建一个试验运行函数<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
-<p>接下来，您需要一个 Python 函数，它知道如何运行 <strong>单个</strong> 试验。这个函数将接收 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 中的信息作为参数。</p>
-<ul class="simple">
-<li><p>它必须接受一个名为 <code class="docutils literal notranslate"><span class="pre">trial_info</span></code> 的参数，这是一个来自您列表的字典（即，一行来自您的 CSV）。</p></li>
-<li><p>它还可以接受您在初始化 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 时定义的任何其他关键字参数（“固定参数”）。</p></li>
-</ul>
-<p>这是一个典型的试验运行函数的骨架，它位于 <code class="docutils literal notranslate"><span class="pre">src/run_trial.py</span></code> 中：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># In src/run_trial.py</span>
+<h3>1. 初始化<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p>要创建一个 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>，您需要提供有关块和实验设置的基本信息：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockUnit</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">trial_info</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">,</span> <span class="n">settings</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    运行一个单独的试验。</span>
-
-<span class="sd">    参数:</span>
-<span class="sd">    - trial_info (dict): 来自试验列表的当前试验的规格。</span>
-<span class="sd">    - win, kb, stim_bank, settings: 传递给 BlockUnit 的固定参数。</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># 1. 从 trial_info 中解包信息</span>
-    <span class="n">condition</span> <span class="o">=</span> <span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;condition&#39;</span><span class="p">]</span>
-    <span class="n">target_name</span> <span class="o">=</span> <span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;target_stim&#39;</span><span class="p">]</span>
-    <span class="n">correct_key</span> <span class="o">=</span> <span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;correct_key&#39;</span><span class="p">]</span>
-
-    <span class="c1"># 2. 使用 stim_bank 检索刺激</span>
-    <span class="n">target_stim</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">target_name</span><span class="p">)</span>
-
-    <span class="c1"># 3. 使用 StimUnit 来呈现刺激并捕获反应</span>
-    <span class="c1"># (这是一个简化的例子)</span>
-    <span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;trial_</span><span class="si">{</span><span class="n">trial_info</span><span class="p">[</span><span class="s1">&#39;trial_num&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
-    <span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">target_stim</span><span class="p">)</span>
-    <span class="n">unit</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;j&#39;</span><span class="p">],</span> <span class="n">correct_keys</span><span class="o">=</span><span class="p">[</span><span class="n">correct_key</span><span class="p">],</span> <span class="n">duration</span><span class="o">=</span><span class="mf">2.0</span><span class="p">)</span>
-
-    <span class="c1"># 4. 返回试验数据</span>
-    <span class="k">return</span> <span class="n">unit</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+<span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
+    <span class="n">block_id</span><span class="o">=</span><span class="s1">&#39;block1&#39;</span><span class="p">,</span>      <span class="c1"># 唯一标识符</span>
+    <span class="n">block_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>            <span class="c1"># 块索引 (0-based)</span>
+    <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>      <span class="c1"># TaskSettings 实例</span>
+    <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>             <span class="c1"># PsychoPy 窗口</span>
+    <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>             <span class="c1"># PsychoPy 键盘</span>
+<span class="p">)</span>
 </pre></div>
 </div>
+<p><code class="docutils literal notranslate"><span class="pre">settings</span></code> 参数应该是一个 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 对象或类似的对象，其中包括：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">trials_per_block</span></code>: 每个块中的试验次数</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">block_seed</span></code>: 用于随机数生成的种子（用于可复现性）</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">condition_list</span></code>: 条件列表</p></li>
+</ul>
 </section>
 <section id="id6">
-<h3>3. 初始化 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code><a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
-<p>现在您已经有了您的试验列表和您的 <code class="docutils literal notranslate"><span class="pre">run_trial</span></code> 函数，您可以初始化 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.block_unit</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlockUnit</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">src.run_trial</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_trial</span> <span class="c1"># 导入您的函数</span>
+<h3>2. 生成条件<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">generate_conditions()</span></code> 方法提供了一个内置的、平衡的（或加权的）生成器，以创建一个长度为 <code class="docutils literal notranslate"><span class="pre">n_trials</span></code> 的条件标签序列。关键参数：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">condition_labels</span></code>: 用于此块的标签列表（默认为 <code class="docutils literal notranslate"><span class="pre">settings.conditions</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weights</span></code>: 每个标签的相对权重（默认为相等权重）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">order</span></code>: <code class="docutils literal notranslate"><span class="pre">'random'</span></code> 或 <code class="docutils literal notranslate"><span class="pre">'sequential'</span></code>——控制最终序列的排列。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">seed</span></code>: 用于可复现洗牌的随机种子覆盖。</p></li>
+</ul>
+<p><strong>加权生成算法</strong></p>
+<p>此方法首先计算每个标签的基本计数为 <code class="docutils literal notranslate"><span class="pre">floor(n_trials</span> <span class="pre">*</span> <span class="pre">weight</span> <span class="pre">/</span> <span class="pre">total_weight)</span></code>，然后根据给定的权重随机分配任何剩余的试验。最后，它通过按指定顺序交错标签或洗牌完整列表来构建完整序列，具体取决于 <code class="docutils literal notranslate"><span class="pre">order</span></code> 参数。</p>
+<p><strong>设置权重</strong>：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># 使 &#39;A&#39; 的可能性是 &#39;B&#39; 的两倍</span>
+<span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span>
+    <span class="n">condition_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">],</span>
+    <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">order</span><span class="o">=</span><span class="s1">&#39;random&#39;</span><span class="p">,</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>预期的 A:B 比例约为 2:1，受舍入和余数随机分布的影响。</p>
+<p><strong>顺序模式</strong>：</p>
+<ul class="simple">
+<li><p><strong>Sequential</strong>: 确保按原始标签顺序交错、循环呈现条件。
+<em>示例</em>：在一个有两种条件——<code class="docutils literal notranslate"><span class="pre">ec</span></code>（闭眼）和 <code class="docutils literal notranslate"><span class="pre">eo</span></code>（睁眼）——的静息态实验中，使用 <code class="docutils literal notranslate"><span class="pre">order='sequential'</span></code> 会产生 <code class="docutils literal notranslate"><span class="pre">['ec','eo','ec','eo']</span></code>，可预测地交替块。</p></li>
+<li><p><strong>Random</strong>: 提供一个完全洗牌的序列，同时尊重标签权重。
+<em>示例</em>：使用相同的 <code class="docutils literal notranslate"><span class="pre">ec</span></code>/<code class="docutils literal notranslate"><span class="pre">eo</span></code> 设置和 <code class="docutils literal notranslate"><span class="pre">order='random'</span></code>，序列可能是 <code class="docutils literal notranslate"><span class="pre">['ec','ec','eo','eo']</span></code> 或任何其他随机排列。</p></li>
+</ul>
+<p><strong>示例</strong>：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 默认：使用 settings.conditions、相等权重、随机顺序</span>
+<span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">()</span>
 
-<span class="c1"># 试验列表 (来自上面的 .csv)</span>
-<span class="n">trial_list</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;trials.csv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="s1">&#39;records&#39;</span><span class="p">)</span>
+<span class="c1"># 自定义标签和顺序</span>
+<span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span>
+    <span class="n">condition_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">,</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">],</span>
+    <span class="n">weights</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+    <span class="n">order</span><span class="o">=</span><span class="s1">&#39;sequential&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>自定义条件生成器</strong></p>
+<p>对于专门的块设计——例如停止信号任务（SST），您需要对停止/执行比率、运行长度和起始试验有特定约束——您可以提供自己的生成器函数。您的函数必须具有以下签名：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">gen_func</span><span class="p">(</span><span class="n">n_trials</span><span class="p">,</span> <span class="n">condition_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="o">...</span>
+</pre></div>
+</div>
+<p><strong>示例：SST 条件生成器</strong></p>
+<p>此自定义函数为停止信号任务（SST）生成条件序列，强制执行：</p>
+<ul class="simple">
+<li><p>固定的停止与执行试验比率（<code class="docutils literal notranslate"><span class="pre">stop_ratio</span></code>）。</p></li>
+<li><p>连续停止试验的最大运行长度（<code class="docutils literal notranslate"><span class="pre">max_stop_run</span></code>）。</p></li>
+<li><p>初始执行试验的最小数量（<code class="docutils literal notranslate"><span class="pre">min_go_start</span></code>）。</p></li>
+<li><p>通过本地 RNG 保护全局随机状态。</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="c1"># 固定的参数，将传递给每个 run_trial 调用</span>
-<span class="n">fixed_params</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;win&#39;</span><span class="p">:</span> <span class="n">my_psychopy_window</span><span class="p">,</span>
-    <span class="s1">&#39;kb&#39;</span><span class="p">:</span> <span class="n">my_keyboard</span><span class="p">,</span>
-    <span class="s1">&#39;stim_bank&#39;</span><span class="p">:</span> <span class="n">my_stim_bank</span><span class="p">,</span>
-    <span class="s1">&#39;settings&#39;</span><span class="p">:</span> <span class="n">my_experiment_settings</span>
-<span class="p">}</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_sst_conditions</span><span class="p">(</span>
+    <span class="n">n_trials</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">condition_labels</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">stop_ratio</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
+    <span class="n">max_stop_run</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="n">min_go_start</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    在保留全局 RNG 状态的同时生成 SST 序列。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 1) 如果没有提供标签，则使用默认标签</span>
+    <span class="k">if</span> <span class="n">condition_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">condition_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;go_left&#39;</span><span class="p">,</span> <span class="s1">&#39;go_right&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_left&#39;</span><span class="p">,</span> <span class="s1">&#39;stop_right&#39;</span><span class="p">]</span>
+    <span class="n">go_labels</span>   <span class="o">=</span> <span class="p">[</span><span class="n">lbl</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">condition_labels</span> <span class="k">if</span> <span class="n">lbl</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;go&#39;</span><span class="p">)]</span>
+    <span class="n">stop_labels</span><span class="o">=</span> <span class="p">[</span><span class="n">lbl</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">condition_labels</span> <span class="k">if</span> <span class="n">lbl</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;stop&#39;</span><span class="p">)]</span>
 
-<span class="c1"># 创建 BlockUnit 实例</span>
-<span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
-    <span class="n">trial_list</span><span class="o">=</span><span class="n">trial_list</span><span class="p">,</span>
-    <span class="n">run_func</span><span class="o">=</span><span class="n">run_trial</span><span class="p">,</span>
-    <span class="n">fixed_params</span><span class="o">=</span><span class="n">fixed_params</span><span class="p">,</span>
-    <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span>  <span class="c1"># 在运行前对试验列表进行随机化</span>
+    <span class="c1"># 2) 计算试验次数</span>
+    <span class="n">n_stop</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">n_trials</span> <span class="o">*</span> <span class="n">stop_ratio</span><span class="p">))</span>
+    <span class="n">n_go</span>   <span class="o">=</span> <span class="n">n_trials</span> <span class="o">-</span> <span class="n">n_stop</span>
+    <span class="n">base_go</span><span class="p">,</span> <span class="n">rem_go</span>   <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">n_go</span><span class="p">,</span>   <span class="nb">len</span><span class="p">(</span><span class="n">go_labels</span><span class="p">))</span>
+    <span class="n">base_st</span><span class="p">,</span> <span class="n">rem_st</span>   <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">n_stop</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">stop_labels</span><span class="p">))</span>
+
+    <span class="n">counts</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">go_labels</span><span class="p">):</span>
+        <span class="n">counts</span><span class="p">[</span><span class="n">lbl</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_go</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">rem_go</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">stop_labels</span><span class="p">):</span>
+        <span class="n">counts</span><span class="p">[</span><span class="n">lbl</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_st</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">rem_st</span> <span class="k">else</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># 3) 构建并带约束地洗牌</span>
+    <span class="n">trial_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">lbl</span> <span class="k">for</span> <span class="n">lbl</span><span class="p">,</span> <span class="n">cnt</span> <span class="ow">in</span> <span class="n">counts</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cnt</span><span class="p">)]</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">Random</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">rng</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">trial_list</span><span class="p">)</span>
+        <span class="c1"># a) 前 min_go_start 个试验必须是 &#39;go&#39;</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">lbl</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;stop&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">trial_list</span><span class="p">[:</span><span class="n">min_go_start</span><span class="p">]):</span>
+            <span class="k">continue</span>
+        <span class="c1"># b) 任何 5 个试验窗口内不超过 max_stop_run 个停止试验</span>
+        <span class="n">violation</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_trials</span> <span class="o">-</span> <span class="mi">4</span><span class="p">):</span>
+            <span class="n">window</span> <span class="o">=</span> <span class="n">trial_list</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">5</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lbl</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;stop&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">lbl</span> <span class="ow">in</span> <span class="n">window</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_stop_run</span><span class="p">:</span>
+                <span class="n">violation</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">violation</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">trial_list</span>
+
+<span class="c1"># 在 BlockUnit 中使用它：</span>
+<span class="n">block</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">generate_sst_conditions</span><span class="p">,</span>
+    <span class="n">condition_labels</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;go_left&#39;</span><span class="p">,</span><span class="s1">&#39;go_right&#39;</span><span class="p">,</span><span class="s1">&#39;stop_left&#39;</span><span class="p">,</span><span class="s1">&#39;stop_right&#39;</span><span class="p">],</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">123</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">conditions</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>通过将自定义生成器作为 <code class="docutils literal notranslate"><span class="pre">func</span></code> 参数传递给 <code class="docutils literal notranslate"><span class="pre">generate_conditions()</span></code> 来应用它。</p>
+<p>例如，在构建块时使用 <code class="docutils literal notranslate"><span class="pre">generate_sst_conditions</span></code>：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
+    <span class="n">block_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;block_</span><span class="si">{</span><span class="n">block_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">block_idx</span><span class="o">=</span><span class="n">block_i</span><span class="p">,</span>
+    <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
+    <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>
+    <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>
+<span class="p">)</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">generate_sst_conditions</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>这个单一的调用既创建了块，又根据 SST 约束生成了其试验条件，并将结果序列存储在 <code class="docutils literal notranslate"><span class="pre">block.conditions</span></code> 中。</p>
+<p><strong>手动条件分配</strong></p>
+<p>如果条件的精确序列是预先确定的，则完全绕过生成器：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 交替 ec/eo 的预定义块序列</span>
+<span class="n">manual_seq</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ec&#39;</span><span class="p">,</span><span class="s1">&#39;eo&#39;</span><span class="p">,</span><span class="s1">&#39;ec&#39;</span><span class="p">,</span><span class="s1">&#39;eo&#39;</span><span class="p">]</span>
+<span class="n">block</span><span class="o">.</span><span class="n">add_condition</span><span class="p">(</span><span class="n">manual_seq</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">block</span><span class="o">.</span><span class="n">conditions</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="on-start-on-end">
+<h3>3. 钩子：on_start 和 on_end<a class="headerlink" href="#on-start-on-end" title="Link to this heading">¶</a></h3>
+<p>钩子允许在每个块的开始或结束时注入自定义逻辑，而无需修改核心试验循环。常见用途包括：</p>
+<ul class="simple">
+<li><p><strong>触发硬件事件</strong>（例如，发送 EEG 或 MRI 触发器）</p></li>
+<li><p><strong>更新 GUI 元素</strong>（例如，显示块进度或说明）</p></li>
+<li><p><strong>记录或分析</strong>（例如，为其他指标添加时间戳）</p></li>
+</ul>
+<p>可以通过两种方式注册钩子：</p>
+<ol class="arabic">
+<li><p><strong>装饰器风格</strong>：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@block</span><span class="o">.</span><span class="n">on_start</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">before_block</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+    <span class="c1"># 自定义设置</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;开始块 </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">block_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nd">@block</span><span class="o">.</span><span class="n">on_end</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">after_block</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+    <span class="c1"># 自定义清理</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;结束块 </span><span class="si">{</span><span class="n">b</span><span class="o">.</span><span class="n">block_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>链式风格</strong>：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">block</span><span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_onset&quot;</span><span class="p">)))</span>
+     <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_end&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p><strong>示例：在块边界发送触发器</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span> <span class="o">=</span> <span class="n">BlockUnit</span><span class="p">(</span>
+    <span class="n">block_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;block_</span><span class="si">{</span><span class="n">block_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="n">block_idx</span><span class="o">=</span><span class="n">block_i</span><span class="p">,</span>
+    <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
+    <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>
+    <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>
+<span class="p">)</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">generate_sst_conditions</span><span class="p">)</span>
+  <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_onset&quot;</span><span class="p">)))</span>
+  <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_end&quot;</span><span class="p">)))</span>
+</pre></div>
+</div>
+<p>此设置确保在块开始和结束时精确发送触发器或外部事件，并无缝集成到块执行流程中。</p>
+</section>
+<section id="id7">
+<h3>4. 运行试验<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">.run_trials()</span></code> 方法通过重复调用用户定义的试验函数来驱动块中每个试验的执行。该函数通常在 TAPS 代码库的 <code class="docutils literal notranslate"><span class="pre">src/run_trial.py</span></code> 中实现，并封装了所有试验级别的逻辑（例如，刺激呈现、响应捕获、触发器）。</p>
+<p><strong>签名：</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">run_trials</span><span class="p">(</span>
+    <span class="n">trial_func</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">trial_list</span></code>: 您的试验规格列表。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">run_func</span></code>: 您为运行单个试验而创建的函数。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">fixed_params</span></code>: 一个字典，包含将作为关键字参数传递给您的 <code class="docutils literal notranslate"><span class="pre">run_func</span></code> 的对象。这对于传递像 <code class="docutils literal notranslate"><span class="pre">win</span></code>、<code class="docutils literal notranslate"><span class="pre">kb</span></code> 和 <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code> 这样的全局对象非常有用。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">shuffle</span></code>: 一个布尔值，指示是否在运行前对 <code class="docutils literal notranslate"><span class="pre">trial_list</span></code> 进行随机化。默认为 <code class="docutils literal notranslate"><span class="pre">False</span></code>。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">trial_func</span></code> (callable, required): 试验级别的函数。必须接受四个强制性参数：</p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">win</span></code> (PsychoPy 窗口)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kb</span></code> (PsychoPy 键盘)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">settings</span></code> (TaskSettings)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">condition</span></code> (str 或标签) 其他参数（例如 <code class="docutils literal notranslate"><span class="pre">stim_bank</span></code>、<code class="docutils literal notranslate"><span class="pre">controller</span></code>、<code class="docutils literal notranslate"><span class="pre">trigger_sender</span></code>）可以通过 <code class="docutils literal notranslate"><span class="pre">kwargs</span></code> 传递，并且是可选的——仅当您的 <code class="docutils literal notranslate"><span class="pre">trial_func</span></code> 使用它们时才包括它们。</p></li>
+</ol>
+</li>
 </ul>
-</section>
-<section id="id7">
-<h3>4. 运行块<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
-<p>最后，调用 <code class="docutils literal notranslate"><span class="pre">.run()</span></code> 方法来执行块。这将迭代（可能是随机化后的）<code class="docutils literal notranslate"><span class="pre">trial_list</span></code>，并为每个条目调用您的 <code class="docutils literal notranslate"><span class="pre">run_trial</span></code> 函数。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 在块开始前显示指令</span>
-<span class="n">show_instructions</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;准备好开始第一个块！&quot;</span><span class="p">)</span>
-
-<span class="c1"># 运行块并收集数据</span>
-<span class="n">block_data</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-
-<span class="c1"># 在块结束后显示休息屏幕</span>
-<span class="n">show_break_screen</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="s2">&quot;休息一下！&quot;</span><span class="p">)</span>
-
-<span class="c1"># block_data 现在是一个列表，其中包含了每个试验返回的字典</span>
-<span class="c1"># [{&#39;condition&#39;: &#39;win&#39;, &#39;response&#39;: &#39;f&#39;, ...}, {&#39;condition&#39;: &#39;loss&#39;, ...}]</span>
+<blockquote>
+<div><p><strong>注意：</strong> 在调用 <code class="docutils literal notranslate"><span class="pre">.run_trials()</span></code> <strong>之前</strong> 注册所有 <code class="docutils literal notranslate"><span class="pre">on_start</span></code> 和 <code class="docutils literal notranslate"><span class="pre">on_end</span></code> 钩子，因为它们在此方法内部被调用。</p>
+</div></blockquote>
+<p><strong>执行流程：</strong></p>
+<ol class="arabic">
+<li><p><strong>开始时间戳</strong>：保存 <code class="docutils literal notranslate"><span class="pre">meta['block_start_time']</span></code>。</p></li>
+<li><p><strong>钩子</strong>：运行块开始回调（例如，触发器）。</p></li>
+<li><p><strong>每个试验的循环</strong>：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">trial_func</span><span class="p">(</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">win</span><span class="p">,</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">kb</span><span class="p">,</span>
+    <span class="n">block</span><span class="o">.</span><span class="n">settings</span><span class="p">,</span>
+    <span class="n">condition</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">.run()</span></code> 方法会自动将 <code class="docutils literal notranslate"><span class="pre">trial_info</span></code> 和 <code class="docutils literal notranslate"><span class="pre">fixed_params</span></code> 传递给您的 <code class="docutils literal notranslate"><span class="pre">run_trial</span></code> 函数。它收集从每个 <code class="docutils literal notranslate"><span class="pre">run_trial</span></code> 调用返回的字典，并将它们聚合到一个列表中。</p>
-</section>
+</li>
+<li><p><strong>钩子</strong>：运行块结束回调。</p></li>
+<li><p><strong>结束时间戳和持续时间</strong>：设置 <code class="docutils literal notranslate"><span class="pre">meta['block_end_time']</span></code> 和 <code class="docutils literal notranslate"><span class="pre">meta['duration']</span></code>。</p></li>
+</ol>
 <section id="id8">
-<h3>5. 添加开始和结束屏幕<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 使得在块的开始和结束时显示屏幕变得容易，使用 <code class="docutils literal notranslate"><span class="pre">.on_start()</span></code> 和 <code class="docutils literal notranslate"><span class="pre">.on_end()</span></code> 方法。这些方法接受一个函数，该函数将被调用。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">show_start_screen</span><span class="p">(</span><span class="n">block_info</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;在块开始时显示。&quot;&quot;&quot;</span>
-    <span class="c1"># block_info 是一个包含块信息的字典</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;即将开始块 </span><span class="si">{</span><span class="n">block_info</span><span class="p">[</span><span class="s1">&#39;block_num&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="n">instruction_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;instructions&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
-    <span class="n">instruction_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">msg</span><span class="p">))</span>
-    <span class="n">instruction_unit</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
+<h4><strong>静息态示例</strong><a class="headerlink" href="#id8" title="Link to this heading">¶</a></h4>
+<p>此试验函数显示一个说明屏幕，后跟一个简单的刺激，没有响应收集。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">show_end_screen</span><span class="p">(</span><span class="n">block_info</span><span class="p">,</span> <span class="n">block_data</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;在块结束时显示。&quot;&quot;&quot;</span>
-    <span class="c1"># block_data 是从块收集的数据</span>
-    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">calculate_accuracy</span><span class="p">(</span><span class="n">block_data</span><span class="p">)</span>
-    <span class="n">msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;块完成！您的准确率是: </span><span class="si">{</span><span class="n">accuracy</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%&quot;</span>
-    <span class="n">feedback_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
-    <span class="n">feedback_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">visual</span><span class="o">.</span><span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">msg</span><span class="p">))</span>
-    <span class="n">feedback_unit</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_trials</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;condition&#39;</span><span class="p">:</span> <span class="n">condition</span><span class="p">}</span>
+    <span class="n">make_unit</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">StimUnit</span><span class="p">,</span> <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span>
 
-<span class="c1"># 将钩子附加到您的块</span>
-<span class="n">block</span><span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="n">show_start_screen</span><span class="p">)</span>
-<span class="n">block</span><span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="n">show_end_screen</span><span class="p">)</span>
+    <span class="c1"># 仅说明</span>
+    <span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;inst&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_instruction&quot;</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">show</span><span class="p">()</span> \
+        <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
-<span class="c1"># 现在，当您调用 .run() 时，这些函数将被自动执行</span>
-<span class="n">block_data</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+    <span class="c1"># 仅刺激</span>
+    <span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;stim&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_stim&quot;</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">rest_duration</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="n">block</span><span class="o">.</span><span class="n">run_trials</span><span class="p">(</span><span class="n">run_trials</span><span class="p">,</span> <span class="n">stim_bank</span><span class="o">=</span><span class="n">stim_bank</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span>
 </pre></div>
 </div>
-<ul class="simple">
-<li><p>传递给 <code class="docutils literal notranslate"><span class="pre">.on_start()</span></code> 的函数接收一个包含关于块的信息的字典（例如，<code class="docutils literal notranslate"><span class="pre">block_num</span></code>）。</p></li>
-<li><p>传递给 <code class="docutils literal notranslate"><span class="pre">.on_end()</span></code> 的函数接收该信息字典 <strong>和</strong> 从块中收集的 <code class="docutils literal notranslate"><span class="pre">block_data</span></code>。</p></li>
-</ul>
+</section>
+<section id="mid">
+<h4><strong>MID 任务示例</strong><a class="headerlink" href="#mid" title="Link to this heading">¶</a></h4>
+<p>实现一个多阶段试验（提示 → 预期 → 目标 → 反馈），使用 <code class="docutils literal notranslate"><span class="pre">controller</span></code> 调整持续时间并记录响应。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_trials</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">,</span> <span class="n">controller</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;condition&#39;</span><span class="p">:</span> <span class="n">condition</span><span class="p">}</span>
+    <span class="n">make_unit</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">StimUnit</span><span class="p">,</span> <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span>
+
+    <span class="c1"># 提示阶段</span>
+    <span class="n">make_unit</span><span class="p">(</span><span class="s1">&#39;cue&#39;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">condition</span><span class="si">}</span><span class="s2">_cue&quot;</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">cue_duration</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># (预期、目标、反馈阶段遵循类似的模式)</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+
+<span class="n">block</span><span class="o">.</span><span class="n">run_trials</span><span class="p">(</span><span class="n">run_trials</span><span class="p">,</span> <span class="n">stim_bank</span><span class="o">=</span><span class="n">stim_bank</span><span class="p">,</span> <span class="n">controller</span><span class="o">=</span><span class="n">controller</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="id9">
-<h2>后续步骤<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
-<p>通过 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>，您现在拥有了在 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 中构建功能齐全的实验的所有构建块。您可以：</p>
+<h3>5. 访问和筛选数据<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<p>要提取和分析块级别的结果，请使用两个核心方法：</p>
+<ol class="arabic simple">
+<li><p><strong>使用 <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code> 检索所有试验</strong>，它返回块中所有试验字典的有序列表。</p></li>
+<li><p><strong>使用 <code class="docutils literal notranslate"><span class="pre">.get_trial_data(key,</span> <span class="pre">pattern,</span> <span class="pre">match_type,</span> <span class="pre">negate)</span></code> 筛选特定试验</strong>，选择与给定条件匹配的子集。</p></li>
+</ol>
+<section id="get-all-data-mid">
+<h4>示例：使用 <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code> 的 MID 块总结<a class="headerlink" href="#get-all-data-mid" title="Link to this heading">¶</a></h4>
+<p>在金钱激励延迟（MID）任务中，您通常会计算一个块中所有试验的总体性能指标：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 按顺序检索每个试验</span>
+<span class="n">block_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span>
+
+<span class="c1"># 计算命中率：&#39;target_hit&#39; 为 True 的试验比例</span>
+<span class="n">total_trials</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_trials</span><span class="p">)</span>
+<span class="n">hit_trials</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target_hit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">block_trials</span><span class="p">)</span>
+<span class="n">hit_rate</span> <span class="o">=</span> <span class="n">hit_trials</span> <span class="o">/</span> <span class="n">total_trials</span>
+
+<span class="c1"># 计算试验中的总反馈分数</span>
+<span class="n">total_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback_delta&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">block_trials</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>在这里，<code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code> 提供了完整的试验数据集，简单的列表推导式可以生成块的摘要统计信息。</p>
+</section>
+<section id="get-trial-data-sst">
+<h4>示例：使用 <code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code> 的 SST 块分析<a class="headerlink" href="#get-trial-data-sst" title="Link to this heading">¶</a></h4>
+<p>在停止信号任务（SST）中，为不同的性能指标分别处理执行和停止试验：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 按条件前缀筛选试验</span>
+<span class="n">go_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span>
+    <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;go&#39;</span><span class="p">,</span>
+    <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span>
+<span class="p">)</span>
+<span class="n">stop_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span>
+    <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span>
+    <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># 执行试验命中率</span>
+<span class="n">total_go</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">go_trials</span><span class="p">)</span>
+<span class="n">go_hits</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_hit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">go_trials</span><span class="p">)</span>
+<span class="n">go_hit_rate</span> <span class="o">=</span> <span class="n">go_hits</span> <span class="o">/</span> <span class="n">total_go</span> <span class="k">if</span> <span class="n">total_go</span> <span class="k">else</span> <span class="mi">0</span>
+
+<span class="c1"># 停止试验成功率（无按键）</span>
+<span class="n">total_stop</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stop_trials</span><span class="p">)</span>
+<span class="n">stops_success</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+    <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_ssd_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stop_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">stop_trials</span>
+<span class="p">)</span>
+<span class="n">stop_success_rate</span> <span class="o">=</span> <span class="n">stops_success</span> <span class="o">/</span> <span class="n">total_stop</span> <span class="k">if</span> <span class="n">total_stop</span> <span class="k">else</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code> 通过将 <code class="docutils literal notranslate"><span class="pre">'condition'</span></code> 字段与模式匹配来筛选，从而允许对每个试验子集进行下游计算。</p>
+</section>
+</section>
+<section id="id10">
+<h3>6. 总结块结果<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h3>
+<p>为了获得完全的灵活性，通常最好使用上面介绍的数据检索方法手动计算块级别的摘要。这可以确保统计数据与您的试验逻辑生成​​的字段完全匹配。两种常见的模式是：</p>
+<section id="id11">
+<h4>使用 <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code> 手动总结（例如，MID 任务）<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h4>
+<p>使用 <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code> 按顺序获取每个试验的结果字典，然后应用简单的 Python 表达式来计算块指标。在金钱激励延迟（MID）实验中，您可以如下计算总体命中率和总分：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 获取所有试验数据</span>
+<span class="n">block_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span>
+
+<span class="c1"># 命中率：目标被命中的试验比例</span>
+<span class="n">total_trials</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">block_trials</span><span class="p">)</span>
+<span class="n">hit_count</span>    <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;target_hit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">block_trials</span><span class="p">)</span>
+<span class="n">hit_rate</span>     <span class="o">=</span> <span class="n">hit_count</span> <span class="o">/</span> <span class="n">total_trials</span>
+
+<span class="c1"># 整个块的总反馈分数（增量）</span>
+<span class="n">total_score</span>  <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback_delta&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">block_trials</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>此方法适用于您的 <code class="docutils literal notranslate"><span class="pre">run_trials</span></code> 函数存储的任何字段。只需调整推导式以定位相关键即可。</p>
+</section>
+<section id="id12">
+<h4>使用 <code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code> 手动总结（例如，SST 任务）<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h4>
+<p>当不同类型的试验需要不同的指标时——如在具有执行与停止试验的停止信号任务（SST）中——使用 <code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code> 筛选块的试验，然后总结每个子集：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 按条件前缀分离执行和停止试验</span>
+<span class="n">go_trials</span>   <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;go&#39;</span><span class="p">,</span> <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span>
+<span class="p">)</span>
+<span class="n">stop_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># 执行试验命中率</span>
+<span class="n">total_go</span>     <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">go_trials</span><span class="p">)</span>
+<span class="n">go_hits</span>      <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_hit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">go_trials</span><span class="p">)</span>
+<span class="n">go_hit_rate</span>  <span class="o">=</span> <span class="n">go_hits</span> <span class="o">/</span> <span class="n">total_go</span> <span class="k">if</span> <span class="n">total_go</span> <span class="k">else</span> <span class="mi">0</span>
+
+<span class="c1"># 停止试验成功率（停止试验无响应）</span>
+<span class="n">total_stop</span>        <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stop_trials</span><span class="p">)</span>
+<span class="n">stop_success_count</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+    <span class="ow">not</span> <span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_ssd_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">trial</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stop_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="n">stop_trials</span>
+<span class="p">)</span>
+<span class="n">stop_success_rate</span> <span class="o">=</span> <span class="n">stop_success_count</span> <span class="o">/</span> <span class="n">total_stop</span> <span class="k">if</span> <span class="n">total_stop</span> <span class="k">else</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+<section id="summarize">
+<h4>内置 <code class="docutils literal notranslate"><span class="pre">.summarize()</span></code> 实用程序<a class="headerlink" href="#summarize" title="Link to this heading">¶</a></h4>
+<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 还提供了一个默认的总结器，可以计算每个条件的命中率和平均反应时间：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">summary</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">summarize</span><span class="p">()</span>
+<span class="c1"># 示例输出：</span>
+<span class="c1"># {</span>
+<span class="c1">#   &#39;A&#39;: {&#39;hit_rate&#39;: 0.75, &#39;avg_rt&#39;: 0.48},</span>
+<span class="c1">#   &#39;B&#39;: {&#39;hit_rate&#39;: 0.62, &#39;avg_rt&#39;: 0.55}</span>
+<span class="c1"># }</span>
+</pre></div>
+</div>
+<p>要覆盖此行为，请提供一个接受 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 并返回摘要指标字典的自定义函数。以下是为 SST 块量身定制的示例：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">sst_summary</span><span class="p">(</span><span class="n">bu</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;计算 SST 块的执行命中率和停止成功率。&quot;&quot;&quot;</span>
+    <span class="c1"># 检索所有试验</span>
+    <span class="n">trials</span> <span class="o">=</span> <span class="n">bu</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span>
+    <span class="c1"># 分离执行和停止试验</span>
+    <span class="n">go_trials</span> <span class="o">=</span> <span class="n">bu</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="s1">&#39;go&#39;</span><span class="p">,</span> <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span><span class="p">)</span>
+    <span class="n">stop_trials</span> <span class="o">=</span> <span class="n">bu</span><span class="o">.</span><span class="n">get_trial_data</span><span class="p">(</span><span class="s1">&#39;condition&#39;</span><span class="p">,</span> <span class="s1">&#39;stop&#39;</span><span class="p">,</span> <span class="n">match_type</span><span class="o">=</span><span class="s1">&#39;startswith&#39;</span><span class="p">)</span>
+
+    <span class="c1"># 执行试验命中率</span>
+    <span class="n">total_go</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">go_trials</span><span class="p">)</span>
+    <span class="n">go_hits</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_hit&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">go_trials</span><span class="p">)</span>
+    <span class="n">go_hit_rate</span> <span class="o">=</span> <span class="n">go_hits</span> <span class="o">/</span> <span class="n">total_go</span> <span class="k">if</span> <span class="n">total_go</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="c1"># 停止试验成功率（无响应）</span>
+    <span class="n">total_stop</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stop_trials</span><span class="p">)</span>
+    <span class="n">stop_success</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+        <span class="p">(</span><span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;go_ssd_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stop_key_press&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">stop_trials</span>
+    <span class="p">)</span>
+    <span class="n">stop_success_rate</span> <span class="o">=</span> <span class="n">stop_success</span> <span class="o">/</span> <span class="n">total_stop</span> <span class="k">if</span> <span class="n">total_stop</span> <span class="k">else</span> <span class="mi">0</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;go_hit_rate&#39;</span><span class="p">:</span> <span class="n">go_hit_rate</span><span class="p">,</span>
+        <span class="s1">&#39;stop_success_rate&#39;</span><span class="p">:</span> <span class="n">stop_success_rate</span>
+    <span class="p">}</span>
+
+<span class="c1"># 使用自定义总结器</span>
+<span class="n">summary</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">summarize</span><span class="p">(</span><span class="n">summary_func</span><span class="o">=</span><span class="n">sst_summary</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id13">
+<h3>7. 存储块级别的数据<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h3>
+<p>每个块完成后，其试验结果（存储在 <code class="docutils literal notranslate"><span class="pre">block.results</span></code> 中）可以使用 <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code> 方法合并到整个实验的主列表中。此方法支持两种模式：</p>
 <ul class="simple">
-<li><p>回顾 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 教程以获取有关构建单个试验的更多详细信息。</p></li>
-<li><p>学习 <code class="docutils literal notranslate"><span class="pre">TaskSettings</span></code> 以了解如何管理整个实验的设置。</p></li>
+<li><p><strong>链式模式</strong>：不带参数调用 <code class="docutils literal notranslate"><span class="pre">.to_dict()</span></code> 只返回 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 实例，允许您链接其他调用。</p></li>
+<li><p><strong>附加模式</strong>：将列表传递给 <code class="docutils literal notranslate"><span class="pre">.to_dict(target_list)</span></code> 会将该列表扩展为块的试验字典。</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 初始化一个空列表以收集所有试验</span>
+<span class="n">all_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">block_i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">):</span>
+    <span class="c1"># 准备并运行块，然后附加其结果</span>
+    <span class="n">BlockUnit</span><span class="p">(</span>
+        <span class="n">block_id</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;block_</span><span class="si">{</span><span class="n">block_i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">block_idx</span><span class="o">=</span><span class="n">block_i</span><span class="p">,</span>
+        <span class="n">settings</span><span class="o">=</span><span class="n">settings</span><span class="p">,</span>
+        <span class="n">window</span><span class="o">=</span><span class="n">win</span><span class="p">,</span>
+        <span class="n">keyboard</span><span class="o">=</span><span class="n">kb</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">generate_conditions</span><span class="p">()</span> \
+     <span class="o">.</span><span class="n">on_start</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_onset&quot;</span><span class="p">)))</span> \
+     <span class="o">.</span><span class="n">on_end</span><span class="p">(</span><span class="k">lambda</span> <span class="n">b</span><span class="p">:</span> <span class="n">trigger_sender</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;block_end&quot;</span><span class="p">)))</span> \
+     <span class="o">.</span><span class="n">run_trials</span><span class="p">(</span><span class="n">run_trial</span><span class="p">,</span> <span class="n">stim_bank</span><span class="o">=</span><span class="n">stim_bank</span><span class="p">,</span> <span class="n">controller</span><span class="o">=</span><span class="n">controller</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span> \
+     <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
+
+<span class="c1"># 此时，all_data 包含所有块的所有试验字典</span>
+
+<span class="c1"># 转换为 DataFrame 并保存到 CSV</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">all_data</span><span class="p">)</span>
+<span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">res_file</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<blockquote>
+<div><p><strong>替代方法：</strong> 您可以在运行块后调用 <code class="docutils literal notranslate"><span class="pre">block.get_all_data()</span></code> 并手动扩展您的列表：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">block</span><span class="o">.</span><span class="n">run_trials</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">block_data</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span>
+<span class="n">all_data</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">block_data</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</section>
+<section id="id14">
+<h3>8. 记录块信息<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 会在开始和结束时自动记录元数据：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blockid</span><span class="p">:</span> <span class="n">block1</span>
+<span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blockidx</span><span class="p">:</span> <span class="mi">0</span>
+<span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blockseed</span><span class="p">:</span> <span class="mi">12345</span>
+<span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blocktrial</span><span class="o">-</span><span class="n">N</span><span class="p">:</span> <span class="mi">40</span>
+<span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blockdist</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;A&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">:</span><span class="mi">20</span><span class="p">}</span>
+<span class="p">[</span><span class="n">BlockUnit</span><span class="p">]</span> <span class="n">Blockconditions</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id15">
+<h2>后续步骤<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h2>
+<p>现在您已经了解了如何使用 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code>，您可以：</p>
+<ul class="simple">
+<li><p><strong>构建试验</strong>：了解 <a class="reference internal" href="build_stimunit_cn.html"><span class="std std-doc">StimUnit</span></a> 以更好地控制单个试验</p></li>
+<li><p><strong>管理刺激</strong>：探索 <a class="reference internal" href="build_stimulus_cn.html"><span class="std std-doc">StimBank</span></a> 以进行高效的刺激管理</p></li>
+<li><p><strong>发送触发器</strong>：查看 <a class="reference internal" href="send_trigger_cn.html"><span class="std std-doc">TriggerSender</span></a> 以进行 EEG/MEG 实验集成</p></li>
 </ul>
 </section>
 </section>
@@ -468,7 +860,7 @@ loss,loss_stim_B,j
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">StimBank：灵活的刺激管理</div>
+                <div class="title">StimBank: 灵活的刺激管理</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
@@ -479,7 +871,7 @@ loss,loss_stim_B,j
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">TaskSettings: 管理实验配置</div>
+                <div class="title">TaskSettings: 配置您的实验</div>
                 
               </div>
             </a>
@@ -513,18 +905,35 @@ loss,loss_stim_B,j
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">BlockUnit: 组织和运行试验</a><ul>
+<li><a class="reference internal" href="#">BlockUnit: 管理试验</a><ul>
 <li><a class="reference internal" href="#id1">概述</a></li>
-<li><a class="reference internal" href="#id2">核心概念</a></li>
-<li><a class="reference internal" href="#id3">详细使用指南</a><ul>
-<li><a class="reference internal" href="#id4">1. 定义您的试验</a></li>
-<li><a class="reference internal" href="#id5">2. 创建一个试验运行函数</a></li>
-<li><a class="reference internal" href="#id6">3. 初始化 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code></a></li>
-<li><a class="reference internal" href="#id7">4. 运行块</a></li>
-<li><a class="reference internal" href="#id8">5. 添加开始和结束屏幕</a></li>
+<li><a class="reference internal" href="#id2">主要功能</a></li>
+<li><a class="reference internal" href="#id3">快速参考</a></li>
+<li><a class="reference internal" href="#id4">详细使用指南</a><ul>
+<li><a class="reference internal" href="#id5">1. 初始化</a></li>
+<li><a class="reference internal" href="#id6">2. 生成条件</a></li>
+<li><a class="reference internal" href="#on-start-on-end">3. 钩子：on_start 和 on_end</a></li>
+<li><a class="reference internal" href="#id7">4. 运行试验</a><ul>
+<li><a class="reference internal" href="#id8"><strong>静息态示例</strong></a></li>
+<li><a class="reference internal" href="#mid"><strong>MID 任务示例</strong></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id9">后续步骤</a></li>
+<li><a class="reference internal" href="#id9">5. 访问和筛选数据</a><ul>
+<li><a class="reference internal" href="#get-all-data-mid">示例：使用 <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code> 的 MID 块总结</a></li>
+<li><a class="reference internal" href="#get-trial-data-sst">示例：使用 <code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code> 的 SST 块分析</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id10">6. 总结块结果</a><ul>
+<li><a class="reference internal" href="#id11">使用 <code class="docutils literal notranslate"><span class="pre">.get_all_data()</span></code> 手动总结（例如，MID 任务）</a></li>
+<li><a class="reference internal" href="#id12">使用 <code class="docutils literal notranslate"><span class="pre">.get_trial_data()</span></code> 手动总结（例如，SST 任务）</a></li>
+<li><a class="reference internal" href="#summarize">内置 <code class="docutils literal notranslate"><span class="pre">.summarize()</span></code> 实用程序</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id13">7. 存储块级别的数据</a></li>
+<li><a class="reference internal" href="#id14">8. 记录块信息</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id15">后续步骤</a></li>
 </ul>
 </li>
 </ul>

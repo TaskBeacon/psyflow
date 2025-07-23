@@ -2,144 +2,286 @@
 
 ## 概述
 
-`SubInfo` 是 `psyflow` 中用于在实验开始前通过一个简单的图形用户界面（GUI）表单收集被试信息的模块。它被设计用来：
+`SubInfo` 类提供了一种灵活且用户友好的方式，在实验开始时收集被试信息。它创建了标准化的 GUI 对话框，可以通过配置文件进行自定义，支持多种字段类型和国际研究的本地化。
 
--   动态地从 `config.yaml` 文件生成一个输入表单。
--   支持多种语言的标签和字段。
--   验证输入以确保数据完整性。
--   将收集到的信息作为字典返回，以便于保存和使用。
+`SubInfo` 解决了被试注册中的几个常见挑战：
 
-这个模块取代了 PsychoPy 内置的 `gui.DlgFromDict`，提供了一个更现代化、更灵活且与 `psyflow` 生态系统完全集成的解决方案。
+- **标准化**：在不同实验中创建一致的被试信息表单
+- **验证**：根据字段约束自动验证输入
+- **本地化**：以被试的语言显示表单
+- **配置**：使用 YAML 或字典定义表单，便于修改
+- **集成**：与其他 psyflow 组件无缝连接
 
-## 核心概念
+## 主要功能
 
-`SubInfo` 的工作流程很简单：
+| 功能 | 描述 |
+|---|---|
+| 多种字段类型 | 支持字符串、整数和选择（下拉）字段 |
+| 输入验证 | 强制执行最小/最大值和数字长度等约束 |
+| 本地化 | 以任何语言显示字段标签和消息 |
+| YAML 配置 | 使用人类可读的配置文件定义表单 |
+| 自动默认值 | 如果未指定，则添加 subject_id 等标准字段 |
+| 错误处理 | 为无效输入提供清晰的错误消息 |
 
-1.  **配置**: 您在 `config.yaml` 中定义表单的字段和它们在不同语言中的标签。
-2.  **调用**: 您调用 `SubInfo.get()` 函数，它会显示 GUI 表单。
-3.  **收集**: 被试填写表单并点击“确定”。
-4.  **返回**: 函数返回一个包含被试信息的字典。如果被试点击“取消”，实验将优雅地退出。
+## 快速参考
+
+| 目的 | 方法 | 示例 |
+|---|---|---|
+| 初始化 | `SubInfo(config)` | `subinfo = SubInfo(config)` |
+| 收集信息 | `.collect()` | `data = subinfo.collect()` |
+| 访问数据 | `.subject_data` | `subject_id = subinfo.subject_data['subject_id']` |
+| 验证输入 | `.validate()` | `is_valid = subinfo.validate()` |
 
 ## 详细使用指南
 
-### 1. 在 `config.yaml` 中配置表单
+### 1. 配置表单和收集信息
 
-GUI 表单是在您的 `config/config.yaml` 文件中定义的。您需要指定两个部分：`subinfo_fields` 和 `subinfo_mapping`。
+#### 选项 A：使用 YAML 配置
 
--   `subinfo_fields`: 一个您想要在表单中包含的字段名称的列表。
--   `subinfo_mapping`: 一个字典，将这些字段名称映射到您想要为每种支持的语言显示的标签。
+YAML 提供了一种清晰、可读的方式来定义您的表单结构：
 
-**示例 `config.yaml`:**
 ```yaml
-# ---------------------------------------------------------------------------- #
-#                              被试信息表单配置                              #
-# ---------------------------------------------------------------------------- #
+# subinfo_config.yaml
 subinfo_fields:
-  - id
-  - age
-  - gender
-  - session
-  - language
+  - name: subject_id
+    type: int
+    constraints:
+      min: 101
+      max: 999
+      digits: 3
 
+  - name: age
+    type: int
+    constraints:
+      min: 18
+      max: 100
+
+  - name: gender
+    type: choice
+    choices: [Male, Female, Non-binary, Prefer not to say]
+
+  - name: handedness
+    type: choice
+    choices: [Right, Left, Ambidextrous]
+
+  - name: vision
+    type: choice
+    choices: [Normal, Corrected-to-normal, Impaired]
+
+# 可选的本地化映射
 subinfo_mapping:
-  # 英语标签
-  en:
-    id: "Participant ID"
-    age: "Age"
-    gender: "Gender"
-    session: "Session"
-    language: "Language"
-  # 中文标签
-  cn:
-    id: "被试ID"
-    age: "年龄"
-    gender: "性别"
-    session: "阶段"
-    language: "语言"
-  # 韩语标签
-  kr:
-    id: "참가자 ID"
-    age: "나이"
-    gender: "성별"
-    session: "세션"
-    language: "언어"
+  subject_id: "Participant ID"
+  age: "Age"
+  gender: "Gender"
+  handedness: "Handedness"
+  vision: "Vision"
+  Male: "Male"
+  Female: "Female"
+  Non-binary: "Non-binary"
+  Prefer not to say: "Prefer not to say"
+  Right: "Right"
+  Left: "Left"
+  Ambidextrous: "Ambidextrous"
+  Normal: "Normal"
+  Corrected-to-normal: "Corrected-to-normal"
+  Impaired: "Impaired"
+  registration_successful: "Registration successful!"
+  registration_failed: "Registration cancelled."
+  invalid_input: "Invalid input for {field}"
 ```
-
-在这个例子中，表单将有五个字段。根据选择的语言，标签将相应地改变。
-
-### 2. 调用 `SubInfo.get()`
-
-在您的主实验脚本中，在任何其他操作之前调用 `SubInfo.get()`。
+定义配置后，收集信息就很简单了：
 
 ```python
-from psyflow.subinfo import SubInfo
+from psyflow import SubInfo
 import yaml
-
-# 通常，您会从您的 config.yaml 加载这些
-with open('config/config.yaml', 'r', encoding='utf-8') as f:
+# 从 YAML 加载配置
+with open("subinfo_config.yaml", "r", encoding='utf-8') as f:
     config = yaml.safe_load(f)
+# 创建 SubInfo 实例
+subinfo = SubInfo(config)
+# 显示对话框并收集信息
+subject_data = subinfo.collect()
+```
+![使用 yaml 配置收集 subinfo](figures/subinfo_yaml.png)
 
-fields = config['subinfo_fields']
-mapping = config['subinfo_mapping']
-
-# 调用 get() 来显示表单
-# 它会首先询问语言
-sub_info = SubInfo.get(fields, mapping)
-
-# 如果被试点击“取消”，sub_info 将是 None，程序将退出。
-# 否则，它是一个包含他们输入的字典。
-# {'id': '001', 'age': '25', 'gender': 'Female', 'session': '1', 'language': 'en'}
+```{note}
+打开 YAML 文件时，请确保使用 `encoding='utf-8'` 以支持本地化中的非 ASCII 字符。
 ```
 
-### 3. 语言选择
+#### 选项 B：使用 Python 字典
 
-`SubInfo.get()` 的一个关键特性是它内置的语言选择。
+您也可以直接在 Python 中定义表单：
 
-1.  当您调用 `SubInfo.get()` 时，它首先会显示一个语言选择对话框。这个对话框的选项是根据您在 `subinfo_mapping` 中定义的语言（`en`, `cn`, `kr` 等）自动生成的。
-
-    ![语言选择对话框](https://raw.githubusercontent.com/Xh-Hypnos/psyflow/main/docs/tutorials/figures/subinfo_yaml.png)
-
-2.  一旦被试选择了一种语言并点击“确定”，`SubInfo` 就会使用该语言的相应标签来呈现主输入表单。
-
-    ![英文表单](https://raw.githubusercontent.com/Xh-Hypnos/psyflow/main/docs/tutorials/figures/subinfo_yaml.png)
-    ![中文表单](https://raw.githubusercontent.com/Xh-Hypnos/psyflow/main/docs/tutorials/figures/subinfo_yaml_cn.png)
-
-### 4. 输入验证
-
-`SubInfo` 会执行基本的输入验证。在上面的例子中，`id` 和 `session` 字段是必需的。如果被试将它们留空并尝试点击“确定”，这些字段将以红色高亮显示，提示他们需要填写这些字段。
-
-![验证失败](https://raw.githubusercontent.com/Xh-Hypnos/psyflow/main/docs/tutorials/figures/subinfo_failed.png)
-
-验证是基于字段名称的：
--   如果一个字段的名称包含 `id` 或 `session`，它被认为是必需的。
--   所有其他字段都是可选的。
-
-### 5. 使用返回的数据
-
-`SubInfo.get()` 返回一个字典，其中键是 `subinfo_fields` 中的字段名称，值是被试的输入。您可以使用这个字典来：
-
--   为您的数据文件创建一个唯一的、信息丰富的文件名。
--   在您的实验中存储被试的人口统计信息。
--   根据会话编号或语言改变实验逻辑。
-
-**示例用法:**
 ```python
-# 从 SubInfo 获取被试信息
-sub_info = SubInfo.get(fields, mapping)
+config = {
+    "subinfo_fields": [
+        {
+            "name": "subject_id",
+            "type": "int",
+            "constraints": {"min": 101, "max": 999, "digits": 3}
+        },
+        {
+            "name": "age",
+            "type": "int",
+            "constraints": {"min": 18, "max": 100}
+        },
+        {
+            "name": "gender",
+            "type": "choice",
+            "choices": ["Male", "Female", "Non-binary", "Prefer not to say"]
+        },
+        {
+            "name": "handedness",
+            "type": "choice",
+            "choices": ["Right", "Left", "Ambidextrous"]
+        }
+    ],
+    "subinfo_mapping": {
+        "subject_id": "Participant ID",
+        "age": "Age",
+        "gender": "Gender",
+        "handedness": "Handedness"
+        # 根据需要添加更多映射
+    }
+}
+```
+定义配置后，收集信息就很简单了：
 
-# 如果用户点击了取消，则 sub_info 将为 None
-if sub_info is None:
-    print("实验被用户取消。")
-    # core.quit() 会被自动调用
+```python
+from psyflow import SubInfo
+subinfo = SubInfo(config)
+# 显示对话框并收集信息
+subject_data = subinfo.collect()
+```
+![使用 python dict 收集 subinfo](figures/subinfo_dict.png)
 
-# 创建一个文件名
-output_filename = f"sub-{sub_info['id']}_ses-{sub_info['session']}_task-stroop_data.csv"
 
-# 将被试信息添加到您的数据记录中
-trial_data['participant_id'] = sub_info['id']
-trial_data['age'] = sub_info['age']
+如果注册（收集）失败，实验将退出，Python 环境将关闭。
 
-print(f"数据将保存到: {output_filename}")
+![registration_failed](figures/subinfo_failed.png)
+
+
+### 2. 字段类型和约束
+
+`SubInfo` 支持三种字段类型：
+
+#### 字符串字段
+
+```yaml
+- name: subject_name
+  type: string
 ```
 
-通过使用 `SubInfo`，您可以确保在实验开始时以一种用户友好和健壮的方式收集到干净、结构化的被试信息。
+字符串字段接受任何文本输入，无需验证。
+
+#### 整数字段
+
+```yaml
+- name: subject_id
+  type: int
+  constraints:
+    min: 101      # 允许的最小值
+    max: 999      # 允许的最大值
+    digits: 3     # 所需的数字位数
+```
+
+整数字段验证：
+- 输入可以转换为整数
+- 值在最小/最大范围内（如果指定）
+- 数字具有指定的确切位数（如果指定）
+
+#### 选择字段（下拉菜单）
+
+```yaml
+- name: condition
+  type: choice
+  choices: [Control, Experimental]
+```
+
+选择字段提供一个包含指定选项的下拉菜单。
+
+
+
+
+### 3. 本地化
+
+对于国际研究，您可以通过在 `subinfo_mapping` 部分提供翻译来本地化表单：
+
+```yaml
+# subinfo_config.yaml 本地化示例
+subinfo_mapping:
+  subject_id: "참가자 ID"
+  age: "나이"
+  gender: "성별"
+  handedness: "주사용 손"
+  vision: "시력"
+  Male: "남성"
+  Female: "여성"
+  Non-binary: "논바이너리"
+  Prefer not to say: "응답하지 않음"
+  Right: "오른손잡이"
+  Left: "왼손잡이"
+  Ambidextrous: "양손잡이"
+  Normal: "정상"
+  Corrected-to-normal: "교정된 정상"
+  Impaired: "손상된"
+  registration_successful: "등록 성공!"
+  registration_failed: "등록이 취소되었습니다."
+  invalid_input: "{field}에 대한 잘못된 입력입니다."
+```
+```python
+from psyflow import SubInfo
+import yaml
+# 从 YAML 加载配置
+with open("subinfo_config.yaml", "r", encoding='utf-8') as f:
+    config = yaml.safe_load(f)
+# 创建 SubInfo 实例
+subinfo = SubInfo(config)
+# 显示对话框并收集信息
+subject_data = subinfo.collect()
+```
+![使用 yaml 配置收集 subinfo](figures/subinfo_yaml_kr.png)
+
+采用相同的方法，您可以通过在 `subinfo_mapping` 部分提供适当的翻译来为任何语言进行本地化。
+
+![使用 yaml 配置收集 subinfo](figures/subinfo_yaml_cn.png)
+
+
+```{tip}
+除了使用 LLM 模型的聊天框进行翻译外，
+psyflow 还内置了一个函数（`translate_config()`），使用 LLM API 翻译 subinfo 映射。
+如果使用 LLM 生成翻译，请确保翻译准确。如果可能，请咨询母语人士。
+```
+
+
+
+### 4. 将被试信息添加到 TaskSettings
+
+收集后，需要将被试信息传递给 TaskSettings 以完成实验配置。然后，该信息将通过 TaskSettings 与其他任务参数一起自动保存。
+
+```python
+from psyflow import SubInfo, TaskSettings, load_config
+
+# 1. 加载配置
+cfg = load_config()
+
+# 2. 收集被试信息
+subform = SubInfo(cfg['subform_config'])
+subject_data = subform.collect()
+
+# 3. 加载任务设置
+settings = TaskSettings.from_dict(cfg['task_config'])
+settings.add_subinfo(subject_data)
+```
+```{tip}
+`load_config()` 是一个方便的函数，用于加载存储在默认 TAPS 格式的 `config/config.yaml` 中的配置。
+```
+
+## 后续步骤
+
+现在您已经了解了如何使用 `SubInfo`，您可以：
+
+- 了解 [TaskSettings](task_settings_cn.md) 以配置您的实验
+- 探索 [StimBank](build_stimulus_cn.md) 以管理刺激
+- 查看 [BlockUnit](build_blocks_cn.md) 以将试验组织成块
+- 查看 [StimUnit](build_trialunit_cn.md) 以创建单个试验

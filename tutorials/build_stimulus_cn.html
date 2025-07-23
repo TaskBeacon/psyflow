@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="StimUnit：模块化的刺激呈现与反应处理单元" href="build_stimunit_cn.html" /><link rel="prev" title="BlockUnit: 组织和运行试验" href="build_blocks_cn.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="StimUnit：模块化的刺激呈现与反应处理单元" href="build_stimunit_cn.html" /><link rel="prev" title="BlockUnit: 管理试验" href="build_blocks_cn.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>StimBank：灵活的刺激管理 - psyflow 0.1.1</title>
+        <title>StimBank: 灵活的刺激管理 - psyflow 0.1.1</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -224,9 +224,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started_cn.html">PsyFlow 入门指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo_cn.html">SubInfo: 收集被试信息</a></li>
-<li class="toctree-l1"><a class="reference internal" href="task_settings_cn.html">TaskSettings: 管理实验配置</a></li>
-<li class="toctree-l1"><a class="reference internal" href="build_blocks_cn.html">BlockUnit: 组织和运行试验</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">StimBank：灵活的刺激管理</a></li>
+<li class="toctree-l1"><a class="reference internal" href="task_settings_cn.html">TaskSettings: 配置您的实验</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_blocks_cn.html">BlockUnit: 管理试验</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">StimBank: 灵活的刺激管理</a></li>
 <li class="toctree-l1"><a class="reference internal" href="build_stimunit_cn.html">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html">TriggerSender: 发送硬件触发器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html">psyflow-init: 命令行界面</a></li>
@@ -274,185 +274,582 @@
         </div>
         <article role="main" id="furo-main-content">
           <section id="stimbank">
-<h1>StimBank：灵活的刺激管理<a class="headerlink" href="#stimbank" title="Link to this heading">¶</a></h1>
+<h1>StimBank: 灵活的刺激管理<a class="headerlink" href="#stimbank" title="Link to this heading">¶</a></h1>
 <section id="id1">
 <h2>概述<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> (刺激银行) 是 <code class="docutils literal notranslate"><span class="pre">psyflow</span></code> 中用于管理、创建和重用 PsychoPy 刺激的中央枢纽。它将您的刺激定义从实验逻辑中分离出来，使您的代码更清晰、更易于维护。</p>
-<p>通过 <code class="docutils literal notranslate"><span class="pre">StimBank</span></code>，您可以：</p>
+<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 是一个用于 PsychoPy 实验的强大刺激管理系统，解决了几个常见的挑战：</p>
 <ul class="simple">
-<li><p>在 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 中以声明方式定义所有刺激。</p></li>
-<li><p>按名称动态创建和检索刺激。</p></li>
-<li><p>在运行时格式化刺激文本（例如，插入分数或条件名称）。</p></li>
-<li><p>预加载刺激以确保精确的呈现时间。</p></li>
-<li><p>轻松地在不同的试次（trials）和单元（units）中重用相同的刺激。</p></li>
+<li><p><strong>集中式刺激管理</strong>：在一个地方定义所有视觉和听觉刺激。</p></li>
+<li><p><strong>多种定义方法</strong>：通过 Python 装饰器或配置文件（YAML/字典）注册刺激。</p></li>
+<li><p><strong>延迟加载</strong>：仅在首次访问时实例化刺激，以减少初始加载时间。</p></li>
+<li><p><strong>动态格式化</strong>：将运行时值插入文本刺激中，而无需重新定义它们。</p></li>
+<li><p><strong>批量操作</strong>：高效地预览、导出、验证和分组刺激。</p></li>
 </ul>
+<p>无论您是运行简单的行为任务还是复杂的多模态协议，<code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 都能帮助您保持与刺激相关的代码和配置的整洁、一致和可维护性。</p>
 </section>
 <section id="id2">
-<h2>核心概念<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 的工作流程很简单：</p>
-<ol class="arabic simple">
-<li><p><strong>定义</strong>: 您在 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 文件中的 <code class="docutils literal notranslate"><span class="pre">stimuli</span></code> 部分定义所有刺激及其属性。</p></li>
-<li><p><strong>初始化</strong>: 您在实验开始时创建一个 <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 的单一实例。</p></li>
-<li><p><strong>检索</strong>: 在您的试次逻辑中，您通过名称从 <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 中 <code class="docutils literal notranslate"><span class="pre">.get()</span></code> 刺激。</p></li>
-</ol>
-<p>这种方法遵循“关注点分离”的原则，将您的刺激内容（在 YAML 中）与您的实验逻辑（在 Python 中）分开。</p>
+<h2>主要功能<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>功能</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>双重注册</p></td>
+<td><p>通过装饰器或声明式地通过 YAML/字典定义刺激</p></td>
+</tr>
+<tr class="row-odd"><td><p>延迟实例化</p></td>
+<td><p>延迟对象创建直到需要时</p></td>
+</tr>
+<tr class="row-even"><td><p>分组</p></td>
+<td><p>按前缀或显式列表检索相关刺激</p></td>
+</tr>
+<tr class="row-odd"><td><p>文本格式化</p></td>
+<td><p>使用 Python 风格的占位符和 <code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>刺激重建</p></td>
+<td><p>使用 <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code> 动态覆盖属性</p></td>
+</tr>
+<tr class="row-odd"><td><p>预览功能</p></td>
+<td><p>批量视觉检查或播放刺激</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 <section id="id3">
-<h2>详细使用指南<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
-<section id="config-yaml">
-<h3>1. 在 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 中定义刺激<a class="headerlink" href="#config-yaml" title="Link to this heading">¶</a></h3>
-<p>您的所有刺激都定义在 <code class="docutils literal notranslate"><span class="pre">config/config.yaml</span></code> 文件中的 <code class="docutils literal notranslate"><span class="pre">stimuli</span></code> 键下。每个刺激都有一个唯一的名称（例如，<code class="docutils literal notranslate"><span class="pre">fixation</span></code>，<code class="docutils literal notranslate"><span class="pre">win_feedback</span></code>）和一组属性。</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: 指定要创建的 PsychoPy 对象的类型（例如，<code class="docutils literal notranslate"><span class="pre">text</span></code>，<code class="docutils literal notranslate"><span class="pre">circle</span></code>，<code class="docutils literal notranslate"><span class="pre">sound</span></code>）。</p></li>
-<li><p>其他键: 任何其他键都直接作为关键字参数传递给该 PsychoPy 对象的构造函数。</p></li>
-</ul>
-<p>这是一个示例 <code class="docutils literal notranslate"><span class="pre">stimuli</span></code> 配置：</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">stimuli</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">fixation</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
-<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;+&#39;</span>
-<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
-<span class="w">    </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
-
-<span class="w">  </span><span class="nt">win_target</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">circle</span>
-<span class="w">    </span><span class="nt">radius</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.5</span>
-<span class="w">    </span><span class="nt">fillColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gold</span>
-<span class="w">    </span><span class="nt">lineColor</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
-
-<span class="w">  </span><span class="nt">loss_feedback</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
-<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;您输了</span><span class="nv"> </span><span class="s">{last_loss}</span><span class="nv"> </span><span class="s">分&quot;</span>
-<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">red</span>
-<span class="w">    </span><span class="nt">pos</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">0</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">2</span><span class="p p-Indicator">]</span>
-
-<span class="w">  </span><span class="nt">pop_sound</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sound</span>
-<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;assets/sounds/pop.wav&#39;</span>
-</pre></div>
+<h2>快速参考<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>目的</p></th>
+<th class="head"><p>方法</p></th>
+<th class="head"><p>示例</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>初始化</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">StimBank(win)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank</span> <span class="pre">=</span> <span class="pre">StimBank(win)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>注册（装饰器）</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;bank.define(name)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&#64;bank.define(&quot;fixation&quot;)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>注册（字典/YAML）</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.add_from_dict(dict)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.add_from_dict(config)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>获取刺激</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.get(name)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stim</span> <span class="pre">=</span> <span class="pre">bank.get(&quot;target&quot;)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>获取多个</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.get_selected(list)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">stims</span> <span class="pre">=</span> <span class="pre">bank.get_selected([&quot;fix&quot;,&quot;cue&quot;])</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>按前缀获取</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.get_group(prefix)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">cues</span> <span class="pre">=</span> <span class="pre">bank.get_group(&quot;cue_&quot;)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>格式化文本</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.get_and_format(name,</span> <span class="pre">**kw)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.get_and_format(&quot;msg&quot;,</span> <span class="pre">name=&quot;John&quot;)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>修改刺激</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.rebuild(name,</span> <span class="pre">**kw)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.rebuild(&quot;target&quot;,</span> <span class="pre">fillColor=&quot;blue&quot;)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>预览全部</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.preview_all()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.preview_all()</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>导出配置</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.export_to_yaml(file_path)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bank.export_to_yaml(&quot;stimuli.yaml&quot;)</span></code></p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<p>在这个例子中：</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">fixation</span></code> 是一个白色的文本刺激。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">win_target</span></code> 是一个金色的圆形。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">loss_feedback</span></code> 是一个红色的文本刺激，其中包含一个 f-string 风格的占位符 <code class="docutils literal notranslate"><span class="pre">{last_loss}</span></code>。</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pop_sound</span></code> 是一个声音刺激。</p></li>
-</ul>
 </section>
 <section id="id4">
-<h3>2. 初始化 StimBank<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
-<p>在您的主实验脚本中，在设置好您的 PsychoPy 窗口之后，创建 <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 的一个实例。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.stim_bank</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimBank</span>
-
-<span class="c1"># 1. 创建您的 PsychoPy 窗口</span>
-<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
-
-<span class="c1"># 2. 从您的配置文件中加载刺激定义</span>
-<span class="c1"># (假设 stim_config 是从 config.yaml 加载的字典)</span>
-<span class="n">stim_config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;fixation&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="s1">&#39;color&#39;</span><span class="p">:</span> <span class="s1">&#39;white&#39;</span><span class="p">},</span>
-    <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;circle&#39;</span><span class="p">,</span> <span class="s1">&#39;radius&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;fillColor&#39;</span><span class="p">:</span> <span class="s1">&#39;blue&#39;</span><span class="p">}</span>
-<span class="p">}</span>
-
-<span class="c1"># 3. 创建 StimBank 实例</span>
-<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">stim_config</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 现在已经准备好按需创建刺激了。</p>
-</section>
+<h2>详细使用指南<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h2>
 <section id="id5">
-<h3>3. 检索刺激<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
-<p>使用 <code class="docutils literal notranslate"><span class="pre">.get()</span></code> 方法按名称从 <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 中检索刺激。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 检索一个简单的注视十字</span>
-<span class="n">fixation_cross</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">)</span>
+<h3>1. 初始化<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<p>使用您的 PsychoPy 窗口创建一个 <code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 实例：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.visual</span><span class="w"> </span><span class="kn">import</span> <span class="n">Window</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimBank</span>
 
-<span class="c1"># 在一个 StimUnit 中使用它</span>
-<span class="n">unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;fixation_trial&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
-<span class="n">unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">fixation_cross</span><span class="p">)</span>
-<span class="n">unit</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="n">win</span> <span class="o">=</span> <span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">1024</span><span class="p">,</span> <span class="mi">768</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;black&quot;</span><span class="p">,</span> <span class="n">units</span><span class="o">=</span><span class="s2">&quot;deg&quot;</span><span class="p">)</span>
+<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">)</span>
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 会缓存刺激，所以如果您多次调用 <code class="docutils literal notranslate"><span class="pre">.get('fixation')</span></code>，您将收到对完全相同的 PsychoPy 对象的引用。这对于高效地重用刺激非常有用。</p>
+<p>或者，传递一个初始配置字典或从 YAML 加载：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;instructions&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Press SPACE to begin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
+        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;left_target&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;circle&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;image_stimulus&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="s2">&quot;images/stimulus.png&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]}</span>
+<span class="p">}</span>
+<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">stim_config</span><span class="p">)</span>
+</pre></div>
+</div>
 </section>
 <section id="id6">
-<h3>4. 动态格式化文本<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 最强大的功能之一是能够在检索时动态格式化文本刺激。如果在您的 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 中定义的 <code class="docutils literal notranslate"><span class="pre">text</span></code> 字段包含 f-string 风格的占位符（例如，<code class="docutils literal notranslate"><span class="pre">{score}</span></code>），您可以在调用 <code class="docutils literal notranslate"><span class="pre">.get()</span></code> 时提供值来填充它们。</p>
-<p>假设您的 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 中有这个：</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">stimuli</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">score_display</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
-<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;分数:</span><span class="nv"> </span><span class="s">{current_score}&quot;</span>
-<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
-</pre></div>
+<h3>2. 支持的刺激<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 目前支持以下刺激类型。在字典/YAML 定义中，使用 <code class="docutils literal notranslate"><span class="pre">type</span></code> 字段中的这些键来选择适当的类：</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>键</p></th>
+<th class="head"><p>类</p></th>
+<th class="head"><p>描述</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>text</p></td>
+<td><p>TextStim</p></td>
+<td><p>单行文本</p></td>
+</tr>
+<tr class="row-odd"><td><p>textbox</p></td>
+<td><p>TextBox2</p></td>
+<td><p>多行、自动换行的文本框</p></td>
+</tr>
+<tr class="row-even"><td><p>circle</p></td>
+<td><p>Circle</p></td>
+<td><p>填充或描边的圆形</p></td>
+</tr>
+<tr class="row-odd"><td><p>rect</p></td>
+<td><p>Rect</p></td>
+<td><p>矩形</p></td>
+</tr>
+<tr class="row-even"><td><p>polygon</p></td>
+<td><p>Polygon</p></td>
+<td><p>由顶点定义的任意多边形</p></td>
+</tr>
+<tr class="row-odd"><td><p>image</p></td>
+<td><p>ImageStim</p></td>
+<td><p>静态位图图像</p></td>
+</tr>
+<tr class="row-even"><td><p>shape</p></td>
+<td><p>ShapeStim</p></td>
+<td><p>通过顶点列表自定义形状</p></td>
+</tr>
+<tr class="row-odd"><td><p>movie</p></td>
+<td><p>MovieStim</p></td>
+<td><p>视频播放</p></td>
+</tr>
+<tr class="row-even"><td><p>sound</p></td>
+<td><p>Sound</p></td>
+<td><p>使用 PsychoPy Sound 进行音频播放</p></td>
+</tr>
+</tbody>
+</table>
 </div>
-<p>您可以像这样格式化和检索它：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 在运行时提供 current_score 的值</span>
-<span class="n">score_text</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;score_display&#39;</span><span class="p">,</span> <span class="n">current_score</span><span class="o">=</span><span class="mi">95</span><span class="p">)</span>
-
-<span class="c1"># score_text.text 现在是 &quot;分数: 95&quot;</span>
-</pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>了解刺激参数的好地方是 PsychoPy 视觉 API 页面 (https://www.psychopy.org/api/visual/)。我们将在开发新任务时根据需要添加对其他刺激类型的支持。</p>
 </div>
-<p>这对于显示动态反馈、分数更新或特定于试次的指令非常有用。</p>
-</section>
 <section id="id7">
-<h3>5. 预加载刺激<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
-<p>为了确保精确的计时并避免在第一次呈现刺激时出现延迟，您可以预加载部分或全部刺激。这会在它们被需要之前在内存中创建 PsychoPy 对象。</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 预加载所有在 config.yaml 中定义的刺激</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>
+<h4>参数验证<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h4>
+<p>通过 <code class="docutils literal notranslate"><span class="pre">add_from_dict</span></code> 加载定义时，您可以根据构造函数签名验证规范：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 验证但不引发错误（打印警告）</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">validate_dict</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-<span class="c1"># 只预加载特定的刺激</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">preload</span><span class="p">([</span><span class="s1">&#39;fixation&#39;</span><span class="p">,</span> <span class="s1">&#39;win_target&#39;</span><span class="p">,</span> <span class="s1">&#39;loss_target&#39;</span><span class="p">])</span>
+<span class="c1"># 验证并在任何问题上引发错误</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">validate_dict</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>一个好的做法是在实验开始时，在任何试次开始之前，调用 <code class="docutils literal notranslate"><span class="pre">stim_bank.preload_all()</span></code>。</p>
-</section>
+<p>这将检查：</p>
+<ul class="simple">
+<li><p><strong>缺少必需参数</strong>（没有默认值的参数）</p></li>
+<li><p><strong>未知参数</strong>（拼写错误或不支持的字段）</p></li>
+</ul>
 </section>
 <section id="id8">
-<h2>完整的工作流程示例<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h2>
-<p>下面是一个将所有部分组合在一起的简短示例：</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy</span><span class="w"> </span><span class="kn">import</span> <span class="n">visual</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.stim_bank</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimBank</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.stim_unit</span><span class="w"> </span><span class="kn">import</span> <span class="n">StimUnit</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.hardware.keyboard</span><span class="w"> </span><span class="kn">import</span> <span class="n">Keyboard</span>
+<h4>检查可用参数<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h4>
+<p>要确切查看每个刺激类接受哪些关键字参数（及其默认值），请使用：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_bank</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>示例输出：</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Description</span> <span class="n">of</span> <span class="s1">&#39;fixation&#39;</span> <span class="p">(</span><span class="n">TextStim</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">text</span><span class="p">:</span> <span class="n">required</span>
+  <span class="o">-</span> <span class="n">pos</span><span class="p">:</span> <span class="n">default</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">color</span><span class="p">:</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;white&#39;</span>
+  <span class="o">-</span> <span class="n">height</span><span class="p">:</span> <span class="n">default</span><span class="o">=</span><span class="mf">1.0</span>
+  <span class="o">-</span> <span class="n">bold</span><span class="p">:</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+  <span class="o">...</span>
+</pre></div>
+</div>
+<p>这个内置的帮助程序可让您在编写字典/YAML 规范或调用 <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code> 时发现所有支持的参数及其默认值。</p>
+</section>
+</section>
+<section id="id9">
+<h3>3. 注册刺激<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<section id="id10">
+<h4>方法 1：使用装饰器<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h4>
+<p>通过工厂函数装饰器进行编程注册：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psychopy.visual</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextStim</span><span class="p">,</span> <span class="n">Circle</span>
 
-<span class="c1"># 1. 设置</span>
-<span class="n">win</span> <span class="o">=</span> <span class="n">visual</span><span class="o">.</span><span class="n">Window</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">[</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
-<span class="n">kb</span> <span class="o">=</span> <span class="n">Keyboard</span><span class="p">()</span>
+<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_fixation</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">TextStim</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
-<span class="c1"># 2. 从 YAML 加载的刺激定义</span>
-<span class="n">stim_config</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;fixation&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;+&#39;</span><span class="p">},</span>
-    <span class="s1">&#39;feedback&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;text&#39;</span><span class="p">,</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span> <span class="s1">&#39;你得了 </span><span class="si">{points}</span><span class="s1"> 分!&#39;</span><span class="p">}</span>
+<span class="nd">@stim_bank</span><span class="o">.</span><span class="n">define</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">make_target</span><span class="p">(</span><span class="n">win</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Circle</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">lineColor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">,</span> <span class="n">lineWidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>您还可以通过组装子元素和覆盖方法来构建复合刺激。</p>
+</section>
+<section id="yaml-load-config">
+<h4>方法 2：使用字典、YAML 或 <code class="docutils literal notranslate"><span class="pre">load_config</span></code><a class="headerlink" href="#yaml-load-config" title="Link to this heading">¶</a></h4>
+<p>对于声明式刺激定义，您有两个主要选项：</p>
+<p><strong>1. 手动加载字典/YAML</strong></p>
+<p>使用 Python 的 <code class="docutils literal notranslate"><span class="pre">yaml</span></code> 库或普通字典：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="c1"># a) 加载 YAML 文件</span>
+<span class="n">yaml_config</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;config.yaml&quot;</span><span class="p">))</span>
+<span class="c1"># b) 如果存在，则提取嵌套的 &#39;stimuli&#39; 部分</span>
+<span class="n">stim_config</span> <span class="o">=</span> <span class="n">yaml_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stimuli&#39;</span><span class="p">,</span> <span class="n">yaml_config</span><span class="p">)</span>
+<span class="c1"># c) 注册定义</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">(</span><span class="n">stim_config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>或在代码中直接使用字典定义：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_config</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;instructions&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="s2">&quot;Press SPACE to begin&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mf">0.7</span><span class="p">,</span>
+        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;left_target&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;circle&quot;</span><span class="p">,</span> <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="mf">0.8</span><span class="p">,</span> <span class="s2">&quot;pos&quot;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;fillColor&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">}</span>
 <span class="p">}</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">(</span><span class="n">stim_config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>2. 使用内置的 <code class="docutils literal notranslate"><span class="pre">load_config</span></code> 帮助程序</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 通常包含多个部分（例如 <code class="docutils literal notranslate"><span class="pre">settings</span></code>、<code class="docutils literal notranslate"><span class="pre">triggers</span></code>、<code class="docutils literal notranslate"><span class="pre">stimuli</span></code>），<code class="docutils literal notranslate"><span class="pre">load_config()</span></code> 会自动读取 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 并返回一个字典，其中 <code class="docutils literal notranslate"><span class="pre">stim_config</span></code> 键仅包含相关的刺激定义。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_config</span>
+<span class="c1"># 加载所有配置部分</span>
+<span class="n">cfg</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">()</span>
+<span class="c1"># 仅提取刺激定义</span>
+<span class="n">stim_config</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;stim_config&#39;</span><span class="p">]</span>
 
-<span class="c1"># 3. 初始化 StimBank 并预加载</span>
-<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">stim_config</span><span class="p">)</span>
-<span class="n">stim_bank</span><span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>
-
-<span class="c1"># --- 试次循环 ---</span>
-<span class="k">for</span> <span class="n">trial</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
-    <span class="c1"># 4. 呈现一个注视十字</span>
-    <span class="n">fixation_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;fix&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
-    <span class="n">fixation_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fixation&#39;</span><span class="p">))</span>
-    <span class="n">fixation_unit</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-
-    <span class="c1"># (这里是您的核心试次逻辑...)</span>
-    <span class="n">points_this_trial</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># 假设</span>
-
-    <span class="c1"># 5. 呈现动态反馈</span>
-    <span class="n">feedback_unit</span> <span class="o">=</span> <span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">,</span> <span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">)</span>
-    <span class="n">feedback_stim</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;feedback&#39;</span><span class="p">,</span> <span class="n">points</span><span class="o">=</span><span class="n">points_this_trial</span><span class="p">)</span>
-    <span class="n">feedback_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">feedback_stim</span><span class="p">)</span>
-    <span class="n">feedback_unit</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
-
-<span class="n">win</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="c1"># 使用预加载的定义初始化 bank 并链接进一步的设置</span>
+<span class="n">stim_bank</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">stim_config</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">convert_to_voice</span><span class="p">(</span><span class="s1">&#39;instruction_text&#39;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>
-<section id="id9">
-<h2>后续步骤<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h2>
-<p>现在您已经掌握了 <code class="docutils literal notranslate"><span class="pre">StimBank</span></code>，请继续学习 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 教程，了解如何使用您创建的刺激来构建和运行单个试次。</p>
+</section>
+<section id="id11">
+<h3>4. 检索和预览刺激<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h3>
+<p>注册刺激后，您可以按需获取和检查它们。</p>
+<p><strong>单个检索</strong>：按名称获取单个刺激（首次使用时实例化）。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fixation</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>选择性检索</strong>：通过列出名称获取特定的子集。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">choices</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get_selected</span><span class="p">([</span><span class="s2">&quot;left_target&quot;</span><span class="p">,</span> <span class="s2">&quot;right_target&quot;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>分组检索</strong>：获取其键共享公共前缀的所有刺激。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cues</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get_group</span><span class="p">(</span><span class="s2">&quot;cue_&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>所有检索方法在创建后都会缓存实例，因此重复调用速度很快。</p>
+<section id="id12">
+<h4>预览刺激<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h4>
+<p>在将刺激嵌入试验代码之前，通常需要预览其外观或音频以验证位置、颜色、大小或播放行为：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_all</span><span class="p">()</span>                    <span class="c1"># 显示或播放每个注册的刺激</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_selected</span><span class="p">([</span><span class="s2">&quot;fixation&quot;</span><span class="p">])</span>   <span class="c1"># 仅指定的刺激</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">preview_group</span><span class="p">(</span><span class="s2">&quot;feedback_&quot;</span><span class="p">)</span>       <span class="c1"># 所有带有 &quot;feedback_&quot; 前缀的刺激</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>使用预览及早发现布局或样式问题，而不是在实时试验中。</p>
+</div>
+</section>
+<section id="id13">
+<h4>列出和描述刺激<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h4>
+<p><strong>列出所有键</strong>：查看注册了哪些刺激。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</pre></div>
+</div>
+<p><strong>检查是否存在</strong>：测试名称是否已注册。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">has</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">):</span>
+    <span class="c1"># 继续</span>
+</pre></div>
+</div>
+<p><strong>描述参数</strong>：检查任何刺激的构造函数参数和默认值。</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_bank</span><span class="o">.</span><span class="n">describe</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span>
+<span class="c1"># 打印每个关键字参数及其默认值（如果没有则为“必需”）</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id14">
+<h3>5. 动态文本格式化<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code> 仅支持 <code class="docutils literal notranslate"><span class="pre">TextStim</span></code> 和 <code class="docutils literal notranslate"><span class="pre">TextBox2</span></code> 刺激。它返回一个具有相同属性的新实例，但格式化的 <code class="docutils literal notranslate"><span class="pre">text</span></code> 字段除外。将其应用于其他刺激类型将引发 <code class="docutils literal notranslate"><span class="pre">TypeError</span></code>。</p>
+<p>您只需在配置（字典或 YAML）中使用 Python 风格的占位符定义文本，并注入运行时值。</p>
+<p>例如，当您需要在每个块后显示一个摘要屏幕，其中包含动态值和用户提示时。以下是如何配置和呈现多行中断消息。</p>
+<p>您可以在 YAML 文件中或直接在 Python 中作为字典定义 <code class="docutils literal notranslate"><span class="pre">block_break</span></code> 刺激：</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># config.yaml</span>
+<span class="nt">stimuli</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">block_break</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">text</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">{block_num}/{total_blocks} Done</span>
+<span class="w">      </span><span class="no">Score: {score}</span>
+<span class="w">      </span><span class="no">Press Enter to proceed</span>
+<span class="w">    </span><span class="nt">color</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">white</span>
+<span class="w">    </span><span class="nt">height</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.78</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 在代码中，使用字典</span>
+<span class="n">stim_bank</span><span class="o">.</span><span class="n">add_from_dict</span><span class="p">({</span>
+    <span class="s2">&quot;block_break&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;text&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">{block_num}</span><span class="s2">/</span><span class="si">{total_blocks}</span><span class="s2"> Done</span>
+<span class="s2">&quot;</span>
+            <span class="s2">&quot;Score: </span><span class="si">{score}</span>
+<span class="s2">&quot;</span>
+            <span class="s2">&quot;Press Enter to proceed&quot;</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;color&quot;</span><span class="p">:</span> <span class="s2">&quot;white&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;height&quot;</span><span class="p">:</span> <span class="mf">0.78</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p><strong>运行时示例</strong>：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 在块结束时：</span>
+<span class="n">block_trials</span> <span class="o">=</span> <span class="n">block</span><span class="o">.</span><span class="n">get_all_data</span><span class="p">()</span>
+<span class="n">score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cue_delta&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">block_trials</span><span class="p">)</span>
+
+<span class="c1"># 格式化并显示中断屏幕</span>
+<span class="n">StimUnit</span><span class="p">(</span><span class="s1">&#39;block&#39;</span><span class="p">,</span><span class="n">win</span><span class="p">,</span><span class="n">kb</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get_and_format</span><span class="p">(</span><span class="s1">&#39;block_break&#39;</span><span class="p">,</span> 
+                                                                <span class="n">block_num</span><span class="o">=</span><span class="n">block_i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> 
+                                                                <span class="n">total_blocks</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">total_blocks</span><span class="p">,</span>
+                                                                <span class="n">score</span><span class="o">=</span><span class="n">score</span><span class="p">))</span><span class="o">.</span><span class="n">wait_and_continue</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>在此模式中，占位符 <code class="docutils literal notranslate"><span class="pre">{block_num}</span></code>、<code class="docutils literal notranslate"><span class="pre">{total_blocks}</span></code> 和 <code class="docutils literal notranslate"><span class="pre">{score}</span></code> 在运行时被替换，生成的 <code class="docutils literal notranslate"><span class="pre">TextStim</span></code> 被传递给 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 以进行显示和输入处理。</p>
+<p>注意：<code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code> 通过手动重建新的文本刺激而不是尝试对原始刺激进行深层复制来工作。在内部，它检查 <code class="docutils literal notranslate"><span class="pre">TextStim</span></code> 或 <code class="docutils literal notranslate"><span class="pre">TextBox2</span></code> 的构造函数签名，从其 <code class="docutils literal notranslate"><span class="pre">__dict__</span></code> 中提取原始实例的所有存储的关键字参数，用您的格式化字符串替换文本字段，然后使用该参数集调用类构造函数。这种方法避免了改变 StimBank 中缓存的版本，但由于 PsychoPy 对象不支持真正的深层复制，一些复杂的属性——尤其是在 TextBox2 中（例如换行行为或锚点）——可能无法与原始版本完全一致。如果您在使用 <code class="docutils literal notranslate"><span class="pre">TextBox2</span></code> 时遇到意外的布局或格式问题，请考虑使用 <code class="docutils literal notranslate"><span class="pre">TextStim</span></code> 类型或使用新的 <code class="docutils literal notranslate"><span class="pre">text</span></code> 覆盖的 <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code>。</p>
+</section>
+<section id="id15">
+<h3>6. 重建和修改刺激<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">StimBank.rebuild()</span></code> 允许您动态覆盖刺激参数，而无需改变原始定义。传递与刺激构造函数匹配的关键字参数以创建新实例。如果要覆盖缓存的版本，请使用 <code class="docutils literal notranslate"><span class="pre">update_cache=True</span></code>。</p>
+<p><strong>基本示例</strong>：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 创建一个蓝色的 &quot;target&quot; 变体，而不改变原始的</span>
+<span class="n">blue_target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">,</span> <span class="n">fillColor</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="c1"># 原始的保持不变</span>
+<span class="n">red_target</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span>  <span class="c1"># 仍然是红色，半径=0.5</span>
+</pre></div>
+</div>
+<p>以下是来自概率逆转学习（PRL）任务的一个实际示例，展示了如何在 <code class="docutils literal notranslate"><span class="pre">run_trial</span></code> 函数中以及何时重建刺激。在每个试验中，两个选择刺激根据 <code class="docutils literal notranslate"><span class="pre">condition</span></code> 和参与者历史交换位置：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">partial</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_trial</span><span class="p">(</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="p">,</span> <span class="n">settings</span><span class="p">,</span> <span class="n">condition</span><span class="p">,</span> <span class="n">stim_bank</span><span class="p">,</span> <span class="n">controller</span><span class="p">,</span> <span class="n">trigger_sender</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    单个 PRL 试验序列：</span>
+<span class="sd">      1. 注视</span>
+<span class="sd">      2. 提示显示 + 响应收集</span>
+<span class="sd">      3. 随机反馈</span>
+<span class="sd">      4. 试验间间隔</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">trial_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;condition&quot;</span><span class="p">:</span> <span class="n">condition</span><span class="p">}</span>
+    <span class="n">make_unit</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">StimUnit</span><span class="p">,</span> <span class="n">win</span><span class="o">=</span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span><span class="o">=</span><span class="n">kb</span><span class="p">,</span> <span class="n">triggersender</span><span class="o">=</span><span class="n">trigger_sender</span><span class="p">)</span>
+    <span class="n">marker_pad</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">reversal_count</span> <span class="o">*</span> <span class="mi">10</span>
+
+    <span class="c1"># 1) 注视</span>
+    <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;fixation&quot;</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stim_bank</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation&quot;</span><span class="p">))</span> \
+        <span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">fixation_duration</span><span class="p">,</span>
+              <span class="n">onset_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;fixation_onset&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">marker_pad</span><span class="p">)</span> \
+        <span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+
+    <span class="c1"># 2) 提示 + 响应收集</span>
+    <span class="c1"># 根据条件重建左/右刺激位置</span>
+    <span class="k">if</span> <span class="n">condition</span> <span class="o">==</span> <span class="s2">&quot;AB&quot;</span><span class="p">:</span>
+        <span class="n">stima</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;stima&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">stimb</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;stimb&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># &quot;BA&quot;</span>
+        <span class="n">stimb</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;stimb&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">stima</span> <span class="o">=</span> <span class="n">stim_bank</span><span class="o">.</span><span class="n">rebuild</span><span class="p">(</span><span class="s2">&quot;stima&quot;</span><span class="p">,</span> <span class="n">pos</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="c1"># 确定正确的响应键</span>
+    <span class="n">correct_label</span> <span class="o">=</span> <span class="n">controller</span><span class="o">.</span><span class="n">current_correct</span>
+    <span class="n">correct_side</span> <span class="o">=</span> <span class="s2">&quot;left&quot;</span> <span class="k">if</span> <span class="n">correct_label</span> <span class="o">==</span> <span class="s2">&quot;stima&quot;</span> <span class="k">else</span> <span class="s2">&quot;right&quot;</span>
+    <span class="n">correct_key</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">left_key</span> <span class="k">if</span> <span class="n">correct_side</span> <span class="o">==</span> <span class="s2">&quot;left&quot;</span> <span class="k">else</span> <span class="n">settings</span><span class="o">.</span><span class="n">right_key</span>
+
+    <span class="c1"># 构建并显示提示单元</span>
+    <span class="n">cue_unit</span> <span class="o">=</span> <span class="n">make_unit</span><span class="p">(</span><span class="n">unit_label</span><span class="o">=</span><span class="s2">&quot;cue&quot;</span><span class="p">)</span>
+    <span class="n">cue_unit</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stima</span><span class="p">)</span><span class="o">.</span><span class="n">add_stim</span><span class="p">(</span><span class="n">stimb</span><span class="p">)</span>
+    <span class="n">cue_unit</span><span class="o">.</span><span class="n">capture_response</span><span class="p">(</span>
+        <span class="n">key_list</span><span class="o">=</span><span class="p">[</span><span class="n">settings</span><span class="o">.</span><span class="n">left_key</span><span class="p">,</span> <span class="n">settings</span><span class="o">.</span><span class="n">right_key</span><span class="p">],</span>
+        <span class="n">correct_key</span><span class="o">=</span><span class="n">correct_key</span><span class="p">,</span>
+        <span class="n">duration</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">cue_duration</span><span class="p">,</span>
+        <span class="n">onset_trigger</span><span class="o">=</span><span class="n">settings</span><span class="o">.</span><span class="n">triggers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cue_onset&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="n">marker_pad</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">trial_data</span><span class="p">)</span>
+
+    <span class="c1"># 3) 为简洁起见，省略了反馈和 ITI...</span>
+
+    <span class="k">return</span> <span class="n">trial_data</span>
+</pre></div>
+</div>
+<p>在此示例中，使用 <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code> 使您可以从单个基本定义开始，仅调整需要更改的参数（例如交换左/右位置），而无需创建全新的刺激条目。通过传递构造函数覆盖（例如 <code class="docutils literal notranslate"><span class="pre">pos</span></code>、<code class="docutils literal notranslate"><span class="pre">fillColor</span></code>、<code class="docutils literal notranslate"><span class="pre">size</span></code> 或 <code class="docutils literal notranslate"><span class="pre">opacity</span></code>），您可以保留完全的运行时灵活性，以根据当前条件或参与者数据自定义刺激。因为 <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code> 默认情况下不会覆盖缓存的实例，所以原始定义保持不变；如果您确实希望在后续试验中保留更改，只需包含 <code class="docutils literal notranslate"><span class="pre">update_cache=True</span></code>。此模式可使您的刺激库保持紧凑，并避免为每个可能的变体增生几乎相同的定义。</p>
+<section id="get-and-format-rebuild">
+<h4><code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code> 与 <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code><a class="headerlink" href="#get-and-format-rebuild" title="Link to this heading">¶</a></h4>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>功能</p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code></p></th>
+<th class="head"><p><code class="docutils literal notranslate"><span class="pre">rebuild()</span></code></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>目的</strong></p></td>
+<td><p>仅更新 <strong>文本</strong> 内容</p></td>
+<td><p>创建具有任何覆盖属性的新实例</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>支持的刺激</strong></p></td>
+<td><p>仅 <code class="docutils literal notranslate"><span class="pre">TextStim</span></code>、<code class="docutils literal notranslate"><span class="pre">TextBox2</span></code></p></td>
+<td><p>通过注册的工厂支持所有刺激类型</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>可修改的属性</strong></p></td>
+<td><p>仅文本内容</p></td>
+<td><p>任何构造函数参数（<code class="docutils literal notranslate"><span class="pre">pos</span></code>、<code class="docutils literal notranslate"><span class="pre">fillColor</span></code>、<code class="docutils literal notranslate"><span class="pre">size</span></code> 等）</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>机制</strong></p></td>
+<td><p>从原始副本中复制存储的 kwargs，替换 <code class="docutils literal notranslate"><span class="pre">text</span></code>，然后调用构造函数</p></td>
+<td><p>使用基本 kwargs + 覆盖调用注册的工厂</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>缓存行为</strong></p></td>
+<td><p>从不覆盖缓存</p></td>
+<td><p>默认情况下 <strong>不</strong> 覆盖；使用 <code class="docutils literal notranslate"><span class="pre">update_cache=True</span></code> 替换</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>最适合</strong></p></td>
+<td><p>视觉布局保持不变的简单标签或分数更新</p></td>
+<td><p>复杂或多属性覆盖；当 TextBox2 格式不可靠时</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>限制</strong></p></td>
+<td><p>无法更改非文本属性；换行/锚定的深层复制问题</p></td>
+<td><p>需要有效的工厂定义；始终实例化一个新对象</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="id16">
+<h3>7. 文本到语音转换<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 支持 <strong>文本到语音（TTS）</strong> 转换，以增强可访问性并标准化不同语言的指令传递。</p>
+<p><strong>为什么重要</strong>：使用文本到语音可以提高可访问性——特别是对于儿童、老年参与者或识字率低的人。它确保了不同语言版本之间的一致语音传递，并消除了为每次翻译录制人声的需要。通过使用标准化的合成语音，您可以减少由不同实验者引入的可变性，从而在会话和站点之间保持一致性。</p>
+<p><strong>工作原理</strong>：<code class="docutils literal notranslate"><span class="pre">StimBank</span></code> 使用微软的 <code class="docutils literal notranslate"><span class="pre">edge-tts</span></code>，这是一个基于云的 TTS API，可将文本转换为 MP3 音频。生成的文件保存在 <code class="docutils literal notranslate"><span class="pre">assets/</span></code> 文件夹下，如果已存在则跳过（除非 <code class="docutils literal notranslate"><span class="pre">overwrite=True</span></code>），然后自动注册为新的 <code class="docutils literal notranslate"><span class="pre">Sound</span></code> 刺激。</p>
+<div class="highlight-note notranslate"><div class="highlight"><pre><span></span>TTS 生成需要互联网连接。离线工具存在，但通常会产生质量较低的音频。
+</pre></div>
+</div>
+<section id="id17">
+<h4>将现有文本刺激转换为语音<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">win</span><span class="p">,</span> <span class="n">kb</span> <span class="o">=</span> <span class="n">initialize_exp</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+<span class="c1"># 设置刺激库</span>
+<span class="n">stim_bank</span> <span class="o">=</span> <span class="n">StimBank</span><span class="p">(</span><span class="n">win</span><span class="p">,</span><span class="n">cfg</span><span class="p">[</span><span class="s1">&#39;stim_config&#39;</span><span class="p">])</span>\
+    <span class="o">.</span><span class="n">convert_to_voice</span><span class="p">(</span><span class="s1">&#39;instruction_text&#39;</span><span class="p">)</span>\
+    <span class="o">.</span><span class="n">preload_all</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>这会在 <code class="docutils literal notranslate"><span class="pre">assets/</span></code> 中创建 <code class="docutils literal notranslate"><span class="pre">instruction_text_voice.mp3</span></code> 和 <code class="docutils literal notranslate"><span class="pre">good_bye_voice.mp3</span></code>，并注册名为 <code class="docutils literal notranslate"><span class="pre">instruction_text_voice</span></code> 和 <code class="docutils literal notranslate"><span class="pre">good_bye_voice</span></code> 的刺激。</p>
+<p>如果您计划重新生成语音，请先删除 <code class="docutils literal notranslate"><span class="pre">assets/</span></code> 中先前生成的文件。选择与文本语言匹配的 TTS 语音以确保发音自然。默认值为 <code class="docutils literal notranslate"><span class="pre">zh-CN-XiaoxiaoNeural</span></code>。</p>
+</section>
+<section id="id18">
+<h4>从自定义文本添加语音<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">stim_bank</span><span class="o">.</span><span class="n">add_voice</span><span class="p">(</span>
+    <span class="n">stim_label</span><span class="o">=</span><span class="s2">&quot;welcome_voice&quot;</span><span class="p">,</span>
+    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;ようこそ。タスクを開始します。&quot;</span><span class="p">,</span>
+    <span class="n">voice</span><span class="o">=</span><span class="s2">&quot;ja-JP-NanamiNeural&quot;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>注册 <code class="docutils literal notranslate"><span class="pre">welcome_voice</span></code> 并保存 <code class="docutils literal notranslate"><span class="pre">assets/welcome_voice.mp3</span></code> 以供播放。</p>
+</section>
+<section id="id19">
+<h4>语音选择<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h4>
+<p>使用帮助程序列出支持的语音：</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">psyflow.tts_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_supported_voices</span>
+
+<span class="c1"># 所有语音</span>
+<span class="n">tsv</span> <span class="o">=</span> <span class="n">list_supported_voices</span><span class="p">(</span><span class="n">human_readable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1"># 按语言代码筛选</span>
+<span class="n">ts_jp</span> <span class="o">=</span> <span class="n">list_supported_voices</span><span class="p">(</span><span class="n">filter_lang</span><span class="o">=</span><span class="s2">&quot;ja&quot;</span><span class="p">,</span> <span class="n">human_readable</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>示例输出：</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>ShortName</p></th>
+<th class="head"><p>Locale</p></th>
+<th class="head"><p>Gender</p></th>
+<th class="head"><p>Personalities</p></th>
+<th class="head"><p>FriendlyName</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>af-ZA-AdriNeural</p></td>
+<td><p>af-ZA</p></td>
+<td><p>Female</p></td>
+<td><p>Friendly, Positive</p></td>
+<td><p>Microsoft Adri Online (Natural) - Afrikaans (South Africa)</p></td>
+</tr>
+<tr class="row-odd"><td><p>af-ZA-WillemNeural</p></td>
+<td><p>af-ZA</p></td>
+<td><p>Male</p></td>
+<td><p>Friendly, Positive</p></td>
+<td><p>Microsoft Willem Online (Natural) - Afrikaans (South Africa)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>或者，在此 <a class="reference external" href="https://gist.github.com/BettyJJ/17cbaa1de96235a7f5773b8690a20462">支持的语音 Gist</a> 中查看完整列表。</p>
+</section>
+<section id="id20">
+<h4>提示和注意事项<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h4>
+<ul class="simple">
+<li><p><strong>占位符限制</strong>：TTS 不支持动态占位符（例如 <code class="docutils literal notranslate"><span class="pre">{duration}</span></code>）。仅使用静态文本。</p></li>
+<li><p><strong>需要互联网连接</strong>：生成依赖于微软的云服务——确保网络访问。</p></li>
+<li><p><strong>覆盖</strong>：传递 <code class="docutils literal notranslate"><span class="pre">overwrite=True</span></code> 以强制重新生成，但要谨慎使用。</p></li>
+<li><p><strong>语音-语言匹配</strong>：始终将语音区域设置与文本语言匹配以获得自然的输出。</p></li>
+<li><p><strong>预览音频</strong>：在完整实验之前验证 <code class="docutils literal notranslate"><span class="pre">assets/</span></code> 中的 MP3 文件。如果文件为空或损坏，请删除并重新生成。</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="id21">
+<h2>后续步骤<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h2>
+<p>现在您已经了解了如何使用 <code class="docutils literal notranslate"><span class="pre">StimBank</span></code>，您可以：</p>
+<ul class="simple">
+<li><p><strong>构建试验</strong>：探索 <a class="reference internal" href="build_stimunit_cn.html"><span class="std std-doc">StimUnit 教程</span></a> 以了解如何创建试验序列</p></li>
+<li><p><strong>组织块</strong>：查看 <a class="reference internal" href="build_blocks_cn.html"><span class="std std-doc">BlockUnit 教程</span></a> 以将试验组织成块</p></li>
+<li><p><strong>发送触发器</strong>：了解有关 <a class="reference internal" href="send_trigger_cn.html"><span class="std std-doc">触发器发送</span></a> 的信息以进行 EEG/MEG 实验集成</p></li>
+</ul>
 </section>
 </section>
 
@@ -477,7 +874,7 @@
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">BlockUnit: 组织和运行试验</div>
+                <div class="title">BlockUnit: 管理试验</div>
                 
               </div>
             </a>
@@ -511,19 +908,42 @@
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">StimBank：灵活的刺激管理</a><ul>
+<li><a class="reference internal" href="#">StimBank: 灵活的刺激管理</a><ul>
 <li><a class="reference internal" href="#id1">概述</a></li>
-<li><a class="reference internal" href="#id2">核心概念</a></li>
-<li><a class="reference internal" href="#id3">详细使用指南</a><ul>
-<li><a class="reference internal" href="#config-yaml">1. 在 <code class="docutils literal notranslate"><span class="pre">config.yaml</span></code> 中定义刺激</a></li>
-<li><a class="reference internal" href="#id4">2. 初始化 StimBank</a></li>
-<li><a class="reference internal" href="#id5">3. 检索刺激</a></li>
-<li><a class="reference internal" href="#id6">4. 动态格式化文本</a></li>
-<li><a class="reference internal" href="#id7">5. 预加载刺激</a></li>
+<li><a class="reference internal" href="#id2">主要功能</a></li>
+<li><a class="reference internal" href="#id3">快速参考</a></li>
+<li><a class="reference internal" href="#id4">详细使用指南</a><ul>
+<li><a class="reference internal" href="#id5">1. 初始化</a></li>
+<li><a class="reference internal" href="#id6">2. 支持的刺激</a><ul>
+<li><a class="reference internal" href="#id7">参数验证</a></li>
+<li><a class="reference internal" href="#id8">检查可用参数</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id8">完整的工作流程示例</a></li>
-<li><a class="reference internal" href="#id9">后续步骤</a></li>
+<li><a class="reference internal" href="#id9">3. 注册刺激</a><ul>
+<li><a class="reference internal" href="#id10">方法 1：使用装饰器</a></li>
+<li><a class="reference internal" href="#yaml-load-config">方法 2：使用字典、YAML 或 <code class="docutils literal notranslate"><span class="pre">load_config</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id11">4. 检索和预览刺激</a><ul>
+<li><a class="reference internal" href="#id12">预览刺激</a></li>
+<li><a class="reference internal" href="#id13">列出和描述刺激</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id14">5. 动态文本格式化</a></li>
+<li><a class="reference internal" href="#id15">6. 重建和修改刺激</a><ul>
+<li><a class="reference internal" href="#get-and-format-rebuild"><code class="docutils literal notranslate"><span class="pre">get_and_format()</span></code> 与 <code class="docutils literal notranslate"><span class="pre">rebuild()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id16">7. 文本到语音转换</a><ul>
+<li><a class="reference internal" href="#id17">将现有文本刺激转换为语音</a></li>
+<li><a class="reference internal" href="#id18">从自定义文本添加语音</a></li>
+<li><a class="reference internal" href="#id19">语音选择</a></li>
+<li><a class="reference internal" href="#id20">提示和注意事项</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id21">后续步骤</a></li>
 </ul>
 </li>
 </ul>
