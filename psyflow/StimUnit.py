@@ -498,9 +498,13 @@ class StimUnit:
             raise TypeError(f"Invalid duration type: {type(duration)}")
         self.set_state(duration=t_val)
         
-        # initial draw + trigger scheduling
+        # --- Initial Flip (trigger locked to onset) ---
         for stim in self.stimuli:
-            stim.draw()
+            if hasattr(stim, "play") and callable(stim.play):
+                self.win.callOnFlip(stim.play)
+            else:
+                stim.draw()
+
         self.win.callOnFlip(self.send_trigger, onset_trigger)
         self.win.callOnFlip(self.set_state,
                         onset_time=self.clock.getTime(), 
@@ -519,12 +523,12 @@ class StimUnit:
         responded = False
         chosen_key = None  # track which key to highlight
 
-
+        visual_stims = [s for s in self.stimuli if hasattr(s, "draw") and callable(s.draw)]
         n_frames = int(round(t_val / self.frame_time))
         for _ in range(n_frames-1):
             # draw or blank?
             if not (responded and terminate_on_response):
-                for stim in self.stimuli:
+                for stim in visual_stims:
                     stim.draw()
             # draw highlight if requested
             if highlight_stim and (responded or dynamic_highlight):
