@@ -280,7 +280,7 @@ StimUnit('goodbye',win,kb)\
 
 ### 6. Get responses with `capture_response()`
 
-The `capture_response()` method in `StimUnit` integrates stimulus presentation, timing, triggers, and response handling into a single, chainable call. It is ideal for:
+The `capture_response()` method in `StimUnit` integrates stimulus presentation, timing, triggers, and response handling into a single, chainable call. Like `.show()`, it automatically handles both visual and audio stimuli. It is ideal for:
 
 - Detecting and logging subject responses within a predefined response window
 - Determining correct versus incorrect responses for performance analysis
