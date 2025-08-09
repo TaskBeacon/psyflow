@@ -30,7 +30,7 @@ pip install psyflow
 To get the very latest features and updates, you can install directly from the GitHub repository:
 
 ```bash
-pip install git+https://github.com/Xiong-Hao-MHC/psyflow.git
+pip install https://github.com/TaskBeacon/psyflow.git
 ```
 
 ## Step 1: Create a New Project

@@ -30,7 +30,7 @@ pip install psyflow
 要获取最新的功能和更新，您可以直接从 GitHub 存储库安装：
 
 ```bash
-pip install git+https://github.com/Xiong-Hao-MHC/psyflow.git
+pip install https://github.com/TaskBeacon/psyflow.git
 ```
 
 ## 第 1 步：创建一个新项目

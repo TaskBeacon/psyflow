@@ -70,7 +70,7 @@ html_theme_options = {
     "dark_logo": "logo_black-removebg.png",   # used on dark background
     "source_repository": "https://github.com/TaskBeacon/psyflow/",
     "source_branch": "main",
-    "source_directory": "source/",
+    "source_directory": "docs/",
 }
 
 def setup(app):
