@@ -52,14 +52,6 @@ psyflow.TriggerSender module
    :undoc-members:
    :show-inheritance:
 
-psyflow.LLM module
-------------------
-
-.. automodule:: psyflow.LLM
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 psyflow.utils module
 --------------------
 

@@ -14,7 +14,7 @@ Features
 - Modular classes for each experiment phase (GUI, stimuli, trials, blocks)
 - Declarative configuration with lifecycle hooks
 - Audio support including text-to-speech and hardware triggers
-- LLM integration and CLI scaffolding tools
+- CLI scaffolding tools
 
 
 Start with one of the tutorials below or explore the API reference.
@@ -32,13 +32,11 @@ Start with one of the tutorials below or explore the API reference.
    tutorials/send_trigger
    tutorials/cli_usage
    tutorials/utilities
-   tutorials/llm_client
-
 
 
 .. toctree::
    :maxdepth: 1
-   :caption: 中文教程(Chinese Tutorials)
+   :caption: Chinese Tutorials
 
    tutorials/getting_started_cn
    tutorials/get_subinfo_cn
@@ -48,11 +46,12 @@ Start with one of the tutorials below or explore the API reference.
    tutorials/build_stimunit_cn
    tutorials/send_trigger_cn
    tutorials/cli_usage_cn
-   tutorials/llm_client_cn
 
 
 .. toctree::
    :maxdepth: 1
    :caption: Indices and tables
+
    genindex
    modindex
+
