@@ -51,7 +51,7 @@ class TriggerSender:
         self.on_trigger_start = on_trigger_start
         self.on_trigger_end = on_trigger_end
 
-    def send(self, code: Optional[int]):
+    def send(self, code: Optional[int], wait: bool = True):
         """
         Send a trigger code using the configured function and callbacks.
 
@@ -60,6 +60,11 @@ class TriggerSender:
         code : int or None
             The code to send. If ``None`` the method does nothing and logs a
             warning.
+        wait : bool, default=True
+            If True, apply the configured ``post_delay`` and call the
+            ``on_trigger_end`` hook (if provided). If False, skip any waiting
+            and do not run the end hook, which reduces the risk of frame timing
+            jitter when used in flip callbacks (e.g., ``win.callOnFlip``).
 
         Returns
         -------
@@ -81,11 +86,10 @@ class TriggerSender:
         except Exception as e:
             logging.error(f"[Trigger] Failed to send trigger {code}: {e}")
         else:
-            print(f"[Trigger] Trigger sent: {code}")
             logging.data(f"[Trigger] Trigger sent: {code}")
 
-        if self.post_delay:
+        if wait and self.post_delay:
             core.wait(self.post_delay)
 
-        if self.on_trigger_end:
+        if wait and self.on_trigger_end:
             self.on_trigger_end()
