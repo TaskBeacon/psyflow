@@ -1,10 +1,17 @@
 # psyflow change log
 
-## 2026-02-10
+## 0.1.3 (2026-02-10)
+
+### Summary
+- Timing/response-stage fixes in `StimUnit` (flip-synced stamps, RT consistency, close semantics, flip-locked offsets).
+- Trigger sending made safer for flip callbacks (`TriggerSender.send(..., wait=False)` path).
+- Correctness fixes: `BlockUnit.summarize()` no longer crashes; `taps()` locates templates correctly.
+- Packaging/import cleanup: Python >= 3.10 declared; LLM utilities removed (deps/docs/exports cleaned); `import psyflow` is now lazy.
+- Basic CI smoke checks added.
 
 ### StimUnit.run fixed-window response stage (behavior + API)
 
-File: `psyflow/psyflow/StimUnit.py`
+File: `psyflow/StimUnit.py`
 
 #### What changed
 - `StimUnit.run(terminate_on_response=True)` now truly ends the stage immediately after the first valid response (or timeout) is registered.
@@ -51,7 +58,7 @@ StimUnit("trial", win, kb).add_stim(stim).run(
 
 ### Flip-synced onset timestamps (callOnFlip argument evaluation fix)
 
-File: `psyflow/psyflow/StimUnit.py`
+File: `psyflow/StimUnit.py`
 
 #### What changed
 - Onset timestamps are now evaluated at flip-time by scheduling a callback that reads clocks inside the `win.flip()` callback, instead of passing pre-evaluated float values into `win.callOnFlip(...)`.
@@ -67,7 +74,7 @@ File: `psyflow/psyflow/StimUnit.py`
 ### RT consistency + stage-close semantics + flip-locked offsets
 
 Files:
-- `psyflow/psyflow/StimUnit.py`
+- `psyflow/StimUnit.py`
 
 #### What changed
 - RTs are now based on PsychoPy's asynchronous keyboard timestamps (`KeyPress.rt`) rather than poll-time (`self.clock.getTime()`) where applicable.
@@ -94,8 +101,8 @@ Files:
 ### TriggerSender jitter reduction for flip callbacks
 
 Files:
-- `psyflow/psyflow/TriggerSender.py`
-- `psyflow/psyflow/StimUnit.py`
+- `psyflow/TriggerSender.py`
+- `psyflow/StimUnit.py`
 
 #### What changed
 - `TriggerSender.send(code, wait=True)` now accepts `wait: bool` and no longer prints on every send.
@@ -105,6 +112,71 @@ Files:
 
 ### StimUnit TriggerSender import (typing/runtime fix)
 
-File: `psyflow/psyflow/StimUnit.py`
+File: `psyflow/StimUnit.py`
 
 - Replaced `from psyflow import TriggerSender` with a relative import (`from .TriggerSender import TriggerSender`) so that `Optional[TriggerSender]` type annotations refer to the class (not the submodule).
+
+### BlockUnit summarize() fix + quieter condition generation
+
+Files:
+- `psyflow/BlockUnit.py`
+
+#### What changed
+- `BlockUnit.summarize()` no longer crashes (it now summarizes from `self.results` instead of mistakenly iterating the return value of `to_dict()`).
+- `BlockUnit.generate_conditions()` no longer prints the full condition list to stdout; it logs via PsychoPy logging instead.
+
+### taps() template path fix
+
+Files:
+- `psyflow/utils.py`
+
+#### What changed
+- `utils.taps()` now locates the bundled cookiecutter template via `importlib.resources.files("psyflow.templates") / template` (instead of looking under the package root).
+
+### Minimal config validation helper
+
+Files:
+- `psyflow/utils.py`
+
+#### What changed
+- Added `validate_config(...)` for lightweight top-level section/type checks.
+- `load_config(..., validate=True, required_sections=...)` can now opt into validation at load time.
+
+### Import/Packaging Cleanup (Post-LLM Removal)
+
+Files:
+- `psyflow/__init__.py`
+- `pyproject.toml`
+- `setup.py`
+- `docs/index.rst`
+- `docs/api/psyflow.rst`
+- `docs/tutorials/getting_started.md`
+- `docs/tutorials/getting_started_cn.md`
+- `docs/tutorials/get_subinfo.md`
+- `docs/tutorials/get_subinfo_cn.md`
+
+#### What changed
+- `psyflow/__init__.py` now uses lazy exports (`__getattr__`) so `import psyflow` is lightweight and does not import PsychoPy unless needed.
+- Declared Python requirement `>=3.10` (PEP 604 unions are used in the codebase).
+- Removed LLM-related dependencies from packaging metadata after removing the LLM utilities.
+- Removed LLM-related docs entry points from the docs tree.
+
+### CI Smoke Checks
+
+Files:
+- `.github/workflows/ci.yml`
+- `tests/test_smoke.py`
+
+#### What changed
+- Added a basic CI workflow to compile sources and run a small `unittest` smoke suite.
+
+### ASCII Cleanup (Console/Encoding Robustness)
+
+Files:
+- `psyflow/StimBank.py`
+- `psyflow/StimUnit.py`
+- `psyflow/SubInfo.py`
+- `psyflow/cli.py`
+
+#### What changed
+- Replaced non-essential emoji/fancy punctuation with ASCII to avoid console encoding issues on Windows setups.

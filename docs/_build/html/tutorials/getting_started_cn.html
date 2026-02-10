@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
-<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="SubInfo: 收集被试信息" href="get_subinfo_cn.html" /><link rel="prev" title="LLMClient: Using Large Language Models" href="llm_client.html" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="SubInfo: 收集被试信息" href="get_subinfo_cn.html" /><link rel="prev" title="Utility Functions" href="utilities.html" />
 
     <!-- Generated with Sphinx 7.3.7 and Furo 2024.08.06 -->
-        <title>PsyFlow 入门指南 - psyflow 0.1.2</title>
+        <title>PsyFlow 入门指南 - psyflow 0.1.3</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="../_static/logo_settings.css?v=510bd44c" />
@@ -167,7 +167,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../index.html"><div class="brand">psyflow 0.1.2</div></a>
+      <a href="../index.html"><div class="brand">psyflow 0.1.3</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -195,7 +195,7 @@
     <img class="sidebar-logo only-dark" src="../_static/logo_black-removebg.png" alt="Dark Logo"/>
   </div>
   
-  <span class="sidebar-brand-text">psyflow 0.1.2</span>
+  <span class="sidebar-brand-text">psyflow 0.1.3</span>
   
 </a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
@@ -218,9 +218,8 @@
 <li class="toctree-l1"><a class="reference internal" href="send_trigger.html">TriggerSender: Sending Hardware Triggers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage.html">psyflow-init: Command-Line Interface</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utilities.html">Utility Functions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client.html">LLMClient: Using Large Language Models</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">中文教程(Chinese Tutorials)</span></p>
+<p class="caption" role="heading"><span class="caption-text">Chinese Tutorials</span></p>
 <ul class="current">
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">PsyFlow 入门指南</a></li>
 <li class="toctree-l1"><a class="reference internal" href="get_subinfo_cn.html">SubInfo: 收集被试信息</a></li>
@@ -230,7 +229,11 @@
 <li class="toctree-l1"><a class="reference internal" href="build_stimunit_cn.html">StimUnit：模块化的刺激呈现与反应处理单元</a></li>
 <li class="toctree-l1"><a class="reference internal" href="send_trigger_cn.html">TriggerSender: 发送硬件触发器</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli_usage_cn.html">psyflow-init: 命令行界面</a></li>
-<li class="toctree-l1"><a class="reference internal" href="llm_client_cn.html">LLMClient: 使用大型语言模型</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Indices and tables</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../py-modindex.html">Module Index</a></li>
 </ul>
 
 </div></div>
@@ -283,13 +286,14 @@
 <li><p><strong>声明式语法</strong>：在易于阅读的 YAML 文件中定义刺激、计时和任务结构。</p></li>
 <li><p><strong>结构化项目布局</strong>：命令行工具 (<code class="docutils literal notranslate"><span class="pre">psyflow-init</span></code>) 为您的项目生成一个标准化的、有组织的文件夹结构。</p></li>
 <li><p><strong>简化的 API</strong>：像 <code class="docutils literal notranslate"><span class="pre">StimUnit</span></code> 和 <code class="docutils literal notranslate"><span class="pre">BlockUnit</span></code> 这样的高级类处理刺激呈现、响应捕获和数据记录的复杂性。</p></li>
-<li><p><strong>可扩展性</strong>：轻松集成硬件触发器（EEG、fMRI）、眼动仪，甚至大型语言模型（LLM）以用于高级用例。</p></li>
+<li><p><strong>可扩展性</strong>：轻松集成硬件触发器（EEG、fMRI）、眼动仪，以用于高级用例。</p></li>
 </ul>
 <p>本指南将引导您从头开始创建一个简单的反应时任务，演示 PsyFlow 的核心概念。</p>
 </section>
 <section id="id2">
 <h2>安装<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h2>
-<p>您可以使用 <code class="docutils literal notranslate"><span class="pre">pip</span></code> 安装 PsyFlow。</p>
+<p>您可以使用 <code class="docutils literal notranslate"><span class="pre">pip</span></code> 安装 PsyFlow。
+需要 Python &gt;= 3.10。</p>
 <section id="pypi">
 <h3>从 PyPI (推荐)<a class="headerlink" href="#pypi" title="Link to this heading">¶</a></h3>
 <p>对于最新的稳定版本，请运行：</p>
@@ -511,7 +515,6 @@
 <li><p><strong>构建复杂的试验</strong>：在<a class="reference internal" href="build_stimunit_cn.html"><span class="std std-doc">StimUnit 教程</span></a>中学习如何创建具有多种刺激和响应类型的更复杂的试验。</p></li>
 <li><p><strong>组织组块</strong>：请参阅<a class="reference internal" href="build_blocks_cn.html"><span class="std std-doc">BlockUnit 教程</span></a>以了解如何将试验组织成组块。</p></li>
 <li><p><strong>发送硬件触发器</strong>：请参阅<a class="reference internal" href="send_trigger_cn.html"><span class="std std-doc">TriggerSender 教程</span></a>以了解如何集成 EEG、fMRI 或眼动追踪触发器。</p></li>
-<li><p><strong>使用 LLM</strong>：在<a class="reference internal" href="llm_client_cn.html"><span class="std std-doc">LLMClient 教程</span></a>中发现如何使用大型语言模型生成文档或翻译您的任务。</p></li>
 </ul>
 </section>
 </section>
@@ -530,14 +533,14 @@
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="llm_client.html">
+          <a class="prev-page" href="utilities.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">LLMClient: Using Large Language Models</div>
+                <div class="title">Utility Functions</div>
                 
               </div>
             </a>
@@ -595,7 +598,7 @@
       
     </aside>
   </div>
-</div><script src="../_static/documentation_options.js?v=92734c54"></script>
+</div><script src="../_static/documentation_options.js?v=360bc84d"></script>
     <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=5fa4622c"></script>

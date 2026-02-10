@@ -18,7 +18,7 @@ class StimUnit:
     - Register event hooks for start, response, timeout, and end stages.
     - Supports both time-based and frame-based control modes.
     - Triggers aligned to visual flips (e.g., for EEG/fMRI).
-    - Logs detailed trial state to PsychoPy’s logging system.
+    - Logs detailed trial state to PsychoPy's logging system.
 
     Parameters
     ----------
@@ -244,7 +244,7 @@ class StimUnit:
         """Write the current trial state to PsychoPy logs.
 
         All key-value pairs stored in :attr:`state` are emitted using
-        ``logging.data`` which allows post‑hoc reconstruction of each trial.
+        ``logging.data`` which allows post-hoc reconstruction of each trial.
 
         Examples
         --------
@@ -519,7 +519,7 @@ class StimUnit:
             Duration of stimulus presentation (in seconds). Can be:
             - A fixed number
             - A (min, max) range to sample from
-            - None → automatically use max sound duration (if any)
+            - None -> automatically use max sound duration (if any)
         onset_trigger : int
             Trigger code to send at stimulus onset.
         offset_trigger : int
@@ -709,7 +709,7 @@ class StimUnit:
                 self.win.callOnFlip(self._stamp_close)
             self.win.flip()
 
-            # only listen for keys if we haven’t responded or if dynamic_highlight=True
+            # only listen for keys if we haven't responded or if dynamic_highlight=True
             if not responded or dynamic_highlight:
                 keypress = self.kb.getKeys(keyList=keys, waitRelease=False)
                 if keypress:

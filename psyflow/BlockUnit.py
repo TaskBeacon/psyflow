@@ -177,7 +177,7 @@ class BlockUnit:
             self.conditions = result
         if not isinstance(self.conditions, list): # make sure the dist work
             self.conditions = list(self.conditions)
-        print((f"[BlockUnit] Blockconditions: {self.conditions}"))
+        logging.data(f"[BlockUnit] Blockconditions: {self.conditions}")
         return self
 
 
@@ -284,7 +284,7 @@ class BlockUnit:
             summary = summary_func(self)
         else:
             # Default summary: RT and hit rate per condition
-            results = self.to_dict()
+            results = self.results
             conds = set(r["condition"] for r in results)
             summary = {}
             for cond in conds:

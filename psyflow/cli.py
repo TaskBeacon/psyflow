@@ -62,7 +62,7 @@ def climain(project_name):
 
             # if dest already exists, ask once whether to overwrite everything
             if dest.exists() and not overwrite_all:
-                resp = input(f"⚠ Existing '{item.name}' detected. Overwrite this and all remaining? [y/N]: ").strip().lower()
+                resp = input(f"WARNING: Existing '{item.name}' detected. Overwrite this and all remaining? [y/N]: ").strip().lower()
                 if resp == 'y':
                     overwrite_all = True
                 else:

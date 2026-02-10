@@ -248,9 +248,7 @@ Following same approach, you can do localization for any language by providing t
 
 
 ```{tip}
-In addition to using the chatbox from LLM models for translation,  
-psyflow has a built-in function (`translate_config()`) using LLM APIs for translating the subinfo mapping.  
-Make sure the translations are accurate if you use an LLM to generate them. Consult a native speaker if possible.
+For localization, edit `subinfo_mapping` with your target-language labels. If you use machine translation, double-check accuracy with a native speaker.
 ```
 
 

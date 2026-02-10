@@ -8,19 +8,27 @@ boilerplate.
 
 ## Key components
 
-- **BlockUnit** – manage blocks of trials and collect results
-- **StimUnit** – present a single trial and log responses
-- **StimBank** – register and build stimuli from Python functions or YAML
+- **BlockUnit** - manage blocks of trials and collect results
+- **StimUnit** - present a single trial and log responses
+- **StimBank** - register and build stimuli from Python functions or YAML
   definitions
-- **SubInfo** – gather participant information via a simple GUI
-- **TaskSettings** – central configuration object for an experiment
-- **TriggerSender** – send triggers to external devices (e.g. EEG/MEG)
+- **SubInfo** - gather participant information via a simple GUI
+- **TaskSettings** - central configuration object for an experiment
+- **TriggerSender** - send triggers to external devices (e.g. EEG/MEG)
 
 The package also provides a command line tool `psyflow-init` which
 scaffolds a new project using the bundled cookiecutter template.
 
 Comprehensive documentation and tutorials are available on the
 [psyflow website](https://taskbeacon.github.io/psyflow/).
+
+## Requirements
+
+- Python >= 3.10
+
+## Changelog
+
+See `log.md`.
 
 
 ## License

@@ -23,6 +23,22 @@ print(f"The experiment will run in a window of size {window_settings['size']}.")
 ```
 `load_config` intelligently separates your raw configuration into different sections like `task_config`, `stim_config`, `subform_config`, etc., making it easy to access the settings you need.
 
+If you want to fail fast on missing top-level sections or obvious type mismatches, you can enable lightweight validation:
+
+```python
+from psyflow.utils import load_config
+
+cfg = load_config(
+    "config/config.yaml",
+    validate=True,
+    required_sections=["window", "task", "timing"],
+)
+```
+
+## `validate_config()`
+
+`validate_config()` is the underlying helper used by `load_config(..., validate=True, ...)`. It performs minimal top-level checks (intentionally not a full schema validator).
+
 ## `initialize_exp()`
 
 Setting up the PsychoPy window, keyboard, and log file is a repetitive task. `initialize_exp()` handles all of it for you in a single function call. It takes a configuration object and returns the initialized `Window` and `Keyboard` objects.
@@ -35,7 +51,7 @@ from psyflow.TaskSettings import TaskSettings
 config = load_config()
 
 # 2. Create a TaskSettings object (or any object with attributes)
-settings = TaskSettings(config['task_config'])
+settings = TaskSettings.from_dict(config['task_config'])
 
 # 3. Initialize the experiment
 win, kb = initialize_exp(settings)

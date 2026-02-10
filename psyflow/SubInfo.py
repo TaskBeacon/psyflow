@@ -112,7 +112,7 @@ class SubInfo:
             infoDlg.show()
 
             if exit_on_cancel:
-                print("Participant cancelled — aborting experiment.")
+                print("Participant cancelled - aborting experiment.")
                 import sys
                 sys.exit(0)
             return None

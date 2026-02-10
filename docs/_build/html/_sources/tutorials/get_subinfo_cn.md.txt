@@ -248,9 +248,7 @@ subject_data = subinfo.collect()
 
 
 ```{tip}
-除了使用 LLM 模型的聊天框进行翻译外，
-psyflow 还内置了一个函数（`translate_config()`），使用 LLM API 翻译 subinfo 映射。
-如果使用 LLM 生成翻译，请确保翻译准确。如果可能，请咨询母语人士。
+对于本地化，请直接编辑 `subinfo_mapping` 中的标签翻译。如果使用机器翻译，请尽量请母语人士复核准确性。
 ```
 
 

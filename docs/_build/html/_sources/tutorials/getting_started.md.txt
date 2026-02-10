@@ -9,13 +9,14 @@ Key features include:
 - **Declarative Syntax**: Define stimuli, timings, and task structure in easy-to-read YAML files.
 - **Structured Project Layout**: A command-line tool (`psyflow-init`) generates a standardized, organized folder structure for your projects.
 - **Simplified API**: High-level classes like `StimUnit` and `BlockUnit` handle the complexities of stimulus presentation, response capturing, and data logging.
-- **Extensibility**: Easily integrate hardware triggers (EEG, fMRI), eye-trackers, and even Large Language Models (LLMs) for advanced use cases.
+- **Extensibility**: Easily integrate hardware triggers (EEG, fMRI) and eye-trackers for advanced use cases.
 
 This guide will walk you through creating a simple reaction time task from scratch, demonstrating the core concepts of PsyFlow.
 
 ## Installation
 
 You can install PsyFlow using `pip`.
+Python >= 3.10 is required.
 
 #### From PyPI (Recommended)
 
@@ -249,4 +250,3 @@ You've now built a basic experiment using PsyFlow's core components. From here, 
 - **Build Complex Trials**: Learn how to create more complex trials with multiple stimuli and response types in the [StimUnit tutorial](build_stimunit.md).
 - **Organize Blocks**: See the [BlockUnit tutorial](build_blocks.md) to learn how to organize trials into blocks.
 - **Send Hardware Triggers**: See the [TriggerSender tutorial](send_trigger.md) to learn how to integrate EEG, fMRI, or eye-tracking triggers.
-- **Use LLMs**: Discover how to use Large Language Models to generate documentation or translate your task with the [LLMClient tutorial](llm_client.md).

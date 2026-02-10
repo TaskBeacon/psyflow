@@ -352,7 +352,7 @@ class StimBank:
             Name of the stimulus to describe.
         """
         if name not in self._registry:
-            print(f"❌ No such stimulus: {name}")
+            print(f"[Error] No such stimulus: {name}")
             return
 
         try:
@@ -370,7 +370,7 @@ class StimBank:
         sig = inspect.signature(cls.__init__)
         params = {k: v for k, v in sig.parameters.items() if k not in ('self', 'win')}
 
-        print(f"🧾 Description of '{name}' ({cls.__name__})")
+        print(f"[StimBank] Description of '{name}' ({cls.__name__})")
         for k, v in params.items():
             default = "required" if v.default is inspect.Parameter.empty else f"default={v.default!r}"
             print(f"  - {k}: {default}")
@@ -396,7 +396,7 @@ class StimBank:
 
         with open(path, 'w') as f:
             yaml.dump(yaml_defs, f)
-        print(f"✅ Exported {len(yaml_defs)} YAML stimuli to {path}")
+        print(f"[OK] Exported {len(yaml_defs)} YAML stimuli to {path}")
 
     def make_factory(self, cls, base_kwargs: dict, name: str):
         """
@@ -468,12 +468,12 @@ class StimBank:
         strict : bool
             If True, raise errors; otherwise print warnings only.
         """
-        print(f"\n🔍 Validating stimulus dictionary\n{'-' * 40}")
+        print(f"\n[StimBank] Validating stimulus dictionary\n{'-' * 40}")
 
         for name, spec in config.items():
             stim_type = spec.get("type")
             if stim_type not in STIM_CLASSES:
-                msg = f"❌ [{name}] Unsupported type '{stim_type}'"
+                msg = f"[Error] [{name}] Unsupported type '{stim_type}'"
                 if strict:
                     raise ValueError(msg)
                 print(msg)
@@ -494,17 +494,17 @@ class StimBank:
             missing_args = [k for k in required if k not in kwargs]
 
             if unknown_args:
-                msg = f"⚠️ [{name}] Unknown arguments: {unknown_args}"
+                msg = f"[Warn] [{name}] Unknown arguments: {unknown_args}"
                 if strict:
                     raise ValueError(msg)
                 print(msg)
             if missing_args:
-                msg = f"⚠️ [{name}] Missing required arguments: {missing_args}"
+                msg = f"[Warn] [{name}] Missing required arguments: {missing_args}"
                 if strict:
                     raise ValueError(msg)
                 print(msg)
             if not unknown_args and not missing_args:
-                print(f"✅ [{name}] OK")
+                print(f"[OK] [{name}] OK")
 
 
 
@@ -554,7 +554,7 @@ class StimBank:
             if os.path.isfile(mp3_path) and not overwrite:
                 print(f"[Info] '{mp3_filename}' exists and overwrite=False. Skipping generation.")
             else:
-                print(f"[Info] Generating TTS for '{key}' → '{mp3_filename}' …")
+                print(f"[Info] Generating TTS for '{key}' -> '{mp3_filename}'...")
 
                 async def _generate():
                     await edge_tts.Communicate(text=text, voice=voice).save(mp3_path)
@@ -565,10 +565,10 @@ class StimBank:
                 except Exception as e:
                     print(f"[Error] Failed to generate speech for '{key}': {e}")
                     print("Possible reasons:")
-                    print(" • No internet connection or unstable network")
-                    print(" • HTTPS proxies not supported by edge-tts")
-                    print(" • Incorrect or unsupported voice name")
-                    print(" • edge-tts not installed or version mismatch")
+                    print(" - No internet connection or unstable network")
+                    print(" - HTTPS proxies not supported by edge-tts")
+                    print(" - Incorrect or unsupported voice name")
+                    print(" - edge-tts not installed or version mismatch")
                     continue
 
             # register the new MP3 as a Sound stimulus
@@ -591,7 +591,7 @@ class StimBank:
         ----------
         stim_label : str
             The name under which to register the new voice stimulus, 
-            and the base filename for the MP3 (e.g. 'welcome_voice' → 'assets/welcome_voice.mp3').
+            and the base filename for the MP3 (e.g. 'welcome_voice' -> 'assets/welcome_voice.mp3').
         text : str
             The text to synthesize.
         overwrite : bool
@@ -613,7 +613,7 @@ class StimBank:
         if os.path.isfile(mp3_path) and not overwrite:
             print(f"[Info] '{mp3_filename}' already exists (overwrite=False). Skipping synthesis.")
         else:
-            print(f"[Info] Generating TTS for '{stim_label}' → '{mp3_filename}' …")
+            print(f"[Info] Generating TTS for '{stim_label}' -> '{mp3_filename}'...")
 
             async def _generate():
                 await edge_tts.Communicate(text=text, voice=voice).save(mp3_path)
@@ -623,10 +623,10 @@ class StimBank:
             except Exception as e:
                 print(f"[Error] Failed to generate speech for '{stim_label}': {e}")
                 print("Possible reasons:")
-                print(" • No internet connection or unstable network")
-                print(" • HTTPS proxies not supported by edge-tts")
-                print(" • Incorrect or unsupported voice name")
-                print(" • edge-tts not installed or version mismatch")
+                print(" - No internet connection or unstable network")
+                print(" - HTTPS proxies not supported by edge-tts")
+                print(" - Incorrect or unsupported voice name")
+                print(" - edge-tts not installed or version mismatch")
                 return
 
         # 4. Register the new MP3 as a Sound stimulus

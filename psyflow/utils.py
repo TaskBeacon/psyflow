@@ -59,7 +59,7 @@ def taps(task_name: str, template: str = "cookiecutter-psyflow"):
     >>> taps("mytask")
     "mytask"
     """
-    tmpl_dir = pkg_res.files("psyflow") / template
+    tmpl_dir = pkg_res.files("psyflow.templates") / template
     cookiecutter(
         str(tmpl_dir),
         no_input=True,
@@ -96,10 +96,40 @@ def count_down(win, seconds=3, **stim_kwargs):
             win.flip()
 
 
-from typing import Dict, List, Optional
+from typing import Any, Dict, Iterable, List, Optional
 import yaml
+
+
+def validate_config(
+    raw_config: Any,
+    *,
+    required_sections: Optional[Iterable[str]] = None,
+) -> None:
+    """Lightweight validation for a psyflow-style YAML config dict.
+
+    This is intentionally minimal: it checks only for required top-level
+    sections and basic types. Call it once at experiment start to fail fast on
+    obvious typos or missing keys.
+    """
+    if not isinstance(raw_config, dict):
+        raise TypeError(f"Config must be a dict, got {type(raw_config)}")
+
+    required = list(required_sections) if required_sections is not None else []
+    missing = [k for k in required if k not in raw_config]
+    if missing:
+        raise ValueError(f"Missing top-level config sections: {missing}")
+
+    # Common sections are expected to be mappings when present.
+    for k in ("window", "task", "timing", "stimuli", "triggers", "controller"):
+        if k in raw_config and raw_config[k] is not None and not isinstance(raw_config[k], dict):
+            raise TypeError(f"Config section '{k}' must be a dict, got {type(raw_config[k])}")
+
+
 def load_config(config_file: str = 'config/config.yaml',
-                extra_keys: Optional[List[str]] = None) -> Dict:
+                extra_keys: Optional[List[str]] = None,
+                *,
+                validate: bool = False,
+                required_sections: Optional[Iterable[str]] = None) -> Dict:
     """
     Load a config.yaml file and return a structured dictionary.
 
@@ -122,6 +152,9 @@ def load_config(config_file: str = 'config/config.yaml',
     """
     with open(config_file, encoding='utf-8') as f:
         config = yaml.safe_load(f)
+
+    if validate:
+        validate_config(config, required_sections=required_sections)
 
     task_keys = ['window', 'task', 'timing']
     output = {
