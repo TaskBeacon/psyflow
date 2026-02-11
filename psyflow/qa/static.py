@@ -3,7 +3,12 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any, Optional
 
-import yaml
+try:
+    import yaml  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover
+    # Keep this module importable in minimal environments (e.g., CI smoke tests)
+    # where optional dependencies are not installed.
+    yaml = None
 
 
 class StaticQAError(Exception):
@@ -31,6 +36,10 @@ class KeysInvalidError(StaticQAError):
 
 
 def load_yaml(path: str | Path) -> Any:
+    if yaml is None:  # pragma: no cover
+        raise ModuleNotFoundError(
+            "PyYAML is required to load YAML files. Install with `pip install pyyaml`."
+        )
     path = Path(path)
     with path.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)

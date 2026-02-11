@@ -40,6 +40,7 @@ Files:
   - QA event validation (`validate_events`)
   - standardized failure taxonomy in `outputs/qa/qa_report.json`.
   - optional static validation of `task.key_list` (non-empty, subset of `allowed_keys` when provided) and trigger-code sanity (int-or-null, uniqueness when present).
+- `pyyaml` is required only when loading YAML files from disk (`load_yaml()`); the QA modules remain importable in minimal environments (e.g., CI) without installing dependencies.
 
 #### Responder injection seam (psyflow-level, minimal surface)
 - `StimUnit.capture_response()` and `StimUnit.wait_and_continue()` can now inject scripted responses when a QA context is active (`mode=qa`):
