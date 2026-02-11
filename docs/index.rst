@@ -32,6 +32,7 @@ Start with one of the tutorials below or explore the API reference.
    tutorials/send_trigger
    tutorials/cli_usage
    tutorials/utilities
+   tutorials/qa_runner
 
 
 .. toctree::
@@ -54,4 +55,3 @@ Start with one of the tutorials below or explore the API reference.
 
    genindex
    modindex
-

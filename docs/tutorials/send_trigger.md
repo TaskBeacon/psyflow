@@ -1,18 +1,79 @@
-# TriggerSender: Sending Hardware Triggers
+# Sending Hardware Triggers (TriggerRuntime + TriggerSender)
 
 ## Overview
 
-The `TriggerSender` class provides a flexible, device-independent way to send event codes (triggers) to external recording equipment (e.g., EEG, MEG, eye‐trackers). By wrapping your device-specific send function, it keeps experiment code clean, adds optional pre- and post-hooks, enforces precise timing delays, and even supports a mock mode for development without hardware.
+psyflow supports two trigger layers:
+- **TriggerRuntime + TriggerDriver (recommended)**: runtime owns timing semantics and audit logging; drivers own device/protocol I/O.
+- **TriggerSender (compatibility)**: a thin wrapper around TriggerRuntime so existing tasks keep working.
 
-`TriggerSender` solves several common challenges in neuroscience experiments:
+This separation solves common neuroscience experiment needs:
 
 - **Hardware abstraction**: Decouple your experiment logic from device-specific I/O.
-- **Mock testing**: Develop and debug on any machine—no data acquisition hardware needed.
+- **Mock testing**: Develop and debug on any machine (no data acquisition hardware needed).
 - **Precise timing**: Automatically insert configurable delays after each trigger send.
 - **Custom hooks**: Run user-provided callbacks immediately before and after each trigger.
-- **Robust logging**: Warn on invalid codes, catch errors, and record trigger events in PsychoPy’s log.
+- **Robust logging**: Warn on invalid codes, catch errors, and record trigger events in PsychoPy's log.
 
-## Key Features
+## Recommended: TriggerRuntime + Driver
+
+### Why this exists
+- Task code should say: "emit `cue_onset` on flip"
+- Driver code should say: "write bytes to COM3 / set TTL pin / publish LSL marker"
+
+### Quick example (mock)
+
+```python
+from psyflow import TriggerRuntime, TriggerEvent, MockDriver
+
+runtime = TriggerRuntime(MockDriver(print_codes=True))
+runtime.emit(TriggerEvent(name="exp_onset", code=1), when="now")
+```
+
+### Flip-locked trigger emission (EEG/fMRI timing)
+
+```python
+from psyflow import TriggerRuntime, TriggerEvent, MockDriver
+
+runtime = TriggerRuntime(MockDriver(print_codes=False))
+runtime.emit(
+    TriggerEvent(name="cue_onset", code=20, meta={"phase": "cue"}),
+    when="flip",
+    win=win,       # PsychoPy Window
+    wait=False,    # avoid post-delay jitter in flip callbacks
+)
+```
+
+Optional: write structured trigger logs (JSONL):
+```python
+from psyflow.io import make_jsonl_logger
+
+runtime = TriggerRuntime(driver, event_logger=make_jsonl_logger("outputs/trigger_events.jsonl"))
+# or set env var: PSYFLOW_TRIGGER_LOG_PATH=outputs/trigger_events.jsonl
+```
+
+### TTL-style pulse/reset (contract)
+
+`TriggerEvent` supports optional `pulse_width_ms` and `reset_code`. Drivers that implement
+`send_pulse(...)` and/or `reset(...)` can use them to provide TTL-like pulse semantics.
+
+In strict mode (or QA strict), psyflow fails if you request a pulse/reset but the driver does
+not support it. Otherwise, psyflow logs a `trigger_capability_missing` event and falls back
+to a plain send.
+
+```python
+runtime.emit(
+    TriggerEvent(name="stim_onset", code=10, pulse_width_ms=5, reset_code=0),
+    when="flip",
+    win=win,
+    wait=False,
+)
+```
+
+## TriggerSender (Compatibility Layer)
+
+`TriggerSender` remains supported for existing tasks. Internally it uses TriggerRuntime + a driver.
+
+## Key Features (TriggerSender)
 
 | Feature            | Description                                                          |
 | ------------------ | -------------------------------------------------------------------- |
@@ -21,7 +82,7 @@ The `TriggerSender` class provides a flexible, device-independent way to send ev
 | Configurable delay | Wait a specified duration after each send (default 0.001 s)          |
 | Pre-/post hooks    | Execute user functions before and/or after sending each trigger      |
 | Error handling     | Catch exceptions, log errors, and continue without crashing          |
-| Logging support    | Record warnings and trigger events via PsychoPy’s logging system     |
+| Logging support    | Record warnings and trigger events via PsychoPy's logging system     |
 
 ## Quick Reference
 
@@ -53,10 +114,10 @@ trigger_sender.send(255)
 ### 2. Connecting to Real Hardware
 
 ```{warning}
- Of the examples below, only the Serial (UART) Port example has been tested by the authors. The EGI, Neuroscan, Brain Products (RDA) and other device snippets were gathered from online sources and have not been validated on actual hardware. If you test these or implement triggers for additional devices (e.g., eye‑trackers), please share your code so we can keep this documentation up to date.
+ Of the examples below, only the Serial (UART) Port example has been tested by the authors. The EGI, Neuroscan, Brain Products (RDA) and other device snippets were gathered from online sources and have not been validated on actual hardware. If you test these or implement triggers for additional devices (e.g., eye-trackers), please share your code so we can keep this documentation up to date.
 ```
 
-When your rig is ready, supply a function to send integer codes to your device via the `trigger_func` argument. You can adapt this pattern for serial ports, USB interfaces, LabJack devices, or any other hardware: just supply a function that takes an integer and transmits it.
+When your rig is ready, supply a function to send integer codes to your device via the `trigger_func` argument. You can adapt this pattern for serial ports, USB interfaces, LabJack devices, or any other hardware: just supply a function that takes an integer and transmits it.
 
 #### Example: Serial (UART) Port (tested)
 
@@ -113,7 +174,7 @@ except Exception as e:
     trigger_sender.send(128)  # Prints to console instead
 ```
 
-#### Example: EGI NetStation (Not tested yet)
+#### Example: EGI NetStation (Not tested yet)
 
 ```python
 from egi_pynetstation.NetStation import NetStation
@@ -147,7 +208,7 @@ eci_client.end_rec()
 eci_client.disconnect()
 ```
 
-#### Example: Neuroscan via Parallel Port (Not tested yet)
+#### Example: Neuroscan via Parallel Port (Not tested yet)
 
 ```python
 from psychopy import parallel
@@ -166,7 +227,7 @@ neuroscan_sender = TriggerSender(
 neuroscan_sender.send(50)
 ```
 
-#### Example: Brain Products via RDA Server (TCP) (Not tested yet)
+#### Example: Brain Products via RDA Server (TCP) (Not tested yet)
 
 ```python
 import socket
@@ -179,8 +240,7 @@ sock.connect((HOST, PORT))
 
 # Wrap socket send in TriggerSender
 gp_sender = TriggerSender(
-    trigger_func=lambda code: sock.sendall(f'{code}
-'.encode()),
+    trigger_func=lambda code: sock.sendall(f"{code}\n".encode()),
     post_delay=0.001
 )
 
@@ -196,7 +256,7 @@ sock.close()
 For finer control, `TriggerSender` lets you:
 
 - `post_delay`: Insert a pause (in seconds) after each send (default `0.001`).
-- `on_trigger_start` : Call a function just before sending starts.
+- `on_trigger_start`: Call a function just before sending starts.
 - `on_trigger_end` : Call a function after the post-delay.
 
 ```python
@@ -280,7 +340,7 @@ from functools import partial
 
 def run_trial(win, kb, settings, condition, stim_bank, controller, trigger_sender):
     """
-    Run a single MID trial sequence (fixation → cue → anticipation → target → feedback).
+    Run a single MID trial sequence (fixation -> cue -> anticipation -> target -> feedback).
     """
     trial_data = {"condition": condition}
     make_unit = partial(StimUnit, win=win, kb=kb, triggersender=trigger_sender)
@@ -350,4 +410,3 @@ Now that you know how to send triggers, you can explore other parts of PsyFlow:
 - **Getting Started**: If you're new to PsyFlow, check out the [Getting Started tutorial](getting_started.md).
 - **Building Trials**: Learn how to build complex trials in the [StimUnit tutorial](build_stimunit.md).
 - **Organizing Blocks**: See the [BlockUnit tutorial](build_blocks.md) to learn how to organize trials into blocks.
-

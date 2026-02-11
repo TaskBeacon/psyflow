@@ -30,7 +30,9 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "psyflow-init = psyflow.cli:climain"],
+            "psyflow-init = psyflow.cli:climain",
+            "psyflow-qa = psyflow.qa_cli:main",
+        ],
     },
     include_package_data=True,
     package_data={

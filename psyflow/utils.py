@@ -157,6 +157,26 @@ def load_config(config_file: str = 'config/config.yaml',
         validate_config(config, required_sections=required_sections)
 
     task_keys = ['window', 'task', 'timing']
+
+    # Trigger config supports two shapes:
+    # 1) legacy: triggers: {event_name: code, ...}
+    # 2) new:    triggers: {map: {...}, driver: {...}, policy: {...}, timing: {...}}
+    triggers_section = config.get('triggers', {}) or {}
+    trigger_map = triggers_section
+    trigger_driver = {}
+    trigger_policy = {}
+    trigger_timing = {}
+    if isinstance(triggers_section, dict):
+        maybe_map = triggers_section.get("map")
+        if isinstance(maybe_map, dict):
+            trigger_map = maybe_map
+            driver = triggers_section.get("driver", {})
+            policy = triggers_section.get("policy", {})
+            timing = triggers_section.get("timing", {})
+            trigger_driver = driver if isinstance(driver, dict) else {}
+            trigger_policy = policy if isinstance(policy, dict) else {}
+            trigger_timing = timing if isinstance(timing, dict) else {}
+
     output = {
         'raw': config,
         'task_config': {k: v for key in task_keys for k, v in config.get(key, {}).items()},
@@ -165,7 +185,10 @@ def load_config(config_file: str = 'config/config.yaml',
             'subinfo_fields': config.get('subinfo_fields', []),
             'subinfo_mapping': config.get('subinfo_mapping', {}),
         },
-        'trigger_config': config.get('triggers', {}),
+        'trigger_config': trigger_map if isinstance(trigger_map, dict) else {},
+        'trigger_driver_config': trigger_driver,
+        'trigger_policy_config': trigger_policy,
+        'trigger_timing_config': trigger_timing,
         'controller_config': config.get('controller', {}),
     }
 

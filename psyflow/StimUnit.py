@@ -3,6 +3,8 @@ from psychopy.hardware.keyboard import Keyboard
 from typing import Callable, Optional, List, Dict, Any, Union
 import random
 from .TriggerSender import TriggerSender
+from .qa.context import get_context
+from .io.events import TriggerEvent
 
 class StimUnit:
     """
@@ -37,17 +39,48 @@ class StimUnit:
     unit_label: str,
     win: visual.Window,
     kb: Optional[Keyboard] = None,
-    triggersender: Optional[TriggerSender] = None
+    triggersender: Optional[TriggerSender] = None,
+    runtime: Any = None,
 ):
         self.win = win
         self.label = unit_label
         self.triggersender = triggersender
+        # Preferred path: TriggerRuntime; fall back to legacy TriggerSender.
+        self.runtime = runtime or getattr(triggersender, "runtime", None)
         self.stimuli: List[visual.BaseVisualStim] = []
         self.state: Dict[str, Any] = {}
         self.clock = core.Clock()
         self.kb = kb or Keyboard()
         self._hooks: Dict[str, List] = {"start": [], "response": [], "timeout": [], "end": []}
         self.frame_time = self.win.monitorFramePeriod
+
+    def _qa_scale_duration(self, nominal_s: float) -> tuple[float, int, bool]:
+        """Return (used_seconds, n_frames, scaled_flag) for QA mode.
+
+        This keeps default behavior unchanged. In QA mode, scaling is opt-in
+        via QAContext.config.enable_scaling.
+        """
+        used = float(nominal_s)
+        n_frames = max(1, int(round(used / self.frame_time)))
+
+        ctx = get_context()
+        if ctx is None or ctx.mode != "qa" or not getattr(ctx.config, "enable_scaling", False):
+            return used, n_frames, False
+
+        scale = float(getattr(ctx.config, "timing_scale", 1.0) or 1.0)
+        if scale <= 0:
+            scale = 1.0
+
+        scaled = used * scale
+        # Guardrail: never scale below one refresh interval when using real flips.
+        scaled = max(self.frame_time, scaled)
+
+        min_frames = int(getattr(ctx.config, "min_frames", 2) or 2)
+        min_frames = max(1, min_frames)
+        n_frames = max(min_frames, int(round(scaled / self.frame_time)))
+
+        used = max(self.frame_time, n_frames * self.frame_time)
+        return used, n_frames, True
 
     def add_stim(self, *stims: Union[visual.BaseVisualStim, sound.Sound, List[Union[visual.BaseVisualStim, sound.Sound]]]) -> "StimUnit":
         """
@@ -163,25 +196,53 @@ class StimUnit:
         return self
     
 
-    def send_trigger(self, trigger_code: int, wait: bool = True) -> "StimUnit":
-        """
-        Send a trigger value via the connected trigger object.
+    def _emit_trigger(
+        self,
+        trigger_code: int | None,
+        *,
+        when: str = "now",
+        wait: bool = True,
+        name: str | None = None,
+        meta: dict[str, Any] | None = None,
+    ) -> None:
+        """Internal helper to emit a trigger via TriggerRuntime (preferred) or TriggerSender (legacy)."""
+        code_i = None
+        if trigger_code is not None:
+            try:
+                code_i = int(trigger_code)
+            except Exception:
+                logging.warning(f"[StimUnit] Skipping trigger: non-int code {trigger_code!r} (unit={self.label!r})")
+                return
 
-        Parameters
-        ----------
-        trigger_code : int
-            The value to send.
-        wait : bool, default=True
-            If True, allow the TriggerSender to apply its configured post-delay
-            and end-hook behavior. If False, skip any post-delay work to reduce
-            the risk of timing jitter when called from flip callbacks.
+        if meta is None:
+            meta = {}
+        meta.setdefault("unit_label", self.label)
+        meta.setdefault("trial_id", self.get_state("trial_id", None))
+        meta.setdefault("block_id", self.get_state("block_id", None))
+        meta.setdefault("condition_id", self.get_state("condition_id", None))
+        meta.setdefault("task_factors", self.get_state("task_factors", None))
 
-        Returns
-        -------
-        StimUnit
-        """
-        if self.triggersender is not None:
-            self.triggersender.send(trigger_code, wait=wait)
+        if self.runtime is not None:
+            self.runtime.emit(
+                TriggerEvent(name=name, code=code_i, meta=meta),
+                when="flip" if when == "flip" else "now",
+                win=self.win if when == "flip" else None,
+                wait=wait,
+            )
+            return
+
+        if self.triggersender is None:
+            return
+
+        # Legacy path: preserve timing semantics by scheduling on flip when requested.
+        if when == "flip":
+            self.win.callOnFlip(self.triggersender.send, code_i, wait)
+        else:
+            self.triggersender.send(code_i, wait=wait)
+
+    def send_trigger(self, trigger_code: int | None, wait: bool = True) -> "StimUnit":
+        """Backward compatible: send a trigger code immediately (not flip-scheduled)."""
+        self._emit_trigger(trigger_code, when="now", wait=wait, name="manual")
         return self
 
     def _reset_keyboard_clock(self) -> None:
@@ -561,8 +622,11 @@ class StimUnit:
         else:
             raise TypeError(f"Invalid duration type: {type(duration)}")
 
-        self.set_state(duration=t_val)
-        n_frames = max(1, int(round(t_val / self.frame_time)))
+        nominal = float(t_val)
+        used, n_frames, scaled = self._qa_scale_duration(nominal)
+        if scaled:
+            self.set_state(duration_nominal=nominal, duration_scaled=used)
+        self.set_state(duration=used)
 
         # --- Initial Flip (trigger locked to onset) ---
         sound_stims = []
@@ -576,7 +640,13 @@ class StimUnit:
         # even if trigger/audio callbacks are slow.
         self.win.callOnFlip(self.clock.reset)
         self.win.callOnFlip(self._stamp_onset, onset_trigger)
-        self.win.callOnFlip(self.send_trigger, onset_trigger, False)
+        self._emit_trigger(
+            onset_trigger,
+            when="flip",
+            wait=False,
+            name=f"{self.label}_onset",
+            meta={"kind": "onset"},
+        )
         for stim in sound_stims:
             self.win.callOnFlip(stim.play)
 
@@ -584,7 +654,13 @@ class StimUnit:
         # occur on the same flip.
         if n_frames == 1:
             self.win.callOnFlip(self._stamp_close, offset_trigger)
-            self.win.callOnFlip(self.send_trigger, offset_trigger, False)
+            self._emit_trigger(
+                offset_trigger,
+                when="flip",
+                wait=False,
+                name=f"{self.label}_offset",
+                meta={"kind": "offset"},
+            )
 
         flip_time = self.win.flip()
         self.set_state(flip_time=flip_time)
@@ -599,7 +675,13 @@ class StimUnit:
                 if frame_i == n_frames - 2:
                     # Flip-locked offset stamp + trigger on the final displayed frame.
                     self.win.callOnFlip(self._stamp_close, offset_trigger)
-                    self.win.callOnFlip(self.send_trigger, offset_trigger, False)
+                    self._emit_trigger(
+                        offset_trigger,
+                        when="flip",
+                        wait=False,
+                        name=f"{self.label}_offset",
+                        meta={"kind": "offset"},
+                    )
                 offset_flip_time = self.win.flip()
 
         if offset_flip_time is not None:
@@ -657,8 +739,12 @@ class StimUnit:
             t_val = duration
         else:
             raise TypeError(f"Invalid duration type: {type(duration)}")
-        self.set_state(duration=t_val)
-        n_frames = max(1, int(round(t_val / self.frame_time)))
+
+        nominal = float(t_val)
+        used, n_frames, scaled = self._qa_scale_duration(nominal)
+        if scaled:
+            self.set_state(duration_nominal=nominal, duration_scaled=used)
+        self.set_state(duration=used)
         
         # --- Initial Flip (trigger locked to onset) ---
         sound_stims = []
@@ -673,7 +759,13 @@ class StimUnit:
         self.win.callOnFlip(self._reset_keyboard_clock)
         self.win.callOnFlip(self.clock.reset)
         self.win.callOnFlip(self._stamp_onset, onset_trigger)
-        self.win.callOnFlip(self.send_trigger, onset_trigger, False)
+        self._emit_trigger(
+            onset_trigger,
+            when="flip",
+            wait=False,
+            name=f"{self.label}_onset",
+            meta={"kind": "onset"},
+        )
         for stim in sound_stims:
             self.win.callOnFlip(stim.play)
         if n_frames == 1:
@@ -689,6 +781,57 @@ class StimUnit:
             correct_keys = [correct_keys]
         responded = False
         chosen_key = None  # track which key to highlight
+
+        # QA-mode responder injection (psyflow-level seam)
+        ctx = get_context()
+        responder = None
+        if ctx is not None and ctx.mode in ("qa", "sim") and getattr(ctx, "responder", None) is not None:
+            responder = ctx.responder
+
+        sim_key = None
+        sim_rt = None
+        if responder is not None:
+            obs = {
+                "mode": getattr(ctx, "mode", "qa") if ctx is not None else "qa",
+                "trial_id": self.get_state("trial_id", None),
+                "block_id": self.get_state("block_id", None),
+                "unit_label": self.label,
+                "deadline_s": nominal,
+                "response_window_open": True,
+                "response_window_s": used,
+                "valid_keys": list(keys),
+                "t_phase_onset": self.get_state("onset_time", None),
+                "t_phase_onset_global": self.get_state("onset_time_global", None),
+                "stim_id": self.get_state("stim_id", None),
+                "stim_features": self.get_state("stim_features", None),
+                "condition_id": self.get_state("condition_id", None),
+                "task_factors": self.get_state("task_factors", None),
+            }
+            try:
+                act = responder.act(obs)
+            except Exception:
+                act = None
+
+            try:
+                if hasattr(act, "key") and hasattr(act, "rt"):
+                    sim_key, sim_rt = act.key, act.rt
+                elif isinstance(act, (list, tuple)) and len(act) >= 2:
+                    sim_key, sim_rt = act[0], act[1]
+                elif isinstance(act, dict):
+                    sim_key, sim_rt = act.get("key"), act.get("rt")
+            except Exception:
+                sim_key, sim_rt = None, None
+
+            # Validate action; treat invalid actions as "no response".
+            try:
+                if sim_key is not None and sim_key not in keys:
+                    sim_key = None
+                if sim_rt is not None:
+                    sim_rt = float(sim_rt)
+                if sim_rt is not None and (sim_rt < 0 or sim_rt > used):
+                    sim_key, sim_rt = None, None
+            except Exception:
+                sim_key, sim_rt = None, None
 
         visual_stims = [s for s in self.stimuli if hasattr(s, "draw") and callable(s.draw)]
         for frame_i in range(n_frames - 1):
@@ -711,39 +854,83 @@ class StimUnit:
 
             # only listen for keys if we haven't responded or if dynamic_highlight=True
             if not responded or dynamic_highlight:
-                keypress = self.kb.getKeys(keyList=keys, waitRelease=False)
-                if keypress:
-                    kp = keypress[0]
-                    k = kp.name
-                    chosen_key = k
-                    rt = kp.rt
-                    onset_time_global = self.get_state("onset_time_global", None)
-                    response_time_global = (
-                        onset_time_global + rt
-                        if onset_time_global is not None
-                        else core.getAbsTime()
-                    )
-                    self.set_state(
-                        hit=k in correct_keys,
-                        correct_keys=correct_keys,
-                        response=k,
-                        key_press=True,
-                        rt=rt,
-                        response_time=rt,
-                        response_time_global=response_time_global,
-                    )
-                    code = (response_trigger.get(k, None)
-                        if isinstance(response_trigger, dict)
-                        else response_trigger)
-                    self.send_trigger(code)
-                    self.set_state(response_trigger=code)
-                    responded = True
-                      
-                     # if we should stop immediately, break out
-                    if terminate_on_response and not dynamic_highlight:
-                        # In terminate-on-response mode, the stage ends at the first response.
-                        self.set_state(close_time=rt, close_time_global=response_time_global)
-                        break
+                if responder is None:
+                    keypress = self.kb.getKeys(keyList=keys, waitRelease=False)
+                    if keypress:
+                        kp = keypress[0]
+                        k = kp.name
+                        chosen_key = k
+                        rt = kp.rt
+                        onset_time_global = self.get_state("onset_time_global", None)
+                        response_time_global = (
+                            onset_time_global + rt
+                            if onset_time_global is not None
+                            else core.getAbsTime()
+                        )
+                        self.set_state(
+                            hit=k in correct_keys,
+                            correct_keys=correct_keys,
+                            response=k,
+                            key_press=True,
+                            rt=rt,
+                            response_time=rt,
+                            response_time_global=response_time_global,
+                        )
+                        code = (response_trigger.get(k, None)
+                            if isinstance(response_trigger, dict)
+                            else response_trigger)
+                        self._emit_trigger(
+                            code,
+                            when="now",
+                            wait=True,
+                            name=f"{self.label}_response",
+                            meta={"kind": "response", "key": k},
+                        )
+                        self.set_state(response_trigger=code)
+                        responded = True
+
+                        # if we should stop immediately, break out
+                        if terminate_on_response and not dynamic_highlight:
+                            # In terminate-on-response mode, the stage ends at the first response.
+                            self.set_state(close_time=rt, close_time_global=response_time_global)
+                            break
+                else:
+                    elapsed = self.clock.getTime()
+                    if sim_key is not None and sim_rt is not None and elapsed >= sim_rt:
+                        k = sim_key
+                        chosen_key = k
+                        rt = sim_rt
+                        onset_time_global = self.get_state("onset_time_global", None)
+                        response_time_global = (
+                            onset_time_global + rt
+                            if onset_time_global is not None
+                            else core.getAbsTime()
+                        )
+                        self.set_state(
+                            hit=k in correct_keys,
+                            correct_keys=correct_keys,
+                            response=k,
+                            key_press=True,
+                            rt=rt,
+                            response_time=rt,
+                            response_time_global=response_time_global,
+                        )
+                        code = (response_trigger.get(k, None)
+                            if isinstance(response_trigger, dict)
+                            else response_trigger)
+                        self._emit_trigger(
+                            code,
+                            when="now",
+                            wait=True,
+                            name=f"{self.label}_response",
+                            meta={"kind": "response", "key": k},
+                        )
+                        self.set_state(response_trigger=code)
+                        responded = True
+
+                        if terminate_on_response and not dynamic_highlight:
+                            self.set_state(close_time=rt, close_time_global=response_time_global)
+                            break
 
 
         if not responded: 
@@ -757,7 +944,13 @@ class StimUnit:
                 response_time_global=None,
                 timeout_trigger=timeout_trigger
             )
-            self.send_trigger(timeout_trigger)
+            self._emit_trigger(
+                timeout_trigger,
+                when="now",
+                wait=True,
+                name=f"{self.label}_timeout",
+                meta={"kind": "timeout"},
+            )
 
         # Ensure close time exists (should be stamped on final flip for timeouts,
         # or set explicitly for terminate-on-response).
@@ -824,36 +1017,107 @@ class StimUnit:
         flip_time = self.win.flip()
         self.set_state(flip_time=flip_time)
 
+        ctx = get_context()
+        responder = None
+        if ctx is not None and ctx.mode in ("qa", "sim") and getattr(ctx, "responder", None) is not None:
+            responder = ctx.responder
+
+        sim_key = None
+        sim_rt = None
+        max_wait_s = None
+        if responder is not None:
+            max_wait_s = float(getattr(getattr(ctx, "config", None), "max_wait_s", 10.0) or 10.0)
+            obs = {
+                "mode": getattr(ctx, "mode", "qa") if ctx is not None else "qa",
+                "trial_id": self.get_state("trial_id", None),
+                "block_id": self.get_state("block_id", None),
+                "unit_label": self.label,
+                "valid_keys": list(keys),
+                "min_wait_s": float(min_wait or 0.0),
+                "t_phase_onset": self.get_state("onset_time", None),
+                "t_phase_onset_global": self.get_state("onset_time_global", None),
+                "stim_id": self.get_state("stim_id", None),
+                "stim_features": self.get_state("stim_features", None),
+                "condition_id": self.get_state("condition_id", None),
+                "task_factors": self.get_state("task_factors", None),
+            }
+            try:
+                act = responder.act(obs)
+            except Exception:
+                act = None
+
+            try:
+                if hasattr(act, "key") and hasattr(act, "rt"):
+                    sim_key, sim_rt = act.key, act.rt
+                elif isinstance(act, (list, tuple)) and len(act) >= 2:
+                    sim_key, sim_rt = act[0], act[1]
+                elif isinstance(act, dict):
+                    sim_key, sim_rt = act.get("key"), act.get("rt")
+            except Exception:
+                sim_key, sim_rt = None, None
+
+            try:
+                if sim_key is not None and sim_key not in keys:
+                    sim_key = None
+                sim_rt = float(sim_rt) if sim_rt is not None else float(min_wait or 0.0)
+                sim_rt = max(sim_rt, float(min_wait or 0.0))
+            except Exception:
+                sim_key, sim_rt = None, None
+
         while True:
             for stim in self.stimuli:
                 if not (hasattr(stim, "play") and callable(stim.play)):
                     stim.draw()
             self.win.flip()
 
-            keys_pressed = self.kb.getKeys(keyList=keys, waitRelease=False)
-            if keys_pressed:
-                kp = keys_pressed[0]
-                rt = kp.rt
-                if rt is None:
-                    rt = self.clock.getTime()
-                if rt < min_wait:
-                    continue
+            if responder is None:
+                keys_pressed = self.kb.getKeys(keyList=keys, waitRelease=False)
+                if keys_pressed:
+                    kp = keys_pressed[0]
+                    rt = kp.rt
+                    if rt is None:
+                        rt = self.clock.getTime()
+                    if rt < min_wait:
+                        continue
 
-                key = kp.name
-                onset_time_global = self.get_state("onset_time_global", None)
-                response_time_global = (
-                    onset_time_global + rt
-                    if onset_time_global is not None and rt is not None
-                    else core.getAbsTime()
-                )
-                self.set_state(
-                    response=key,
-                    response_time=rt,
-                    response_time_global=response_time_global,
-                    close_time=rt,
-                    close_time_global=response_time_global,
-                )
-                break
+                    key = kp.name
+                    onset_time_global = self.get_state("onset_time_global", None)
+                    response_time_global = (
+                        onset_time_global + rt
+                        if onset_time_global is not None and rt is not None
+                        else core.getAbsTime()
+                    )
+                    self.set_state(
+                        response=key,
+                        response_time=rt,
+                        response_time_global=response_time_global,
+                        close_time=rt,
+                        close_time_global=response_time_global,
+                    )
+                    break
+            else:
+                elapsed = self.clock.getTime()
+                if max_wait_s is not None and elapsed > max_wait_s:
+                    raise RuntimeError(
+                        f"QA wait_and_continue exceeded max_wait_s={max_wait_s} without response (unit={self.label!r})"
+                    )
+                if sim_key is not None and sim_rt is not None and elapsed >= sim_rt:
+                    key = sim_key
+                    rt = sim_rt
+                    onset_time_global = self.get_state("onset_time_global", None)
+                    response_time_global = (
+                        onset_time_global + rt
+                        if onset_time_global is not None and rt is not None
+                        else core.getAbsTime()
+                    )
+                    self.set_state(
+                        response=key,
+                        response_time=rt,
+                        response_time_global=response_time_global,
+                        close_time=rt,
+                        close_time_global=response_time_global,
+                    )
+                    break
 
         msg = log_message or (
             "Experiment ended by key press." if terminate else f"Continuing after key '{key}'"

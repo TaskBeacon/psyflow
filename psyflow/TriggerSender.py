@@ -1,95 +1,86 @@
-from typing import Callable, Optional
-from psychopy import logging, core
+from __future__ import annotations
+
+from typing import Callable, Optional, Any, Literal
+
+from psychopy import logging
+
+from .io import TriggerEvent, TriggerRuntime
+from .io.drivers.callable import CallableDriver
+from .io.drivers.mock import MockDriver
+
 
 class TriggerSender:
-    """
-    A wrapper for sending EEG/MEG trigger codes with optional hooks and delays.
+    """Backward-compatible trigger API (compat wrapper).
 
-    Can be initialized with a real sending function or used in mock mode
-    for development/testing without hardware.
+    Historically, psyflow tasks used a `TriggerSender(trigger_func=...)` object
+    and called `.send(code)` directly. The new architecture uses:
+    - TriggerRuntime (timing semantics + logging)
+    - TriggerDriver  (hardware/protocol I/O)
 
-    Examples
-    --------
-    >>> sender = TriggerSender(lambda c: port.write(bytes([c])))
-    >>> sender.send(32)
-
-    >>> sender = TriggerSender(mock=True)
-    >>> sender.send(99)
+    This class remains as a thin wrapper for one or two releases.
     """
 
     def __init__(
         self,
-        trigger_func: Optional[Callable[[int], None]] = None,
+        trigger_func: Optional[Callable[[Any], None]] = None,
         *,
         mock: bool = False,
         post_delay: float = 0.001,
         on_trigger_start: Optional[Callable[[], None]] = None,
         on_trigger_end: Optional[Callable[[], None]] = None,
+        runtime: Optional[TriggerRuntime] = None,
+        driver: Any = None,
     ):
-        """
-        Initialize the trigger sender.
+        if runtime is not None:
+            self.runtime = runtime
+            return
 
-        Parameters
-        ----------
-        trigger_func : Callable, optional
-            A function that accepts an int trigger code.
-        mock : bool, default=False
-            If True, use a mock print function instead of sending triggers.
-        post_delay : float, default=0.001
-            Time to wait (in seconds) after sending each trigger.
-        on_trigger_start : Callable, optional
-            Hook called before sending the trigger.
-        on_trigger_end : Callable, optional
-            Hook called after sending the trigger.
-        """
-        if mock or trigger_func is None:
-            self.trigger_func = lambda code: print(f"[MockTrigger] Sent code: {code}")
-        else:
-            self.trigger_func = trigger_func
+        if driver is None:
+            if mock or trigger_func is None:
+                driver = MockDriver(print_codes=True)
+            else:
+                driver = CallableDriver(
+                    trigger_func,
+                    post_delay_s=post_delay,
+                    on_trigger_start=on_trigger_start,
+                    on_trigger_end=on_trigger_end,
+                )
 
-        self.post_delay = post_delay
-        self.on_trigger_start = on_trigger_start
-        self.on_trigger_end = on_trigger_end
+        self.runtime = TriggerRuntime(driver)
+
+    def open(self) -> None:
+        try:
+            self.runtime.open()
+        except Exception:
+            return
+
+    def close(self) -> None:
+        try:
+            self.runtime.close()
+        except Exception:
+            return
+
+    def emit(
+        self,
+        event: TriggerEvent,
+        *,
+        when: Literal["now", "flip"] = "now",
+        win: Any = None,
+        wait: bool = True,
+    ) -> None:
+        self.runtime.emit(event, when=when, win=win, wait=wait)
 
     def send(self, code: Optional[int], wait: bool = True):
-        """
-        Send a trigger code using the configured function and callbacks.
-
-        Parameters
-        ----------
-        code : int or None
-            The code to send. If ``None`` the method does nothing and logs a
-            warning.
-        wait : bool, default=True
-            If True, apply the configured ``post_delay`` and call the
-            ``on_trigger_end`` hook (if provided). If False, skip any waiting
-            and do not run the end hook, which reduces the risk of frame timing
-            jitter when used in flip callbacks (e.g., ``win.callOnFlip``).
-
-        Returns
-        -------
-        None
-
-        Examples
-        --------
-        >>> sender.send(1)
-        """
+        """Compatibility API: send an integer trigger code now."""
         if code is None:
             logging.warning("[Trigger] Skipping trigger send: code is None")
             return
 
-        if self.on_trigger_start:
-            self.on_trigger_start()
-
         try:
-            self.trigger_func(code)
-        except Exception as e:
-            logging.error(f"[Trigger] Failed to send trigger {code}: {e}")
-        else:
-            logging.data(f"[Trigger] Trigger sent: {code}")
+            code_i = int(code)
+        except Exception:
+            logging.warning(f"[Trigger] Skipping trigger send: non-int code {code!r}")
+            return
 
-        if wait and self.post_delay:
-            core.wait(self.post_delay)
+        self.runtime.emit(TriggerEvent(code=code_i), when="now", wait=wait)
 
-        if wait and self.on_trigger_end:
-            self.on_trigger_end()

@@ -16,8 +16,9 @@ boilerplate.
 - **TaskSettings** - central configuration object for an experiment
 - **TriggerSender** - send triggers to external devices (e.g. EEG/MEG)
 
-The package also provides a command line tool `psyflow-init` which
-scaffolds a new project using the bundled cookiecutter template.
+The package also provides command line tools:
+- `psyflow-init` to scaffold a new project from the bundled template
+- `psyflow-qa` to run static checks and (optionally) a scripted-input smoke run
 
 Comprehensive documentation and tutorials are available on the
 [psyflow website](https://taskbeacon.github.io/psyflow/).
@@ -28,7 +29,7 @@ Comprehensive documentation and tutorials are available on the
 
 ## Changelog
 
-See `log.md`.
+See `ChangLog.md`.
 
 
 ## License

@@ -21,6 +21,13 @@ _LAZY_ATTRS: dict[str, tuple[str, str]] = {
     "SubInfo": ("psyflow.SubInfo", "SubInfo"),
     "TaskSettings": ("psyflow.TaskSettings", "TaskSettings"),
     "TriggerSender": ("psyflow.TriggerSender", "TriggerSender"),
+    # Trigger runtime/driver (recommended)
+    "TriggerRuntime": ("psyflow.io.runtime", "TriggerRuntime"),
+    "TriggerEvent": ("psyflow.io.events", "TriggerEvent"),
+    "MockDriver": ("psyflow.io.drivers.mock", "MockDriver"),
+    "SerialDriver": ("psyflow.io.drivers.serial", "SerialDriver"),
+    "FanoutDriver": ("psyflow.io.drivers.fanout", "FanoutDriver"),
+    "CallableDriver": ("psyflow.io.drivers.callable", "CallableDriver"),
     # CLI entry (kept for backward compatibility)
     "climain": ("psyflow.cli", "climain"),
     # Common utilities
@@ -71,4 +78,3 @@ def __getattr__(name: str) -> Any:
 
 def __dir__() -> list[str]:
     return sorted(set(globals().keys()) | set(_LAZY_ATTRS.keys()))
-

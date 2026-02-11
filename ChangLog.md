@@ -1,13 +1,88 @@
 # psyflow change log
 
-## 0.1.3 (2026-02-10)
+## 0.1.3 (2026-02-11)
 
 ### Summary
 - Timing/response-stage fixes in `StimUnit` (flip-synced stamps, RT consistency, close semantics, flip-locked offsets).
 - Trigger sending made safer for flip callbacks (`TriggerSender.send(..., wait=False)` path).
+- New trigger architecture (EEG/fMRI-ready): `TriggerRuntime` + pluggable drivers (`MockDriver`, `SerialDriver`, `FanoutDriver`), with `TriggerSender` kept as a thin compatibility wrapper.
+- Added QA tooling: `psyflow-qa` CLI + `psyflow.qa` helpers for static contract checks and runtime trace/event validation with standardized artifacts under `outputs/qa/`.
+- Added QA-mode scripted response injection in `StimUnit.capture_response()` and `StimUnit.wait_and_continue()` (no PsychoPy `Keyboard` emulation), plus optional QA timing scaling and trigger planned/executed event logging.
 - Correctness fixes: `BlockUnit.summarize()` no longer crashes; `taps()` locates templates correctly.
 - Packaging/import cleanup: Python >= 3.10 declared; LLM utilities removed (deps/docs/exports cleaned); `import psyflow` is now lazy.
+- Docs hygiene: docs deployment now does a clean build; trigger/CLI tutorials updated to be copy-paste safe.
 - Basic CI smoke checks added.
+
+### QA runner + scripted responder (static QA + runtime QA)
+
+Files:
+- `psyflow/qa/*`
+- `psyflow/qa_cli.py`
+- `psyflow/StimUnit.py`
+- `pyproject.toml`
+- `setup.py`
+- `docs/tutorials/qa_runner.md`
+- `docs/index.rst`
+
+#### What changed
+- Added a lightweight QA runner CLI: `psyflow-qa <task_dir> [--runtime-cmd \"python main.py\"]`.
+  - Always runs static checks (config/acceptance contract lint).
+  - Writes machine-readable static artifacts:
+    - `outputs/qa/static_report.json`
+    - `outputs/qa/contract_report.json`
+  - If `--runtime-cmd` is provided, runs the task in a subprocess with `PSYFLOW_MODE=qa` and validates:
+    - `outputs/qa/qa_trace.csv` against `acceptance_criteria.yaml` (required columns) + generic invariants.
+    - `outputs/qa/qa_events.jsonl` for trigger planned vs executed mismatches (when present).
+- Introduced a pure-Python `psyflow.qa` subpackage (no PsychoPy imports) for:
+  - acceptance criteria lint (`contract_lint`)
+  - static checks (`static_qa`)
+  - trace CSV validation (`validate_trace_csv`)
+  - QA event validation (`validate_events`)
+  - standardized failure taxonomy in `outputs/qa/qa_report.json`.
+  - optional static validation of `task.key_list` (non-empty, subset of `allowed_keys` when provided) and trigger-code sanity (int-or-null, uniqueness when present).
+
+#### Responder injection seam (psyflow-level, minimal surface)
+- `StimUnit.capture_response()` and `StimUnit.wait_and_continue()` can now inject scripted responses when a QA context is active (`mode=qa`):
+  - responder acts on an `Observation` dict (stim descriptor fields are optional and pulled from `StimUnit` state when present).
+  - no attempt is made to emulate PsychoPy's `Keyboard` API globally.
+
+#### QA timing scaling (opt-in)
+- QA mode supports opt-in duration scaling with guardrails:
+  - default: scaling disabled
+  - never below one refresh interval
+  - `min_frames` default 2 in QA mode
+  - logs both nominal and scaled durations into state (`*_duration_nominal`, `*_duration_scaled`) when scaling is enabled.
+
+#### Trigger planned vs executed logging (QA mode)
+- In QA mode, flip-scheduled triggers are logged as:
+  - `trigger_planned` (when scheduled)
+  - `trigger_executed` (when the send path runs)
+  - JSONL stream: `outputs/qa/qa_events.jsonl` (when QA context is active).
+
+#### Template updates (cookiecutter)
+- The bundled task template now includes:
+  - `acceptance_criteria.yaml` with required columns and basic expectations.
+  - `config/config.yaml` so the scaffold runs out of the box.
+  - `PSYFLOW_MODE=qa` support to skip GUI subject info and avoid hardware triggers.
+
+### TriggerRuntime + Driver Architecture (EEG/fMRI-ready)
+
+Files:
+- `psyflow/io/*`
+- `psyflow/TriggerSender.py`
+- `psyflow/StimUnit.py`
+- `docs/tutorials/send_trigger.md`
+
+#### What changed
+- Added `TriggerRuntime` (timing semantics + audit logging) and driver abstractions:
+  - `MockDriver`: development/QA without hardware
+  - `SerialDriver`: pyserial-backed byte writes (encoder lives in the driver)
+  - `FanoutDriver`: broadcast to multiple drivers
+  - `CallableDriver`: wrap a custom send function
+- `TriggerSender` is now a thin compatibility wrapper around `TriggerRuntime`.
+  Existing code calling `TriggerSender.send(code)` continues to work.
+- `StimUnit.show()` and `StimUnit.capture_response()` now emit triggers through `TriggerRuntime` when available
+  (automatically picked up via `TriggerSender.runtime`), preserving flip-locked semantics via the runtime.
 
 ### StimUnit.run fixed-window response stage (behavior + API)
 

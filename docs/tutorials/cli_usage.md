@@ -1,8 +1,10 @@
-# psyflow-init: Command-Line Interface
+# Command-Line Interface
 
 ## Overview
 
-`psyflow-init` is the command-line interface (CLI) entrypoint for scaffolding new PsychoPy experiments using the built‑in template. It uses Cookiecutter under the hood to generate a standardized project layout, so you can focus on your task logic rather than boilerplate.
+psyflow provides two CLI entrypoints:
+- `psyflow-init`: scaffold a new PsychoPy task from the bundled template (Cookiecutter)
+- `psyflow-qa`: run static QA checks and (optionally) a scripted-input smoke run with standardized artifacts under `outputs/qa/`
 
 Key benefits:
 
@@ -16,6 +18,7 @@ Key benefits:
 | ---------------------------- | ----------------------------------------------- | ----------------------------- |
 | `psyflow-init <name>`        | Create a new folder `<name>` with project files | `psyflow-init my-new-task`    |
 | `psyflow-init` (no argument) | Initialize current directory in-place           | `cd existing && psyflow-init` |
+| `psyflow-qa`                 | Run static QA + optional runtime QA             | `psyflow-qa . --runtime-cmd "python main.py"` |
 
 ## 1. Creating a New Project
 
@@ -29,19 +32,20 @@ This will create a new folder `my-new-task/` containing all the necessary files 
 
 ```
 my-new-task/
-├── main.py
-├── README.md
-├── assets/
-├── config/
-│   └── config.yaml
-├── data/
-└── src/
-    ├── __init__.py
-    ├── run_trial.py
-    └── utils.py
+  acceptance_criteria.yaml
+  main.py
+  README.md
+  assets/
+  config/
+    config.yaml
+  data/
+  src/
+    __init__.py
+    run_trial.py
+    utils.py
 ```
 
-## 2. In‑Place Initialization
+## 2. In-Place Initialization
 
 If you already have (or have just created) an empty directory and wish to populate it with the `psyflow` scaffold, run the command without any arguments:
 
@@ -54,7 +58,7 @@ psyflow-init
 Before copying template files, the CLI checks for existing files or folders with the same names. If any conflicts are found, you will be prompted:
 
 ```
-⚠ Existing file 'main.py' detected. Overwrite this and all remaining? [y/N]:
+WARNING: Existing file 'main.py' detected. Overwrite this and all remaining? [y/N]:
 ```
 
 - Enter `y` to proceed and replace all existing files.
@@ -65,8 +69,8 @@ This interactive confirmation prevents unintentional data loss during in-place i
 ## 3. How It Works Internally
 1. **Locate template**: Uses `importlib.resources` to find the `psyflow.templates` package and the `cookiecutter-psyflow` folder.
 2. **Cookiecutter render**:
-   - **New‑directory mode**: Directly runs Cookiecutter into `./<project_name>`.
-   - **In‑place mode**: Renders into a temporary directory, then copies files into the current folder.
+   - **New-directory mode**: Directly runs Cookiecutter into `./<project_name>`.
+   - **In-place mode**: Renders into a temporary directory, then copies files into the current folder.
 3. **Cleanup**: In-place mode deletes the temporary render directory when finished.
 
 ## Next Steps
@@ -76,3 +80,13 @@ Now that you know how to initialize a project, you're ready to start building yo
 - **Getting Started**: Follow the [Getting Started tutorial](getting_started.md) to build a simple task from scratch.
 - **Learn the Core Concepts**: Dive into the [StimBank](build_stimulus.md), [StimUnit](build_stimunit.md), and [BlockUnit](build_blocks.md) tutorials to understand the key components of PsyFlow.
 
+## QA Runner (psyflow-qa)
+
+`psyflow-qa` runs static checks and can optionally run a scripted-input smoke test.
+
+Example (from a task directory):
+```bash
+psyflow-qa . --runtime-cmd "python main.py"
+```
+
+Artifacts are written under `outputs/qa/` (including `qa_report.json`, `static_report.json`, and `contract_report.json`).
