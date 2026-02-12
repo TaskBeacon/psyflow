@@ -8,6 +8,7 @@ This module is designed so that:
 
 from .events import TriggerEvent
 from .runtime import TriggerRuntime, make_jsonl_logger
+from .trigger import initialize_triggers
 from .drivers.base import TriggerDriver
 from .drivers.callable import CallableDriver
 from .drivers.mock import MockDriver
@@ -22,5 +23,6 @@ __all__ = [
     "TriggerDriver",
     "TriggerEvent",
     "TriggerRuntime",
+    "initialize_triggers",
     "make_jsonl_logger",
 ]

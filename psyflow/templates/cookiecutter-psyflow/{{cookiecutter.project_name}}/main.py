@@ -5,16 +5,16 @@ from pathlib import Path
 import pandas as pd
 from psychopy import core
 
-from psyflow import BlockUnit, StimBank, StimUnit, SubInfo, TaskSettings, TriggerSender
+from psyflow import BlockUnit, StimBank, StimUnit, SubInfo, TaskSettings, initialize_triggers
 from psyflow import count_down, initialize_exp, load_config
 
 from src import Controller, run_trial
 
 
-def _make_qa_trigger_sender():
+def _make_qa_trigger_runtime():
     # In QA mode we don't want to hit real hardware.
     # Trigger logging (planned/executed) is handled by TriggerRuntime.
-    return TriggerSender(trigger_func=lambda code: None, post_delay=0.0)
+    return initialize_triggers(mock=True)
 
 
 def run():
@@ -59,27 +59,9 @@ def _run_impl(*, mode: str, qa_output_dir: Path | None):
     # 4. Setup triggers (mock in QA)
     settings.triggers = cfg["trigger_config"]
     if mode == "qa":
-        trigger_sender = _make_qa_trigger_sender()
-        ser = None
+        trigger_runtime = _make_qa_trigger_runtime()
     else:
-        import serial
-
-        driver_cfg = cfg.get("trigger_driver_config", {})
-        timing_cfg = cfg.get("trigger_timing_config", {})
-        port = driver_cfg.get("port", "loop://")
-        baudrate = driver_cfg.get("baudrate", 115200)
-        post_delay_ms = timing_cfg.get("post_delay_ms", 1)
-        post_delay_s = float(post_delay_ms) / 1000.0
-
-        ser = serial.serial_for_url(port, baudrate=baudrate, timeout=1)
-        # ser = serial.Serial("COM3", baudrate=115200, timeout=1)
-        if not ser.is_open:
-            ser.open()
-
-        trigger_sender = TriggerSender(
-            trigger_func=lambda code: ser.write(bytes([1, 225, 1, 0, code])),
-            post_delay=post_delay_s,
-        )
+        trigger_runtime = initialize_triggers(cfg)
 
     # 5. Set up window & input
     win, kb = initialize_exp(settings)
@@ -95,10 +77,10 @@ def _run_impl(*, mode: str, qa_output_dir: Path | None):
     settings.save_to_json()
     controller = Controller.from_dict(settings.controller)
 
-    trigger_sender.send(settings.triggers.get("exp_onset"))
+    trigger_runtime.send(settings.triggers.get("exp_onset"))
 
     # Instruction
-    instr = StimUnit("instruction_text", win, kb, triggersender=trigger_sender).add_stim(
+    instr = StimUnit("instruction_text", win, kb, runtime=trigger_runtime).add_stim(
         stim_bank.get("instruction_text")
     )
     if mode != "qa":
@@ -120,9 +102,9 @@ def _run_impl(*, mode: str, qa_output_dir: Path | None):
                 keyboard=kb,
             )
             .generate_conditions()
-            .on_start(lambda b: trigger_sender.send(settings.triggers.get("block_onset")))
-            .on_end(lambda b: trigger_sender.send(settings.triggers.get("block_end")))
-            .run_trial(partial(run_trial, stim_bank=stim_bank, controller=controller, trigger_sender=trigger_sender))
+            .on_start(lambda b: trigger_runtime.send(settings.triggers.get("block_onset")))
+            .on_end(lambda b: trigger_runtime.send(settings.triggers.get("block_end")))
+            .run_trial(partial(run_trial, stim_bank=stim_bank, controller=controller, trigger_runtime=trigger_runtime))
             .to_dict(all_data)
         )
 
@@ -131,7 +113,7 @@ def _run_impl(*, mode: str, qa_output_dir: Path | None):
         # Calculate for the block feedback
         hit_rate = sum(trial.get("target_hit", False) for trial in block_trials) / len(block_trials)
         total_score = sum(trial.get("feedback_delta", 0) for trial in block_trials)
-        StimUnit("block", win, kb, triggersender=trigger_sender).add_stim(
+        StimUnit("block", win, kb, runtime=trigger_runtime).add_stim(
             stim_bank.get_and_format(
                 "block_break",
                 block_num=block_i + 1,
@@ -142,19 +124,18 @@ def _run_impl(*, mode: str, qa_output_dir: Path | None):
         ).wait_and_continue()
 
     final_score = sum(trial.get("feedback_delta", 0) for trial in all_data)
-    StimUnit("goodbye", win, kb, triggersender=trigger_sender).add_stim(
+    StimUnit("goodbye", win, kb, runtime=trigger_runtime).add_stim(
         stim_bank.get_and_format("good_bye", total_score=final_score)
     ).wait_and_continue(terminate=True)
 
-    trigger_sender.send(settings.triggers.get("exp_end"))
+    trigger_runtime.send(settings.triggers.get("exp_end"))
 
     # 9. Save data
     df = pd.DataFrame(all_data)
     df.to_csv(settings.res_file, index=False)
 
     # 10. Close everything
-    if ser is not None:
-        ser.close()
+    trigger_runtime.close()
     core.quit()
 
 

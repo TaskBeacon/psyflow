@@ -48,6 +48,16 @@ class TriggerRuntime:
         if hasattr(self.driver, "close"):
             self.driver.close()
 
+    def send(self, code: int | None, wait: bool = True) -> None:
+        """Send a simple integer trigger code immediately."""
+        if code is None:
+            return
+        try:
+            code_i = int(code)
+        except Exception:
+            return
+        self.emit(TriggerEvent(code=code_i), when="now", wait=wait)
+
     def _next_id(self) -> int:
         self._emit_seq += 1
         return self._emit_seq

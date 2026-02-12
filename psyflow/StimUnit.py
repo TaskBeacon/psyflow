@@ -2,7 +2,6 @@ from psychopy import core, visual, logging, sound
 from psychopy.hardware.keyboard import Keyboard
 from typing import Callable, Optional, List, Dict, Any, Union
 import random
-from .TriggerSender import TriggerSender
 from .qa.context import get_context
 from .io.events import TriggerEvent
 
@@ -28,25 +27,22 @@ class StimUnit:
         PsychoPy window where stimuli will be drawn.
     unit_label : str
         Identifier for the trial (used for logging/debugging).
-    trigger : Trigger, optional
-        External trigger handler (default: a dummy TriggerSender instance).
+    runtime : TriggerRuntime, optional
+        External trigger runtime for event-aligned trigger emission.
     frame_time : float
         Duration of a single frame in seconds (default: 1/60 for 60Hz).
     """
 
     def __init__(
-    self,
-    unit_label: str,
-    win: visual.Window,
-    kb: Optional[Keyboard] = None,
-    triggersender: Optional[TriggerSender] = None,
-    runtime: Any = None,
-):
+        self,
+        unit_label: str,
+        win: visual.Window,
+        kb: Optional[Keyboard] = None,
+        runtime: Any = None,
+    ):
         self.win = win
         self.label = unit_label
-        self.triggersender = triggersender
-        # Preferred path: TriggerRuntime; fall back to legacy TriggerSender.
-        self.runtime = runtime or getattr(triggersender, "runtime", None)
+        self.runtime = runtime
         self.stimuli: List[visual.BaseVisualStim] = []
         self.state: Dict[str, Any] = {}
         self.clock = core.Clock()
@@ -205,7 +201,7 @@ class StimUnit:
         name: str | None = None,
         meta: dict[str, Any] | None = None,
     ) -> None:
-        """Internal helper to emit a trigger via TriggerRuntime (preferred) or TriggerSender (legacy)."""
+        """Internal helper to emit a trigger via TriggerRuntime."""
         code_i = None
         if trigger_code is not None:
             try:
@@ -222,23 +218,15 @@ class StimUnit:
         meta.setdefault("condition_id", self.get_state("condition_id", None))
         meta.setdefault("task_factors", self.get_state("task_factors", None))
 
-        if self.runtime is not None:
-            self.runtime.emit(
-                TriggerEvent(name=name, code=code_i, meta=meta),
-                when="flip" if when == "flip" else "now",
-                win=self.win if when == "flip" else None,
-                wait=wait,
-            )
+        if self.runtime is None:
             return
 
-        if self.triggersender is None:
-            return
-
-        # Legacy path: preserve timing semantics by scheduling on flip when requested.
-        if when == "flip":
-            self.win.callOnFlip(self.triggersender.send, code_i, wait)
-        else:
-            self.triggersender.send(code_i, wait=wait)
+        self.runtime.emit(
+            TriggerEvent(name=name, code=code_i, meta=meta),
+            when="flip" if when == "flip" else "now",
+            win=self.win if when == "flip" else None,
+            wait=wait,
+        )
 
     def send_trigger(self, trigger_code: int | None, wait: bool = True) -> "StimUnit":
         """Backward compatible: send a trigger code immediately (not flip-scheduled)."""

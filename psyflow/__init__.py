@@ -20,7 +20,6 @@ _LAZY_ATTRS: dict[str, tuple[str, str]] = {
     "StimUnit": ("psyflow.StimUnit", "StimUnit"),
     "SubInfo": ("psyflow.SubInfo", "SubInfo"),
     "TaskSettings": ("psyflow.TaskSettings", "TaskSettings"),
-    "TriggerSender": ("psyflow.TriggerSender", "TriggerSender"),
     # Trigger runtime/driver (recommended)
     "TriggerRuntime": ("psyflow.io.runtime", "TriggerRuntime"),
     "TriggerEvent": ("psyflow.io.events", "TriggerEvent"),
@@ -32,11 +31,11 @@ _LAZY_ATTRS: dict[str, tuple[str, str]] = {
     "climain": ("psyflow.cli", "climain"),
     # Common utilities
     "show_ports": ("psyflow.utils", "show_ports"),
-    "list_serial_ports": ("psyflow.utils", "list_serial_ports"),
     "taps": ("psyflow.utils", "taps"),
     "count_down": ("psyflow.utils", "count_down"),
     "load_config": ("psyflow.utils", "load_config"),
     "validate_config": ("psyflow.utils", "validate_config"),
+    "initialize_triggers": ("psyflow.io", "initialize_triggers"),
     "initialize_exp": ("psyflow.utils", "initialize_exp"),
     "list_supported_voices": ("psyflow.utils", "list_supported_voices"),
 }
@@ -50,12 +49,11 @@ if TYPE_CHECKING:
     from .StimUnit import StimUnit as StimUnit
     from .SubInfo import SubInfo as SubInfo
     from .TaskSettings import TaskSettings as TaskSettings
-    from .TriggerSender import TriggerSender as TriggerSender
     from .cli import climain as climain
+    from .io import initialize_triggers as initialize_triggers
     from .utils import (
         count_down as count_down,
         initialize_exp as initialize_exp,
-        list_serial_ports as list_serial_ports,
         list_supported_voices as list_supported_voices,
         load_config as load_config,
         show_ports as show_ports,

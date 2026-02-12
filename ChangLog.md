@@ -1,5 +1,74 @@
 # psyflow change log
 
+## 0.1.4 (2026-02-12)
+
+### Summary
+- Breaking cleanup: removed `TriggerSender` compatibility layer; trigger flow is now `TriggerRuntime` only.
+- Added `initialize_triggers(...)` bootstrap under `psyflow.io`, returning an opened `TriggerRuntime`.
+- Added `TriggerRuntime.send(code, wait=True)` for simple code-based trigger sends.
+- `StimUnit` now consumes `runtime=` directly and no longer supports legacy `triggersender=` fallback.
+- Utility cleanup: trigger bootstrap moved out of `utils`; display helper module renamed to `utils/display.py`; serial-port alias cleanup.
+- Cookiecutter template updated to the runtime-first trigger pattern (including QA mock setup).
+
+### Trigger API Simplification (Runtime-First)
+
+Files:
+- `psyflow/TriggerSender.py` (removed)
+- `psyflow/io/runtime.py`
+- `psyflow/io/trigger.py`
+- `psyflow/io/__init__.py`
+- `psyflow/StimUnit.py`
+- `psyflow/__init__.py`
+
+#### What changed
+- Removed `TriggerSender` and its exports from the public package API.
+- `initialize_triggers(...)` now builds driver + `TriggerRuntime`, calls `runtime.open()`, and returns the runtime directly.
+- Added `TriggerRuntime.send(...)` as a convenience for immediate integer trigger sends.
+- `StimUnit` trigger path is now runtime-only:
+  - constructor uses `runtime=...`
+  - internal trigger emit path uses `runtime.emit(...)`
+  - legacy `triggersender` fallback path was removed.
+
+#### Migration pattern
+```python
+# before
+from psyflow import TriggerSender
+trigger_sender = TriggerSender(...)
+trigger_sender.send(code)
+StimUnit("trial", win, kb, triggersender=trigger_sender)
+
+# after
+from psyflow import initialize_triggers
+trigger_runtime = initialize_triggers(cfg)
+trigger_runtime.send(code)
+StimUnit("trial", win, kb, runtime=trigger_runtime)
+```
+
+### Utility/Module Structure Cleanup
+
+Files:
+- `psyflow/utils/ports.py`
+- `psyflow/utils/display.py` (renamed from `handy_display.py`)
+- `psyflow/utils/__init__.py`
+- `psyflow/io/trigger.py` (trigger bootstrap moved from `utils`)
+
+#### What changed
+- Removed `list_serial_ports()` alias; standardized on `show_ports()`.
+- Renamed timing/display helper module to `utils/display.py` (exported API `count_down` remains available).
+- Moved trigger bootstrap ownership into `psyflow.io` for clearer package boundaries.
+
+### Template Migration (New Default Pattern)
+
+Files:
+- `psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}/main.py`
+- `psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}/src/run_trial.py`
+
+#### What changed
+- Template now initializes triggers via `initialize_triggers(cfg)`.
+- QA mode uses `initialize_triggers(mock=True)` (no hardware dependency).
+- Task code uses `trigger_runtime.send(...)` and passes `runtime=trigger_runtime` into `StimUnit`.
+- Runtime is closed via `trigger_runtime.close()` during teardown.
+
 ## 0.1.3 (2026-02-11)
 
 ### Summary
