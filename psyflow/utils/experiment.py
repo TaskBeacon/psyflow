@@ -1,23 +1,25 @@
 """Experiment/window bootstrap utilities."""
 
-from typing import Tuple
+from typing import Optional, Tuple
 
 from psychopy import core, event, logging, monitors
 from psychopy.hardware import keyboard
 from psychopy.visual import Window
 
 
-def initialize_exp(settings, screen_id: int = 1) -> Tuple[Window, keyboard.Keyboard]:
+def initialize_exp(settings, screen_id: Optional[int] = None) -> Tuple[Window, keyboard.Keyboard]:
     """Set up the PsychoPy window, keyboard and logging."""
     mon = monitors.Monitor("tempMonitor")
     mon.setWidth(getattr(settings, "monitor_width_cm", 35.5))
     mon.setDistance(getattr(settings, "monitor_distance_cm", 60))
     mon.setSizePix(getattr(settings, "size", [1024, 768]))
 
+    resolved_screen = getattr(settings, "screen", 0) if screen_id is None else screen_id
+
     win = Window(
         size=getattr(settings, "size", [1024, 768]),
         fullscr=getattr(settings, "fullscreen", False),
-        screen=screen_id,
+        screen=resolved_screen,
         monitor=mon,
         units=getattr(settings, "units", "pix"),
         color=getattr(settings, "bg_color", [0, 0, 0]),
@@ -53,4 +55,3 @@ def initialize_exp(settings, screen_id: int = 1) -> Tuple[Window, keyboard.Keybo
     logging.console.setLevel(logging.INFO)
 
     return win, kb
-

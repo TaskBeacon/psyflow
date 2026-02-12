@@ -1,9 +1,36 @@
 from psychopy import core, visual, logging, sound
 from psychopy.hardware.keyboard import Keyboard
-from typing import Callable, Optional, List, Dict, Any, Union
+from typing import Callable, Optional, List, Dict, Any, Sequence, TypeAlias, Union
+import importlib
 import random
 from .qa.context import get_context
 from .io.events import TriggerEvent
+from psychopy.sound._base import _SoundBase
+
+
+def _resolve_audio_stim_types() -> tuple[type, ...]:
+    """Resolve concrete PsychoPy sound classes used at runtime."""
+    types: list[type] = [_SoundBase]
+    candidates = (
+        ("psychopy.sound.backend_ptb", "SoundPTB"),
+        ("psychopy.sound.backend_sounddevice", "SoundDeviceSound"),
+        ("psychopy.sound.backend_pyo", "SoundPyo"),
+        ("psychopy.sound.backend_pygame", "SoundPygame"),
+    )
+    for module_name, class_name in candidates:
+        try:
+            module = importlib.import_module(module_name)
+            cls = getattr(module, class_name, None)
+            if isinstance(cls, type) and cls not in types:
+                types.append(cls)
+        except Exception:
+            continue
+    return tuple(types)
+
+
+AUDIO_STIM_TYPES = _resolve_audio_stim_types()
+SUPPORTED_STIM_TYPES = (visual.BaseVisualStim,) + AUDIO_STIM_TYPES
+SupportedStim: TypeAlias = Union[visual.BaseVisualStim, _SoundBase]
 
 class StimUnit:
     """
@@ -78,7 +105,7 @@ class StimUnit:
         used = max(self.frame_time, n_frames * self.frame_time)
         return used, n_frames, True
 
-    def add_stim(self, *stims: Union[visual.BaseVisualStim, sound.Sound, List[Union[visual.BaseVisualStim, sound.Sound]]]) -> "StimUnit":
+    def add_stim(self, *stims: Union[SupportedStim, Sequence[SupportedStim]]) -> "StimUnit":
         """
         Add one or more visual or sound stimuli to the trial.
 
@@ -101,8 +128,14 @@ class StimUnit:
             stims = stims[0]
 
         for stim in stims:
-            if not isinstance(stim, (visual.BaseVisualStim, sound.Sound)):
-                raise TypeError(f"add_stim expects visual or sound stimuli, got {type(stim)}")
+            if not isinstance(stim, SUPPORTED_STIM_TYPES):
+                supported = ", ".join(sorted({t.__name__ for t in SUPPORTED_STIM_TYPES}))
+                msg = (
+                    "add_stim got unsupported object type "
+                    f"{type(stim).__name__}. Supported types include: {supported}"
+                )
+                logging.warning(f"[StimUnit] {msg}")
+                raise TypeError(msg)
             self.stimuli.append(stim)
 
         return self

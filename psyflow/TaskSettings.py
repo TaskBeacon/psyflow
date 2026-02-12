@@ -178,11 +178,57 @@ class TaskSettings:
         >>> cfg = {'total_blocks': 2, 'total_trials': 20}
         >>> TaskSettings.from_dict(cfg)
         """
-        known_keys = set(f.name for f in cls.__dataclass_fields__.values())
+        if not isinstance(config, dict):
+            raise TypeError(f"config must be a dict, got {type(config)}")
+
+        # Only fields with init=True can be passed to the dataclass constructor.
+        known_keys = {
+            name for name, field_def in cls.__dataclass_fields__.items()
+            if field_def.init
+        }
         init_args = {k: v for k, v in config.items() if k in known_keys}
         extras = {k: v for k, v in config.items() if k not in known_keys}
 
         settings = cls(**init_args)
+
+        # Optional config alias guardrail:
+        # if trial_per_block is provided in task config, it must match the derived value.
+        tpb_declared = None
+        if "trial_per_block" in extras:
+            tpb_declared = extras.pop("trial_per_block")
+        if "trials_per_block" in extras:
+            tpb_alt = extras.pop("trials_per_block")
+            if tpb_declared is None:
+                tpb_declared = tpb_alt
+            elif int(tpb_declared) != int(tpb_alt):
+                raise ValueError(
+                    "Inconsistent task config: both 'trial_per_block' and "
+                    f"'trials_per_block' were provided but differ "
+                    f"({tpb_declared} vs {tpb_alt})."
+                )
+
+        if tpb_declared is not None:
+            try:
+                tpb_declared_i = int(tpb_declared)
+            except Exception as exc:
+                raise TypeError(
+                    "task.trial_per_block must be an int when provided, got "
+                    f"{tpb_declared!r}"
+                ) from exc
+
+            if tpb_declared_i != settings.trials_per_block:
+                raise ValueError(
+                    "Inconsistent task config: "
+                    f"trial_per_block={tpb_declared_i} but "
+                    "ceil(total_trials/total_blocks)="
+                    f"{settings.trials_per_block} "
+                    f"(total_trials={settings.total_trials}, "
+                    f"total_blocks={settings.total_blocks})."
+                )
+            # Keep both names available for task code that reads either alias.
+            settings.trial_per_block = tpb_declared_i
+            settings.trials_per_block = tpb_declared_i
+
         for k, v in extras.items():
             setattr(settings, k, v)
         return settings

@@ -1,5 +1,22 @@
 # psyflow change log
 
+## 0.1.5 (2026-02-12)
+
+### Summary
+- `StimUnit.add_stim(...)` now recognizes PsychoPy runtime audio backends (via `_SoundBase` and resolved backend classes), fixing false rejections of valid sound stimuli.
+- Unsupported stimulus objects in `StimUnit.add_stim(...)` now emit a warning and raise a clearer `TypeError` that lists supported classes.
+- `TaskSettings.from_dict(...)` was hardened:
+  - validates that input config is a dict,
+  - passes only `init=True` dataclass fields into constructor,
+  - validates `trial_per_block` / `trials_per_block` aliases for consistency,
+  - enforces declared trials-per-block matches `ceil(total_trials / total_blocks)` when provided.
+- `initialize_exp(...)` now defaults to `settings.screen` when `screen_id` is not explicitly passed.
+
+### Files
+- `psyflow/StimUnit.py`
+- `psyflow/TaskSettings.py`
+- `psyflow/utils/experiment.py`
+
 ## 0.1.4 (2026-02-12)
 
 ### Summary
