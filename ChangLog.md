@@ -1,5 +1,23 @@
 # psyflow change log
 
+## 0.1.7 (2026-02-15)
+
+### Summary
+- Removed `qa` and `sim` subcommands from root CLI (`psyflow` now exposes `init` only).
+- Standardized task execution on explicit task entrypoint arguments (`python main.py [human|qa|sim] --config ...`).
+- Removed framework emphasis on env-driven QA/sim wrappers from docs; documentation now points to task-level mode/config flow.
+
+### Breaking changes
+- Removed `psyflow qa ...` command.
+- Removed `psyflow sim ...` command.
+- QA/sim runs should now be started from the task script directly.
+
+### Updated files
+- `psyflow/cli.py`
+- `tests/test_cli_root.py`
+- `docs/tutorials/cli_usage.md`
+- `docs/tutorials/qa_runner.md`
+
 ## 0.1.6 (2026-02-15)
 
 ### Summary
@@ -7,12 +25,14 @@
 - Added a centralized responder adapter and policy layer (`strict|warn|coerce`) used by `StimUnit.capture_response()` and `StimUnit.wait_and_continue()` so injected responses flow through one validation seam.
 - Added deterministic simulation plumbing (seed/session/rng), structured JSONL simulation audit logs, and replay helpers.
 - Added plugin loader/config support (built-ins + external import-path responders) and a demo external responder.
-- Updated QA context to carry session/rng/sim logging and unified qa/sim responder setup.
+- Moved runtime context/session plumbing under `psyflow.sim.context` so responder/runtime logic stays in `sim`.
 - Updated template MID task and T000006 MID task to standardize trial context fields (`trial_id`, `phase`, `deadline_s`, `valid_keys`, `condition_id`, `task_factors`) for simulation readiness.
 - Added contract and determinism tests for responder plugins and sim runs.
 - CLI redesign: moved to one root command `psyflow` with subcommands `init`, `qa`, `sim` for compact, terminal-friendly usage.
 - Breaking packaging change: removed separate script entrypoints (`psyflow-init`, `psyflow-qa`, `psyflow-sim`) in favor of `psyflow`.
 - Added clearer CLI terminal summaries for QA/sim runs (status + artifact paths).
+- Neutralized runtime env names (`PSYFLOW_RESPONDER_*`, `PSYFLOW_OUTPUT_DIR`, `PSYFLOW_*` timing knobs) to remove QA-specific naming in simulation paths.
+- Added shared runtime command executor helpers used by both `qa` and `sim` commands.
 
 ### Breaking changes
 - CLI entrypoints changed:
@@ -27,21 +47,23 @@
 - `psyflow/sim/logging.py`
 - `psyflow/sim/rng.py`
 - `psyflow/sim/context_helpers.py`
+- `psyflow/sim/context.py`
 - `psyflow/sim/__init__.py`
-- `psyflow/sim_cli.py`
+- `psyflow/sim_command.py`
 - `examples/sim/demo_responder.py`
 - `tests/test_responder_contract.py`
 - `tests/test_sim_golden.py`
-- `tests/test_sim_cli.py`
+- `tests/test_sim_command.py`
 - `tests/test_cli_root.py`
 
 ### Core updates
 - `psyflow/StimUnit.py`
-- `psyflow/qa/context.py`
-- `psyflow/qa/responder.py`
+- `psyflow/sim/context.py`
 - `psyflow/qa/__init__.py`
-- `psyflow/qa_cli.py`
+- `psyflow/qa_command.py`
+- `psyflow/sim_command.py`
 - `psyflow/cli.py`
+- `psyflow/commands/runtime.py`
 - `psyflow/utils/config.py`
 - `psyflow/__init__.py`
 - `pyproject.toml`

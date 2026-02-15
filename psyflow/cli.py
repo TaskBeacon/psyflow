@@ -8,9 +8,6 @@ import click
 import importlib.resources as pkg_res
 from cookiecutter.main import cookiecutter
 
-from .qa_cli import main as qa_command
-from .sim_cli import main as sim_command
-
 
 def _render_template(project_name: str, cwd: Path, *, in_place: bool) -> Path:
     tmpl_dir = pkg_res.files("psyflow.templates") / "cookiecutter-psyflow"
@@ -58,10 +55,6 @@ def init(project_name: str | None) -> None:
     name = cwd.name if in_place else str(project_name)
     out = _render_template(name, cwd, in_place=in_place)
     click.echo(f"Initialized project: {out}")
-
-
-main.add_command(qa_command, name="qa")
-main.add_command(sim_command, name="sim")
 
 
 if __name__ == "__main__":
