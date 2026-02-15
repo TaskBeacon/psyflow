@@ -65,7 +65,7 @@ class TriggerRuntime:
     def _log(self, rec: dict[str, Any]) -> None:
         # 1) QA event sink (if active)
         try:
-            from psyflow.qa.context import log_event
+            from psyflow.sim.context import log_event
 
             log_event(rec)
         except Exception:
@@ -90,7 +90,7 @@ class TriggerRuntime:
         if self.strict:
             return True
         try:
-            from psyflow.qa.context import get_context
+            from psyflow.sim.context import get_context
 
             ctx = get_context()
             return bool(ctx is not None and getattr(getattr(ctx, "config", None), "strict", False))

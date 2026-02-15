@@ -1,8 +1,12 @@
 import unittest
 
-from click.testing import CliRunner
+try:
+    from click.testing import CliRunner
+except ModuleNotFoundError:  # pragma: no cover
+    CliRunner = None
 
 
+@unittest.skipUnless(CliRunner is not None, "click is not installed")
 class TestRootCLI(unittest.TestCase):
     def test_root_help_lists_subcommands(self):
         from psyflow.cli import main

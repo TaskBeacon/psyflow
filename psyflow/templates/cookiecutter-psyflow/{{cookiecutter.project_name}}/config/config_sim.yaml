@@ -1,0 +1,208 @@
+# Minimal runnable config for the bundled psyflow template task.
+#
+# Notes:
+# - `load_config()` flattens `window` + `task` + `timing` into `task_config`.
+# - The MID demo code in `main.py` / `src/run_trial.py` expects these fields.
+
+window:
+  size: [1024, 768]
+  units: pix
+  bg_color: gray
+  fullscreen: false
+  monitor_width_cm: 35.5
+  monitor_distance_cm: 60
+
+task:
+  task_name: mid_demo
+  save_path: ./data
+  total_blocks: 2
+  total_trials: 10
+  conditions: [win, lose, neutral]
+  key_list: [space]
+  delta: 1
+
+timing:
+  cue_duration: 0.5
+  anticipation_duration: 1.0
+  prefeedback_duration: 0.5
+  feedback_duration: 1.0
+
+subinfo_fields:
+  - name: subject_id
+    type: int
+    constraints:
+      min: 101
+      max: 999
+      digits: 3
+subinfo_mapping:
+  subject_id: Subject ID (3 digits)
+  Participant Information: Participant Information
+  registration_failed: Registration failed
+  registration_successful: Registration successful
+  invalid_input: "Invalid input for {field}"
+
+stimuli:
+  fixation:
+    type: text
+    text: "+"
+    color: white
+    height: 48
+
+  instruction_text:
+    type: text
+    text: "Press SPACE when you see the target."
+    color: white
+    height: 28
+    wrapWidth: 900
+
+  win_cue:
+    type: text
+    text: "WIN"
+    color: green
+    height: 42
+  lose_cue:
+    type: text
+    text: "LOSE"
+    color: red
+    height: 42
+  neutral_cue:
+    type: text
+    text: "NEUTRAL"
+    color: white
+    height: 42
+
+  win_target:
+    type: text
+    text: "TARGET"
+    color: white
+    height: 42
+  lose_target:
+    type: text
+    text: "TARGET"
+    color: white
+    height: 42
+  neutral_target:
+    type: text
+    text: "TARGET"
+    color: white
+    height: 42
+
+  win_hit_feedback:
+    type: text
+    text: "+1"
+    color: green
+    height: 42
+  win_miss_feedback:
+    type: text
+    text: "+0"
+    color: white
+    height: 42
+  lose_hit_feedback:
+    type: text
+    text: "0"
+    color: white
+    height: 42
+  lose_miss_feedback:
+    type: text
+    text: "-1"
+    color: red
+    height: 42
+  neutral_hit_feedback:
+    type: text
+    text: "0"
+    color: white
+    height: 42
+  neutral_miss_feedback:
+    type: text
+    text: "0"
+    color: white
+    height: 42
+
+  block_break:
+    type: text
+    text: "Block {block_num}/{total_blocks}\\nAccuracy: {accuracy:.2%}\\nScore: {total_score}\\n\\nPress SPACE to continue."
+    color: white
+    height: 24
+    wrapWidth: 900
+
+  good_bye:
+    type: text
+    text: "Finished. Total score: {total_score}\\n\\nPress SPACE to quit."
+    color: white
+    height: 28
+    wrapWidth: 900
+
+triggers:
+  map:
+    exp_onset: 1
+    exp_end: 2
+    block_onset: 10
+    block_end: 11
+
+    win_cue_onset: 20
+    lose_cue_onset: 21
+    neutral_cue_onset: 22
+
+    win_anti_onset: 30
+    lose_anti_onset: 31
+    neutral_anti_onset: 32
+
+    win_target_onset: 40
+    lose_target_onset: 41
+    neutral_target_onset: 42
+
+    win_key_press: 50
+    lose_key_press: 51
+    neutral_key_press: 52
+
+    win_no_response: 60
+    lose_no_response: 61
+    neutral_no_response: 62
+
+    win_hit_fb_onset: 70
+    win_miss_fb_onset: 71
+    lose_hit_fb_onset: 72
+    lose_miss_fb_onset: 73
+    neutral_hit_fb_onset: 74
+    neutral_miss_fb_onset: 75
+
+  # Hardware config is intentionally separate from the event->code map.
+  driver:
+    type: serial
+    port: loop://
+    baudrate: 115200
+
+  timing:
+    post_delay_ms: 1
+
+  policy:
+    strict: false
+
+controller:
+  initial_duration: 0.25
+  min_duration: 0.08
+  max_duration: 0.4
+  step: 0.02
+  target_accuracy: 0.66
+  condition_specific: true
+  enable_logging: true
+
+qa:
+  output_dir: outputs/qa
+  enable_scaling: false
+  timing_scale: 1.0
+  min_frames: 2
+  strict: false
+  max_wait_s: 10.0
+
+sim:
+  output_dir: outputs/sim
+  seed: 0
+  policy: warn
+  default_rt_s: 0.2
+  clamp_rt: false
+  responder:
+    kind: scripted
+    kwargs:
+      key: space
+      rt_s: 0.25

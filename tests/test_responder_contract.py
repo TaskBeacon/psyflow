@@ -1,27 +1,6 @@
-import contextlib
-import os
 import tempfile
 import unittest
 from pathlib import Path
-
-
-@contextlib.contextmanager
-def _patched_env(**updates):
-    old = {}
-    for k, v in updates.items():
-        old[k] = os.environ.get(k)
-        if v is None:
-            os.environ.pop(k, None)
-        else:
-            os.environ[k] = str(v)
-    try:
-        yield
-    finally:
-        for k, v in old.items():
-            if v is None:
-                os.environ.pop(k, None)
-            else:
-                os.environ[k] = v
 
 
 class TestResponderContract(unittest.TestCase):
@@ -155,19 +134,18 @@ class TestResponderContract(unittest.TestCase):
                 "kwargs": {"base_rt_s": 0.2, "jitter_s": 0.01},
             }
         }
-        with _patched_env(PSYFLOW_RESPONDER_CLASS=None, PSYFLOW_RESPONDER_KWARGS=None):
-            responder, meta = load_responder(
-                mode="sim",
-                config=cfg,
-                session=session,
-                rng=make_rng(11),
-                allow_fallback=False,
-            )
+        responder, meta = load_responder(
+            mode="sim",
+            config=cfg,
+            session=session,
+            rng=make_rng(11),
+            allow_fallback=False,
+        )
         self.assertEqual(meta.get("fallback"), False)
         self.assertEqual(meta.get("name"), "DemoResponder")
 
-    def test_context_from_env_reads_raw_yaml_style_config(self):
-        from psyflow.qa.context import context_from_env
+    def test_context_from_config_reads_raw_yaml_style_config(self):
+        from psyflow.sim.context import context_from_config
 
         with tempfile.TemporaryDirectory() as td:
             cfg = {
@@ -182,8 +160,7 @@ class TestResponderContract(unittest.TestCase):
                     "qa": {"output_dir": "outputs/qa"},
                 }
             }
-            with _patched_env(PSYFLOW_MODE="sim"):
-                ctx = context_from_env(task_dir=Path(td), config=cfg)
+            ctx = context_from_config(task_dir=Path(td), config=cfg, mode="sim")
             self.assertEqual(ctx.mode, "sim")
             self.assertEqual(ctx.config.sim_policy, "coerce")
             self.assertEqual(ctx.session.seed, 123)

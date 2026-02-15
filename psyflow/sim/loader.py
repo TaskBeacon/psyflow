@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import importlib
-import json
-import os
 from typing import Any
 
 from .contracts import NullResponder, ScriptedResponder, SessionInfo
@@ -15,16 +13,6 @@ def _deep_get(mapping: dict[str, Any] | None, path: tuple[str, ...], default: An
             return default
         cur = cur[p]
     return cur
-
-
-def _parse_json_env(name: str, default: Any) -> Any:
-    raw = os.getenv(name, "").strip()
-    if not raw:
-        return default
-    try:
-        return json.loads(raw)
-    except Exception:
-        return default
 
 
 def _import_attr(import_path: str) -> Any:
@@ -41,12 +29,6 @@ def _resolve_spec(mode: str, config: dict[str, Any] | None) -> tuple[str | None,
     if mode not in ("qa", "sim"):
         return None, {}, "disabled"
 
-    # Env has highest priority.
-    env_class = os.getenv("PSYFLOW_RESPONDER_CLASS", "").strip()
-    if env_class:
-        env_kwargs = _parse_json_env("PSYFLOW_RESPONDER_KWARGS", {})
-        return env_class, dict(env_kwargs or {}), "env.class"
-
     # Config responder.class
     cfg_class = _deep_get(config, ("responder", "class"), None)
     if isinstance(cfg_class, str) and cfg_class.strip():
@@ -54,23 +36,11 @@ def _resolve_spec(mode: str, config: dict[str, Any] | None) -> tuple[str | None,
         return cfg_class.strip(), dict(cfg_kwargs), "config.class"
 
     # Kind-based fallback.
-    kind = os.getenv("PSYFLOW_QA_RESPONDER", "").strip().lower()
-    if not kind:
-        kind = str(_deep_get(config, ("responder", "kind"), "") or "").strip().lower()
+    kind = str(_deep_get(config, ("responder", "kind"), "") or "").strip().lower()
     if not kind:
         kind = "scripted"
 
     kwargs = dict(_deep_get(config, ("responder", "kwargs"), {}) or {})
-    # Legacy env knobs for scripted responder.
-    key = os.getenv("PSYFLOW_QA_RESPONDER_KEY", "").strip() or None
-    if key is not None:
-        kwargs.setdefault("key", key)
-    rt_raw = os.getenv("PSYFLOW_QA_RESPONDER_RT", "").strip()
-    if rt_raw:
-        try:
-            kwargs.setdefault("rt_s", float(rt_raw))
-        except Exception:
-            pass
     return kind, kwargs, "kind"
 
 
@@ -125,4 +95,3 @@ def load_responder(
 
     name = getattr(cls, "__name__", responder.__class__.__name__) if cls is not None else responder.__class__.__name__
     return responder, {"source": source, "name": name, "fallback": False}
-

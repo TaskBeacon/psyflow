@@ -38,6 +38,17 @@ _LAZY_ATTRS: dict[str, tuple[str, str]] = {
     "initialize_triggers": ("psyflow.io", "initialize_triggers"),
     "initialize_exp": ("psyflow.utils", "initialize_exp"),
     "list_supported_voices": ("psyflow.utils", "list_supported_voices"),
+    # Task runtime option parsing helpers
+    "TaskRunOptions": ("psyflow.task_options", "TaskRunOptions"),
+    "build_task_arg_parser": ("psyflow.task_options", "build_task_arg_parser"),
+    "parse_task_run_options": ("psyflow.task_options", "parse_task_run_options"),
+    "resolve_config_path": ("psyflow.task_options", "resolve_config_path"),
+    "resolve_mode": ("psyflow.task_options", "resolve_mode"),
+    # Sim/QA runtime context helpers
+    "RuntimeContext": ("psyflow.sim", "RuntimeContext"),
+    "context_from_config": ("psyflow.sim", "context_from_config"),
+    "runtime_context": ("psyflow.sim", "runtime_context"),
+    "set_trial_context": ("psyflow.sim", "set_trial_context"),
 }
 
 __all__ = ["__version__", *_LAZY_ATTRS.keys()]
@@ -51,6 +62,19 @@ if TYPE_CHECKING:
     from .TaskSettings import TaskSettings as TaskSettings
     from .cli import main as cli_main
     from .io import initialize_triggers as initialize_triggers
+    from .task_options import (
+        TaskRunOptions as TaskRunOptions,
+        build_task_arg_parser as build_task_arg_parser,
+        parse_task_run_options as parse_task_run_options,
+        resolve_config_path as resolve_config_path,
+        resolve_mode as resolve_mode,
+    )
+    from .sim import (
+        RuntimeContext as RuntimeContext,
+        context_from_config as context_from_config,
+        runtime_context as runtime_context,
+        set_trial_context as set_trial_context,
+    )
     from .utils import (
         count_down as count_down,
         initialize_exp as initialize_exp,

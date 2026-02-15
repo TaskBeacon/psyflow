@@ -1,12 +1,24 @@
-import os
 from functools import partial
 from pathlib import Path
 
 import pandas as pd
 from psychopy import core
 
-from psyflow import BlockUnit, StimBank, StimUnit, SubInfo, TaskSettings, initialize_triggers
-from psyflow import count_down, initialize_exp, load_config
+from psyflow import (
+    BlockUnit,
+    StimBank,
+    StimUnit,
+    SubInfo,
+    TaskRunOptions,
+    TaskSettings,
+    context_from_config,
+    count_down,
+    initialize_exp,
+    initialize_triggers,
+    load_config,
+    parse_task_run_options,
+    runtime_context,
+)
 
 from src import Controller, run_trial
 
@@ -17,16 +29,31 @@ def _make_qa_trigger_runtime():
     return initialize_triggers(mock=True)
 
 
-def run():
+MODES = ("human", "qa", "sim")
+DEFAULT_CONFIG_BY_MODE = {
+    "human": "config/config.yaml",
+    "qa": "config/config_dev.yaml",
+    "sim": "config/config_sim.yaml",
+}
+
+
+def _parse_args(task_root: Path) -> TaskRunOptions:
+    return parse_task_run_options(
+        task_root=task_root,
+        description="Run task in human/qa/sim mode.",
+        default_config_by_mode=DEFAULT_CONFIG_BY_MODE,
+        modes=MODES,
+    )
+
+
+def run(options: TaskRunOptions):
     task_root = Path(__file__).resolve().parent
-    cfg = load_config()
-    mode = (os.getenv("PSYFLOW_MODE", "human") or "human").strip().lower()
+    cfg = load_config(str(options.config_path))
+    mode = options.mode
 
     if mode in ("qa", "sim"):
-        from psyflow.qa.context import context_from_env, qa_context
-
-        ctx = context_from_env(task_dir=task_root, config=cfg)
-        with qa_context(ctx):
+        ctx = context_from_config(task_dir=task_root, config=cfg, mode=mode)
+        with runtime_context(ctx):
             _run_impl(mode=mode, qa_output_dir=ctx.output_dir, cfg=cfg)
     else:
         _run_impl(mode=mode, qa_output_dir=None, cfg=cfg)
@@ -138,4 +165,6 @@ def _run_impl(*, mode: str, qa_output_dir: Path | None, cfg: dict):
 
 
 if __name__ == "__main__":
-    run()
+    _task_root = Path(__file__).resolve().parent
+    _opts = _parse_args(_task_root)
+    run(_opts)

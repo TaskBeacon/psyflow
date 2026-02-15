@@ -1,7 +1,6 @@
 from functools import partial
 
-from psyflow import StimUnit
-from psyflow.sim import set_trial_context
+from psyflow import StimUnit, set_trial_context
 
 
 def _deadline_s(value) -> float | None:

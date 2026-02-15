@@ -3,7 +3,7 @@ from psychopy.hardware.keyboard import Keyboard
 from typing import Callable, Optional, List, Dict, Any, Sequence, TypeAlias, Union
 import importlib
 import random
-from .qa.context import get_context
+from .sim.context import get_context
 from .io.events import TriggerEvent
 from .sim.adapter import ResponderAdapter, ResponderActionError
 from .sim.contracts import Feedback, Observation
@@ -83,7 +83,7 @@ class StimUnit:
         """Return (used_seconds, n_frames, scaled_flag) for QA mode.
 
         This keeps default behavior unchanged. In QA mode, scaling is opt-in
-        via QAContext.config.enable_scaling.
+        via runtime context config.enable_scaling.
         """
         used = float(nominal_s)
         n_frames = max(1, int(round(used / self.frame_time)))
