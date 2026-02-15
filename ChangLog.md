@@ -1,5 +1,63 @@
 # psyflow change log
 
+## 0.1.6 (2026-02-15)
+
+### Summary
+- Added a sampler-ready simulation architecture with a stable responder plugin contract (`SessionInfo`, `Observation`, `Action`, `Feedback`, lifecycle hooks).
+- Added a centralized responder adapter and policy layer (`strict|warn|coerce`) used by `StimUnit.capture_response()` and `StimUnit.wait_and_continue()` so injected responses flow through one validation seam.
+- Added deterministic simulation plumbing (seed/session/rng), structured JSONL simulation audit logs, and replay helpers.
+- Added plugin loader/config support (built-ins + external import-path responders) and a demo external responder.
+- Updated QA context to carry session/rng/sim logging and unified qa/sim responder setup.
+- Updated template MID task and T000006 MID task to standardize trial context fields (`trial_id`, `phase`, `deadline_s`, `valid_keys`, `condition_id`, `task_factors`) for simulation readiness.
+- Added contract and determinism tests for responder plugins and sim runs.
+- CLI redesign: moved to one root command `psyflow` with subcommands `init`, `qa`, `sim` for compact, terminal-friendly usage.
+- Breaking packaging change: removed separate script entrypoints (`psyflow-init`, `psyflow-qa`, `psyflow-sim`) in favor of `psyflow`.
+- Added clearer CLI terminal summaries for QA/sim runs (status + artifact paths).
+
+### Breaking changes
+- CLI entrypoints changed:
+  - old: `psyflow-init`, `psyflow-qa`, `psyflow-sim`
+  - new: `psyflow init`, `psyflow qa`, `psyflow sim`
+- `psyflow.__init__` CLI export changed from `climain` to `cli_main`.
+
+### New modules
+- `psyflow/sim/contracts.py`
+- `psyflow/sim/adapter.py`
+- `psyflow/sim/loader.py`
+- `psyflow/sim/logging.py`
+- `psyflow/sim/rng.py`
+- `psyflow/sim/context_helpers.py`
+- `psyflow/sim/__init__.py`
+- `psyflow/sim_cli.py`
+- `examples/sim/demo_responder.py`
+- `tests/test_responder_contract.py`
+- `tests/test_sim_golden.py`
+- `tests/test_sim_cli.py`
+- `tests/test_cli_root.py`
+
+### Core updates
+- `psyflow/StimUnit.py`
+- `psyflow/qa/context.py`
+- `psyflow/qa/responder.py`
+- `psyflow/qa/__init__.py`
+- `psyflow/qa_cli.py`
+- `psyflow/cli.py`
+- `psyflow/utils/config.py`
+- `psyflow/__init__.py`
+- `pyproject.toml`
+- `setup.py`
+
+### Template/docs updates
+- `psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}/main.py`
+- `psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}/src/run_trial.py`
+- `psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}/config/config.yaml`
+- `psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}/acceptance_criteria.yaml`
+- `README.md`
+- `docs/tutorials/cli_usage.md`
+- `docs/tutorials/qa_runner.md`
+- `docs/tutorials/getting_started.md`
+- `docs/tutorials/getting_started_cn.md`
+
 ## 0.1.5 (2026-02-12)
 
 ### Summary

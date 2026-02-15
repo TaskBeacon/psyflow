@@ -5,6 +5,8 @@ import importlib
 import random
 from .qa.context import get_context
 from .io.events import TriggerEvent
+from .sim.adapter import ResponderAdapter, ResponderActionError
+from .sim.contracts import Feedback, Observation
 from psychopy.sound._base import _SoundBase
 
 
@@ -812,47 +814,40 @@ class StimUnit:
         sim_key = None
         sim_rt = None
         if responder is not None:
-            obs = {
-                "mode": getattr(ctx, "mode", "qa") if ctx is not None else "qa",
-                "trial_id": self.get_state("trial_id", None),
-                "block_id": self.get_state("block_id", None),
-                "unit_label": self.label,
-                "deadline_s": nominal,
-                "response_window_open": True,
-                "response_window_s": used,
-                "valid_keys": list(keys),
-                "t_phase_onset": self.get_state("onset_time", None),
-                "t_phase_onset_global": self.get_state("onset_time_global", None),
-                "stim_id": self.get_state("stim_id", None),
-                "stim_features": self.get_state("stim_features", None),
-                "condition_id": self.get_state("condition_id", None),
-                "task_factors": self.get_state("task_factors", None),
-            }
+            obs = Observation(
+                mode=getattr(ctx, "mode", "qa") if ctx is not None else "qa",
+                trial_id=self.get_state("trial_id", self.get_state("trial_index", None)),
+                block_id=self.get_state("block_id", None),
+                phase=self.label,
+                deadline_s=used,
+                response_window_open=True,
+                response_window_s=used,
+                valid_keys=list(keys),
+                t_phase_onset=self.get_state("onset_time", None),
+                t_phase_onset_global=self.get_state("onset_time_global", None),
+                stim_id=self.get_state("stim_id", None),
+                stim_features=self.get_state("stim_features", None),
+                condition_id=self.get_state("condition_id", None),
+                task_factors=self.get_state("task_factors", None) or {},
+            )
+            adapter = ResponderAdapter(
+                policy=str(getattr(getattr(ctx, "config", None), "sim_policy", "warn") or "warn"),
+                default_rt_s=float(getattr(getattr(ctx, "config", None), "default_rt_s", 0.2) or 0.2),
+                clamp_rt=bool(getattr(getattr(ctx, "config", None), "clamp_rt", False)),
+                logger=getattr(ctx, "sim_logger", None) if ctx is not None else None,
+                session=getattr(ctx, "session", None) if ctx is not None else None,
+            )
+            handled = None
             try:
-                act = responder.act(obs)
+                handled = adapter.handle_response(obs, responder)
+            except ResponderActionError:
+                # Strict mode intentionally raises; other modes degrade to timeout.
+                raise
             except Exception:
-                act = None
-
-            try:
-                if hasattr(act, "key") and hasattr(act, "rt"):
-                    sim_key, sim_rt = act.key, act.rt
-                elif isinstance(act, (list, tuple)) and len(act) >= 2:
-                    sim_key, sim_rt = act[0], act[1]
-                elif isinstance(act, dict):
-                    sim_key, sim_rt = act.get("key"), act.get("rt")
-            except Exception:
-                sim_key, sim_rt = None, None
-
-            # Validate action; treat invalid actions as "no response".
-            try:
-                if sim_key is not None and sim_key not in keys:
-                    sim_key = None
-                if sim_rt is not None:
-                    sim_rt = float(sim_rt)
-                if sim_rt is not None and (sim_rt < 0 or sim_rt > used):
-                    sim_key, sim_rt = None, None
-            except Exception:
-                sim_key, sim_rt = None, None
+                handled = None
+            if handled is not None:
+                sim_key = handled.used_action.key
+                sim_rt = handled.used_action.rt_s
 
         visual_stims = [s for s in self.stimuli if hasattr(s, "draw") and callable(s.draw)]
         for frame_i in range(n_frames - 1):
@@ -973,6 +968,29 @@ class StimUnit:
                 meta={"kind": "timeout"},
             )
 
+        # Optional responder feedback hook for adaptive plugins.
+        if responder is not None and hasattr(responder, "on_feedback"):
+            try:
+                outcome = "timeout"
+                if responded:
+                    outcome = "hit" if bool(self.get_state("hit", False)) else "error"
+                responder.on_feedback(
+                    Feedback(
+                        trial_id=self.get_state("trial_id", self.get_state("trial_index", "unknown")),
+                        phase=self.label,
+                        outcome=outcome,
+                        reward=None,
+                        meta={
+                            "condition_id": self.get_state("condition_id", None),
+                            "task_factors": self.get_state("task_factors", None),
+                            "response": self.get_state("response", None),
+                            "rt_s": self.get_state("rt", None),
+                        },
+                    )
+                )
+            except Exception:
+                pass
+
         # Ensure close time exists (should be stamped on final flip for timeouts,
         # or set explicitly for terminate-on-response).
         if self.get_state("close_time", None) is None:
@@ -1048,42 +1066,40 @@ class StimUnit:
         max_wait_s = None
         if responder is not None:
             max_wait_s = float(getattr(getattr(ctx, "config", None), "max_wait_s", 10.0) or 10.0)
-            obs = {
-                "mode": getattr(ctx, "mode", "qa") if ctx is not None else "qa",
-                "trial_id": self.get_state("trial_id", None),
-                "block_id": self.get_state("block_id", None),
-                "unit_label": self.label,
-                "valid_keys": list(keys),
-                "min_wait_s": float(min_wait or 0.0),
-                "t_phase_onset": self.get_state("onset_time", None),
-                "t_phase_onset_global": self.get_state("onset_time_global", None),
-                "stim_id": self.get_state("stim_id", None),
-                "stim_features": self.get_state("stim_features", None),
-                "condition_id": self.get_state("condition_id", None),
-                "task_factors": self.get_state("task_factors", None),
-            }
+            obs = Observation(
+                mode=getattr(ctx, "mode", "qa") if ctx is not None else "qa",
+                trial_id=self.get_state("trial_id", self.get_state("trial_index", None)),
+                block_id=self.get_state("block_id", None),
+                phase=self.label,
+                valid_keys=list(keys),
+                deadline_s=max_wait_s,
+                t_phase_onset=self.get_state("onset_time", None),
+                t_phase_onset_global=self.get_state("onset_time_global", None),
+                stim_id=self.get_state("stim_id", None),
+                stim_features=self.get_state("stim_features", None),
+                condition_id=self.get_state("condition_id", None),
+                task_factors=self.get_state("task_factors", None) or {},
+                extras={"min_wait_s": float(min_wait or 0.0)},
+            )
+            adapter = ResponderAdapter(
+                policy=str(getattr(getattr(ctx, "config", None), "sim_policy", "warn") or "warn"),
+                default_rt_s=float(getattr(getattr(ctx, "config", None), "default_rt_s", 0.2) or 0.2),
+                clamp_rt=bool(getattr(getattr(ctx, "config", None), "clamp_rt", False)),
+                logger=getattr(ctx, "sim_logger", None) if ctx is not None else None,
+                session=getattr(ctx, "session", None) if ctx is not None else None,
+            )
+            handled = None
             try:
-                act = responder.act(obs)
+                handled = adapter.handle_response(obs, responder)
+            except ResponderActionError:
+                raise
             except Exception:
-                act = None
-
-            try:
-                if hasattr(act, "key") and hasattr(act, "rt"):
-                    sim_key, sim_rt = act.key, act.rt
-                elif isinstance(act, (list, tuple)) and len(act) >= 2:
-                    sim_key, sim_rt = act[0], act[1]
-                elif isinstance(act, dict):
-                    sim_key, sim_rt = act.get("key"), act.get("rt")
-            except Exception:
-                sim_key, sim_rt = None, None
-
-            try:
-                if sim_key is not None and sim_key not in keys:
-                    sim_key = None
-                sim_rt = float(sim_rt) if sim_rt is not None else float(min_wait or 0.0)
-                sim_rt = max(sim_rt, float(min_wait or 0.0))
-            except Exception:
-                sim_key, sim_rt = None, None
+                handled = None
+            if handled is not None:
+                sim_key = handled.used_action.key
+                sim_rt = handled.used_action.rt_s
+                if sim_rt is not None:
+                    sim_rt = max(float(sim_rt), float(min_wait or 0.0))
 
         while True:
             for stim in self.stimuli:
@@ -1145,6 +1161,23 @@ class StimUnit:
         )
         logging.data(f"[StimUnit] wait_and_continue: {msg}")
         self.log_unit()
+
+        if responder is not None and hasattr(responder, "on_feedback"):
+            try:
+                responder.on_feedback(
+                    Feedback(
+                        trial_id=self.get_state("trial_id", self.get_state("trial_index", "unknown")),
+                        phase=self.label,
+                        outcome="continue",
+                        reward=None,
+                        meta={
+                            "response": self.get_state("response", None),
+                            "response_time": self.get_state("response_time", None),
+                        },
+                    )
+                )
+            except Exception:
+                pass
 
         if terminate:
             self.win.close()

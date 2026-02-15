@@ -27,8 +27,8 @@ _LAZY_ATTRS: dict[str, tuple[str, str]] = {
     "SerialDriver": ("psyflow.io.drivers.serial", "SerialDriver"),
     "FanoutDriver": ("psyflow.io.drivers.fanout", "FanoutDriver"),
     "CallableDriver": ("psyflow.io.drivers.callable", "CallableDriver"),
-    # CLI entry (kept for backward compatibility)
-    "climain": ("psyflow.cli", "climain"),
+    # CLI entry
+    "cli_main": ("psyflow.cli", "main"),
     # Common utilities
     "show_ports": ("psyflow.utils", "show_ports"),
     "taps": ("psyflow.utils", "taps"),
@@ -49,7 +49,7 @@ if TYPE_CHECKING:
     from .StimUnit import StimUnit as StimUnit
     from .SubInfo import SubInfo as SubInfo
     from .TaskSettings import TaskSettings as TaskSettings
-    from .cli import climain as climain
+    from .cli import main as cli_main
     from .io import initialize_triggers as initialize_triggers
     from .utils import (
         count_down as count_down,

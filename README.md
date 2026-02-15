@@ -17,8 +17,9 @@ boilerplate.
 - **TriggerSender** - send triggers to external devices (e.g. EEG/MEG)
 
 The package also provides command line tools:
-- `psyflow-init` to scaffold a new project from the bundled template
-- `psyflow-qa` to run static checks and (optionally) a scripted-input smoke run
+- `psyflow init` to scaffold a new project from the bundled template
+- `psyflow qa` to run static checks and (optionally) a scripted-input smoke run
+- `psyflow sim` to run simulation mode with responder plugins
 
 Comprehensive documentation and tutorials are available on the
 [psyflow website](https://taskbeacon.github.io/psyflow/).

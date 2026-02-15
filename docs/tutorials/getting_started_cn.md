@@ -7,7 +7,7 @@ PsyFlow 是一个为 PsychoPy 设计的高级包装器，旨在简化认知神�
 主要功能包括：
 
 - **声明式语法**：在易于阅读的 YAML 文件中定义刺激、计时和任务结构。
-- **结构化项目布局**：命令行工具 (`psyflow-init`) 为您的项目生成一个标准化的、有组织的文件夹结构。
+- **结构化项目布局**：命令行工具 (`psyflow init`) 为您的项目生成一个标准化的、有组织的文件夹结构。
 - **简化的 API**：像 `StimUnit` 和 `BlockUnit` 这样的高级类处理刺激呈现、响应捕获和数据记录的复杂性。
 - **可扩展性**：轻松集成硬件触发器（EEG、fMRI）、眼动仪，以用于高级用例。
 
@@ -36,10 +36,10 @@ pip install https://github.com/TaskBeacon/psyflow.git
 
 ## 第 1 步：创建一个新项目
 
-首先，让我们使用 `psyflow-init` 命令行工具创建一个标准化的项目结构。打开您的终端，导航到您希望项目所在的位置，然后运行：
+首先，让我们使用 `psyflow init` 命令行工具创建一个标准化的项目结构。打开您的终端，导航到您希望项目所在的位置，然后运行：
 
 ```bash
-psyflow-init my-simple-task
+psyflow init my-simple-task
 ```
 
 此命令会创建一个名为 `my-simple-task` 的新文件夹，其布局如下：

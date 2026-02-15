@@ -23,9 +23,16 @@ from psyflow.qa.trace import validate_events, validate_trace_csv
 @click.option("--timing-scale", default=1.0, type=float, show_default=True, help="Scale factor when --enable-scaling is set.")
 @click.option("--min-frames", default=2, type=int, show_default=True, help="Minimum frames per stage in QA mode.")
 @click.option("--strict", is_flag=True, help="Fail on invariant violations (instead of reporting them).")
-@click.option("--responder", type=click.Choice(["scripted"], case_sensitive=False), default="scripted", show_default=True)
+@click.option(
+    "--responder",
+    type=click.Choice(["scripted", "null"], case_sensitive=False),
+    default="scripted",
+    show_default=True,
+)
 @click.option("--responder-key", default=None, help="Scripted responder key (default: first valid key).")
 @click.option("--responder-rt", default=0.2, type=float, show_default=True, help="Scripted responder RT (seconds).")
+@click.option("--responder-class", default=None, help="Import path for external responder class/factory.")
+@click.option("--responder-kwargs", default=None, help="JSON kwargs for --responder-class.")
 def main(
     task_dir: str,
     output_dir: str,
@@ -39,6 +46,8 @@ def main(
     responder: str,
     responder_key: str | None,
     responder_rt: float,
+    responder_class: str | None,
+    responder_kwargs: str | None,
 ):
     """Run static QA and (optionally) a runtime QA command for a task directory."""
     tdir = Path(task_dir).resolve()
@@ -105,6 +114,8 @@ def main(
     _write_json(paths.contract_report_json, contract)
     if report.status == "fail":
         report.write(paths.report_json)
+        click.echo(f"[qa] fail: {report.message}")
+        click.echo(f"[qa] report: {paths.report_json}")
         raise SystemExit(1)
 
     try:
@@ -128,6 +139,8 @@ def main(
             },
         )
         report.write(paths.report_json)
+        click.echo(f"[qa] fail: {report.message}")
+        click.echo(f"[qa] report: {paths.report_json}")
         raise SystemExit(1)
     except Exception as e:
         report.status = "fail"
@@ -143,11 +156,16 @@ def main(
             },
         )
         report.write(paths.report_json)
+        click.echo(f"[qa] fail: {report.message}")
+        click.echo(f"[qa] report: {paths.report_json}")
         raise SystemExit(1)
 
     # If no runtime command is provided, we stop after static QA.
     if not runtime_cmd:
         report.write(paths.report_json)
+        click.echo("[qa] pass (static only)")
+        click.echo(f"[qa] report: {paths.report_json}")
+        click.echo(f"[qa] output: {paths.output_dir}")
         return
 
     # Prepare subprocess environment for QA mode.
@@ -163,6 +181,12 @@ def main(
     if responder_key:
         env["PSYFLOW_QA_RESPONDER_KEY"] = responder_key
     env["PSYFLOW_QA_RESPONDER_RT"] = str(responder_rt)
+    if responder_class:
+        env["PSYFLOW_RESPONDER_CLASS"] = str(responder_class)
+    if responder_kwargs:
+        env["PSYFLOW_RESPONDER_KWARGS"] = str(responder_kwargs)
+    if config_path:
+        env["PSYFLOW_CONFIG"] = str(config_path)
 
     # Run the task command in the task directory.
     try:
@@ -178,6 +202,8 @@ def main(
         report.failure_code = FailureCode.RUNTIME_EXCEPTION
         report.message = f"Failed to run runtime command: {e}"
         report.write(paths.report_json)
+        click.echo(f"[qa] fail: {report.message}")
+        click.echo(f"[qa] report: {paths.report_json}")
         raise SystemExit(1)
 
     report.details["runtime"] = {"cmd": runtime_cmd, "returncode": proc.returncode}
@@ -186,6 +212,8 @@ def main(
         report.failure_code = FailureCode.RUNTIME_EXCEPTION
         report.message = f"Runtime command failed (exit {proc.returncode})."
         report.write(paths.report_json)
+        click.echo(f"[qa] fail: {report.message}")
+        click.echo(f"[qa] report: {paths.report_json}")
         raise SystemExit(1)
 
     # Runtime trace validation (A').
@@ -235,6 +263,10 @@ def main(
         report.message = ev_res["errors"][0]
 
     report.write(paths.report_json)
+    click.echo(f"[qa] {report.status}")
+    click.echo(f"[qa] report: {paths.report_json}")
+    click.echo(f"[qa] trace: {paths.trace_csv}")
+    click.echo(f"[qa] events: {paths.events_jsonl}")
     raise SystemExit(0 if report.status == "pass" else 1)
 
 

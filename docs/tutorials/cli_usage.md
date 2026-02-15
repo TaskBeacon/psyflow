@@ -2,91 +2,46 @@
 
 ## Overview
 
-psyflow provides two CLI entrypoints:
-- `psyflow-init`: scaffold a new PsychoPy task from the bundled template (Cookiecutter)
-- `psyflow-qa`: run static QA checks and (optionally) a scripted-input smoke run with standardized artifacts under `outputs/qa/`
-
-Key benefits:
-
-- **Standardization**: Enforce a consistent folder structure across all experiments
-- **Rapid setup**: Create a full project scaffold with one command
-- **Flexible modes**: Support both new-directory and in-place initialization
+`psyflow` provides one root CLI with subcommands:
+- `psyflow init`: scaffold a new PsychoPy task from the bundled template.
+- `psyflow qa`: run static QA checks and optional runtime QA.
+- `psyflow sim`: run simulation mode with responder plugins.
 
 ## Quick Reference
 
-| Command                      | Purpose                                         | Example                       |
-| ---------------------------- | ----------------------------------------------- | ----------------------------- |
-| `psyflow-init <name>`        | Create a new folder `<name>` with project files | `psyflow-init my-new-task`    |
-| `psyflow-init` (no argument) | Initialize current directory in-place           | `cd existing && psyflow-init` |
-| `psyflow-qa`                 | Run static QA + optional runtime QA             | `psyflow-qa . --runtime-cmd "python main.py"` |
+| Command | Purpose | Example |
+| --- | --- | --- |
+| `psyflow init <name>` | Create a new folder `<name>` with project files | `psyflow init my-new-task` |
+| `psyflow init` | Initialize current directory in-place | `cd existing && psyflow init` |
+| `psyflow qa <task_dir>` | Run static QA + optional runtime QA | `psyflow qa . --runtime-cmd "python main.py"` |
+| `psyflow sim <task_dir>` | Run simulation mode | `psyflow sim . --runtime-cmd "python main.py"` |
 
 ## 1. Creating a New Project
 
-To start from scratch, navigate to the parent directory and run:
-
 ```bash
-psyflow-init my-new-task
-```
-
-This will create a new folder `my-new-task/` containing all the necessary files and subdirectories:
-
-```
-my-new-task/
-  acceptance_criteria.yaml
-  main.py
-  README.md
-  assets/
-  config/
-    config.yaml
-  data/
-  src/
-    __init__.py
-    run_trial.py
-    utils.py
+psyflow init my-new-task
 ```
 
 ## 2. In-Place Initialization
 
-If you already have (or have just created) an empty directory and wish to populate it with the `psyflow` scaffold, run the command without any arguments:
-
 ```bash
 mkdir my-existing-project
 cd my-existing-project
-psyflow-init
+psyflow init
 ```
 
-Before copying template files, the CLI checks for existing files or folders with the same names. If any conflicts are found, you will be prompted:
+## 3. QA Runner
 
-```
-WARNING: Existing file 'main.py' detected. Overwrite this and all remaining? [y/N]:
-```
-
-- Enter `y` to proceed and replace all existing files.
-- Enter `n` (or press Enter) to skip that file and continue with others.
-
-This interactive confirmation prevents unintentional data loss during in-place initialization.
-
-## 3. How It Works Internally
-1. **Locate template**: Uses `importlib.resources` to find the `psyflow.templates` package and the `cookiecutter-psyflow` folder.
-2. **Cookiecutter render**:
-   - **New-directory mode**: Directly runs Cookiecutter into `./<project_name>`.
-   - **In-place mode**: Renders into a temporary directory, then copies files into the current folder.
-3. **Cleanup**: In-place mode deletes the temporary render directory when finished.
-
-## Next Steps
-
-Now that you know how to initialize a project, you're ready to start building your experiment:
-
-- **Getting Started**: Follow the [Getting Started tutorial](getting_started.md) to build a simple task from scratch.
-- **Learn the Core Concepts**: Dive into the [StimBank](build_stimulus.md), [StimUnit](build_stimunit.md), and [BlockUnit](build_blocks.md) tutorials to understand the key components of PsyFlow.
-
-## QA Runner (psyflow-qa)
-
-`psyflow-qa` runs static checks and can optionally run a scripted-input smoke test.
-
-Example (from a task directory):
 ```bash
-psyflow-qa . --runtime-cmd "python main.py"
+psyflow qa . --runtime-cmd "python main.py"
 ```
 
 Artifacts are written under `outputs/qa/` (including `qa_report.json`, `static_report.json`, and `contract_report.json`).
+
+## 4. Simulation Runner
+
+```bash
+psyflow sim . --runtime-cmd "python main.py" --seed 42 --participant-id sim001
+```
+
+Artifacts are written under `outputs/sim/` (including `sim_report.json`, `sim_events.jsonl`, and `qa_trace.csv`).

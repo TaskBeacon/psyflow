@@ -1,5 +1,6 @@
 """Config validation/loading utilities."""
 
+import os
 from typing import Any, Dict, Iterable, List, Optional
 
 import yaml
@@ -32,6 +33,9 @@ def load_config(
     required_sections: Optional[Iterable[str]] = None,
 ) -> Dict:
     """Load a config.yaml file and return a structured dictionary."""
+    if config_file == "config/config.yaml":
+        config_file = os.getenv("PSYFLOW_CONFIG", config_file)
+
     with open(config_file, encoding="utf-8") as f:
         config = yaml.safe_load(f)
 
@@ -81,4 +85,3 @@ def load_config(
                 output[key_name] = config.get(key, {})
 
     return output
-

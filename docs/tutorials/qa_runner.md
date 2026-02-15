@@ -1,4 +1,4 @@
-# QA Runner + Scripted Responder (Plan)
+# QA Runner + Responder Plugins (QA/Sim)
 
 This document turns the "static QA + runtime QA" proposal into an implementable plan with minimal churn.
 
@@ -9,14 +9,14 @@ Design goals:
 
 Non-goals (for now):
 - Headless PsychoPy simulation (keep as future work).
-- Correctness/oracle logic baked into the responder schema (avoid answer leakage).
+- Specific sampler math (DDM, MID-specific computational model, etc.).
 
 ## Modes
 
 We standardize a simple mode switch:
 - `human`: real keyboard input (default)
 - `qa`: scripted responder + QA artifacts
-- `sim`: reserved for future headless simulation
+- `sim`: responder plugin mode (LLM/hybrid/computational samplers)
 
 Tasks should read `PSYFLOW_MODE` (defaults to `human`) and behave accordingly (skip GUI forms, use mock triggers, write QA artifacts).
 
@@ -62,14 +62,22 @@ required_columns:
 ## Phase A': Runtime QA (Real PsychoPy Run, Scripted Input)
 
 ### Response Injection Seam
-Implement scripted responses in `StimUnit.capture_response(...)` (and `StimUnit.wait_and_continue(...)`):
-- Build an `Observation` dict with minimal, responder-useful fields:
-  - `unit_label`, `phase_label` (if any), `deadline_s`, `valid_keys`
-  - stimulus descriptor: `stim_id` and/or `stim_features` (if present in state)
-  - `response_window_open` and `response_window_s`
-  - neutral `condition_id` / factor-coded `task_factors` if provided (avoid response-coded leakage)
-- Call `responder.act(observation)` -> `{key, rt}` (or `(key, rt)`).
-- Drive the same state fields as the keyboard path uses.
+Injected responses are centralized through `psyflow.sim.ResponderAdapter` and used by:
+- `StimUnit.capture_response(...)`
+- `StimUnit.wait_and_continue(...)`
+
+Responder contract is in `psyflow.sim.contracts`:
+- `Observation`: trial/phase context (`trial_id`, `phase`, `valid_keys`, `deadline_s`, plus optional `condition_id/task_factors/stim_features/history`)
+- `Action`: `(key, rt_s)` plus optional `meta`
+- `Feedback`: optional post-trial hook payload
+- `ResponderProtocol`: `start_session`, `act`, `on_feedback`, `end_session`
+
+Built-ins:
+- `ScriptedResponder`
+- `NullResponder`
+
+Policy modes (`PSYFLOW_SIM_POLICY`): `strict | warn | coerce`
+- invalid/missing actions can raise, reject to timeout, or be coerced depending on policy.
 
 ### QA Timing Scaling (Optional)
 Provide opt-in scaling (default OFF) to shorten runs:
@@ -98,14 +106,14 @@ After the run, validate the produced trace (usually `outputs/qa/qa_trace.csv`):
 
 ## QA Runner CLI
 
-`psyflow-qa` runs:
+`psyflow qa` runs:
 1) Static QA (C1 + C2) always
 2) Optional runtime command (A') if provided
 3) Trace + event validation if runtime ran
 
 Typical usage from a task directory:
 ```bash
-psyflow-qa . --runtime-cmd "python main.py"
+psyflow qa . --runtime-cmd "python main.py"
 ```
 
 The runner sets env vars for the subprocess:
@@ -117,6 +125,61 @@ The runner sets env vars for the subprocess:
 - `PSYFLOW_QA_RESPONDER=scripted`
 - `PSYFLOW_QA_RESPONDER_KEY=space` (optional)
 - `PSYFLOW_QA_RESPONDER_RT=0.2` (optional)
+
+## Simulation Runner CLI
+
+Use `psyflow sim` for responder-plugin simulation runs (same style as `psyflow qa`):
+
+```bash
+psyflow sim . \
+  --runtime-cmd "python main.py" \
+  --seed 42 \
+  --participant-id sim001 \
+  --policy warn \
+  --responder scripted \
+  --responder-key space \
+  --responder-rt 0.25
+```
+
+External plugin example:
+
+```bash
+psyflow sim . \
+  --runtime-cmd "python main.py" \
+  --responder-class "examples.sim.demo_responder:DemoResponder" \
+  --responder-kwargs '{"base_rt_s":0.25,"jitter_s":0.05}'
+```
+
+Artifacts (default):
+- `outputs/sim/qa_trace.csv`
+- `outputs/sim/sim_events.jsonl`
+- `outputs/sim/sim_report.json`
+
+Simulation/plugin env vars (task runtime):
+- `PSYFLOW_MODE=sim`
+- `PSYFLOW_SIM_SEED=123`
+- `PSYFLOW_PARTICIPANT_ID=p001`
+- `PSYFLOW_SESSION_ID=sim-p001-seed123`
+- `PSYFLOW_RESPONDER_CLASS=examples.sim.demo_responder:DemoResponder`
+- `PSYFLOW_RESPONDER_KWARGS={"base_rt_s":0.25,"jitter_s":0.08}`
+- `PSYFLOW_SIM_POLICY=warn`
+- `PSYFLOW_SIM_LOG_PATH=outputs/sim/sim_events.jsonl`
+
+## Responder Plugin Example
+Minimal external plugin shape:
+
+```python
+class MyResponder:
+    def start_session(self, session, rng):
+        self.rng = rng
+
+    def act(self, obs):
+        key = obs.valid_keys[0] if obs.valid_keys else None
+        rt_s = self.rng.uniform(0.2, 0.5) if key else None
+        return {"key": key, "rt_s": rt_s, "meta": {"source": "my_responder"}}
+```
+
+Task code does not change when switching responders; only env/config changes.
 
 ## qa_report.json Triage Taxonomy
 

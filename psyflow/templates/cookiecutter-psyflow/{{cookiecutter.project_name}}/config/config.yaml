@@ -186,3 +186,23 @@ controller:
   target_accuracy: 0.66
   condition_specific: true
   enable_logging: true
+
+qa:
+  output_dir: outputs/qa
+  enable_scaling: false
+  timing_scale: 1.0
+  min_frames: 2
+  strict: false
+  max_wait_s: 10.0
+
+sim:
+  output_dir: outputs/sim
+  seed: 0
+  policy: warn
+  default_rt_s: 0.2
+  clamp_rt: false
+  responder:
+    kind: scripted
+    kwargs:
+      key: space
+      rt_s: 0.25

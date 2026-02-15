@@ -1,4 +1,4 @@
-# Minimal acceptance criteria for psyflow-qa.
+# Minimal acceptance criteria for `psyflow qa`.
 #
 # Keep this file small and mechanical. The QA runner uses it for schema checks
 # and runtime trace validation.

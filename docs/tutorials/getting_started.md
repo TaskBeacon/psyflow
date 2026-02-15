@@ -7,7 +7,7 @@ PsyFlow is a high-level wrapper for PsychoPy designed to streamline the developm
 Key features include:
 
 - **Declarative Syntax**: Define stimuli, timings, and task structure in easy-to-read YAML files.
-- **Structured Project Layout**: A command-line tool (`psyflow-init`) generates a standardized, organized folder structure for your projects.
+- **Structured Project Layout**: A command-line tool (`psyflow init`) generates a standardized, organized folder structure for your projects.
 - **Simplified API**: High-level classes like `StimUnit` and `BlockUnit` handle the complexities of stimulus presentation, response capturing, and data logging.
 - **Extensibility**: Easily integrate hardware triggers (EEG, fMRI) and eye-trackers for advanced use cases.
 
@@ -36,10 +36,10 @@ pip install https://github.com/TaskBeacon/psyflow.git
 
 ## Step 1: Create a New Project
 
-First, let's create a standardized project structure using the `psyflow-init` command-line tool. Open your terminal, navigate to where you want your project to live, and run:
+First, let's create a standardized project structure using the `psyflow init` command-line tool. Open your terminal, navigate to where you want your project to live, and run:
 
 ```bash
-psyflow-init my-simple-task
+psyflow init my-simple-task
 ```
 
 This command creates a new folder named `my-simple-task` with the following layout:

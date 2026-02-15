@@ -23,5 +23,4 @@ dependencies = [
 dynamic = ["entry-points"]
 
 [project.scripts]
-psyflow-init = "psyflow.cli:climain"
-psyflow-qa = "psyflow.qa_cli:main"
+psyflow = "psyflow.cli:main"

@@ -19,38 +19,36 @@ def _make_qa_trigger_runtime():
 
 def run():
     task_root = Path(__file__).resolve().parent
+    cfg = load_config()
     mode = (os.getenv("PSYFLOW_MODE", "human") or "human").strip().lower()
 
     if mode in ("qa", "sim"):
         from psyflow.qa.context import context_from_env, qa_context
 
-        ctx = context_from_env(task_dir=task_root)
+        ctx = context_from_env(task_dir=task_root, config=cfg)
         with qa_context(ctx):
-            _run_impl(mode=mode, qa_output_dir=ctx.output_dir)
+            _run_impl(mode=mode, qa_output_dir=ctx.output_dir, cfg=cfg)
     else:
-        _run_impl(mode=mode, qa_output_dir=None)
+        _run_impl(mode=mode, qa_output_dir=None, cfg=cfg)
 
 
-def _run_impl(*, mode: str, qa_output_dir: Path | None):
-    # 1. Load config
-    cfg = load_config()
-
+def _run_impl(*, mode: str, qa_output_dir: Path | None, cfg: dict):
     # 2. Collect subject info (skip GUI in QA mode)
-    if mode == "qa":
-        subject_data = {"subject_id": "qa"}
+    if mode in ("qa", "sim"):
+        subject_data = {"subject_id": mode}
     else:
         subform = SubInfo(cfg["subform_config"])
         subject_data = subform.collect()
 
     # 3. Load task settings
     settings = TaskSettings.from_dict(cfg["task_config"])
-    if mode == "qa" and qa_output_dir is not None:
+    if mode in ("qa", "sim") and qa_output_dir is not None:
         settings.save_path = str(qa_output_dir)
 
     settings.add_subinfo(subject_data)
 
     # In QA mode, force deterministic artifact locations.
-    if mode == "qa" and qa_output_dir is not None:
+    if mode in ("qa", "sim") and qa_output_dir is not None:
         qa_output_dir.mkdir(parents=True, exist_ok=True)
         settings.res_file = str(qa_output_dir / "qa_trace.csv")
         settings.log_file = str(qa_output_dir / "qa_psychopy.log")
@@ -58,7 +56,7 @@ def _run_impl(*, mode: str, qa_output_dir: Path | None):
 
     # 4. Setup triggers (mock in QA)
     settings.triggers = cfg["trigger_config"]
-    if mode == "qa":
+    if mode in ("qa", "sim"):
         trigger_runtime = _make_qa_trigger_runtime()
     else:
         trigger_runtime = initialize_triggers(cfg)
@@ -68,7 +66,7 @@ def _run_impl(*, mode: str, qa_output_dir: Path | None):
 
     # 6. Setup stimulus bank (skip TTS/voice conversion in QA)
     stim_bank = StimBank(win, cfg["stim_config"])
-    if mode != "qa":
+    if mode not in ("qa", "sim"):
         stim_bank = stim_bank.convert_to_voice("instruction_text")
     stim_bank = stim_bank.preload_all()
 
@@ -83,14 +81,14 @@ def _run_impl(*, mode: str, qa_output_dir: Path | None):
     instr = StimUnit("instruction_text", win, kb, runtime=trigger_runtime).add_stim(
         stim_bank.get("instruction_text")
     )
-    if mode != "qa":
+    if mode not in ("qa", "sim"):
         instr.add_stim(stim_bank.get("instruction_text_voice"))
     instr.wait_and_continue()
 
     all_data = []
     for block_i in range(settings.total_blocks):
         # 8. setup block
-        if mode != "qa":
+        if mode not in ("qa", "sim"):
             count_down(win, 3, color="black")
 
         block = (
