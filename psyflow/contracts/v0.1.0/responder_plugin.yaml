@@ -1,0 +1,22 @@
+name: responder_plugin
+file: config/config_sim.yaml
+builtin_types:
+  - scripted
+  - null
+local_module_prefixes:
+  - responders.
+required_methods:
+  - act
+optional_methods:
+  - start_session
+  - on_feedback
+  - end_session
+recommended_import_tokens_any:
+  - from psyflow.sim.contracts import
+recommended_paths:
+  - responders/
+  - responders/__init__.py
+notes:
+  - custom responder import paths should point to task-local modules under responders/.
+  - class must implement act(obs) and return an action payload.
+  - lifecycle hooks are optional but recommended for adaptive samplers.

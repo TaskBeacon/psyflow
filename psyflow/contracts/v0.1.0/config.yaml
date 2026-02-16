@@ -1,0 +1,135 @@
+﻿name: config_base
+file: config/config.yaml
+required_sections:
+  - window
+  - task
+  - timing
+  - stimuli
+  - triggers
+mandatory_nested_keys:
+  - task.task_name
+  - task.key_list
+  - triggers.map
+  - triggers.driver.type
+optional_nested_keys:
+  - controller
+recommended_nested_keys:
+  - task.trial_per_block
+mandatory_value_specs:
+  window.size:
+    type: list_int
+    exact_len: 2
+  window.units:
+    type: str
+    min_length: 1
+  window.screen:
+    type: int
+    min: 0
+  window.bg_color:
+    type: str
+    min_length: 1
+  window.fullscreen:
+    type: bool
+  task.task_name:
+    type: str
+    min_length: 1
+  task.total_blocks:
+    type: int
+    min: 1
+  task.total_trials:
+    type: int
+    min: 1
+  task.conditions:
+    type: list_str
+    min_items: 1
+  task.key_list:
+    type: list_str
+    min_items: 1
+  task.seed_mode:
+    type: str
+    allowed:
+      - same_across_sub
+      - same_within_sub
+  timing:
+    type: mapping
+  stimuli:
+    type: mapping
+    min_items: 1
+  triggers.map:
+    type: mapping
+    min_items: 1
+  triggers.driver.type:
+    type: str
+    allowed:
+      - serial_url
+      - serial_port
+      - mock
+      - callable
+optional_value_specs:
+  controller:
+    type: mapping
+  controller.initial_duration:
+    type: number
+    min: 0.01
+  controller.min_duration:
+    type: number
+    min: 0.01
+  controller.max_duration:
+    type: number
+    min: 0.01
+  controller.step:
+    type: number
+    min: 0.001
+  controller.target_accuracy:
+    type: number
+    min: 0.0
+    max: 1.0
+recommended_value_specs:
+  task.delta:
+    type: number
+  task.trial_per_block:
+    type: int
+    min: 1
+stim_supported_types:
+  - text
+  - textbox
+  - circle
+  - rect
+  - polygon
+  - image
+  - shape
+  - movie
+  - sound
+stim_asset_types:
+  - image
+  - movie
+  - sound
+stim_asset_path_keys_any:
+  - file
+  - filename
+  - image
+  - path
+stim_asset_path_keys_by_type:
+  image:
+    - image
+    - file
+    - path
+  movie:
+    - filename
+    - file
+    - path
+  sound:
+    - file
+    - filename
+    - path
+stim_asset_path_prefixes:
+  - assets/
+  - ./assets/
+  - assets\\
+  - .\\assets\\
+notes:
+  - controller is optional.
+  - if controller is configured, keep implementation under src/utils.py.
+  - stimuli entries must include a valid type.
+  - asset-backed stimuli (image/movie/sound) should load from assets/ paths.
+  - if an asset-backed stimulus path is set dynamically in runtime code, keep a clear comment in run_trial.py.

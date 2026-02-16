@@ -12,9 +12,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
+      - name: Install minimal validator dependency
+        run: python -m pip install pyyaml
       - name: Compile Python sources
         run: |
           python -m compileall -q psyflow tests
           python -m py_compile setup.py
+      - name: Run contracts validator smoke
+        run: python -m psyflow.validate 'psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}'
       - name: Run unit tests
         run: python -m unittest discover -s tests -p "test_*.py"

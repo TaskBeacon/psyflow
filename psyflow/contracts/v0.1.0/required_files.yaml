@@ -1,0 +1,16 @@
+﻿name: required_files
+required_paths:
+  - assets/
+  - config/
+  - src/
+  - main.py
+  - taskbeacon.yaml
+  - README.md
+  - CHANGELOG.md
+recommended_paths:
+  - responders/
+  - outputs/
+  - .gitignore
+notes:
+  - assets is intentionally unsplit (single folder for all assets).
+  - put task-specific responders/samplers in responders/.

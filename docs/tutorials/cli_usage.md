@@ -23,6 +23,7 @@ For convenience, psyflow also provides task launch shortcuts:
 | `psyflow-run <task>` | Run task in human mode via shortcut | `psyflow-run T000006-mid` |
 | `psyflow-qa <task>` | Run task in QA mode via shortcut | `psyflow-qa T000006-mid --config config/config_qa.yaml` |
 | `psyflow-sim <task>` | Run task in simulation mode via shortcut | `psyflow-sim T000006-mid --config config/config_sim.yaml` |
+| `psyflow-validate <task>` | Validate task structure/contracts | `psyflow-validate T000006-mid` |
 
 ## 1. Creating a New Project
 
@@ -68,4 +69,10 @@ Each shortcut calls the task's `main.py` with explicit mode, so task-local argum
 
 ```bash
 psyflow-qa T000006-mid --config config/config_qa.yaml --set-maturity smoke_tested
+```
+
+Validate contract compliance (file structure + metadata + config + runtime wiring):
+
+```bash
+psyflow-validate T000006-mid
 ```

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "psyflow"
-version = "0.1.8"
+version = "0.1.9"
 description = "A utility package for building modular PsychoPy experiments."
 requires-python = ">=3.10"
 authors = [
@@ -27,3 +27,4 @@ psyflow = "psyflow.cli:main"
 psyflow-run = "psyflow.task_launcher:run_main"
 psyflow-qa = "psyflow.task_launcher:qa_main"
 psyflow-sim = "psyflow.task_launcher:sim_main"
+psyflow-validate = "psyflow.validate:main"

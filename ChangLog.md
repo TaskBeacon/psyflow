@@ -1,5 +1,29 @@
 # psyflow change log
 
+## 0.1.9 (2026-02-16)
+
+### Summary
+- Added versioned task contracts at `psyflow/contracts/v0.1.0` for standardized psyflow/TAPS task development and audit.
+- Added new validator CLI: `psyflow-validate <task_path>` with per-contract PASS/WARN/FAIL feedback and actionable suggestions.
+- Added contract adoption tracking in task metadata via `taskbeacon.yaml -> contracts.psyflow_taps`.
+- Updated cookiecutter template to include `taskbeacon.yaml`, `CHANGELOG.md`, and `assets/README.md` so new tasks match required structure by default.
+- Expanded contract coverage with explicit checks for:
+  - `.gitignore` task artifact rules (`outputs/*` / `data/*` migration-safe),
+  - stimulus schema and asset-backed path conventions (`image`/`movie`/`sound` from `assets/`),
+  - responder/sampler plugin standards (`sim.responder.type`, local `responders/` class checks).
+- Added stricter config validation semantics across contracts (`mandatory` / `optional` / `recommended` keys and value specs).
+- Updated CI to install minimal validator dependency (`pyyaml`) and run contract validation smoke checks against the task template.
+- Added validator regression tests for asset-backed stimuli and responder contract failures.
+
+### New modules/files
+- `psyflow/validate.py`
+- `psyflow/contracts/v0.1.0/*`
+- `tests/test_validate.py`
+
+### Packaging/CLI
+- New console script: `psyflow-validate`
+- Included `contracts/**/*` in package data.
+
 ## 0.1.8 (2026-02-16)
 
 ### Summary

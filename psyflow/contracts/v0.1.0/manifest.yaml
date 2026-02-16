@@ -1,0 +1,20 @@
+﻿contract_version: v0.1.0
+name: psyflow task contracts
+purpose: Standardize psyflow/TAPS task structure, runtime, and audit artifacts.
+contracts:
+  - required_files
+  - gitignore
+  - taskbeacon
+  - config_base
+  - config_qa
+  - config_sim
+  - responder_plugin
+  - runtime_main
+  - responder_context
+  - readme_meta
+  - changelog
+  - artifacts
+docs:
+  - README.md
+  - main_pattern.md
+  - run_trial_pattern.md

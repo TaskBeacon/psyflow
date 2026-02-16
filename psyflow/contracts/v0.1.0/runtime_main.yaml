@@ -1,0 +1,20 @@
+﻿name: runtime_main
+file: main.py
+required_mode_tokens:
+  - human
+  - qa
+  - sim
+required_functions:
+  - run
+  - main
+required_strings_all:
+  - parse_task_run_options
+  - DEFAULT_CONFIG_BY_MODE
+required_main_guard: true
+recommended_strings_any:
+  - context_from_config
+  - runtime_context
+  - initialize_triggers
+notes:
+  - main.py should provide one auditable run flow and switch behavior by mode.
+  - "main() should parse args and call run(options)."

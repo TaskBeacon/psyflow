@@ -179,7 +179,11 @@ def _run_impl(*, mode: str, output_dir: Path | None, cfg: dict, participant_id: 
     core.quit()
 
 
+def main() -> None:
+    task_root = Path(__file__).resolve().parent
+    options = _parse_args(task_root)
+    run(options)
+
+
 if __name__ == "__main__":
-    _task_root = Path(__file__).resolve().parent
-    _opts = _parse_args(_task_root)
-    run(_opts)
+    main()

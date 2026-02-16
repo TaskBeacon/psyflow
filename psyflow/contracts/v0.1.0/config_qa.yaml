@@ -1,0 +1,49 @@
+﻿name: config_qa
+file: config/config_qa.yaml
+mandatory_nested_keys:
+  - qa.output_dir
+  - qa.acceptance_criteria.required_columns
+mandatory_value_specs:
+  qa.output_dir:
+    type: str
+    min_length: 1
+  qa.acceptance_criteria.required_columns:
+    type: list_str
+    min_items: 1
+optional_nested_keys:
+  - qa.enable_scaling
+  - qa.timing_scale
+  - qa.min_frames
+  - qa.strict
+  - qa.max_wait_s
+  - qa.acceptance_criteria.expected_trial_count
+  - qa.acceptance_criteria.allowed_keys
+  - qa.acceptance_criteria.triggers_required
+  - qa.acceptance_criteria.trigger_codes_expected
+optional_value_specs:
+  qa.enable_scaling:
+    type: bool
+  qa.timing_scale:
+    type: number
+    min: 0.05
+  qa.min_frames:
+    type: int
+    min: 1
+  qa.strict:
+    type: bool
+  qa.max_wait_s:
+    type: number
+    min: 0.1
+  qa.acceptance_criteria.expected_trial_count:
+    type: int
+    min: 1
+  qa.acceptance_criteria.allowed_keys:
+    type: list_str
+    min_items: 1
+  qa.acceptance_criteria.triggers_required:
+    type: bool
+  qa.acceptance_criteria.trigger_codes_expected:
+    type: list_int
+    min_items: 1
+recommended_nested_keys: []
+recommended_value_specs: {}

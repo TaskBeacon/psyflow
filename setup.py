@@ -34,11 +34,15 @@ setup(
             "psyflow-run = psyflow.task_launcher:run_main",
             "psyflow-qa = psyflow.task_launcher:qa_main",
             "psyflow-sim = psyflow.task_launcher:sim_main",
+            "psyflow-validate = psyflow.validate:main",
         ],
     },
     include_package_data=True,
     package_data={
-        "psyflow": ["templates/cookiecutter-psyflow/**/*"],
+        "psyflow": [
+            "templates/cookiecutter-psyflow/**/*",
+            "contracts/**/*",
+        ],
     },
     zip_safe=False
 )

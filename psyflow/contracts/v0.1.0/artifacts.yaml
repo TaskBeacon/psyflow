@@ -1,0 +1,12 @@
+﻿name: artifacts
+qa_required_filenames:
+  - qa_report.json
+  - static_report.json
+  - contract_report.json
+  - qa_trace.csv
+  - qa_events.jsonl
+sim_recommended_patterns:
+  - '*_sim_events.jsonl'
+  - '*_qa_events.jsonl'
+notes:
+  - Artifact checks are warning-level unless a QA output directory exists and is expected.

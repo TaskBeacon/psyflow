@@ -1,0 +1,11 @@
+﻿name: readme_meta
+file: README.md
+required_table_fields:
+  - Name
+  - Version
+  - Date Updated
+  - PsyFlow Version
+recommended_table_fields:
+  - PsychoPy Version
+  - Modality
+  - Language

@@ -1,0 +1,54 @@
+name: gitignore
+file: .gitignore
+required_any_of:
+  - name: task_output_data
+    options:
+      - outputs/
+      - /outputs/
+      - outputs/*
+      - /outputs/*
+      - outputs/human/
+      - /outputs/human/
+      - data/
+      - /data/
+      - data/*
+      - /data/*
+recommended_any_of:
+  - name: pycache
+    options:
+      - __pycache__/
+      - /__pycache__/
+      - src/__pycache__/
+      - /src/__pycache__/
+      - src/__pycache__/*
+      - /src/__pycache__/*
+  - name: python_bytecode
+    options:
+      - "*.py[cod]"
+      - "*.pyc"
+  - name: pytest_cache
+    options:
+      - .pytest_cache/
+      - /.pytest_cache/
+  - name: mypy_cache
+    options:
+      - .mypy_cache/
+      - /.mypy_cache/
+  - name: venv
+    options:
+      - .venv/
+      - /.venv/
+      - venv/
+      - /venv/
+preferred_any_of:
+  - name: outputs_preferred
+    options:
+      - outputs/
+      - /outputs/
+      - outputs/*
+      - /outputs/*
+      - outputs/human/
+      - /outputs/human/
+notes:
+  - ignore at least one task data/output location (outputs/* preferred; data/* allowed during migration).
+  - keep .gitignore task-focused and avoid ignoring source/config/contracts files.

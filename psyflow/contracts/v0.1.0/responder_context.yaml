@@ -1,0 +1,30 @@
+﻿name: responder_context
+file: src/run_trial.py
+required_strings_all:
+  - set_trial_context
+  - capture_response
+required_function: run_trial
+required_signature_args:
+  - win
+  - kb
+  - settings
+  - condition
+required_context_fields_any:
+  - trial_id=
+  - phase=
+  - deadline_s=
+  - valid_keys=
+required_context_phase_values:
+  - anticipation
+  - target
+required_stage_tokens_in_order:
+  - cue
+  - anticipation
+  - target
+  - feedback
+recommended_context_fields_any:
+  - condition_id=
+  - block_id=
+  - task_factors=
+notes:
+  - run_trial should execute full trial stages in order and return serializable trial_data.

@@ -1,0 +1,79 @@
+﻿name: config_sim
+file: config/config_sim.yaml
+mandatory_nested_keys:
+  - sim.output_dir
+  - sim.seed
+  - sim.policy
+  - sim.responder.type
+mandatory_value_specs:
+  sim.output_dir:
+    type: str
+    min_length: 1
+  sim.seed:
+    type: int
+  sim.policy:
+    type: str
+    allowed:
+      - strict
+      - warn
+      - coerce
+  sim.responder.type:
+    type: str
+    min_length: 1
+optional_nested_keys:
+  - sim.default_rt_s
+  - sim.clamp_rt
+  - sim.participant_id
+  - sim.session_id
+  - sim.log_path
+  - sim.responder.kwargs
+optional_value_specs:
+  sim.default_rt_s:
+    type: number
+    min: 0.01
+  sim.clamp_rt:
+    type: bool
+  sim.participant_id:
+    type: str
+    min_length: 1
+  sim.session_id:
+    type: str
+    min_length: 1
+  sim.log_path:
+    type: str
+    min_length: 1
+  sim.responder.kwargs:
+    type: mapping
+recommended_nested_keys:
+  - sim.participant_id
+  - sim.session_id
+  - sim.log_path
+  - sim.responder.kwargs
+recommended_value_specs:
+  sim.participant_id:
+    type: str
+    min_length: 1
+  sim.session_id:
+    type: str
+    min_length: 1
+  sim.log_path:
+    type: str
+    min_length: 1
+  sim.responder.kwargs:
+    type: mapping
+    min_items: 1
+responder_builtin_types:
+  - scripted
+  - null
+responder_local_module_prefixes:
+  - responders.
+responder_required_methods:
+  - act
+responder_optional_methods:
+  - start_session
+  - on_feedback
+  - end_session
+notes:
+  - built-in responder types: scripted, null
+  - custom responders should use import path in sim.responder.type.
+  - for task-specific samplers, use responders.<module>:<ClassName>.
