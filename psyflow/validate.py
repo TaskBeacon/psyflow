@@ -166,6 +166,27 @@ def _validate_value_spec(path: str, value: Any, spec: dict[str, Any]) -> list[st
         except Exception:
             pass
 
+    disallowed = spec.get("disallowed")
+    if disallowed is not None:
+        try:
+            blocked = list(disallowed)
+            if isinstance(value, str):
+                blocked_lower = [str(x).strip().lower() for x in blocked]
+                if value.strip().lower() in blocked_lower:
+                    issues.append(f"{path} must not be one of {blocked}, got {value!r}")
+            elif value in blocked:
+                issues.append(f"{path} must not be one of {blocked}, got {value!r}")
+        except Exception:
+            pass
+
+    pattern = spec.get("pattern")
+    if pattern is not None and isinstance(value, str):
+        try:
+            if re.search(str(pattern), value) is None:
+                issues.append(f"{path} must match pattern {pattern!r}, got {value!r}")
+        except Exception:
+            pass
+
     return issues
 
 
@@ -626,6 +647,10 @@ def _check_config_file(task_dir: Path, cfg: dict[str, Any]) -> ContractResult:
         if _nested_get(data, str(dotted)) is None:
             warns.append(f"Missing recommended nested key: {dotted}")
 
+    for dotted in list(cfg.get("forbidden_nested_keys") or []):
+        if _nested_has(data, str(dotted)):
+            fails.append(f"Forbidden nested key is present: {dotted}")
+
     req_fails, req_warns = _check_value_specs(
         data,
         cfg.get("mandatory_value_specs")
@@ -654,6 +679,85 @@ def _check_config_file(task_dir: Path, cfg: dict[str, Any]) -> ContractResult:
     warns.extend(opt_warns)
     fails.extend(rec_fails)
     warns.extend(rec_warns)
+
+    profile_rules = cfg.get("profile_rules") if isinstance(cfg, dict) else None
+    if isinstance(profile_rules, dict):
+        base_file = str(profile_rules.get("base_file") or "").strip()
+        base_data = None
+        if base_file:
+            base_path = task_dir / base_file
+            if not base_path.exists():
+                fails.append(f"profile_rules base_file not found: {base_file}")
+            else:
+                try:
+                    base_data = _load_yaml(base_path) or {}
+                except Exception as exc:
+                    fails.append(f"profile_rules could not parse base_file {base_file}: {exc}")
+
+        trials_path = str(profile_rules.get("total_trials_path") or "task.total_trials")
+        blocks_path = str(profile_rules.get("total_blocks_path") or "task.total_blocks")
+        tpb_path = str(profile_rules.get("trial_per_block_path") or "task.trial_per_block")
+        conds_path = str(profile_rules.get("condition_list_path") or "task.conditions")
+
+        def _as_int(v: Any) -> int | None:
+            try:
+                if isinstance(v, bool):
+                    return None
+                return int(v)
+            except Exception:
+                return None
+
+        cur_trials = _as_int(_nested_get(data, trials_path))
+        cur_blocks = _as_int(_nested_get(data, blocks_path))
+        cur_tpb = _as_int(_nested_get(data, tpb_path))
+        cur_conds = _nested_get(data, conds_path)
+        cond_count = len(cur_conds) if isinstance(cur_conds, list) else None
+
+        if bool(profile_rules.get("require_shorter_than_base", False)) and base_data is not None:
+            base_trials = _as_int(_nested_get(base_data, trials_path))
+            if cur_trials is None:
+                fails.append(f"profile_rules missing numeric value: {trials_path}")
+            elif base_trials is None:
+                fails.append(f"profile_rules missing numeric value in base: {trials_path}")
+            elif cur_trials >= base_trials:
+                fails.append(
+                    f"smoke profile must be shorter than base: {trials_path}={cur_trials} "
+                    f"(base={base_trials})"
+                )
+
+        if bool(profile_rules.get("require_trials_cover_conditions", False)):
+            if cur_trials is None:
+                fails.append(f"profile_rules missing numeric value: {trials_path}")
+            elif cond_count is None:
+                fails.append(f"profile_rules missing condition list: {conds_path}")
+            elif cur_trials < cond_count:
+                fails.append(
+                    f"smoke profile too short: {trials_path}={cur_trials} is less than "
+                    f"number of conditions ({cond_count})"
+                )
+
+        if bool(profile_rules.get("require_trial_per_block_consistency", False)):
+            if cur_trials is not None and cur_blocks is not None and cur_tpb is not None:
+                expected = cur_blocks * cur_tpb
+                if expected != cur_trials:
+                    warns.append(
+                        f"{trials_path} ({cur_trials}) != {blocks_path}*{tpb_path} "
+                        f"({cur_blocks}*{cur_tpb}={expected})"
+                    )
+
+        max_trials = _as_int(profile_rules.get("recommended_max_total_trials"))
+        if max_trials is not None and cur_trials is not None and cur_trials > max_trials:
+            warns.append(
+                f"smoke profile is longer than recommended: {trials_path}={cur_trials} "
+                f"(recommended <= {max_trials})"
+            )
+
+        max_blocks = _as_int(profile_rules.get("recommended_max_total_blocks"))
+        if max_blocks is not None and cur_blocks is not None and cur_blocks > max_blocks:
+            warns.append(
+                f"smoke profile uses many blocks: {blocks_path}={cur_blocks} "
+                f"(recommended <= {max_blocks})"
+            )
 
     if name == "config_base":
         has_controller = _nested_has(data, "controller")
@@ -872,7 +976,7 @@ def _check_artifacts(task_dir: Path, cfg: dict[str, Any]) -> ContractResult:
 
 def _check_responder_plugin(task_dir: Path, cfg: dict[str, Any]) -> ContractResult:
     name = str(cfg.get("name") or "responder_plugin")
-    rel = str(cfg.get("file") or "config/config_sim.yaml")
+    rel = str(cfg.get("file") or "config/config_sampler_sim.yaml")
     cpath = task_dir / rel
     fails: list[str] = []
     warns: list[str] = []
@@ -910,7 +1014,8 @@ def _contract_files_for(name: str) -> str:
         "taskbeacon": "taskbeacon.yaml",
         "config_base": "config.yaml",
         "config_qa": "config_qa.yaml",
-        "config_sim": "config_sim.yaml",
+        "config_scripted_sim": "config_scripted_sim.yaml",
+        "config_sampler_sim": "config_sampler_sim.yaml",
         "responder_plugin": "responder_plugin.yaml",
         "runtime_main": "runtime_main.yaml",
         "responder_context": "responder_context.yaml",
@@ -940,7 +1045,9 @@ def _run_checks(task_dir: Path, contracts_root: Path) -> list[ContractResult]:
             results.append(_check_config_file(task_dir, contract_cfg))
         elif cid == "config_qa":
             results.append(_check_config_file(task_dir, contract_cfg))
-        elif cid == "config_sim":
+        elif cid == "config_scripted_sim":
+            results.append(_check_config_file(task_dir, contract_cfg))
+        elif cid == "config_sampler_sim":
             results.append(_check_config_file(task_dir, contract_cfg))
         elif cid == "responder_plugin":
             results.append(_check_responder_plugin(task_dir, contract_cfg))

@@ -1,0 +1,91 @@
+name: config_sampler_sim
+file: config/config_sampler_sim.yaml
+required_sections:
+  - window
+  - task
+  - timing
+  - stimuli
+  - triggers
+  - sim
+mandatory_nested_keys:
+  - sim.output_dir
+  - sim.seed
+  - sim.policy
+  - sim.responder.type
+forbidden_nested_keys:
+  - qa
+mandatory_value_specs:
+  sim.output_dir:
+    type: str
+    min_length: 1
+  sim.seed:
+    type: int
+  sim.policy:
+    type: str
+    allowed:
+      - strict
+      - warn
+      - coerce
+  sim.responder.type:
+    type: str
+    min_length: 1
+    pattern: ".+[:.].+"
+    disallowed:
+      - scripted
+      - null
+optional_nested_keys:
+  - sim.default_rt_s
+  - sim.clamp_rt
+  - sim.participant_id
+  - sim.session_id
+  - sim.log_path
+  - sim.responder.kwargs
+optional_value_specs:
+  sim.default_rt_s:
+    type: number
+    min: 0.01
+  sim.clamp_rt:
+    type: bool
+  sim.participant_id:
+    type: str
+    min_length: 1
+  sim.session_id:
+    type: str
+    min_length: 1
+  sim.log_path:
+    type: str
+    min_length: 1
+  sim.responder.kwargs:
+    type: mapping
+recommended_nested_keys:
+  - sim.participant_id
+  - sim.session_id
+  - sim.log_path
+  - sim.responder.kwargs
+recommended_value_specs:
+  sim.participant_id:
+    type: str
+    min_length: 1
+  sim.session_id:
+    type: str
+    min_length: 1
+  sim.log_path:
+    type: str
+    min_length: 1
+  sim.responder.kwargs:
+    type: mapping
+    min_items: 1
+notes:
+  - sampler sim config should point to a custom responder path under responders/.
+  - do not mix qa settings into this file.
+profile_rules:
+  base_file: config/config.yaml
+  total_trials_path: task.total_trials
+  total_blocks_path: task.total_blocks
+  trial_per_block_path: task.trial_per_block
+  condition_list_path: task.conditions
+  require_shorter_than_base: true
+  require_trials_cover_conditions: true
+  require_trial_per_block_consistency: true
+  recommended_max_total_trials: 48
+  recommended_max_total_blocks: 2

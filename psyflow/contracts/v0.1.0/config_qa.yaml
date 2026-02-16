@@ -1,8 +1,17 @@
-﻿name: config_qa
+name: config_qa
 file: config/config_qa.yaml
+required_sections:
+  - window
+  - task
+  - timing
+  - stimuli
+  - triggers
+  - qa
 mandatory_nested_keys:
   - qa.output_dir
   - qa.acceptance_criteria.required_columns
+forbidden_nested_keys:
+  - sim
 mandatory_value_specs:
   qa.output_dir:
     type: str
@@ -47,3 +56,14 @@ optional_value_specs:
     min_items: 1
 recommended_nested_keys: []
 recommended_value_specs: {}
+profile_rules:
+  base_file: config/config.yaml
+  total_trials_path: task.total_trials
+  total_blocks_path: task.total_blocks
+  trial_per_block_path: task.trial_per_block
+  condition_list_path: task.conditions
+  require_shorter_than_base: true
+  require_trials_cover_conditions: true
+  require_trial_per_block_consistency: true
+  recommended_max_total_trials: 48
+  recommended_max_total_blocks: 2

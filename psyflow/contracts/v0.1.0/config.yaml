@@ -11,6 +11,9 @@ mandatory_nested_keys:
   - task.key_list
   - triggers.map
   - triggers.driver.type
+forbidden_nested_keys:
+  - qa
+  - sim
 optional_nested_keys:
   - controller
 recommended_nested_keys:

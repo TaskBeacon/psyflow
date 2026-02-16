@@ -1,10 +1,19 @@
-﻿name: config_sim
-file: config/config_sim.yaml
+name: config_scripted_sim
+file: config/config_scripted_sim.yaml
+required_sections:
+  - window
+  - task
+  - timing
+  - stimuli
+  - triggers
+  - sim
 mandatory_nested_keys:
   - sim.output_dir
   - sim.seed
   - sim.policy
   - sim.responder.type
+forbidden_nested_keys:
+  - qa
 mandatory_value_specs:
   sim.output_dir:
     type: str
@@ -19,7 +28,8 @@ mandatory_value_specs:
       - coerce
   sim.responder.type:
     type: str
-    min_length: 1
+    allowed:
+      - scripted
 optional_nested_keys:
   - sim.default_rt_s
   - sim.clamp_rt
@@ -48,7 +58,6 @@ recommended_nested_keys:
   - sim.participant_id
   - sim.session_id
   - sim.log_path
-  - sim.responder.kwargs
 recommended_value_specs:
   sim.participant_id:
     type: str
@@ -59,21 +68,16 @@ recommended_value_specs:
   sim.log_path:
     type: str
     min_length: 1
-  sim.responder.kwargs:
-    type: mapping
-    min_items: 1
-responder_builtin_types:
-  - scripted
-  - null
-responder_local_module_prefixes:
-  - responders.
-responder_required_methods:
-  - act
-responder_optional_methods:
-  - start_session
-  - on_feedback
-  - end_session
 notes:
-  - built-in responder types: scripted, null
-  - custom responders should use import path in sim.responder.type.
-  - for task-specific samplers, use responders.<module>:<ClassName>.
+  - scripted sim config should only define sim runtime controls and scripted responder params.
+profile_rules:
+  base_file: config/config.yaml
+  total_trials_path: task.total_trials
+  total_blocks_path: task.total_blocks
+  trial_per_block_path: task.trial_per_block
+  condition_list_path: task.conditions
+  require_shorter_than_base: true
+  require_trials_cover_conditions: true
+  require_trial_per_block_consistency: true
+  recommended_max_total_trials: 48
+  recommended_max_total_blocks: 2

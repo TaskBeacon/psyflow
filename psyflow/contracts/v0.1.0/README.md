@@ -9,9 +9,10 @@ These contracts define practical standards for building auditable psyflow/TAPS t
 - Config structure and explicit value/type constraints
   - mandatory/optional/recommended keys and value specs
   - stimulus type standards and asset-backed path conventions
+  - smoke-profile rules for `config_qa.yaml` and sim configs (shorter than base but condition-covering)
 - Runtime entrypoint pattern (`main.py`)
 - Trial runtime pattern (`src/run_trial.py`)
-- Responder/sampler plugin standards (`config_sim.yaml` + `responders/`)
+- Responder/sampler plugin standards (`config_scripted_sim.yaml`, `config_sampler_sim.yaml`, `responders/`)
 - README metadata rows
 - Changelog format
 - QA/sim artifact presence conventions

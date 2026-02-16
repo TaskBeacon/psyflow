@@ -1,5 +1,5 @@
 name: responder_plugin
-file: config/config_sim.yaml
+file: config/config_sampler_sim.yaml
 builtin_types:
   - scripted
   - null

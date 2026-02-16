@@ -1,7 +1,8 @@
 # ============================================================================
-# Base config (human run)
-# - Used by: python main.py
-# - Scope: human experiment only (no qa/sim section in this file)
+# Scripted simulation config
+# - Used by: python main.py sim --config config/config_scripted_sim.yaml
+# - Scope: scripted simulation only (no qa section in this file)
+# - Profile: short smoke run for responder plumbing checks
 # ============================================================================
 
 # === Subject Form ===========================================================
@@ -35,10 +36,10 @@ window:
 # === Task ==================================================================
 task:
   task_name: mid_demo
-  save_path: ./outputs/human
-  total_blocks: 3
-  total_trials: 90
-  trial_per_block: 30
+  save_path: ./outputs/sim
+  total_blocks: 1
+  total_trials: 12
+  trial_per_block: 12
   conditions: [win, lose, neutral]
   key_list: [space]
   seed_mode: same_across_sub
@@ -196,3 +197,20 @@ controller:
   target_accuracy: 0.66
   condition_specific: true
   enable_logging: true
+
+
+# === Simulation Runtime (scripted responder) ================================
+sim:
+  output_dir: outputs/sim
+  seed: 0
+  participant_id: sim001
+  session_id: sub-sim001_task-mid_demo_seed0
+  log_path: outputs/sim/sub-sim001_task-mid_demo_seed0_sim_events.jsonl
+  policy: warn
+  default_rt_s: 0.2
+  clamp_rt: false
+  responder:
+    type: scripted
+    kwargs:
+      key: space
+      rt_s: 0.25

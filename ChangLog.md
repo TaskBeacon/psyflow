@@ -1,5 +1,49 @@
 # psyflow change log
 
+## 0.1.10 (2026-02-16)
+
+### Summary
+- Split simulation config standards into two explicit profiles:
+  - `config/config_scripted_sim.yaml` for built-in scripted responder runs
+  - `config/config_sampler_sim.yaml` for task-specific sampler responders
+- Updated validator contract manifest and checks to validate both sim profiles independently.
+- Strengthened config contract rules:
+  - base `config.yaml` now forbids embedded `qa` / `sim` sections
+  - `config_qa.yaml` now requires full base task sections and forbids `sim`
+  - added smoke-profile checks (shorter-than-base, condition coverage, basic trial/block consistency)
+- Extended validator value-spec engine with:
+  - `disallowed` list support
+  - string `pattern` matching
+  - generic `forbidden_nested_keys` enforcement
+- Updated responder plugin contract to target sampler config (`config_sampler_sim.yaml`) and explicit custom responder path checks.
+- Updated template required files contract to require:
+  - `config/config.yaml`
+  - `config/config_qa.yaml`
+  - `config/config_scripted_sim.yaml`
+  - `config/config_sampler_sim.yaml`
+
+### Template updates
+- Reworked cookiecutter config files for readability and auditability:
+  - section headers/comments, cleaner spacing, explicit mode scope per file
+  - base config now human-only
+  - qa config now qa-only and short smoke profile
+  - removed legacy monolithic `config/config_sim.yaml`
+  - added new `config/config_scripted_sim.yaml` and `config/config_sampler_sim.yaml`
+- Added `responders/` folder in template with starter sampler responder scaffold:
+  - `responders/task_sampler.py`
+  - `responders/__init__.py`
+  - `responders/README.md`
+- Updated template `main.py` default sim config mapping to `config/config_scripted_sim.yaml`.
+
+### Runtime/CLI
+- Updated task launcher `sim` shortcut default config to `config/config_scripted_sim.yaml`.
+
+### Tests
+- Expanded validator tests to cover:
+  - split sim config files
+  - responder folder/class checks
+  - stricter smoke-profile expectations for qa/sim config profiles.
+
 ## 0.1.9 (2026-02-16)
 
 ### Summary

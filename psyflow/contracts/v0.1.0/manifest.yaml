@@ -7,7 +7,8 @@ contracts:
   - taskbeacon
   - config_base
   - config_qa
-  - config_sim
+  - config_scripted_sim
+  - config_sampler_sim
   - responder_plugin
   - runtime_main
   - responder_context

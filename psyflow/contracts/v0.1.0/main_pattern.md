@@ -18,7 +18,7 @@ MODES = ("human", "qa", "sim")
 DEFAULT_CONFIG_BY_MODE = {
     "human": "config/config.yaml",
     "qa": "config/config_qa.yaml",
-    "sim": "config/config_sim.yaml",
+    "sim": "config/config_scripted_sim.yaml",
 }
 
 

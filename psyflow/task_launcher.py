@@ -429,4 +429,4 @@ def qa_main() -> None:
 
 
 def sim_main() -> None:
-    raise SystemExit(run_task_shortcut("sim", defaults=["config/config_sim.yaml"]))
+    raise SystemExit(run_task_shortcut("sim", defaults=["config/config_scripted_sim.yaml"]))

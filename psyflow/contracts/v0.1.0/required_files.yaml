@@ -2,6 +2,10 @@
 required_paths:
   - assets/
   - config/
+  - config/config.yaml
+  - config/config_qa.yaml
+  - config/config_scripted_sim.yaml
+  - config/config_sampler_sim.yaml
   - src/
   - main.py
   - taskbeacon.yaml
