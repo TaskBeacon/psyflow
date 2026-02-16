@@ -3,6 +3,13 @@ import tempfile
 import unittest
 from pathlib import Path
 
+try:
+    import yaml as _yaml  # noqa: F401
+except ModuleNotFoundError:  # pragma: no cover
+    _HAS_YAML = False
+else:
+    _HAS_YAML = True
+
 
 class TestQAStatic(unittest.TestCase):
     def test_contract_lint_requires_required_columns(self):
@@ -17,6 +24,7 @@ class TestQAStatic(unittest.TestCase):
         # Minimal OK
         contract_lint({"required_columns": ["condition"]})
 
+    @unittest.skipUnless(_HAS_YAML, "pyyaml is not installed")
     def test_static_qa_reads_acceptance_from_config_qa(self):
         from psyflow.qa.static import static_qa
 

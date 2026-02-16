@@ -5,6 +5,13 @@ from types import SimpleNamespace
 from unittest.mock import patch
 import json
 
+try:
+    import yaml as _yaml  # noqa: F401
+except ModuleNotFoundError:  # pragma: no cover
+    _HAS_YAML = False
+else:
+    _HAS_YAML = True
+
 
 class TestTaskLauncher(unittest.TestCase):
     def test_run_task_shortcut_directory_with_config_and_passthrough(self):
@@ -113,6 +120,7 @@ class TestTaskLauncher(unittest.TestCase):
             out = readme.read_text(encoding="cp1252")
             self.assertIn("Maturity: piloted", out)
 
+    @unittest.skipUnless(_HAS_YAML, "pyyaml is not installed")
     def test_run_qa_shortcut_requires_acceptance_criteria(self):
         from psyflow.task_launcher import run_qa_shortcut
 
