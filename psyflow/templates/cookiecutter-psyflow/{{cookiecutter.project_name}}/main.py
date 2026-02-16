@@ -32,7 +32,7 @@ def _make_qa_trigger_runtime():
 MODES = ("human", "qa", "sim")
 DEFAULT_CONFIG_BY_MODE = {
     "human": "config/config.yaml",
-    "qa": "config/config_dev.yaml",
+    "qa": "config/config_qa.yaml",
     "sim": "config/config_sim.yaml",
 }
 
@@ -51,35 +51,41 @@ def run(options: TaskRunOptions):
     cfg = load_config(str(options.config_path))
     mode = options.mode
 
+    ctx = None
     if mode in ("qa", "sim"):
         ctx = context_from_config(task_dir=task_root, config=cfg, mode=mode)
+        sim_participant = "sim"
+        if ctx.session is not None:
+            sim_participant = str(ctx.session.participant_id or "sim")
         with runtime_context(ctx):
-            _run_impl(mode=mode, qa_output_dir=ctx.output_dir, cfg=cfg)
+            _run_impl(mode=mode, output_dir=ctx.output_dir, cfg=cfg, participant_id=sim_participant)
     else:
-        _run_impl(mode=mode, qa_output_dir=None, cfg=cfg)
+        _run_impl(mode=mode, output_dir=None, cfg=cfg, participant_id="human")
 
 
-def _run_impl(*, mode: str, qa_output_dir: Path | None, cfg: dict):
+def _run_impl(*, mode: str, output_dir: Path | None, cfg: dict, participant_id: str):
     # 2. Collect subject info (skip GUI in QA mode)
-    if mode in ("qa", "sim"):
-        subject_data = {"subject_id": mode}
+    if mode == "qa":
+        subject_data = {"subject_id": "qa"}
+    elif mode == "sim":
+        subject_data = {"subject_id": participant_id}
     else:
         subform = SubInfo(cfg["subform_config"])
         subject_data = subform.collect()
 
     # 3. Load task settings
     settings = TaskSettings.from_dict(cfg["task_config"])
-    if mode in ("qa", "sim") and qa_output_dir is not None:
-        settings.save_path = str(qa_output_dir)
+    if mode in ("qa", "sim") and output_dir is not None:
+        settings.save_path = str(output_dir)
 
     settings.add_subinfo(subject_data)
 
     # In QA mode, force deterministic artifact locations.
-    if mode in ("qa", "sim") and qa_output_dir is not None:
-        qa_output_dir.mkdir(parents=True, exist_ok=True)
-        settings.res_file = str(qa_output_dir / "qa_trace.csv")
-        settings.log_file = str(qa_output_dir / "qa_psychopy.log")
-        settings.json_file = str(qa_output_dir / "qa_settings.json")
+    if mode == "qa" and output_dir is not None:
+        output_dir.mkdir(parents=True, exist_ok=True)
+        settings.res_file = str(output_dir / "qa_trace.csv")
+        settings.log_file = str(output_dir / "qa_psychopy.log")
+        settings.json_file = str(output_dir / "qa_settings.json")
 
     # 4. Setup triggers (mock in QA)
     settings.triggers = cfg["trigger_config"]
@@ -126,12 +132,21 @@ def _run_impl(*, mode: str, qa_output_dir: Path | None, cfg: dict):
                 window=win,
                 keyboard=kb,
             )
-            .generate_conditions()
-            .on_start(lambda b: trigger_runtime.send(settings.triggers.get("block_onset")))
-            .on_end(lambda b: trigger_runtime.send(settings.triggers.get("block_end")))
-            .run_trial(partial(run_trial, stim_bank=stim_bank, controller=controller, trigger_runtime=trigger_runtime))
-            .to_dict(all_data)
-        )
+                .generate_conditions()
+                .on_start(lambda b: trigger_runtime.send(settings.triggers.get("block_onset")))
+                .on_end(lambda b: trigger_runtime.send(settings.triggers.get("block_end")))
+                .run_trial(
+                    partial(
+                        run_trial,
+                        stim_bank=stim_bank,
+                        controller=controller,
+                        trigger_runtime=trigger_runtime,
+                        block_id=f"block_{block_i}",
+                        block_idx=block_i,
+                    )
+                )
+                .to_dict(all_data)
+            )
 
         block_trials = block.get_all_data()
 

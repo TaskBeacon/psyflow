@@ -25,23 +25,20 @@ def _import_attr(import_path: str) -> Any:
 
 
 def _resolve_spec(mode: str, config: dict[str, Any] | None) -> tuple[str | None, dict[str, Any], str]:
-    """Return (responder_class_path_or_kind, kwargs, source)."""
+    """Return (responder_type_or_import_path, kwargs, source)."""
     if mode not in ("qa", "sim"):
         return None, {}, "disabled"
 
-    # Config responder.class
-    cfg_class = _deep_get(config, ("responder", "class"), None)
-    if isinstance(cfg_class, str) and cfg_class.strip():
-        cfg_kwargs = _deep_get(config, ("responder", "kwargs"), {}) or {}
-        return cfg_class.strip(), dict(cfg_kwargs), "config.class"
+    responder_cfg = _deep_get(config, ("responder",), {})
+    if not isinstance(responder_cfg, dict):
+        responder_cfg = {}
 
-    # Kind-based fallback.
-    kind = str(_deep_get(config, ("responder", "kind"), "") or "").strip().lower()
-    if not kind:
-        kind = "scripted"
+    responder_type = responder_cfg.get("type")
+    kwargs = dict(responder_cfg.get("kwargs") or {})
+    if isinstance(responder_type, str) and responder_type.strip():
+        return responder_type.strip(), kwargs, "config.type"
 
-    kwargs = dict(_deep_get(config, ("responder", "kwargs"), {}) or {})
-    return kind, kwargs, "kind"
+    return "scripted", kwargs, "default"
 
 
 def load_responder(
@@ -68,10 +65,11 @@ def load_responder(
 
     cls = None
     try:
-        if spec in builtins:
-            cls = builtins[spec]
+        spec_name = str(spec).strip()
+        if spec_name.lower() in builtins:
+            cls = builtins[spec_name.lower()]
         else:
-            cls = _import_attr(spec)
+            cls = _import_attr(spec_name)
         responder = cls(**kwargs) if callable(cls) else cls
     except Exception as e:
         if not allow_fallback:

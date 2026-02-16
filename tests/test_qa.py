@@ -17,6 +17,35 @@ class TestQAStatic(unittest.TestCase):
         # Minimal OK
         contract_lint({"required_columns": ["condition"]})
 
+    def test_static_qa_reads_acceptance_from_config_qa(self):
+        from psyflow.qa.static import static_qa
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            cfg_dir = root / "config"
+            cfg_dir.mkdir(parents=True, exist_ok=True)
+            (cfg_dir / "config_qa.yaml").write_text(
+                "\n".join(
+                    [
+                        "task:",
+                        "  key_list: [space]",
+                        "triggers:",
+                        "  map:",
+                        "    exp_onset: 1",
+                        "qa:",
+                        "  acceptance_criteria:",
+                        "    required_columns: [condition]",
+                        "    allowed_keys: [space]",
+                        "    triggers_required: true",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            out = static_qa(root)
+            self.assertEqual(out["acceptance_source"], "config:qa.acceptance_criteria")
+            self.assertEqual(Path(out["config_path"]), cfg_dir / "config_qa.yaml")
+
 
 class TestQATrace(unittest.TestCase):
     def test_validate_trace_csv_required_columns_and_rt_invariants(self):

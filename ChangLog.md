@@ -1,5 +1,33 @@
 # psyflow change log
 
+## 0.1.8 (2026-02-16)
+
+### Summary
+- Standardized responder configuration on `responder.type` (built-ins or import path); removed `responder.kind`/`responder.class` behavior.
+- Strengthened `psyflow-qa` into a strict gate:
+  - `qa.acceptance_criteria` is now required in `config/config_qa.yaml`.
+  - static + runtime + trace/events validation remains bundled in one command.
+- Added automatic post-QA metadata refresh on pass:
+  - promotes `taskbeacon.yaml` `maturity` (no downgrade),
+  - updates README maturity badge to a cleaner flat-square style.
+- Hardened README badge update for non-UTF8 files via encoding fallback.
+- Updated templates and MID example configs to use `type` consistently (`triggers.driver.type`, `sim.responder.type`).
+- Updated docs/tests for the new QA/sim contract and launcher behavior.
+
+### Files (high impact)
+- `psyflow/task_launcher.py`
+- `psyflow/sim/loader.py`
+- `psyflow/sim/context.py`
+- `tests/test_task_launcher.py`
+- `tests/test_responder_contract.py`
+- `tests/test_sim_golden.py`
+- `docs/tutorials/cli_usage.md`
+- `docs/tutorials/qa_runner.md`
+- `psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}/config/config.yaml`
+- `psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}/config/config_qa.yaml`
+- `psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}/config/config_sim.yaml`
+- `pyproject.toml`
+
 ## 0.1.7 (2026-02-15)
 
 ### Summary

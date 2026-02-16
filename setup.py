@@ -31,6 +31,9 @@ setup(
     entry_points={
         "console_scripts": [
             "psyflow = psyflow.cli:main",
+            "psyflow-run = psyflow.task_launcher:run_main",
+            "psyflow-qa = psyflow.task_launcher:qa_main",
+            "psyflow-sim = psyflow.task_launcher:sim_main",
         ],
     },
     include_package_data=True,

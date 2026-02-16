@@ -53,7 +53,7 @@ class TaskSettings:
     json_file: Optional[str] = None
 
     # --- File path info ---
-    save_path: Optional[str] = './data'
+    save_path: Optional[str] = './outputs/human'
     task_name: Optional[str] = None
 
     def __post_init__(self):

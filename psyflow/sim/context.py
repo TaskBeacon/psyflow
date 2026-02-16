@@ -3,6 +3,7 @@ from __future__ import annotations
 import contextlib
 import contextvars
 import json
+import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -42,6 +43,14 @@ def _as_bool(value: Any, default: bool = False) -> bool:
 def _normalize_mode(value: Any, default: str = "human") -> str:
     mode = str(value or "").strip().lower() or str(default or "human").strip().lower() or "human"
     return mode if mode in ("human", "qa", "sim") else "human"
+
+
+def _slug(value: Any, *, default: str) -> str:
+    raw = str(value or "").strip().lower()
+    if not raw:
+        return default
+    slug = re.sub(r"[^a-z0-9]+", "_", raw).strip("_")
+    return slug or default
 
 
 @dataclass(frozen=True)
@@ -146,7 +155,12 @@ def context_from_config(
     mode = _normalize_mode(mode, default=mode_cfg)
 
     default_output_dir = "outputs/sim" if mode == "sim" else "outputs/qa"
-    output_dir_cfg = _cfg_get(raw_cfg, ("sim", "output_dir"), None) or _cfg_get(raw_cfg, ("qa", "output_dir"), None)
+    if mode == "sim":
+        output_dir_cfg = _cfg_get(raw_cfg, ("sim", "output_dir"), None)
+    elif mode == "qa":
+        output_dir_cfg = _cfg_get(raw_cfg, ("qa", "output_dir"), None)
+    else:
+        output_dir_cfg = None
     output_dir = str(output_dir_cfg or default_output_dir)
 
     enable_scaling = _as_bool(_cfg_get(raw_cfg, ("qa", "enable_scaling"), False), False)
@@ -180,8 +194,15 @@ def context_from_config(
     task_version = _cfg_get(raw_cfg, ("task", "task_version"), _cfg_get(config, ("task_config", "task_version"), None))
     seed = int(_cfg_get(raw_cfg, ("sim", "seed"), 0))
     participant_id = str(_cfg_get(raw_cfg, ("sim", "participant_id"), _cfg_get(raw_cfg, ("task", "participant_id"), "p000")) or "p000")
-    default_session_id = f"{mode}-{participant_id}-seed{seed}"
-    session_id = str(_cfg_get(raw_cfg, ("sim", "session_id"), default_session_id))
+    if mode == "sim":
+        task_tag = _slug(task_name, default="task")
+        default_session_id = f"sub-{participant_id}_task-{task_tag}_seed{seed}"
+    else:
+        default_session_id = f"{mode}-{participant_id}-seed{seed}"
+    session_id_cfg = _cfg_get(raw_cfg, ("sim", "session_id"), None)
+    session_id = str(session_id_cfg).strip() if session_id_cfg is not None else default_session_id
+    if not session_id:
+        session_id = default_session_id
     session = SessionInfo(
         participant_id=participant_id,
         session_id=session_id,
@@ -195,12 +216,17 @@ def context_from_config(
     tdir = Path(task_dir) if task_dir is not None else None
     out = (tdir / output_dir) if (tdir is not None and not Path(output_dir).is_absolute()) else Path(output_dir)
 
-    events_path = out / "qa_events.jsonl"
+    events_name = "qa_events.jsonl" if mode == "qa" else f"{session.session_id}_qa_events.jsonl"
+    events_path = out / events_name
     event_logger = make_jsonl_logger(events_path) if mode in ("qa", "sim") else None
 
-    sim_log_default = str(Path(output_dir) / "sim_events.jsonl")
-    sim_log_cfg = _cfg_get(raw_cfg, ("sim", "log_path"), sim_log_default)
-    sim_log_path = str(sim_log_cfg)
+    sim_log_name = "sim_events.jsonl" if mode == "qa" else f"{session.session_id}_sim_events.jsonl"
+    sim_log_default = str(Path(output_dir) / sim_log_name)
+    sim_log_cfg = _cfg_get(raw_cfg, ("sim", "log_path"), None)
+    if sim_log_cfg is None:
+        sim_log_path = sim_log_default
+    else:
+        sim_log_path = str(sim_log_cfg)
     sim_log = (tdir / sim_log_path) if (tdir is not None and not Path(sim_log_path).is_absolute()) else Path(sim_log_path)
     sim_logger = make_sim_jsonl_logger(sim_log) if mode in ("qa", "sim") else None
 

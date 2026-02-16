@@ -130,7 +130,7 @@ class TestResponderContract(unittest.TestCase):
         )
         cfg = {
             "responder": {
-                "class": "examples.sim.demo_responder:DemoResponder",
+                "type": "examples.sim.demo_responder:DemoResponder",
                 "kwargs": {"base_rt_s": 0.2, "jitter_s": 0.01},
             }
         }
@@ -155,7 +155,7 @@ class TestResponderContract(unittest.TestCase):
                         "seed": 123,
                         "policy": "coerce",
                         "output_dir": "outputs/sim",
-                        "responder": {"kind": "null"},
+                        "responder": {"type": "null"},
                     },
                     "qa": {"output_dir": "outputs/qa"},
                 }

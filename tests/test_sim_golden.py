@@ -31,7 +31,7 @@ class TestSimGolden(unittest.TestCase):
             mode="sim",
             config={
                 "responder": {
-                    "class": "examples.sim.demo_responder:DemoResponder",
+                    "type": "examples.sim.demo_responder:DemoResponder",
                     "kwargs": {"base_rt_s": 0.23, "jitter_s": 0.04},
                 }
             },
@@ -93,4 +93,3 @@ class TestSimGolden(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

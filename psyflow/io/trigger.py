@@ -20,33 +20,33 @@ def initialize_triggers(
     policy_cfg = cfg.get("trigger_policy_config", {}) or {}
     timing_cfg = cfg.get("trigger_timing_config", {}) or {}
 
-    kind = str(driver_cfg.get("kind", "")).strip().lower()
+    driver_type = str(driver_cfg.get("type", "")).strip().lower()
     if mock is True:
-        kind = "mock"
-    if not kind:
-        kind = "callable" if trigger_func is not None else "serial_url"
+        driver_type = "mock"
+    if not driver_type:
+        driver_type = "callable" if trigger_func is not None else "serial_url"
 
     strict = bool(policy_cfg.get("strict", False))
 
-    if kind == "mock":
+    if driver_type == "mock":
         driver = MockDriver(print_codes=bool(driver_cfg.get("print_codes", True)))
-    elif kind == "callable":
+    elif driver_type == "callable":
         if trigger_func is None:
-            raise ValueError("initialize_triggers(kind='callable') requires trigger_func")
+            raise ValueError("initialize_triggers(type='callable') requires trigger_func")
         driver = CallableDriver(
             trigger_func,
             post_delay_s=float(timing_cfg.get("post_delay_s", 0.001)),
         )
-    elif kind in ("serial_url", "serial_port"):
+    elif driver_type in ("serial_url", "serial_port"):
         import serial
 
         baudrate = int(driver_cfg.get("baudrate", 115200))
         timeout = float(driver_cfg.get("timeout", 1))
 
-        if kind == "serial_port":
+        if driver_type == "serial_port":
             port = str(driver_cfg.get("port", "")).strip()
             if not port:
-                raise ValueError("triggers.driver.port is required when kind='serial_port'")
+                raise ValueError("triggers.driver.port is required when type='serial_port'")
             ser = serial.Serial(port, baudrate=baudrate, timeout=timeout)
         else:
             url = str(driver_cfg.get("url", "loop://")).strip() or "loop://"
@@ -70,7 +70,7 @@ def initialize_triggers(
 
         driver = SerialDriver(ser, encode_fn=_encode)
     else:
-        raise ValueError(f"Unsupported triggers.driver.kind: {kind}")
+        raise ValueError(f"Unsupported triggers.driver.type: {driver_type}")
 
     runtime = TriggerRuntime(driver, strict=strict)
     runtime.open()

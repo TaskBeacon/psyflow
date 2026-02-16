@@ -14,7 +14,7 @@ window:
 
 task:
   task_name: mid_demo
-  save_path: ./data
+  save_path: ./outputs/human
   total_blocks: 2
   total_trials: 10
   conditions: [win, lose, neutral]
@@ -168,8 +168,8 @@ triggers:
 
   # Hardware config is intentionally separate from the event->code map.
   driver:
-    type: serial
-    port: loop://
+    type: serial_url
+    url: loop://
     baudrate: 115200
 
   timing:
@@ -202,7 +202,7 @@ sim:
   default_rt_s: 0.2
   clamp_rt: false
   responder:
-    kind: scripted
+    type: scripted
     kwargs:
       key: space
       rt_s: 0.25

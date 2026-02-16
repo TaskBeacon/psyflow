@@ -25,7 +25,17 @@ def _next_trial_id(controller) -> int:
     return int(done) + 1
 
 
-def run_trial(win, kb, settings, condition, stim_bank, controller, trigger_runtime):
+def run_trial(
+    win,
+    kb,
+    settings,
+    condition,
+    stim_bank,
+    controller,
+    trigger_runtime,
+    block_id=None,
+    block_idx=None,
+):
     """
     Run a single MID trial sequence.
     """
@@ -47,9 +57,9 @@ def run_trial(win, kb, settings, condition, stim_bank, controller, trigger_runti
         phase="anticipation",
         deadline_s=_deadline_s(settings.anticipation_duration),
         valid_keys=list(settings.key_list),
-        block_id=None,
+        block_id=block_id,
         condition_id=str(condition),
-        task_factors={"condition": str(condition), "stage": "anticipation"},
+        task_factors={"condition": str(condition), "stage": "anticipation", "block_idx": block_idx},
         stim_id="fixation",
     )
     anti.capture_response(
@@ -72,11 +82,12 @@ def run_trial(win, kb, settings, condition, stim_bank, controller, trigger_runti
         phase="target",
         deadline_s=_deadline_s(duration),
         valid_keys=list(settings.key_list),
-        block_id=None,
+        block_id=block_id,
         condition_id=str(condition),
         task_factors={
             "condition": str(condition),
             "stage": "target",
+            "block_idx": block_idx,
             "target_duration_s": float(duration),
         },
         stim_id=f"{condition}_target",

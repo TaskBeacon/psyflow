@@ -14,7 +14,7 @@ window:
 
 task:
   task_name: mid_demo
-  save_path: ./data
+  save_path: ./outputs/human
   total_blocks: 2
   total_trials: 10
   conditions: [win, lose, neutral]
@@ -168,8 +168,8 @@ triggers:
 
   # Hardware config is intentionally separate from the event->code map.
   driver:
-    type: serial
-    port: loop://
+    type: serial_url
+    url: loop://
     baudrate: 115200
 
   timing:
@@ -194,6 +194,17 @@ qa:
   min_frames: 2
   strict: false
   max_wait_s: 10.0
+  acceptance_criteria:
+    required_columns:
+      - condition
+      - block_id
+      - trial_index
+      - target_key_press
+      - target_response
+      - target_rt
+    expected_trial_count: 10
+    allowed_keys: ["space"]
+    triggers_required: true
 
 sim:
   output_dir: outputs/sim
@@ -202,7 +213,7 @@ sim:
   default_rt_s: 0.2
   clamp_rt: false
   responder:
-    kind: scripted
+    type: scripted
     kwargs:
       key: space
       rt_s: 0.25

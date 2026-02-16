@@ -51,7 +51,7 @@ def contract_lint(acceptance: dict[str, Any]) -> None:
 
     cols = acceptance.get("required_columns")
     if cols is None:
-        raise ContractInvalidError("acceptance_criteria.yaml missing 'required_columns'")
+        raise ContractInvalidError("acceptance_criteria missing 'required_columns'")
     if not isinstance(cols, list) or not cols or not all(isinstance(c, str) and c for c in cols):
         raise ContractInvalidError("'required_columns' must be a non-empty list of strings")
 
@@ -86,6 +86,25 @@ def contract_lint(acceptance: dict[str, Any]) -> None:
         codes = triggers_expected.get("codes")
         if codes is not None and (not isinstance(codes, list) or not all(isinstance(c, int) for c in codes)):
             raise ContractInvalidError("'triggers_expected.codes' must be a list of integers if present")
+
+
+def _extract_acceptance_from_config(cfg: Any) -> Any:
+    if not isinstance(cfg, dict):
+        return None
+    qa_cfg = cfg.get("qa")
+    if not isinstance(qa_cfg, dict):
+        return None
+    return qa_cfg.get("acceptance_criteria")
+
+
+def _default_config_path(task_dir: Path) -> Path | None:
+    qa_path = task_dir / "config" / "config_qa.yaml"
+    if qa_path.exists():
+        return qa_path
+    base_path = task_dir / "config" / "config.yaml"
+    if base_path.exists():
+        return base_path
+    return None
 
 
 def _config_sanity(cfg: Any) -> None:
@@ -187,40 +206,50 @@ def static_qa(
 ) -> dict[str, Any]:
     """Run lightweight static checks for a task directory."""
     task_dir = Path(task_dir)
-    out: dict[str, Any] = {"warnings": [], "config_path": None, "acceptance_path": None}
+    out: dict[str, Any] = {
+        "warnings": [],
+        "config_path": None,
+        "acceptance_path": None,
+        "acceptance_source": None,
+    }
+
+    cfg_obj: Any = None
+    if config_path is None:
+        config_path = _default_config_path(task_dir)
+    if config_path is not None:
+        cp = Path(config_path)
+        cfg = load_yaml(cp)
+        _config_sanity(cfg)
+        cfg_obj = cfg
+        out["config_path"] = str(cp)
+    else:
+        out["warnings"].append("No config found (checked config/config_qa.yaml then config/config.yaml); config checks skipped.")
 
     acceptance_obj: Any = None
-    if acceptance_path is None:
-        candidate = task_dir / "acceptance_criteria.yaml"
-        acceptance_path = candidate if candidate.exists() else None
     if acceptance_path is not None:
         ap = Path(acceptance_path)
         acc = load_yaml(ap)
         contract_lint(acc)
         acceptance_obj = acc
         out["acceptance_path"] = str(ap)
+        out["acceptance_source"] = "file"
+    else:
+        acc = _extract_acceptance_from_config(cfg_obj)
+        if acc is not None:
+            contract_lint(acc)
+            acceptance_obj = acc
+            out["acceptance_source"] = "config:qa.acceptance_criteria"
+        else:
+            out["warnings"].append("qa.acceptance_criteria not found in config; schema checks will be limited.")
 
-        assets = acc.get("assets_required") if isinstance(acc, dict) else None
+    if isinstance(acceptance_obj, dict):
+        assets = acceptance_obj.get("assets_required")
         if isinstance(assets, list):
             missing = [a for a in assets if not (task_dir / a).exists()]
             if missing:
                 raise AssetMissingError(f"Missing required assets: {missing}")
-    else:
-        out["warnings"].append("acceptance_criteria.yaml not found; schema checks will be limited.")
 
-    cfg_obj: Any = None
-    if config_path is None:
-        candidate = task_dir / "config" / "config.yaml"
-        config_path = candidate if candidate.exists() else None
-    if config_path is not None:
-        cp = Path(config_path)
-        cfg = load_yaml(cp)
-        _config_sanity(cfg)
-        _keys_sanity(cfg, acceptance_obj)
-        _triggers_sanity(cfg, acceptance_obj)
-        cfg_obj = cfg
-        out["config_path"] = str(cp)
-    else:
-        out["warnings"].append("config/config.yaml not found; config checks skipped.")
+    _keys_sanity(cfg_obj, acceptance_obj)
+    _triggers_sanity(cfg_obj, acceptance_obj)
 
     return out

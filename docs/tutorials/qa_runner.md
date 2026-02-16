@@ -13,8 +13,16 @@ Typical usage from a task directory:
 
 ```bash
 python main.py
-python main.py qa --config config/config_dev.yaml
+python main.py qa --config config/config_qa.yaml
 python main.py sim --config config/config_sim.yaml
+```
+
+Or use shortcut launchers:
+
+```bash
+psyflow-run <task_dir>
+psyflow-qa <task_dir> --config config/config_qa.yaml
+psyflow-sim <task_dir> --config config/config_sim.yaml
 ```
 
 ## Required Task Wiring
@@ -54,7 +62,7 @@ sim:
   seed: 11
   policy: warn
   responder:
-    class: src.sampler:MidSamplerResponder
+    type: src.sampler:MidSamplerResponder
     kwargs:
       key: space
 ```
@@ -76,3 +84,16 @@ Typical artifacts emitted by task runtime:
 - Sim: `outputs/sim/qa_trace.csv`, `outputs/sim/sim_events.jsonl`
 
 Exact paths depend on each task config file.
+
+## QA Pass Metadata Updates
+
+`psyflow-qa` runs static checks + runtime execution + artifact validation.
+When QA passes, it can promote task maturity and refresh README maturity badge:
+
+```bash
+psyflow-qa <task_dir> --set-maturity smoke_tested
+```
+
+Flags:
+- `--set-maturity <value>`: promotion target (`smoke_tested` default).
+- `--no-maturity-update`: skip `taskbeacon.yaml` / `README.md` updates.
