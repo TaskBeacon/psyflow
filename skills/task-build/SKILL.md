@@ -1,0 +1,178 @@
+---
+name: task-build
+description: Build or refactor cognitive experiment tasks into PsyFlow/TAPS standard from literature evidence, with strict reference-aligned stimulus implementation (no placeholders).
+---
+
+# Task Build
+
+Build a task from literature to validated, publishable PsyFlow/TAPS structure.
+
+## Required Inputs
+
+Collect these fields before execution:
+
+- `task_id` (example: `T000016`)
+- `task_slug` (example: `cpt`)
+- `task_title`
+- `task_path`
+- `acquisition` (`behavior|eeg|fmri|meg|...`)
+
+Use defaults unless explicitly overridden:
+
+- `variant=baseline`
+- `language=Chinese`
+- `voice_name=zh-CN-YunyangNeural`
+- `citation_threshold=100`
+- `max_retries=3`
+
+Language/font default policy:
+
+- If `language=Chinese`, set participant-facing text stimuli to `font: SimHei`.
+- For non-Chinese languages, choose a readable font with strong glyph coverage for that language/script.
+
+## Workflow
+
+### Phase 1: Discover and Filter Literature
+
+1. Run `scripts/select_papers.py` with task keywords and acquisition modality.
+2. Enforce all filter rules:
+   - citation count `>=100`
+   - open-access only (skip paywalled)
+   - at least one paper from `references/high_impact_psyneuro_journals.yaml`
+   - at least three selected papers
+3. Stop with an explicit blocker if constraints are not satisfied.
+
+### Phase 2: Build Evidence Artifacts
+
+1. Run `scripts/build_reference_bundle.py`.
+2. Create in task repo:
+   - `references/references.yaml`
+   - `references/references.md`
+   - `references/parameter_mapping.md`
+   - `references/stimulus_mapping.md`
+3. Mark unresolved protocol decisions as `inferred` and explain rationale.
+4. Do not continue to implementation unless `stimulus_mapping.md` is fully resolved.
+
+### Phase 3: Build or Refactor Task to PsyFlow/TAPS Standard
+
+Ensure mandatory structure exists and is aligned:
+
+- `main.py` mode-aware for `human|qa|sim`
+- `src/run_trial.py` with `set_trial_context(...)`
+- `config/config.yaml`
+- `config/config_qa.yaml`
+- `config/config_scripted_sim.yaml`
+- `config/config_sampler_sim.yaml`
+- `responders/__init__.py`
+- `responders/task_sampler.py`
+- `assets/README.md`
+- `README.md`
+- `CHANGELOG.md`
+- `taskbeacon.yaml` with `contracts.psyflow_taps`
+- `.gitignore` aligned to outputs
+
+Use `references/psyflow_task_standard_checklist.md` as the source of truth.
+
+### Phase 4: Implement Reference-Exact Stimuli
+
+Stimulus policy is strict:
+
+- Implement the exact stimulus logic/material from selected references.
+- Prefer PsychoPy built-in drawing primitives (`text`, `circle`, `rect`, `polygon`, `shape`) when possible.
+- If external media is required, generate/build non-placeholder assets aligned to references.
+- Every implemented stimulus must map to citation evidence in `references/stimulus_mapping.md`.
+- Do not show internal condition labels or debugging cues to participants unless explicitly required by the reference protocol.
+
+### Phase 5: Execute Gates with Auto-Fix Loop
+
+Run `scripts/run_gates.py`.
+
+Required gates:
+
+- `python scripts/check_task_standard.py --task-path <task_path>`
+- `python -m psyflow.validate <task_path>` (or `psyflow-validate` if available)
+- `psyflow-qa <task_path> --config config/config_qa.yaml --no-maturity-update`
+- `python main.py sim --config config/config_scripted_sim.yaml`
+- `python main.py sim --config config/config_sampler_sim.yaml`
+
+Rules:
+
+- Retry up to `max_retries=3` after failures.
+- Apply deterministic basic fixes only.
+- Emit a gate report under `outputs/qa/gate_report.json`.
+
+### Phase 6: Finalize and Publish
+
+1. Update `README.md` metadata and runtime instructions.
+2. Update `CHANGELOG.md` with concrete changes.
+3. Update `taskbeacon.yaml` release tag and contracts version.
+4. Run `scripts/publish_task.py` to commit and push.
+
+README contract requirements:
+
+- Follow `psyflow/psyflow/templates/task2doc_prompt.txt` structure exactly.
+- Include all required sections:
+  - `## 1. Task Overview`
+  - `## 2. Task Flow`
+  - `## 3. Configuration Summary`
+  - `## 4. Methods (for academic publication)`
+- In `## 2`, include block-level flow, trial-level flow, controller logic, and other logic (if present).
+- In `## 3`, include subject info, window settings, stimuli, timing, triggers (if present), and adaptive controller (if present).
+- Ensure table formatting is consistent and auditable (header row + separator + blank line after each table).
+
+## Guardrails
+
+- Do not introduce protocol decisions without references or `inferred` labeling.
+- Do not mix mode sections across configs:
+  - `config.yaml`: no `qa`, no `sim`
+  - `config_qa.yaml`: has `qa`, no `sim`
+  - `config_scripted_sim.yaml`: has `sim`, no `qa`
+  - `config_sampler_sim.yaml`: has `sim`, no `qa`
+- Placeholder or dummy assets are forbidden.
+- Do not publish if any gate fails.
+
+## Generic Development Experience
+
+Apply these cross-task lessons by default:
+
+- Separate **framework compliance** from **paradigm validity**: passing gates is necessary but not sufficient.
+- Implement one task at a time end-to-end before scaling to batch work.
+- Prefer PsychoPy built-ins for core stimuli when possible; reduce external asset dependency.
+- Keep participant-facing text language-consistent with the configured task language.
+- Use language-appropriate fonts consistently:
+  - Chinese tasks default to `SimHei`.
+  - Other languages use fonts that fully support their scripts.
+- Keep pre-response displays neutral unless required by protocol (avoid leaking condition identity before response).
+- Resolve stimulus evidence mapping before runtime tuning or polishing.
+- Add strict fail-fast checks early (`check_task_standard.py`) to avoid long failing gate loops.
+- Keep QA and sim profiles short but mechanism-complete (cover all conditions/stages).
+- Avoid over-automation that invents paradigm logic; when unsure, stop and mark inference explicitly.
+
+## Command Quick Start
+
+```powershell
+# 1) Select papers
+python scripts/select_papers.py --task-name "monetary incentive delay" --task-path e:\Taskbeacon\T000006-mid --acquisition eeg
+
+# 2) Build reference bundle (includes stimulus_mapping.md)
+python scripts/build_reference_bundle.py --task-path e:\Taskbeacon\T000006-mid
+
+# 3) Check standard + stimulus fidelity constraints
+python scripts/check_task_standard.py --task-path e:\Taskbeacon\T000006-mid
+
+# 4) Run full gate suite
+python scripts/run_gates.py --task-path e:\Taskbeacon\T000006-mid --max-retries 3
+
+# 5) Publish
+python scripts/publish_task.py --task-path e:\Taskbeacon\T000006-mid
+```
+
+## References to Load on Demand
+
+- `references/literature_search_playbook.md`
+- `references/task_param_inference_rules.md`
+- `references/psyflow_task_standard_checklist.md`
+- `references/publish_checklist.md`
+- `references/high_impact_psyneuro_journals.yaml`
+- `references/stimulus_fidelity_policy.md`
+- `references/task_development_experience.md`

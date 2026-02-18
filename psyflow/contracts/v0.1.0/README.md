@@ -12,6 +12,7 @@ These contracts define practical standards for building auditable psyflow/TAPS t
   - smoke-profile rules for `config_qa.yaml` and sim configs (shorter than base but condition-covering)
 - Runtime entrypoint pattern (`main.py`)
 - Trial runtime pattern (`src/run_trial.py`)
+  - phase/stage labels are task-defined (generic), not MID-specific
 - Responder/sampler plugin standards (`config_scripted_sim.yaml`, `config_sampler_sim.yaml`, `responders/`)
 - README metadata rows
 - Changelog format

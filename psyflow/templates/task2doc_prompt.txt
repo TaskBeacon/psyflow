@@ -1,84 +1,68 @@
-Based on the task_context files, including configuration file (`config/config.yaml`) and task logic files (`main.py`, `run_trial.py`, and, if present, `util.py`), generate a `README.md` for this task.
+Based on the task context files, including `config/config.yaml` and task logic files (`main.py`, `run_trial.py`, and, if present, `util.py` or `utils.py`), generate `README.md`.
 
-- **`main.py`** is the entry point: it defines the overall task setup and block-level flow.  
-- **`run_trial.py`** defines the trial-level flow.  
-- **`util.py`** (if it exists) contains helper functions—e.g. the adaptive controller or other utilities.  
-- **`config/config.yaml`** defines all task settings.  
+- `main.py` defines setup and block-level flow.
+- `run_trial.py` defines trial-level flow.
+- `util.py`/`utils.py` defines controller and helper logic.
+- `config/config.yaml` defines task parameters.
 
-Your goal is to analyze the provided files and generate a `README.md` that ensures full transparency and reproducibility of the task.
-Imagine you are a researcher who must reimplement this experiment from scratch using only the information in your README.  
-For each section below, include every detail—parameters, timings, flow logic, and configuration values—so that someone can rebuild the task programmatically without referring back to the original code.
+Goal: produce a transparent and reproducible README that lets a researcher rebuild the task without opening source code.
 
-**IMPORTANT TABLE FORMATTING RULES (apply to every table in sections 1–4):**  
-1. Always start with a header row and a separator row, for example:  
-2. Do **not** omit the blank line—this ensures the table closes properly.  
-3. Do **not** add extra pipes or indentation.
+IMPORTANT TABLE RULES (apply to all tables):
+1. Always include a header row and separator row.
+2. Leave one blank line after each table before the next paragraph/section.
+3. Do not add extra table pipes or indentation.
 
-# Task Name  
-Extract the full task name and use it as the document’s top-level heading.
+# Task Name
+Use the full task name as the top-level heading.
 
-## (Meta Information) we don't need the meta information as header, we just show table  
-• Render as a Markdown table with two columns: Field and Value. 
-• Include this header and separator row exactly
-  | Field                | Value                        |  
-  |----------------------|------------------------------|  
+Meta table (no "Meta Information" header):
+- Render a 2-column table (`Field`, `Value`).
+- Use this exact header structure:
+  | Field                | Value                        |
+  |----------------------|------------------------------|
+- Include rows:
+  - Name
+  - Version
+  - URL / Repository
+  - Short Description
+  - Created By
+  - Date Updated
+  - PsyFlow Version
+  - PsychoPy Version
+  - Modality
+  - Language
+  - Voice Name
+- Fill values when available; leave blank only if unknown.
 
-• Leave the “Value” cells blank. Include rows for:  
-  - Name  
-  - Version  
-  - URL / Repository  
-  - Short Description  
-  - Created By  
-  - Date Updated 
-  - PsyFlow Version  
-  - PsychoPy Version  
-  Try your best to fill the table, if you are not sure leave them as blank.
+## 1. Task Overview
+One concise paragraph summarizing task goal and design.
 
-## 1. Task Overview  
-• One concise paragraph summarizing the goal and design of the task.
+## 2. Task Flow
+Create separate tables for:
+- Block-Level Flow (from `main.py`)
+- Trial-Level Flow (from `run_trial.py`)
+- Controller Logic (from `util.py` / `utils.py`, if present)
+- Other Logic (if present in helper files; e.g., scoring, adaptive updates, side counterbalancing)
 
-## 2. Task Flow  
-Split into two subtables—**Block-Level Flow** and **Trial-Level Flow**—plus **Controller Logic** and **other logics** if `util.py` exists.  
-• Block-Level Flow comes from `main.py`.  
-• Trial-Level Flow comes from `run_trial.py`.  
-• Controller Logic comes from `util.py`.  
-• any other Logic comes from `util.py`. 
+Descriptions must be implementation-detailed and reference timing/stimulus IDs where relevant.
 
-Leave a blank line after each table before continuing.  
-Each description must be detailed enough that an LLM could reconstruct the code. Incorporate any timing parameters or stimuli defined in `config.yaml` into the descriptions.
+## 3. Configuration Summary
+State that settings are from `config/config.yaml`. Add these subtables:
 
-## 3. Configuration Summary  
-Note that all settings live in `config/config.yaml`. 
-In this section, summarize each subsection in its own table (with header, separator, blank line):
+a. Subject Info (`Field`, `Meaning`)
+b. Window Settings (`Parameter`, `Value`)
+c. Stimuli (`Name`, `Type`, `Description`)
+d. Timing (`Phase`, `Duration`)
+e. Triggers (`Event`, `Code`) when triggers exist
+f. Adaptive Controller (`Parameter`, `Value`) when controller exists
 
-**a. Subject Info** — list each field and its meaning  
+## 4. Methods (for academic publication)
+Write 2-3 academic paragraphs covering:
+- Participant experience across phases
+- Adaptive/controller logic and parameters (if any)
+- Design rationale
+- Concrete timing/setup details
 
-**b. Window Settings** — list each parameter and its value  
-Example:  
-  | Parameter          | Value            |  
-  |--------------------|------------------|  
-  | size               | [1920, 1080]     |  
-  | units              | deg              |  
-  | screen             | 1                |  
-  | bg_color           | gray             |  
-  | fullscreen         | True             |  
-  | monitor_width_cm   | 60               |  
-  | monitor_distance_cm| 72               |  
-
-**c. Stimuli** — a table with columns: Name, Type, Description  
- 
-**d. Timing** — a table with columns: Phase, Duration  
-
-**e. Triggers (if exist)** — a table with columns: Event, Code  
-
-**f. Adaptive Controller (if exists)** — a table with columns: Parameter, Value  
-
-## 4. Methods (for academic publication)  
-Write this like a Methods section in a paper, with academic tone and clarity.
-Prepare two or three paragraphs containing the following:   
-- What participants see at each step  
-- Any adaptive algorithms or parameters  
-- The rationale behind major design choices  
-- Detailed task setup and timing information  
-
-**IMPORTANT:** Output **only** the Markdown for the `README.md` file—do not include any additional explanation or commentary.  
+IMPORTANT:
+- Output only Markdown for `README.md`.
+- Do not output explanations outside README content.

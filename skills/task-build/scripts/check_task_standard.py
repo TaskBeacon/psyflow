@@ -1,0 +1,279 @@
+#!/usr/bin/env python3
+"""Check whether a task matches PsyFlow/TAPS structural and stimulus-fidelity standards."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import re
+from pathlib import Path
+from typing import Any
+
+import yaml
+
+REQUIRED_FILES = [
+    "main.py",
+    "src/run_trial.py",
+    "config/config.yaml",
+    "config/config_qa.yaml",
+    "config/config_scripted_sim.yaml",
+    "config/config_sampler_sim.yaml",
+    "responders/__init__.py",
+    "responders/task_sampler.py",
+    "README.md",
+    "CHANGELOG.md",
+    "taskbeacon.yaml",
+    ".gitignore",
+    "references/references.yaml",
+    "references/references.md",
+    "references/parameter_mapping.md",
+    "references/stimulus_mapping.md",
+]
+
+FORBIDDEN_TOKENS = ("placeholder", "dummy", "todo")
+UNRESOLVED_STIM_MARKERS = ("UNSET", "TODO", "required_review")
+REQUIRED_README_HEADINGS = (
+    "## 1. Task Overview",
+    "## 2. Task Flow",
+    "## 3. Configuration Summary",
+    "## 4. Methods (for academic publication)",
+)
+RECOMMENDED_README_SUBHEADINGS = (
+    "### Block-Level Flow",
+    "### Trial-Level Flow",
+    "### Controller Logic",
+    "### a. Subject Info",
+    "### b. Window Settings",
+    "### c. Stimuli",
+    "### d. Timing",
+)
+
+
+def _load_yaml(path: Path) -> dict[str, Any]:
+    payload = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if payload is None:
+        return {}
+    if not isinstance(payload, dict):
+        raise ValueError(f"Expected dictionary YAML in {path}")
+    return payload
+
+
+def _contains_forbidden_token(text: str) -> str | None:
+    lower = text.lower()
+    for token in FORBIDDEN_TOKENS:
+        if token in lower:
+            return token
+    return None
+
+
+def _stim_asset_path(spec: dict[str, Any], stim_type: str) -> str | None:
+    if stim_type == "image":
+        keys = ("image", "file", "filename")
+    elif stim_type == "movie":
+        keys = ("movie", "file", "filename")
+    elif stim_type == "sound":
+        keys = ("file", "sound", "filename")
+    else:
+        return None
+    for k in keys:
+        v = spec.get(k)
+        if isinstance(v, str) and v.strip():
+            return v.strip()
+    return None
+
+
+def _check_asset_backed_stimuli(cfg: dict[str, Any], *, cfg_name: str, task_path: Path, failures: list[str]) -> None:
+    stimuli = cfg.get("stimuli", {}) if isinstance(cfg, dict) else {}
+    if not isinstance(stimuli, dict):
+        failures.append(f"{cfg_name}: stimuli section must be a dict")
+        return
+
+    for stim_id, spec in stimuli.items():
+        if not isinstance(spec, dict):
+            continue
+        stim_type = str(spec.get("type", "")).strip().lower()
+        if stim_type not in {"image", "movie", "sound"}:
+            continue
+        asset_rel = _stim_asset_path(spec, stim_type)
+        if not asset_rel:
+            failures.append(f"{cfg_name}: stimulus '{stim_id}' ({stim_type}) missing asset path field")
+            continue
+
+        if _contains_forbidden_token(asset_rel):
+            failures.append(f"{cfg_name}: stimulus '{stim_id}' uses forbidden asset token in path: {asset_rel}")
+
+        asset_path = task_path / asset_rel
+        if not asset_path.exists():
+            failures.append(f"{cfg_name}: stimulus '{stim_id}' asset file not found: {asset_rel}")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Validate task standard layout and patterns.")
+    parser.add_argument("--task-path", required=True)
+    parser.add_argument("--json-report", default=None)
+    return parser.parse_args()
+
+
+def main() -> int:
+    args = parse_args()
+    task_path = Path(args.task_path).resolve()
+
+    failures: list[str] = []
+    warnings: list[str] = []
+
+    for rel in REQUIRED_FILES:
+        p = task_path / rel
+        if not p.exists():
+            failures.append(f"Missing required file: {rel}")
+
+    if failures:
+        _emit(task_path, failures, warnings, args.json_report)
+        return 2
+
+    main_text = (task_path / "main.py").read_text(encoding="utf-8", errors="ignore")
+    if "parse_task_run_options" not in main_text:
+        failures.append("main.py must call parse_task_run_options(...)")
+    for mode in ("human", "qa", "sim"):
+        if mode not in main_text:
+            failures.append(f"main.py missing mode token: {mode}")
+
+    run_trial_text = (task_path / "src" / "run_trial.py").read_text(encoding="utf-8", errors="ignore")
+    if "set_trial_context" not in run_trial_text:
+        failures.append("src/run_trial.py must include set_trial_context(...) usage")
+
+    cfg_paths = {
+        "config/config.yaml": task_path / "config" / "config.yaml",
+        "config/config_qa.yaml": task_path / "config" / "config_qa.yaml",
+        "config/config_scripted_sim.yaml": task_path / "config" / "config_scripted_sim.yaml",
+        "config/config_sampler_sim.yaml": task_path / "config" / "config_sampler_sim.yaml",
+    }
+
+    cfg_payloads: dict[str, dict[str, Any]] = {}
+    for name, path in cfg_paths.items():
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        token = _contains_forbidden_token(text)
+        if token:
+            failures.append(f"{name} contains forbidden token '{token}'")
+        cfg_payloads[name] = _load_yaml(path)
+
+    base_cfg = cfg_payloads["config/config.yaml"]
+    qa_cfg = cfg_payloads["config/config_qa.yaml"]
+    scripted_cfg = cfg_payloads["config/config_scripted_sim.yaml"]
+    sampler_cfg = cfg_payloads["config/config_sampler_sim.yaml"]
+
+    if "qa" in base_cfg or "sim" in base_cfg:
+        failures.append("config/config.yaml must not include qa or sim sections")
+    if "qa" not in qa_cfg:
+        failures.append("config/config_qa.yaml must include qa section")
+    if "sim" in qa_cfg:
+        failures.append("config/config_qa.yaml must not include sim section")
+    if "sim" not in scripted_cfg:
+        failures.append("config/config_scripted_sim.yaml must include sim section")
+    if "qa" in scripted_cfg:
+        failures.append("config/config_scripted_sim.yaml must not include qa section")
+    if "sim" not in sampler_cfg:
+        failures.append("config/config_sampler_sim.yaml must include sim section")
+    if "qa" in sampler_cfg:
+        failures.append("config/config_sampler_sim.yaml must not include qa section")
+
+    _check_asset_backed_stimuli(base_cfg, cfg_name="config/config.yaml", task_path=task_path, failures=failures)
+    _check_asset_backed_stimuli(qa_cfg, cfg_name="config/config_qa.yaml", task_path=task_path, failures=failures)
+    _check_asset_backed_stimuli(
+        scripted_cfg,
+        cfg_name="config/config_scripted_sim.yaml",
+        task_path=task_path,
+        failures=failures,
+    )
+    _check_asset_backed_stimuli(
+        sampler_cfg,
+        cfg_name="config/config_sampler_sim.yaml",
+        task_path=task_path,
+        failures=failures,
+    )
+
+    tb_cfg = _load_yaml(task_path / "taskbeacon.yaml")
+    contracts = tb_cfg.get("contracts") if isinstance(tb_cfg, dict) else None
+    if not isinstance(contracts, dict) or not contracts.get("psyflow_taps"):
+        failures.append("taskbeacon.yaml must include contracts.psyflow_taps")
+
+    gitignore_text = (task_path / ".gitignore").read_text(encoding="utf-8", errors="ignore")
+    if "outputs/*" not in gitignore_text:
+        warnings.append(".gitignore should include outputs/*")
+    if "!/outputs/.gitkeep" not in gitignore_text:
+        warnings.append(".gitignore should include !/outputs/.gitkeep")
+
+    readme_text = (task_path / "README.md").read_text(encoding="utf-8", errors="ignore")
+    for heading in REQUIRED_README_HEADINGS:
+        if heading not in readme_text:
+            failures.append(f"README.md missing required heading: {heading}")
+    for heading in RECOMMENDED_README_SUBHEADINGS:
+        if heading not in readme_text:
+            warnings.append(f"README.md missing recommended heading: {heading}")
+
+    assets_dir = task_path / "assets"
+    if assets_dir.exists():
+        for f in assets_dir.rglob("*"):
+            if f.is_file():
+                token = _contains_forbidden_token(f.name)
+                if token:
+                    failures.append(f"Forbidden asset filename token '{token}' in: {f.relative_to(task_path)}")
+
+    assets_readme = task_path / "assets" / "README.md"
+    if assets_readme.exists():
+        token = _contains_forbidden_token(assets_readme.read_text(encoding="utf-8", errors="ignore"))
+        if token:
+            failures.append(f"assets/README.md contains forbidden token '{token}'")
+
+    stim_map = task_path / "references" / "stimulus_mapping.md"
+    stim_text = stim_map.read_text(encoding="utf-8", errors="ignore")
+    for marker in UNRESOLVED_STIM_MARKERS:
+        pat = rf"^\|.*\b{re.escape(marker)}\b.*\|"
+        if re.search(pat, stim_text, flags=re.MULTILINE):
+            failures.append(f"references/stimulus_mapping.md contains unresolved marker '{marker}'")
+
+    conditions = (
+        base_cfg.get("task", {}).get("conditions", [])
+        if isinstance(base_cfg.get("task", {}), dict)
+        else []
+    )
+    if isinstance(conditions, list):
+        for cond in conditions:
+            if isinstance(cond, str) and cond.strip():
+                token = f"`{cond.strip()}`"
+                if token not in stim_text:
+                    failures.append(
+                        f"references/stimulus_mapping.md missing condition mapping row for '{cond.strip()}'"
+                    )
+
+    _emit(task_path, failures, warnings, args.json_report)
+    return 0 if not failures else 1
+
+
+def _emit(task_path: Path, failures: list[str], warnings: list[str], json_report: str | None) -> None:
+    print(f"[task-build] task={task_path}")
+    if failures:
+        print("[task-build] FAIL")
+        for item in failures:
+            print(f"  - {item}")
+    else:
+        print("[task-build] PASS")
+    if warnings:
+        print("[task-build] WARN")
+        for item in warnings:
+            print(f"  - {item}")
+
+    if json_report:
+        payload = {
+            "task_path": str(task_path),
+            "status": "pass" if not failures else "fail",
+            "failures": failures,
+            "warnings": warnings,
+        }
+        p = Path(json_report)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+        print(f"[task-build] wrote {p}")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

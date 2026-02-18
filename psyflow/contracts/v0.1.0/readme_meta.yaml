@@ -5,7 +5,20 @@ required_table_fields:
   - Version
   - Date Updated
   - PsyFlow Version
+required_sections:
+  - "## 1. Task Overview"
+  - "## 2. Task Flow"
+  - "## 3. Configuration Summary"
+  - "## 4. Methods (for academic publication)"
 recommended_table_fields:
   - PsychoPy Version
   - Modality
   - Language
+recommended_subsections:
+  - "### Block-Level Flow"
+  - "### Trial-Level Flow"
+  - "### Controller Logic"
+  - "### a. Subject Info"
+  - "### b. Window Settings"
+  - "### c. Stimuli"
+  - "### d. Timing"

@@ -835,6 +835,13 @@ def _check_responder_context(task_dir: Path, cfg: dict[str, Any]) -> ContractRes
 
     text = _read_text_with_fallback(path)
     low = text.lower()
+    set_ctx_count = len(re.findall(r"\bset_trial_context\s*\(", text))
+    capture_count = len(re.findall(r"\bcapture_response\s*\(", text))
+    phase_values = {
+        str(m.group(1) or "").strip().lower()
+        for m in re.finditer(r"\bphase\s*=\s*['\"]([^'\"]+)['\"]", text)
+        if str(m.group(1) or "").strip()
+    }
 
     req_fn = cfg.get("required_function")
     if req_fn:
@@ -861,10 +868,52 @@ def _check_responder_context(task_dir: Path, cfg: dict[str, Any]) -> ContractRes
         if str(token) not in text:
             fails.append(f"Missing required trial context field argument: {token}")
 
+    min_set_ctx = cfg.get("required_set_trial_context_min")
+    if min_set_ctx is not None:
+        try:
+            need = int(min_set_ctx)
+            if set_ctx_count < need:
+                fails.append(
+                    f"set_trial_context(...) call count too low: {set_ctx_count} < required {need}"
+                )
+        except Exception:
+            pass
+
+    min_capture = cfg.get("required_capture_response_min")
+    if min_capture is not None:
+        try:
+            need = int(min_capture)
+            if capture_count < need:
+                fails.append(
+                    f"capture_response(...) call count too low: {capture_count} < required {need}"
+                )
+        except Exception:
+            pass
+
     for phase in list(cfg.get("required_context_phase_values") or []):
         p = str(phase)
-        if (f'phase="{p}"' not in text) and (f"phase='{p}'" not in text):
+        if p.strip().lower() not in phase_values:
             fails.append(f"Missing set_trial_context phase value: {p}")
+
+    required_phase_any = {
+        str(x or "").strip().lower()
+        for x in list(cfg.get("required_context_phase_values_any") or [])
+        if str(x or "").strip()
+    }
+    if required_phase_any and phase_values.isdisjoint(required_phase_any):
+        fails.append(
+            "Missing required context phase (any): "
+            f"expected one of {sorted(required_phase_any)}, got {sorted(phase_values) or 'none'}"
+        )
+
+    forbidden_phase = {
+        str(x or "").strip().lower()
+        for x in list(cfg.get("forbidden_context_phase_values") or [])
+        if str(x or "").strip()
+    }
+    hit_forbidden = sorted(phase_values.intersection(forbidden_phase))
+    if hit_forbidden:
+        fails.append(f"Found forbidden context phase value(s): {hit_forbidden}")
 
     stages = [str(x).lower() for x in list(cfg.get("required_stage_tokens_in_order") or [])]
     if stages:
@@ -884,6 +933,25 @@ def _check_responder_context(task_dir: Path, cfg: dict[str, Any]) -> ContractRes
     for token in list(cfg.get("recommended_context_fields_any") or []):
         if str(token) not in text:
             warns.append(f"Missing recommended trial context field argument: {token}")
+
+    recommended_phase_any = {
+        str(x or "").strip().lower()
+        for x in list(cfg.get("recommended_context_phase_values_any") or [])
+        if str(x or "").strip()
+    }
+    if recommended_phase_any and phase_values.isdisjoint(recommended_phase_any):
+        warns.append(
+            "No recommended phase labels found (any): "
+            f"{sorted(recommended_phase_any)}; got {sorted(phase_values) or 'none'}"
+        )
+
+    required_stage_any = [str(x).strip().lower() for x in list(cfg.get("required_stage_tokens_any") or []) if str(x).strip()]
+    if required_stage_any and not any(tok in low for tok in required_stage_any):
+        fails.append(f"Missing required trial stage token (any): {required_stage_any}")
+
+    recommended_stage_any = [str(x).strip().lower() for x in list(cfg.get("recommended_stage_tokens_any") or []) if str(x).strip()]
+    if recommended_stage_any and not any(tok in low for tok in recommended_stage_any):
+        warns.append(f"Missing recommended trial stage token (any): {recommended_stage_any}")
 
     if fails:
         suggestions.append("Call set_trial_context(...) with required fields before response windows.")
@@ -913,8 +981,19 @@ def _check_readme_meta(task_dir: Path, cfg: dict[str, Any]) -> ContractResult:
         if pat.search(text) is None:
             warns.append(f"Missing recommended README metadata row: {field_name}")
 
+    for section in list(cfg.get("required_sections") or []):
+        section_text = str(section)
+        if section_text not in text:
+            fails.append(f"Missing required README section heading: {section_text}")
+
+    for section in list(cfg.get("recommended_subsections") or []):
+        section_text = str(section)
+        if section_text not in text:
+            warns.append(f"Missing recommended README subsection heading: {section_text}")
+
     if fails:
         suggestions.append("Add required metadata rows to the README table for consistent audits.")
+        suggestions.append("Add missing required README headings to match the standard reproducibility layout.")
     return _result(name, fails, warns, suggestions)
 
 

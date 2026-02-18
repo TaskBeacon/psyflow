@@ -112,7 +112,11 @@ class StimBank:
 
     def get_and_format(self, name: str, **format_kwargs):
         """
-        Return a fresh TextStim or TextBox2 with formatted text, keeping other properties unchanged.
+        Return a fresh TextStim or TextBox2 with formatted text.
+
+        This method now formats text and rebuilds the stimulus from its registered
+        definition, so layout-relevant properties (e.g., pos/height/wrapWidth)
+        are preserved from the template definition.
 
         Parameters
         ----------
@@ -128,35 +132,26 @@ class StimBank:
         Raises
         ------
         TypeError
-            If the stimulus is not a TextStim.
+            If the stimulus is not a TextStim/TextBox2.
+        KeyError
+            If required format keys are missing.
+        ValueError
+            If rebuilding the formatted stimulus fails.
         """
         original = self.get(name)
-        if  isinstance(original, TextStim):
-            sig = inspect.signature(TextStim.__init__)
-            valid_args = {k for k in sig.parameters if k not in ('self', 'win')}
-
-            copied_kwargs = {
-                k: original.__dict__[k]
-                for k in valid_args
-                if k in original.__dict__
-            }
-
-            copied_kwargs["text"] = original.text.format(**format_kwargs)
-            return TextStim(win=self.win, **copied_kwargs)
-        elif isinstance(original, TextBox2):
-            sig = inspect.signature(TextBox2.__init__)
-            valid_args = {k for k in sig.parameters if k not in ('self', 'win')}
-
-            copied_kwargs = {
-                k: original.__dict__[k]
-                for k in valid_args
-                if k in original.__dict__
-            }
-
-            copied_kwargs["text"] = original.text.format(**format_kwargs)
-            return TextBox2(win=self.win, **copied_kwargs)
-        else:
+        if not isinstance(original, (TextStim, TextBox2)):
             raise TypeError(f"Stimulus '{name}' is not a supported text type (TextStim/TextBox2).")
+
+        try:
+            formatted_text = str(original.text).format(**format_kwargs)
+        except KeyError as e:
+            missing = e.args[0]
+            raise KeyError(f"Missing format key '{missing}' for stimulus '{name}'.") from e
+
+        try:
+            return self.rebuild(name, update_cache=False, text=formatted_text)
+        except Exception as e:
+            raise ValueError(f"[StimBank] Failed to rebuild formatted stimulus '{name}': {e}") from e
     
 
     def rebuild(self, name: str, update_cache: bool = False, **overrides):

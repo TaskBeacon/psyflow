@@ -14,17 +14,19 @@ required_context_fields_any:
   - phase=
   - deadline_s=
   - valid_keys=
-required_context_phase_values:
+required_context_phase_values_any:
+  - choice
+  - response
+  - decision
+  - offer
+  - probe
+  - selection
   - anticipation
   - target
-required_stage_tokens_in_order:
-  - cue
-  - anticipation
-  - target
-  - feedback
 recommended_context_fields_any:
   - condition_id=
   - block_id=
   - task_factors=
 notes:
-  - run_trial should execute full trial stages in order and return serializable trial_data.
+  - phase labels are task-specific; do not hardcode paradigm-specific names.
+  - run_trial should execute an auditable trial flow and return serializable trial_data.

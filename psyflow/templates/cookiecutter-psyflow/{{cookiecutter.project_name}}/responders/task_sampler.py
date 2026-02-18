@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any
+import random as _py_random
 
-from psyflow.sim.contracts import Action, Observation, SessionInfo
+from psyflow.sim.contracts import Action, Feedback, Observation, SessionInfo
 
 
 @dataclass
@@ -29,6 +30,24 @@ class TaskSamplerResponder:
     def start_session(self, session: SessionInfo, rng: Any) -> None:
         self._rng = rng
 
+    def on_feedback(self, fb: Feedback) -> None:
+        return None
+
+    def end_session(self) -> None:
+        self._rng = None
+
+    def _sample_normal(self, mean: float, sd: float) -> float:
+        rng = self._rng
+        if hasattr(rng, "normal"):
+            return float(rng.normal(mean, sd))
+        return float(rng.gauss(mean, sd))
+
+    def _sample_random(self) -> float:
+        rng = self._rng
+        if hasattr(rng, "random"):
+            return float(rng.random())
+        return float(_py_random.random())
+
     def act(self, obs: Observation) -> Action:
         valid_keys = list(obs.valid_keys or [])
         if not valid_keys:
@@ -38,9 +57,9 @@ class TaskSamplerResponder:
         if rng is None:
             return Action(key=None, rt_s=None, meta={"source": "task_sampler", "reason": "rng_missing"})
 
-        if float(rng.random()) > self.hit_rate:
+        if self._sample_random() > self.hit_rate:
             return Action(key=None, rt_s=None, meta={"source": "task_sampler", "outcome": "miss"})
 
         chosen_key = self.key if self.key in valid_keys else valid_keys[0]
-        rt = max(self.rt_min_s, float(rng.normal(self.rt_mean_s, self.rt_sd_s)))
+        rt = max(self.rt_min_s, self._sample_normal(self.rt_mean_s, self.rt_sd_s))
         return Action(key=chosen_key, rt_s=rt, meta={"source": "task_sampler", "outcome": "hit"})

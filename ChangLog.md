@@ -1,5 +1,68 @@
 # psyflow change log
 
+## 0.1.12 (2026-02-18)
+
+### Summary
+- Generalized task contracts to remove MID-specific phase coupling in responder checks.
+  - `responder_context` now validates task-agnostic response phases via `required_context_phase_values_any`.
+  - Removed fixed `cue -> anticipation -> target -> feedback` stage-order requirement from contract docs.
+- Enhanced validator logic in `psyflow/validate.py`:
+  - added support for `required_context_phase_values_any`, `forbidden_context_phase_values`,
+    `required_stage_tokens_any`, and `recommended_stage_tokens_any`;
+  - improved README contract validation with required section-heading checks and subsection recommendations.
+- Updated contract documentation and patterns to clarify that phase/stage labels are task-defined, not MID-only.
+- Improved `StimBank.get_and_format(...)` reliability:
+  - now rebuilds formatted text stimuli from template definitions to preserve layout properties,
+  - surfaces clearer errors for missing format keys and rebuild failures.
+- Updated scaffolding quality:
+  - template sampler responder now includes lifecycle hooks and RNG fallback compatibility,
+  - task README-generation prompt refreshed for standardized metadata/flow/config/method sections.
+
+### Validation
+- `python -m py_compile psyflow/validate.py` passed.
+- `python -m psyflow.validate e:\\Taskbeacon\\T000021-drifting-double-bandit` passed (13/13).
+
+## 0.1.11 (2026-02-17)
+
+### Summary
+- Added a new build-automation skill package at `skills/task-build` for end-to-end PsyFlow/TAPS task construction from literature evidence.
+- Implemented a decision-complete workflow in `skills/task-build/SKILL.md` covering:
+  - literature discovery and filtering,
+  - reference bundle generation,
+  - task standard alignment,
+  - placeholder asset generation,
+  - validate/qa/sim gate execution with retry loop,
+  - git commit/push publishing.
+- Added curated high-impact journal reference list for selection policy enforcement:
+  - `skills/task-build/references/high_impact_psyneuro_journals.yaml`.
+- Added task-build reference guides:
+  - `literature_search_playbook.md`
+  - `task_param_inference_rules.md`
+  - `psyflow_task_standard_checklist.md`
+  - `publish_checklist.md`
+- Added task-build automation scripts:
+  - `scripts/select_papers.py`
+  - `scripts/build_reference_bundle.py`
+  - `scripts/check_task_standard.py`
+  - `scripts/run_gates.py`
+  - `scripts/publish_task.py`
+  - `scripts/create_placeholder_assets.py`
+- Added reusable task templates under:
+  - `skills/task-build/assets/templates/*`
+    (README, CHANGELOG, taskbeacon, and split config templates).
+- Added/updated skill agent metadata:
+  - `skills/task-build/agents/openai.yaml`
+
+### Validation
+- `quick_validate.py` passes for `skills/task-build`.
+- Script syntax checks pass (`py_compile`) for all task-build scripts.
+- Dry-run completed on sandbox copy of `T000010-rest`:
+  - paper selection succeeded,
+  - reference bundle generated,
+  - standard check passed,
+  - gate runner passed,
+  - publish script verified with `--no-push`.
+
 ## 0.1.10 (2026-02-16)
 
 ### Summary
