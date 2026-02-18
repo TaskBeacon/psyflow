@@ -14,21 +14,19 @@ required_context_fields_any:
   - phase=
   - deadline_s=
   - valid_keys=
-required_context_phase_tokens_any:
-  - choice
-  - response
-  - decision
-  - offer
-  - probe
-  - selection
-  - signal
-  - reveal
-  - playback
-  - rest
 recommended_context_fields_any:
   - condition_id=
   - block_id=
   - task_factors=
+recommended_context_phase_tokens_any:
+  - cue
+  - fixation
+  - target
+  - response
+  - choice
+  - decision
+  - feedback
+  - iti
 notes:
-  - phase labels are task-specific; do not hardcode paradigm-specific names.
+  - phase labels are task-specific; validator should not hard-fail on phase naming style.
   - run_trial should execute an auditable trial flow and return serializable trial_data.
