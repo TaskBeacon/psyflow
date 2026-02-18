@@ -5,6 +5,7 @@ This policy defines the minimum bar for stimulus implementation in `task-build`.
 ## Core Rule
 
 Implemented stimuli must be traceable to selected references. Placeholder or dummy media is not allowed.
+Do not expose abstract condition IDs or template labels as participant-facing stimuli unless explicitly required by cited protocol.
 
 ## Allowed Implementation Modes
 
@@ -20,5 +21,8 @@ Implemented stimuli must be traceable to selected references. Placeholder or dum
 ## Hard Fail Conditions
 
 - Any config or asset path containing `placeholder`, `dummy`, or `todo`.
+- Participant-facing template text used as trial content (for example `CUE: <condition>`, `TARGET: <condition>`, stock instruction-only placeholders).
+- Participant-facing text that is only a raw condition token (for example `high_risk`, `deck_a`, `mixed_frame`) without protocol-cited justification.
 - Missing asset files referenced by config.
 - Unresolved entries in `references/stimulus_mapping.md`.
+- Multi-option displays without explicit, readable layout separation in configuration.

@@ -28,6 +28,7 @@ REQUIRED_FILES = [
     "references/references.md",
     "references/parameter_mapping.md",
     "references/stimulus_mapping.md",
+    "references/task_logic_audit.md",
 ]
 
 FORBIDDEN_TOKENS = ("placeholder", "dummy", "todo")
@@ -47,6 +48,12 @@ RECOMMENDED_README_SUBHEADINGS = (
     "### c. Stimuli",
     "### d. Timing",
 )
+TEMPLATE_TEXT_SNIPPETS = (
+    "respond as quickly and accurately as possible",
+    "press space to continue",
+    "press space to quit",
+)
+PLACEHOLDER_CUE_TARGET_RE = re.compile(r"^\s*(cue|target)\s*[:：]\s*[a-z0-9_\-\s]+\s*$", flags=re.IGNORECASE)
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -64,6 +71,10 @@ def _contains_forbidden_token(text: str) -> str | None:
         if token in lower:
             return token
     return None
+
+
+def _normalize_label(text: str) -> str:
+    return re.sub(r"[\W_]+", " ", text.lower()).strip()
 
 
 def _stim_asset_path(spec: dict[str, Any], stim_type: str) -> str | None:
@@ -105,6 +116,52 @@ def _check_asset_backed_stimuli(cfg: dict[str, Any], *, cfg_name: str, task_path
         asset_path = task_path / asset_rel
         if not asset_path.exists():
             failures.append(f"{cfg_name}: stimulus '{stim_id}' asset file not found: {asset_rel}")
+
+
+def _check_text_stimulus_fidelity(
+    cfg: dict[str, Any],
+    *,
+    cfg_name: str,
+    condition_labels: set[str],
+    failures: list[str],
+) -> None:
+    stimuli = cfg.get("stimuli", {}) if isinstance(cfg, dict) else {}
+    if not isinstance(stimuli, dict):
+        return
+
+    for stim_id, spec in stimuli.items():
+        if not isinstance(spec, dict):
+            continue
+        stim_type = str(spec.get("type", "")).strip().lower()
+        if stim_type not in {"text", "textbox"}:
+            continue
+
+        raw_text = spec.get("text")
+        if not isinstance(raw_text, str):
+            continue
+        text = raw_text.strip()
+        if not text:
+            continue
+
+        norm = _normalize_label(text)
+        if not norm:
+            continue
+
+        if PLACEHOLDER_CUE_TARGET_RE.match(text):
+            failures.append(
+                f"{cfg_name}: stimulus '{stim_id}' uses placeholder cue/target text '{text}'"
+            )
+
+        if norm in condition_labels:
+            failures.append(
+                f"{cfg_name}: stimulus '{stim_id}' text is raw condition label '{text}'"
+            )
+
+        for snippet in TEMPLATE_TEXT_SNIPPETS:
+            if snippet in norm and len(norm.split()) <= 24:
+                failures.append(
+                    f"{cfg_name}: stimulus '{stim_id}' contains template instruction text '{snippet}'"
+                )
 
 
 def parse_args() -> argparse.Namespace:
@@ -191,6 +248,44 @@ def main() -> int:
         failures=failures,
     )
 
+    base_conditions = (
+        base_cfg.get("task", {}).get("conditions", [])
+        if isinstance(base_cfg.get("task", {}), dict)
+        else []
+    )
+    condition_labels: set[str] = set()
+    if isinstance(base_conditions, list):
+        for cond in base_conditions:
+            if isinstance(cond, str) and cond.strip():
+                raw = cond.strip()
+                condition_labels.add(_normalize_label(raw))
+                condition_labels.add(_normalize_label(raw.replace("_", " ")))
+
+    _check_text_stimulus_fidelity(
+        base_cfg,
+        cfg_name="config/config.yaml",
+        condition_labels=condition_labels,
+        failures=failures,
+    )
+    _check_text_stimulus_fidelity(
+        qa_cfg,
+        cfg_name="config/config_qa.yaml",
+        condition_labels=condition_labels,
+        failures=failures,
+    )
+    _check_text_stimulus_fidelity(
+        scripted_cfg,
+        cfg_name="config/config_scripted_sim.yaml",
+        condition_labels=condition_labels,
+        failures=failures,
+    )
+    _check_text_stimulus_fidelity(
+        sampler_cfg,
+        cfg_name="config/config_sampler_sim.yaml",
+        condition_labels=condition_labels,
+        failures=failures,
+    )
+
     tb_cfg = _load_yaml(task_path / "taskbeacon.yaml")
     contracts = tb_cfg.get("contracts") if isinstance(tb_cfg, dict) else None
     if not isinstance(contracts, dict) or not contracts.get("psyflow_taps"):
@@ -231,13 +326,8 @@ def main() -> int:
         if re.search(pat, stim_text, flags=re.MULTILINE):
             failures.append(f"references/stimulus_mapping.md contains unresolved marker '{marker}'")
 
-    conditions = (
-        base_cfg.get("task", {}).get("conditions", [])
-        if isinstance(base_cfg.get("task", {}), dict)
-        else []
-    )
-    if isinstance(conditions, list):
-        for cond in conditions:
+    if isinstance(base_conditions, list):
+        for cond in base_conditions:
             if isinstance(cond, str) and cond.strip():
                 token = f"`{cond.strip()}`"
                 if token not in stim_text:

@@ -20,6 +20,7 @@ Use this checklist before running final gates.
 - `references/references.md`
 - `references/parameter_mapping.md`
 - `references/stimulus_mapping.md`
+- `references/task_logic_audit.md`
 
 ## Runtime Pattern
 
@@ -38,11 +39,16 @@ Use this checklist before running final gates.
 ## Stimulus Fidelity Rules
 
 - Placeholder/dummy stimuli are forbidden.
+- Placeholder template participant text is forbidden (for example `CUE: ...`, `TARGET: ...`, generic stock prompts with no paradigm content).
 - Configs must not reference files containing tokens like `placeholder`, `dummy`, `todo`.
 - Asset-backed stimuli (`image`, `movie`, `sound`) must point to existing files.
 - `references/stimulus_mapping.md` must be fully resolved (no `UNSET`, `TODO`, or review markers).
 - Every base-config condition must appear in `references/stimulus_mapping.md`.
 - Internal condition/debug labels must not be shown to participants unless references require them.
+- Raw condition tokens (for example `high_risk`, `deck_a`) must not be displayed to participants unless protocol-cited.
+- If key mapping is already explicitly provided in instructions, trial screens should not redundantly repeat the same `F/J left/right` mapping unless references require that reminder.
+- Frames with multiple text/textbox stimuli must use explicit non-overlapping layout settings (`pos`, `height`, `wrapWidth`) and be checked in QA.
+- Multi-option screens must use sensible layout/grouping (explicit anchors, spacing, and legibility checks in QA).
 
 ## Metadata Rules
 

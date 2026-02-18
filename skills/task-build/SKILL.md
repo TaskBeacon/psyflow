@@ -32,6 +32,20 @@ Language/font default policy:
 
 ## Workflow
 
+### Phase 0: Paradigm Logic Audit (Mandatory Before Coding)
+
+1. Create `references/task_logic_audit.md` before editing task code.
+   - Start from `assets/templates/task_logic_audit_template.md`.
+2. Specify the full paradigm workflow:
+   - research question and manipulated factors
+   - block and trial state machine
+   - response rules and timeout rules
+   - scoring/reward update rules
+   - trigger plan by phase
+3. For every condition, describe concrete participant-facing sensory content (what is seen/heard), not abstract IDs.
+4. For every screen with multiple concurrent options/stimuli, define an explicit layout plan (`pos`, spacing, alignment, visual hierarchy) before implementation.
+5. Stop implementation if any trial phase is still represented only by template text or abstract condition labels.
+
 ### Phase 1: Discover and Filter Literature
 
 1. Run `scripts/select_papers.py` with task keywords and acquisition modality.
@@ -50,6 +64,7 @@ Language/font default policy:
    - `references/references.md`
    - `references/parameter_mapping.md`
    - `references/stimulus_mapping.md`
+   - `references/task_logic_audit.md`
 3. Mark unresolved protocol decisions as `inferred` and explain rationale.
 4. Do not continue to implementation unless `stimulus_mapping.md` is fully resolved.
 
@@ -80,8 +95,15 @@ Stimulus policy is strict:
 - Implement the exact stimulus logic/material from selected references.
 - Prefer PsychoPy built-in drawing primitives (`text`, `circle`, `rect`, `polygon`, `shape`) when possible.
 - If external media is required, generate/build non-placeholder assets aligned to references.
+- Always render concrete task stimuli (draw/generate actual task materials). Do not leave participant-facing stages as generic template text.
 - Every implemented stimulus must map to citation evidence in `references/stimulus_mapping.md`.
 - Do not show internal condition labels or debugging cues to participants unless explicitly required by the reference protocol.
+- Do not display raw condition tokens as participant stimuli (for example `high_risk`, `deck_a`, `mixed_frame`) unless a cited protocol explicitly requires label exposure.
+- Placeholder/template participant text is forbidden (for example `CUE: ...`, `TARGET: ...`, `Respond as quickly and accurately as possible`, `Press SPACE to continue` as sole trial content).
+- If key mapping is already clearly taught in instructions, do not redundantly repeat `F/J left/right` mapping text on every trial screen unless the reference protocol explicitly requires repeated reminders.
+- When multiple `text`/`textbox` stimuli are displayed in the same frame, layout must be explicitly separated (`pos`, `height`, `wrapWidth`) to prevent overlap across supported window sizes.
+- When multiple options are displayed together, use a sensible spatial arrangement (left/right grid, radial, card row, etc.) with explicit anchors and perceptual grouping cues.
+- Verify multi-stimulus layout with QA output and adjust spacing until labels/options are readable without overlap.
 
 ### Phase 5: Execute Gates with Auto-Fix Loop
 
@@ -123,6 +145,8 @@ README contract requirements:
 ## Guardrails
 
 - Do not introduce protocol decisions without references or `inferred` labeling.
+- Do not implement paradigms by copying unrelated task templates (for example MID) without paradigm-specific logic refit.
+- Do not treat gate pass as paradigm validity; logic and stimulus fidelity must be manually audited against references.
 - Do not mix mode sections across configs:
   - `config.yaml`: no `qa`, no `sim`
   - `config_qa.yaml`: has `qa`, no `sim`
@@ -143,6 +167,8 @@ Apply these cross-task lessons by default:
   - Chinese tasks default to `SimHei`.
   - Other languages use fonts that fully support their scripts.
 - Keep pre-response displays neutral unless required by protocol (avoid leaking condition identity before response).
+- Avoid redundant key-reminder text on trial screens when instruction phase already defines key mapping.
+- For screens with multiple text elements, define explicit non-overlapping layout anchors and verify visually in QA.
 - Resolve stimulus evidence mapping before runtime tuning or polishing.
 - Add strict fail-fast checks early (`check_task_standard.py`) to avoid long failing gate loops.
 - Keep QA and sim profiles short but mechanism-complete (cover all conditions/stages).

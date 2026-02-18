@@ -1,5 +1,31 @@
 # psyflow change log
 
+## 0.1.14 (2026-02-18)
+
+### Summary
+- Hardened `skills/task-build` to enforce logic-first development and non-placeholder stimulus implementation.
+- Updated `skills/task-build/SKILL.md` workflow:
+  - added mandatory **Phase 0: Paradigm Logic Audit** before coding;
+  - now requires `references/task_logic_audit.md` (seeded from template);
+  - clarified hard bans on placeholder/template participant text and raw condition-token displays;
+  - added explicit multi-option/multi-stimulus layout requirements and QA readability checks.
+- Added reusable audit scaffold:
+  - `skills/task-build/assets/templates/task_logic_audit_template.md`.
+- Strengthened task standard checker (`skills/task-build/scripts/check_task_standard.py`):
+  - now requires `references/task_logic_audit.md`;
+  - fails placeholder cue/target patterns (e.g., `CUE: ...`, `TARGET: ...`);
+  - fails common template stock text in participant stimuli (e.g., generic response/continue/quit text);
+  - fails participant-facing text that is only raw condition labels.
+- Updated policy/checklist references:
+  - `skills/task-build/references/psyflow_task_standard_checklist.md`
+  - `skills/task-build/references/stimulus_fidelity_policy.md`
+  to align with the stricter stimulus and layout standards.
+
+### Validation
+- `python C:/Users/frued/.codex/skills/.system/skill-creator/scripts/quick_validate.py C:/Users/frued/.codex/skills/task-build` passed.
+- `python -m py_compile skills/task-build/scripts/check_task_standard.py` passed.
+- Spot-check on a placeholder-heavy task now fails as expected with explicit stimulus-fidelity violations.
+
 ## 0.1.13 (2026-02-18)
 
 ### Summary
