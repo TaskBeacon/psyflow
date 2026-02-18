@@ -14,15 +14,17 @@ required_context_fields_any:
   - phase=
   - deadline_s=
   - valid_keys=
-required_context_phase_values_any:
+required_context_phase_tokens_any:
   - choice
   - response
   - decision
   - offer
   - probe
   - selection
-  - anticipation
-  - target
+  - signal
+  - reveal
+  - playback
+  - rest
 recommended_context_fields_any:
   - condition_id=
   - block_id=

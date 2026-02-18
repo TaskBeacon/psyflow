@@ -49,17 +49,17 @@ def run_trial(
         onset_trigger=settings.triggers.get(f"{condition}_cue_onset"),
     ).to_dict(trial_data)
 
-    # --- Anticipation ---
+    # phase: pre_response_fixation
     anti = make_unit(unit_label="anticipation").add_stim(stim_bank.get("fixation"))
     set_trial_context(
         anti,
         trial_id=trial_id,
-        phase="anticipation",
+        phase="pre_response_fixation",
         deadline_s=_deadline_s(settings.anticipation_duration),
         valid_keys=list(settings.key_list),
         block_id=block_id,
         condition_id=str(condition),
-        task_factors={"condition": str(condition), "stage": "anticipation", "block_idx": block_idx},
+        task_factors={"condition": str(condition), "stage": "pre_response_fixation", "block_idx": block_idx},
         stim_id="fixation",
     )
     anti.capture_response(
@@ -73,20 +73,20 @@ def run_trial(
     anti.set_state(early_response=early_response)
     anti.to_dict(trial_data)
 
-    # --- Target ---
+    # phase: response_window
     duration = controller.get_duration(condition)
     target = make_unit(unit_label="target").add_stim(stim_bank.get(f"{condition}_target"))
     set_trial_context(
         target,
         trial_id=trial_id,
-        phase="target",
+        phase="response_window",
         deadline_s=_deadline_s(duration),
         valid_keys=list(settings.key_list),
         block_id=block_id,
         condition_id=str(condition),
         task_factors={
             "condition": str(condition),
-            "stage": "target",
+            "stage": "response_window",
             "block_idx": block_idx,
             "target_duration_s": float(duration),
         },

@@ -906,6 +906,22 @@ def _check_responder_context(task_dir: Path, cfg: dict[str, Any]) -> ContractRes
             f"expected one of {sorted(required_phase_any)}, got {sorted(phase_values) or 'none'}"
         )
 
+    required_phase_tokens_any = [
+        str(x or "").strip().lower()
+        for x in list(cfg.get("required_context_phase_tokens_any") or [])
+        if str(x or "").strip()
+    ]
+    if required_phase_tokens_any:
+        has_required_token = any(
+            any(tok in phase for tok in required_phase_tokens_any)
+            for phase in phase_values
+        )
+        if not has_required_token:
+            fails.append(
+                "Missing required context phase token (any): "
+                f"expected one of {sorted(required_phase_tokens_any)}, got {sorted(phase_values) or 'none'}"
+            )
+
     forbidden_phase = {
         str(x or "").strip().lower()
         for x in list(cfg.get("forbidden_context_phase_values") or [])
@@ -944,6 +960,22 @@ def _check_responder_context(task_dir: Path, cfg: dict[str, Any]) -> ContractRes
             "No recommended phase labels found (any): "
             f"{sorted(recommended_phase_any)}; got {sorted(phase_values) or 'none'}"
         )
+
+    recommended_phase_tokens_any = [
+        str(x or "").strip().lower()
+        for x in list(cfg.get("recommended_context_phase_tokens_any") or [])
+        if str(x or "").strip()
+    ]
+    if recommended_phase_tokens_any:
+        has_recommended_token = any(
+            any(tok in phase for tok in recommended_phase_tokens_any)
+            for phase in phase_values
+        )
+        if not has_recommended_token:
+            warns.append(
+                "No recommended phase tokens found (any): "
+                f"{sorted(recommended_phase_tokens_any)}; got {sorted(phase_values) or 'none'}"
+            )
 
     required_stage_any = [str(x).strip().lower() for x in list(cfg.get("required_stage_tokens_any") or []) if str(x).strip()]
     if required_stage_any and not any(tok in low for tok in required_stage_any):

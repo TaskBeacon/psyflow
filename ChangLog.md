@@ -1,5 +1,19 @@
 # psyflow change log
 
+## 0.1.13 (2026-02-18)
+
+### Summary
+- Updated responder context contract/validator to support truly generic, task-specific phase labels via phase-token checks instead of fixed phase values.
+- Extended template compliance so CI validation passes on the cookiecutter task scaffold:
+  - README now includes required section heading `## 4. Methods (for academic publication)` and `Language` metadata row.
+  - Template `.gitignore` now includes recommended housekeeping ignores (`.pytest_cache`, `.mypy_cache`, virtualenv dirs).
+  - Template `CHANGELOG.md` now includes recommended `Changed` and `Fixed` sections.
+  - Template run-trial phase labels updated to generic task-ready names (`pre_response_fixation`, `response_window`).
+  - Added template `outputs/.gitkeep` to satisfy recommended path checks.
+
+### Validation
+- `python -m psyflow.validate 'psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}'` now passes with `FAIL=0`.
+
 ## 0.1.12 (2026-02-18)
 
 ### Summary
