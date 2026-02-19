@@ -2,6 +2,9 @@
 
 Use this file as `references/task_logic_audit.md` before coding.
 
+**WARNING:** DO NOT fill this template by reverse-engineering existing code (`src/run_trial.py`) or using automated scripts. You MUST extract the trial flow, timing, and conditions directly from the text, figures, and tables of the selected literature.
+**WARNING:** If this task was initialized from MID (or any other task), treat that source as structure-only scaffolding. Rebuild the paradigm state machine from zero-base literature logic.
+
 ## 1. Paradigm Intent
 
 - Task:

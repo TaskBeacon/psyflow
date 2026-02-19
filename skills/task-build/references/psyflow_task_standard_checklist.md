@@ -40,6 +40,7 @@ Use this checklist before running final gates.
 
 - Placeholder/dummy stimuli are forbidden.
 - Placeholder template participant text is forbidden (for example `CUE: ...`, `TARGET: ...`, generic stock prompts with no paradigm content).
+- Participant-facing YAML text must not contain encoding corruption (for example `????`, `�`, or mojibake like `Ã¥...`).
 - Configs must not reference files containing tokens like `placeholder`, `dummy`, `todo`.
 - Asset-backed stimuli (`image`, `movie`, `sound`) must point to existing files.
 - `references/stimulus_mapping.md` must be fully resolved (no `UNSET`, `TODO`, or review markers).

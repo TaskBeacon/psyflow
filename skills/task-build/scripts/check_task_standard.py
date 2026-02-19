@@ -54,6 +54,8 @@ TEMPLATE_TEXT_SNIPPETS = (
     "press space to quit",
 )
 PLACEHOLDER_CUE_TARGET_RE = re.compile(r"^\s*(cue|target)\s*[:：]\s*[a-z0-9_\-\s]+\s*$", flags=re.IGNORECASE)
+MOJIBAKE_SEQ_RE = re.compile(r"(?:Ã.|Â.|â.|ð.)")
+MOJIBAKE_CHAR_MARKERS = ("Ã", "Â", "â", "ð", "�")
 
 
 def _load_yaml(path: Path) -> dict[str, Any]:
@@ -162,6 +164,44 @@ def _check_text_stimulus_fidelity(
                 failures.append(
                     f"{cfg_name}: stimulus '{stim_id}' contains template instruction text '{snippet}'"
                 )
+
+
+def _garbled_reason(text: str) -> str | None:
+    if not text:
+        return None
+    if "\ufffd" in text:
+        return "contains replacement character U+FFFD"
+    if "??" in text or text.count("?") >= 3:
+        return "contains repeated '?' characters"
+    if any(ch in text for ch in MOJIBAKE_CHAR_MARKERS) and MOJIBAKE_SEQ_RE.search(text):
+        return "contains likely mojibake sequence"
+    return None
+
+
+def _check_text_encoding_quality(cfg: dict[str, Any], *, cfg_name: str, failures: list[str]) -> None:
+    subinfo_mapping = cfg.get("subinfo_mapping", {}) if isinstance(cfg, dict) else {}
+    if isinstance(subinfo_mapping, dict):
+        for key, value in subinfo_mapping.items():
+            if isinstance(value, str):
+                reason = _garbled_reason(value)
+                if reason:
+                    failures.append(f"{cfg_name}: subinfo_mapping['{key}'] {reason}")
+
+    stimuli = cfg.get("stimuli", {}) if isinstance(cfg, dict) else {}
+    if not isinstance(stimuli, dict):
+        return
+    for stim_id, spec in stimuli.items():
+        if not isinstance(spec, dict):
+            continue
+        stim_type = str(spec.get("type", "")).strip().lower()
+        if stim_type not in {"text", "textbox"}:
+            continue
+        text = spec.get("text")
+        if not isinstance(text, str):
+            continue
+        reason = _garbled_reason(text)
+        if reason:
+            failures.append(f"{cfg_name}: stimulus '{stim_id}' text {reason}")
 
 
 def parse_args() -> argparse.Namespace:
@@ -283,6 +323,26 @@ def main() -> int:
         sampler_cfg,
         cfg_name="config/config_sampler_sim.yaml",
         condition_labels=condition_labels,
+        failures=failures,
+    )
+    _check_text_encoding_quality(
+        base_cfg,
+        cfg_name="config/config.yaml",
+        failures=failures,
+    )
+    _check_text_encoding_quality(
+        qa_cfg,
+        cfg_name="config/config_qa.yaml",
+        failures=failures,
+    )
+    _check_text_encoding_quality(
+        scripted_cfg,
+        cfg_name="config/config_scripted_sim.yaml",
+        failures=failures,
+    )
+    _check_text_encoding_quality(
+        sampler_cfg,
+        cfg_name="config/config_sampler_sim.yaml",
         failures=failures,
     )
 

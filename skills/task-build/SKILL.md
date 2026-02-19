@@ -36,15 +36,18 @@ Language/font default policy:
 
 1. Create `references/task_logic_audit.md` before editing task code.
    - Start from `assets/templates/task_logic_audit_template.md`.
+   - **CRITICAL:** Do NOT generate this file by reverse-engineering existing code or using automated scripts that read `src/run_trial.py`.
+   - **CRITICAL:** Extract the state machine and timing directly from the text, figures, and tables of the cited papers.
+   - **CRITICAL:** If you initialize files from a MID template, treat it as scaffolding only (CLI/mode wiring, file layout). Discard MID trial logic and rebuild phases from literature.
 2. Specify the full paradigm workflow:
    - research question and manipulated factors
-   - block and trial state machine
+   - block and trial state machine (sequence of states)
    - response rules and timeout rules
    - scoring/reward update rules
    - trigger plan by phase
 3. For every condition, describe concrete participant-facing sensory content (what is seen/heard), not abstract IDs.
 4. For every screen with multiple concurrent options/stimuli, define an explicit layout plan (`pos`, spacing, alignment, visual hierarchy) before implementation.
-5. Stop implementation if any trial phase is still represented only by template text or abstract condition labels.
+5. **Stop implementation** if any trial phase is still represented only by template text, abstract condition labels, or if the logic is being "imported" from an unrelated task (e.g., using MID's Cue-Anticipation-Target structure for a choice-based task).
 
 ### Phase 1: Discover and Filter Literature
 
@@ -86,6 +89,12 @@ Ensure mandatory structure exists and is aligned:
 - `taskbeacon.yaml` with `contracts.psyflow_taps`
 - `.gitignore` aligned to outputs
 
+Template bootstrap policy:
+
+- You may initialize a new task from an existing template (including MID) for non-paradigm-specific scaffolding only.
+- Before writing `src/run_trial.py` and `config/config.yaml`, reset to zero-base literature logic: re-derive states, transitions, and stimuli from citations.
+- Any borrowed phase sequence from an unrelated paradigm is invalid, even if all gates pass.
+
 Use `references/psyflow_task_standard_checklist.md` as the source of truth.
 
 ### Phase 4: Implement Reference-Exact Stimuli
@@ -100,6 +109,7 @@ Stimulus policy is strict:
 - Do not show internal condition labels or debugging cues to participants unless explicitly required by the reference protocol.
 - Do not display raw condition tokens as participant stimuli (for example `high_risk`, `deck_a`, `mixed_frame`) unless a cited protocol explicitly requires label exposure.
 - Placeholder/template participant text is forbidden (for example `CUE: ...`, `TARGET: ...`, `Respond as quickly and accurately as possible`, `Press SPACE to continue` as sole trial content).
+- Participant-facing text in YAML must be encoding-clean (no mojibake and no repeated `?` corruption such as `????`).
 - If key mapping is already clearly taught in instructions, do not redundantly repeat `F/J left/right` mapping text on every trial screen unless the reference protocol explicitly requires repeated reminders.
 - When multiple `text`/`textbox` stimuli are displayed in the same frame, layout must be explicitly separated (`pos`, `height`, `wrapWidth`) to prevent overlap across supported window sizes.
 - When multiple options are displayed together, use a sensible spatial arrangement (left/right grid, radial, card row, etc.) with explicit anchors and perceptual grouping cues.
@@ -144,9 +154,14 @@ README contract requirements:
 
 ## Guardrails
 
+- **Zero-Base Implementation:** Do not implement paradigms by copying unrelated task templates (for example MID) without paradigm-specific logic refit. If a task is not an incentive-delay paradigm, it MUST NOT use the `cue -> anticipation -> target -> feedback` state machine.
+- **Scaffold-Only Reuse:** MID can be used to bootstrap project structure, but not as task logic. Keep only generic runtime plumbing; replace all paradigm-specific state machine, response logic, and stimuli from literature.
+- **Audit-to-Code Traceability:** Every phase in `src/run_trial.py` must correspond to a state defined in `references/task_logic_audit.md`.
+- **Anti-Poisoning:** Explicitly verify that the task logic matches the literature. For example, Cyberball must involve ball-tossing interactions, and choice-based games must involve explicit choice stages, not just "hit/miss" targets.
 - Do not introduce protocol decisions without references or `inferred` labeling.
 - Do not implement paradigms by copying unrelated task templates (for example MID) without paradigm-specific logic refit.
 - Do not treat gate pass as paradigm validity; logic and stimulus fidelity must be manually audited against references.
+- Ensure all `config/*.yaml` files are written and saved as UTF-8 with correct multilingual rendering (Chinese/Japanese/English/French etc.) and no corrupted glyph sequences.
 - Do not mix mode sections across configs:
   - `config.yaml`: no `qa`, no `sim`
   - `config_qa.yaml`: has `qa`, no `sim`
