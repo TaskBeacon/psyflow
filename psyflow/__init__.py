@@ -49,6 +49,11 @@ _LAZY_ATTRS: dict[str, tuple[str, str]] = {
     "context_from_config": ("psyflow.sim", "context_from_config"),
     "runtime_context": ("psyflow.sim", "runtime_context"),
     "set_trial_context": ("psyflow.sim", "set_trial_context"),
+    # Trial utilities
+    "next_trial_id": ("psyflow.utils.trials", "next_trial_id"),
+    "reset_trial_counter": ("psyflow.utils.trials", "reset_trial_counter"),
+    "resolve_deadline": ("psyflow.utils.trials", "resolve_deadline"),
+    "resolve_trial_id": ("psyflow.utils.trials", "resolve_trial_id"),
 }
 
 __all__ = ["__version__", *_LAZY_ATTRS.keys()]
@@ -83,6 +88,10 @@ if TYPE_CHECKING:
         show_ports as show_ports,
         taps as taps,
         validate_config as validate_config,
+        next_trial_id as next_trial_id,
+        reset_trial_counter as reset_trial_counter,
+        resolve_deadline as resolve_deadline,
+        resolve_trial_id as resolve_trial_id,
     )
 
 

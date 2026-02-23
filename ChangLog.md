@@ -1,5 +1,13 @@
 # psyflow change log
 
+## 0.1.15 (2026-02-23)
+
+### Summary
+- Decoupled `psyflow.sim.context_helpers.set_trial_context` from task-specific controller logic.
+  - Automatically resolves sequence durations via `max()` internally, eliminating the need for boilerplate `_deadline_s` functions in task code.
+  - Removed controller dependency for `trial_id` resolution from `context_helpers`.
+- Added generic trial increment tracking natively to `psyflow` via `next_trial_id()` to standardize sequential trial IDs across tasks.
+
 ## 0.1.14 (2026-02-18)
 
 ### Summary
