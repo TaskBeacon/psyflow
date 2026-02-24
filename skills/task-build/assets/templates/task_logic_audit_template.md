@@ -20,6 +20,13 @@ Use this file as `references/task_logic_audit.md` before coding.
 - Total blocks:
 - Trials per block:
 - Randomization/counterbalancing:
+- Condition generation method:
+  - Built-in `BlockUnit.generate_conditions(...)` or custom generator?
+  - If custom generator is used, why can simple condition labels not represent the task?
+  - What is the generated condition data shape passed into `run_trial.py`?
+- Runtime-generated trial values (if any):
+  - What is generated in `run_trial.py` instead of precomputed conditions?
+  - How is generation made deterministic/reproducible (seed source, trial ID, block seed, etc.)?
 
 ### Trial State Machine
 
@@ -41,9 +48,16 @@ For each condition token in `task.conditions`:
 - Concrete stimulus realization (visual/audio):
 - Outcome rules:
 
+Also document where participant-facing condition text/stimuli are defined:
+
+- Participant-facing text source (config stimuli / code formatting / generated assets):
+- Why this source is appropriate for auditability:
+
 ## 4. Response and Scoring Rules
 
 - Response mapping:
+- Response key source (config field vs code constant):
+- If code-defined, why config-driven mapping is not sufficient:
 - Missing-response policy:
 - Correctness logic:
 - Reward/penalty updates:
@@ -64,7 +78,17 @@ For every screen with multiple simultaneous options/stimuli:
 
 Map each phase/state to trigger code and semantics.
 
-## 7. Inference Log
+## 7. Architecture Decisions (Auditability)
+
+- `main.py` runtime flow style (simple single flow / helper-heavy / why):
+- `utils.py` used? (yes/no)
+- If yes, exact purpose (adaptive controller / sequence generation / asset pool / other):
+- Custom controller used? (yes/no)
+- If yes, why PsyFlow-native path is insufficient:
+- Legacy/backward-compatibility fallback logic required? (yes/no)
+- If yes, scope and removal plan:
+
+## 8. Inference Log
 
 List any inferred decisions not directly specified by references:
 

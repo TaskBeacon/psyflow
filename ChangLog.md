@@ -1,5 +1,26 @@
 # psyflow change log
 
+## 0.1.16 (2026-02-24)
+
+### Summary
+- Improved `skills/task-build` guidance with generic anti-overdesign and PsyFlow-first decision rules (docs/templates only; no new checker enforcement).
+- Updated `skills/task-build/SKILL.md` to clarify:
+  - start from the simplest PsyFlow-native path;
+  - prefer built-in block condition generation before custom generators;
+  - treat `utils.py` as optional and scoped to real framework gaps;
+  - prefer config-driven participant-facing text and response mappings when appropriate;
+  - prefer auditable `main.py`/`run_trial.py` patterns with minimal fallback logic.
+- Expanded `skills/task-build/assets/templates/task_logic_audit_template.md` with architecture-decision fields for:
+  - condition generation method and justification,
+  - runtime determinism/reproducibility,
+  - response key source,
+  - `utils.py`/controller usage,
+  - fallback/compatibility scope.
+- Updated reusable reference docs to reinforce generic design heuristics:
+  - `skills/task-build/references/psyflow_task_standard_checklist.md`
+  - `skills/task-build/references/task_development_experience.md`
+  so future task builds remain simpler, more PsyFlow-aligned, and easier to audit.
+
 ## 0.1.15 (2026-02-23)
 
 ### Summary

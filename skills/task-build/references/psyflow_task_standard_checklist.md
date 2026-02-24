@@ -28,6 +28,11 @@ Use this checklist before running final gates.
 - `main.py` uses `parse_task_run_options(...)`
 - `run_trial.py` uses `set_trial_context(...)`
 - trigger schema is structured (`map/driver/policy/timing`)
+- Prefer a simple, auditable mode-aware runtime flow in `main.py` (avoid unnecessary abstraction layers).
+- If custom condition generation is used, `references/task_logic_audit.md` documents why built-in block condition generation is insufficient.
+- If a task-specific controller exists, `references/task_logic_audit.md` documents why it is needed (for example adaptive timing or online control).
+- Response keys/mappings are config-driven unless the audit documents a justified runtime exception.
+- Legacy/backward-compatibility fallback branches are avoided unless the audit explicitly requires them.
 
 ## Config Separation Rules
 
@@ -50,6 +55,7 @@ Use this checklist before running final gates.
 - If key mapping is already explicitly provided in instructions, trial screens should not redundantly repeat the same `F/J left/right` mapping unless references require that reminder.
 - Frames with multiple text/textbox stimuli must use explicit non-overlapping layout settings (`pos`, `height`, `wrapWidth`) and be checked in QA.
 - Multi-option screens must use sensible layout/grouping (explicit anchors, spacing, and legibility checks in QA).
+- Prefer config-defined participant-facing text/stimuli for static or condition-indexable content to keep runtime logic easier to audit.
 
 ## Metadata Rules
 
@@ -67,6 +73,7 @@ Use this checklist before running final gates.
   - `## 4. Methods (for academic publication)`
 - README task flow includes block-level, trial-level, controller logic, and other logic (if applicable).
 - README configuration summary includes subject info, window, stimuli, timing, triggers (if present), and adaptive controller (if present).
+- README/audit descriptions of condition generation and controller usage match the actual runtime implementation (no stale references to removed abstractions).
 
 ## Required Gates
 

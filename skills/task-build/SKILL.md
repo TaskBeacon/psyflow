@@ -95,6 +95,27 @@ Template bootstrap policy:
 - Before writing `src/run_trial.py` and `config/config.yaml`, reset to zero-base literature logic: re-derive states, transitions, and stimuli from citations.
 - Any borrowed phase sequence from an unrelated paradigm is invalid, even if all gates pass.
 
+PsyFlow-first implementation decision rules:
+
+- Start from the simplest PsyFlow-native implementation path, then add task-specific abstractions only when the native path cannot express the paradigm.
+- Condition generation:
+  - Prefer built-in `BlockUnit.generate_conditions(...)` using config-defined condition labels/weights/order.
+  - Use a custom generation function only when simple condition labels cannot represent the required trial semantics.
+  - If custom generation is used, document the reason and data shape in `references/task_logic_audit.md` before coding.
+- `utils.py` scope:
+  - `utils.py` is optional and should only hold task-specific helpers that fill real framework gaps (for example adaptive RT/staircase control, complex sequence generation, asset pools, stimulus bookkeeping).
+  - Do not introduce a unified controller/manager abstraction by default.
+- Config-first runtime design:
+  - Prefer config-defined participant-facing stimuli and task parameters when values are static or condition-indexable.
+  - Prefer config-defined response keys/mappings unless the paradigm requires runtime adaptation.
+- `main.py` style:
+  - Prefer one simple, auditable mode-aware flow (`human|qa|sim`) with consistent setup order.
+  - Avoid over-fragmenting `main.py` into many helpers unless complexity clearly justifies it.
+- `src/run_trial.py` auditability:
+  - Avoid legacy/backward-compatibility fallback branches unless migration support is explicitly required.
+  - Keep phase labels and internal unit labels aligned to the literature audit state names.
+  - If values are generated at runtime, make generation deterministic when possible and log enough information to audit reproduction.
+
 Use `references/psyflow_task_standard_checklist.md` as the source of truth.
 
 ### Phase 4: Implement Reference-Exact Stimuli
@@ -158,6 +179,7 @@ README contract requirements:
 - **Scaffold-Only Reuse:** MID can be used to bootstrap project structure, but not as task logic. Keep only generic runtime plumbing; replace all paradigm-specific state machine, response logic, and stimuli from literature.
 - **Audit-to-Code Traceability:** Every phase in `src/run_trial.py` must correspond to a state defined in `references/task_logic_audit.md`.
 - **Anti-Poisoning:** Explicitly verify that the task logic matches the literature. For example, Cyberball must involve ball-tossing interactions, and choice-based games must involve explicit choice stages, not just "hit/miss" targets.
+- **PsyFlow-First Simplicity:** Prefer the simplest built-in PsyFlow path first (standard block condition generation, config-defined keys/stimuli, direct trial logic). Escalate abstraction only when the paradigm requires it.
 - Do not introduce protocol decisions without references or `inferred` labeling.
 - Do not implement paradigms by copying unrelated task templates (for example MID) without paradigm-specific logic refit.
 - Do not treat gate pass as paradigm validity; logic and stimulus fidelity must be manually audited against references.
@@ -188,6 +210,10 @@ Apply these cross-task lessons by default:
 - Add strict fail-fast checks early (`check_task_standard.py`) to avoid long failing gate loops.
 - Keep QA and sim profiles short but mechanism-complete (cover all conditions/stages).
 - Avoid over-automation that invents paradigm logic; when unsure, stop and mark inference explicitly.
+- Prefer a single clear runtime path over fallback-heavy implementations unless backward compatibility is explicitly required.
+- Prefer config parameterization for static participant-facing text and key mappings instead of code-side translation tables when no dynamic behavior is needed.
+- Prefer adding a custom condition generator only after confirming built-in block condition generation cannot represent the paradigm cleanly.
+- Treat `utils.py` as an optional extension point, not a mandatory controller layer.
 
 ## Command Quick Start
 
