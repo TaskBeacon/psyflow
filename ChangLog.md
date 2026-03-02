@@ -1,5 +1,33 @@
 # psyflow change log
 
+## 0.1.17 (2026-03-02)
+
+### Summary
+- Added enforceable localization-safe runtime policy so participant-facing text is config-driven, not hardcoded in `src/run_trial.py`.
+  - Extended responder-context contract with hardcoded-text guards (`TextStim/TextBox` literal text, `.setText('...')`, and `.text='...'` assignment checks).
+  - Implemented AST-based checks in `psyflow/validate.py`.
+- Added a new reference-artifact contract:
+  - `psyflow/contracts/v0.1.0/reference_artifacts.yaml`
+  - wired into contract `manifest.yaml`
+  - validator now checks required reference files, required headings/table columns, and `references.yaml` required keys/paper fields.
+- Updated contract docs/patterns to reflect localization + reference-artifact standards:
+  - `psyflow/contracts/v0.1.0/README.md`
+  - `psyflow/contracts/v0.1.0/run_trial_pattern.md`
+- Upgraded `skills/task-build` to align with these standards:
+  - updated `SKILL.md` with config-first localization and reference-artifact schema requirements;
+  - added `references/reference_artifact_contract.md`;
+  - added mapping templates:
+    - `assets/templates/parameter_mapping_template.md`
+    - `assets/templates/stimulus_mapping_template.md`
+  - strengthened `scripts/check_task_standard.py` and `scripts/build_reference_bundle.py` to emit/check standardized reference artifact formats.
+- Expanded validator regression coverage in `tests/test_validate.py`:
+  - minimal compliant fixture now includes full reference artifacts;
+  - added failure test for hardcoded participant-facing runtime text.
+
+### Validation
+- `python -m py_compile psyflow/validate.py skills/task-build/scripts/check_task_standard.py skills/task-build/scripts/build_reference_bundle.py` passed.
+- `python -m unittest -q tests.test_validate` passed.
+
 ## 0.1.16 (2026-02-24)
 
 ### Summary
