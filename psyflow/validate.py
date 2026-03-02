@@ -369,6 +369,107 @@ def _check_run_trial_text_localization(text: str, cfg: dict[str, Any]) -> list[s
     return issues
 
 
+def _looks_like_mid_identity(value: Any) -> bool:
+    low = str(value or "").strip().lower()
+    if not low:
+        return False
+    if "monetary incentive delay" in low:
+        return True
+    if "incentive delay" in low and "mid" in low:
+        return True
+    return re.search(r"(?<![a-z0-9])mid(?![a-z0-9])", low) is not None
+
+
+def _is_mid_task_identity(task_dir: Path) -> bool:
+    candidates: list[str] = [task_dir.name]
+
+    taskbeacon_path = task_dir / "taskbeacon.yaml"
+    if taskbeacon_path.exists():
+        try:
+            data = _load_yaml(taskbeacon_path) or {}
+            if isinstance(data, dict):
+                for key in ("id", "slug", "title"):
+                    value = data.get(key)
+                    if isinstance(value, str) and value.strip():
+                        candidates.append(value)
+        except Exception:
+            pass
+
+    base_cfg_path = task_dir / "config" / "config.yaml"
+    if base_cfg_path.exists():
+        try:
+            data = _load_yaml(base_cfg_path) or {}
+            task_name = _nested_get(data, "task.task_name")
+            if isinstance(task_name, str) and task_name.strip():
+                candidates.append(task_name)
+        except Exception:
+            pass
+
+    readme_path = task_dir / "README.md"
+    if readme_path.exists():
+        try:
+            text = _read_text_with_fallback(readme_path)
+            if text:
+                candidates.append(text[:1200])
+        except Exception:
+            pass
+
+    return any(_looks_like_mid_identity(item) for item in candidates)
+
+
+def _check_mid_template_leakage(task_dir: Path) -> tuple[list[str], list[str]]:
+    fails: list[str] = []
+    warns: list[str] = []
+
+    if _is_mid_task_identity(task_dir):
+        return fails, warns
+
+    paths = [
+        task_dir / "config" / "config.yaml",
+        task_dir / "config" / "config_qa.yaml",
+        task_dir / "config" / "config_scripted_sim.yaml",
+        task_dir / "config" / "config_sampler_sim.yaml",
+        task_dir / "src" / "run_trial.py",
+        task_dir / "README.md",
+    ]
+    chunks: list[str] = []
+    for path in paths:
+        if not path.exists():
+            continue
+        try:
+            chunks.append(_read_text_with_fallback(path).lower())
+        except Exception:
+            continue
+    if not chunks:
+        return fails, warns
+
+    corpus = "\n".join(chunks)
+    signatures = {
+        "mid_docs": ("monetary incentive delay" in corpus)
+        or (re.search(r"(?<![a-z0-9])mid task(?![a-z0-9])", corpus) is not None),
+        "mid_stim_ids": all(tok in corpus for tok in ("win_cue", "lose_cue"))
+        and ("neutral_cue" in corpus or "neut_cue" in corpus),
+        "mid_timing": ("anticipation_duration" in corpus) and ("prefeedback_duration" in corpus),
+        "mid_trigger_map": all(tok in corpus for tok in ("win_cue_onset", "lose_cue_onset"))
+        and ("neutral_cue_onset" in corpus or "neut_cue_onset" in corpus),
+        "mid_scoring": ("target_hit" in corpus) and ("feedback_delta" in corpus),
+    }
+
+    matched = sorted([name for name, hit in signatures.items() if hit])
+    if len(matched) >= 2:
+        fails.append(
+            "Detected MID-template leakage in a non-MID task: "
+            f"matched signatures {matched}. Remove paradigm-specific MID defaults."
+        )
+    elif len(matched) == 1:
+        warns.append(
+            "Found a MID-template marker in a non-MID task "
+            f"({matched[0]}). Confirm this is intentional."
+        )
+
+    return fails, warns
+
+
 def _normalize_gitignore_entry(value: str) -> str:
     token = str(value or "").strip().replace("\\", "/")
     if token.startswith("./"):
@@ -910,8 +1011,16 @@ def _check_runtime_main(task_dir: Path, cfg: dict[str, Any]) -> ContractResult:
     if any_recommended and not any(str(s) in text for s in any_recommended):
         warns.append(f"main.py is missing recommended runtime helpers: {any_recommended}")
 
+    mid_fails, mid_warns = _check_mid_template_leakage(task_dir)
+    fails.extend(mid_fails)
+    warns.extend(mid_warns)
+
     if fails:
         suggestions.append("Use standardized task options + runtime context wiring in main.py.")
+    if mid_fails:
+        suggestions.append(
+            "Replace MID-specific defaults in config/readme/run_trial with paradigm-neutral template placeholders."
+        )
     return _result(name, fails, warns, suggestions)
 
 

@@ -1,169 +1,95 @@
-# Monetary Incentive Delay (MID) Task
+﻿# PsyFlow Task Template
 
 | Field                | Value                        |
 |----------------------|------------------------------|
-| Name                 | Monetary Incentive Delay (MID) Task |
-| Version              | main (1.0)                          |
-| URL / Repository     |https://github.com/TaskBeacon/T000006-mid  |
-| Short Description    | A task measuring reward anticipation and feedback processing using adaptive timing |
-| Created By           |Zhipeng Cao (zhipeng30@foxmail.com)   |
-| Date Updated         |2025/06/21                |
-| PsyFlow Version      |0.1.0                     |
-| PsychoPy Version     |2025.1.1                  |
-| Modality     |Behavior/EEG                  |
-| Language | Chinese |
-
+| Name                 | PsyFlow Task Template |
+| Version              | main (0.1.0) |
+| URL / Repository     | https://github.com/TaskBeacon/{{cookiecutter.project_name}} |
+| Short Description    | Paradigm-agnostic scaffold for building a PsyFlow task from literature evidence |
+| Created By           | Template Maintainer |
+| Date Updated         | 2026-03-02 |
+| PsyFlow Version      | 0.1.0 |
+| PsychoPy Version     | 2025.1.1 |
+| Modality             | Behavior |
+| Language             | English |
 
 ## 1. Task Overview
 
-The Monetary Incentive Delay (MID) Task is designed to assess reward processing and motivational control. Participants respond to brief target stimuli that follow cues indicating potential monetary gain, loss, or neutral outcomes. By analyzing reaction times and success rates, the task evaluates anticipatory and feedback-related cognitive processes. An adaptive timing algorithm adjusts target durations based on participant performance, maintaining consistent task difficulty.
+This repository is a generic PsyFlow task scaffold. It includes standardized mode wiring (human/qa/sim), config split, trigger plumbing, responder integration, and contract-ready reference artifacts.
+
+The default trial logic is intentionally minimal and non-paradigm-specific. Replace condition generation, timing, scoring, and stimuli with task-specific logic grounded in references under `references/`.
 
 ## 2. Task Flow
 
 ### Block-Level Flow
 
-| Step                       | Description                                                                 |
-|----------------------------|-----------------------------------------------------------------------------|
-| Load Config                | Load task configuration and subject form                                   |
-| Collect Subject Info       | Collect demographic/subject info using `SubInfo` form                      |
-| Setup Triggers             | Initialize trigger sender using serial port (COM3)                          |
-| Initialize Window/Input    | Create PsychoPy window and keyboard handler                                |
-| Load Stimuli               | Load all stimuli via `StimBank`, convert instructions to voice, preload    |
-| Setup Controller           | Create adaptive controller from config                                     |
-| Show Instructions          | Present text and voice instruction before starting                         |
-| Loop Over Blocks           | For each block: countdown, run 60 trials, compute and show block feedback  |
-| Show Goodbye               | Present final feedback with total score                                    |
-| Save Data                  | Save all trial data to CSV                                                 |
-| Close                      | Close serial port and quit PsychoPy                                        |
+| Step | Description |
+|---|---|
+| Load Config | Load selected mode config (`config.yaml`, `config_qa.yaml`, or sim config). |
+| Collect Subject Info | Collect participant info in human mode; inject deterministic IDs in qa/sim mode. |
+| Setup Runtime | Initialize triggers, window, keyboard, and stimuli bank. |
+| Show Instructions | Present configurable instruction stimuli. |
+| Run Blocks | Generate per-block conditions and execute `run_trial(...)` for each trial. |
+| Show Block Break | Present summary values from trial outputs (for example, accuracy and mean RT). |
+| Save Data | Write trial-level CSV outputs and settings JSON. |
+| Finalize | Emit end trigger, close trigger runtime, and quit PsychoPy. |
 
 ### Trial-Level Flow
 
-| Step                | Description                                                                 |
-|---------------------|-----------------------------------------------------------------------------|
-| Cue                 | Show condition-specific cue (win/lose/neutral) with trigger                 |
-| Anticipation        | Display fixation; allow response (early keypress logged)                   |
-| Target              | Show target with adaptive duration; record response                        |
-| Pre-feedback Fixation | Display fixation before feedback                                          |
-| Feedback            | Present hit/miss feedback based on performance                             |
-| Adaptive Update     | Update target duration based on hit/miss outcome                           |
+| Step | Description |
+|---|---|
+| Fixation | Show baseline fixation stimulus. |
+| Response Window | Show prompt stimulus, collect key response with timeout handling. |
+| Feedback | Show configurable feedback stimulus based on response presence. |
+| ITI | Show inter-trial fixation. |
 
 ### Controller Logic
 
-| Feature             | Description                                                                 |
-|---------------------|-----------------------------------------------------------------------------|
-| Adaptive Duration   | Target duration adjusts between 0.04 and 0.37 seconds                       |
-| Step Size           | Â±0.03 seconds                                                               |
-| Accuracy Target     | 66% accuracy threshold                                                      |
-| Condition Specific  | Tracks performance separately by condition (win/lose/neutral)               |
-| Logging             | Performance logs are printed to PsychoPy console                            |
+| Feature | Description |
+|---|---|
+| Condition Scheduling | Uses a generic controller to distribute conditions across a block. |
+| Determinism | Supports seed-driven scheduling for reproducible QA/sim runs. |
+| Extensibility | Replace `src/utils.py` with task-specific planners/adaptive controllers when needed. |
 
 ## 3. Configuration Summary
 
 ### a. Subject Info
 
-| Field       | Meaning                    |
-|-------------|----------------------------|
-| subject_id  | Unique participant number (101â€?99, 3 digits) |
-| subname     | Participant name (pinyin)  |
-| age         | Participant age (5â€?0)     |
-| gender      | Participant gender (Male/Female) |
+| Field | Meaning |
+|---|---|
+| `subject_id` | Numeric participant ID from subform or qa/sim context. |
 
 ### b. Window Settings
 
-| Parameter             | Value       |
-|-----------------------|-------------|
-| size                  | [1920, 1080]|
-| units                 | deg         |
-| screen                | 1           |
-| bg_color              | gray        |
-| fullscreen            | True        |
-| monitor_width_cm      | 60          |
-| monitor_distance_cm   | 72          |
+| Parameter | Meaning |
+|---|---|
+| `window.size` | Window resolution in pixels. |
+| `window.units` | PsychoPy units used for stimulus placement. |
+| `window.bg_color` | Background color. |
+| `window.fullscreen` | Fullscreen mode toggle. |
 
 ### c. Stimuli
 
-| Name                     | Type      | Description                                           |
-|--------------------------|-----------|-------------------------------------------------------|
-| fixation                 | text      | Central cross "+"                                     |
-| win_cue                  | circle    | Magenta circle (reward)                               |
-| lose_cue                 | rect      | Yellow square (punishment)                            |
-| neut_cue                 | triangle  | Cyan triangle (neutral)                               |
-| win_target               | circle    | Black circle target                                   |
-| lose_target              | rect      | Black square target                                   |
-| neut_target              | triangle  | Black triangle target                                 |
-| win_hit_feedback         | textbox   | â€œå‡»ä¸?+10 åˆ†â€?(black text, SimHei)                    |
-| win_miss_feedback        | textbox   | â€œæœªå‡»ä¸­ +0 åˆ†â€?                                      |
-| lose_hit_feedback        | textbox   | â€œå‡»ä¸?-0 åˆ†â€?                                        |
-| lose_miss_feedback       | textbox   | â€œæœªå‡»ä¸­ -10 åˆ†â€?                                     |
-| neut_hit_feedback        | textbox   | â€œå‡»ä¸?+0 åˆ†â€?                                        |
-| neut_miss_feedback       | textbox   | â€œæœªå‡»ä¸­ -0 åˆ†â€?                                      |
-| instruction_text         | textbox   | Multi-line Chinese instructions (includes scoring rules) |
-| block_break              | text      | Inter-block message showing block, accuracy, and score |
-| good_bye                 | text      | End screen showing final score                        |
+| Stimulus ID | Purpose |
+|---|---|
+| `instruction_text` | Entry instruction text. |
+| `fixation` | Baseline fixation symbol. |
+| `trial_prompt` | Response window prompt text. |
+| `feedback_hit` / `feedback_miss` | Response-dependent feedback messages. |
+| `block_break` | Inter-block summary message. |
+| `good_bye` | End-of-task summary message. |
 
 ### d. Timing
 
-| Phase                 | Duration (s)        |
-|------------------------|--------------------|
-| cue                   | 0.3                |
-| anticipation          | random 1.0â€?.2     |
-| target                | adaptive (0.04â€?.37)|
-| prefeedback fixation  | random 0.6â€?.8     |
-| feedback              | 1.0                |
-
-### e. Triggers
-
-| Event                    | Code  |
-|--------------------------|-------|
-| exp_onset                | 98    |
-| exp_end                  | 99    |
-| block_onset              | 100   |
-| block_end                | 101   |
-| win_cue_onset            | 10    |
-| win_anti_onset           | 11    |
-| win_target_onset         | 12    |
-| win_hit_fb_onset         | 13    |
-| win_miss_fb_onset        | 14    |
-| win_key_press            | 15    |
-| win_no_response          | 16    |
-| lose_cue_onset           | 20    |
-| lose_anti_onset          | 21    |
-| lose_target_onset        | 22    |
-| lose_hit_fb_onset        | 23    |
-| lose_miss_fb_onset       | 24    |
-| lose_key_press           | 25    |
-| lose_no_response         | 26    |
-| neut_cue_onset           | 30    |
-| neut_anti_onset          | 31    |
-| neut_target_onset        | 32    |
-| neut_hit_fb_onset        | 33    |
-| neut_miss_fb_onset       | 34    |
-| neut_key_press           | 35    |
-| neut_no_response         | 36    |
-| fixation_onset           | 1     |
-
-### f. Adaptive Controller
-
-| Parameter          | Value    |
-|--------------------|----------|
-| initial_duration   | 0.2      |
-| min_duration       | 0.04     |
-| max_duration       | 0.37     |
-| step               | 0.03     |
-| target_accuracy    | 0.66     |
-| condition_specific | true     |
+| Parameter | Meaning |
+|---|---|
+| `timing.fixation_duration` | Pre-response fixation duration. |
+| `timing.response_window_duration` | Response collection window duration. |
+| `timing.feedback_duration` | Feedback duration. |
+| `timing.iti_duration` | Inter-trial interval duration. |
 
 ## 4. Methods (for academic publication)
 
-Participants performed a computerized Monetary Incentive Delay (MID) task to assess motivational processing under different reward contingencies. The task consisted of **3 blocks**, each comprising **60 trials**, totaling **180 trials**. Each trial began with a cue, a colored shape (circle, square, or triangle), signaling whether the trial was a reward, punishment, or neutral condition. Following a variable anticipation phase (1.0â€?.2 s), a black target appeared briefly. Participants were instructed to press the spacebar as quickly as possible upon target onset.
+Participants completed a computerized behavioral paradigm implemented in PsychoPy/PsyFlow. The runtime architecture supports human testing, QA replay, and simulation with shared task code. Trial flow and timing parameters are fully config-defined, and simulation context fields are attached per phase to support reproducible responder behavior and post-hoc auditing.
 
-The target's presentation duration was controlled by an adaptive algorithm that updated the duration after each trial based on performance. Initial target duration was set to 0.2 s and was adjusted between 0.04 and 0.37 s using Â±0.03 s increments to stabilize performance at a target accuracy of 66%, tracked separately by condition.
-
-Feedback followed the target phase, based on whether participants responded within the target duration. â€œå‡»ä¸­â€?(â€œhitâ€? and â€œæœªå‡»ä¸­â€?(â€œmissâ€? messages were shown with point gain/loss specific to the cue type. After each block, a break screen summarized the participant's accuracy and cumulative score. The task began with audio-visual instructions and ended with a final message displaying total score. 
-
-## 5. References
-The task is originally developed by Knutson 2000:
->Knutson, B., Westdorp, A., Kaiser, E., & Hommer, D. (2000). FMRI visualization of brain activity during a monetary incentive delay task. Neuroimage, 12(1), 20-27.
-
-Here, we adopted the ABCD Study design of the task:
->Casey, B. J., Cannonier, T., Conley, M. I., Cohen, A. O., Barch, D. M., Heitzeg, M. M., ... & Dale, A. M. (2018). The adolescent brain cognitive development (ABCD) study: imaging acquisition across 21 sites. Developmental cognitive neuroscience, 32, 43-54.
+For publication use, replace this template section with task-specific participant/sample details, condition definitions, timing values, scoring rules, and citation-grounded implementation rationale.

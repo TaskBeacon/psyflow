@@ -1,33 +1,42 @@
-# Task Logic Audit
+﻿# Task Logic Audit
 
 ## 1. Paradigm Intent
 
-- Template placeholder. Replace with task-specific paradigm intent.
+- Template scaffold for documenting paradigm intent and theoretical targets.
+- Replace with task-specific cognitive processes and hypotheses.
 
 ## 2. Block/Trial Workflow
 
-- Template placeholder. Replace with task-specific state machine and timing.
+- Current scaffold flow: fixation -> response_window -> feedback -> iti.
+- Replace with task-specific state machine and transition constraints.
 
 ## 3. Condition Semantics
 
-- Template placeholder. Replace with task-specific condition semantics.
+- Current scaffold provides generic `baseline` and `variant` labels.
+- Replace with literature-defined condition semantics and balancing rules.
 
 ## 4. Response and Scoring Rules
 
-- Template placeholder. Replace with task-specific response and scoring rules.
+- Current scaffold records response presence, key, RT, and correctness against `task.correct_key`.
+- Replace with task-specific response validity and scoring contracts.
 
 ## 5. Stimulus Layout Plan
 
-- Template placeholder. Replace with task-specific layout plan.
+- Current scaffold uses config-defined text stimuli (`instruction_text`, `trial_prompt`, `feedback_*`).
+- Replace with task-specific stimulus inventory, modality, and positioning rules.
 
 ## 6. Trigger Plan
 
-- Template placeholder. Replace with task-specific trigger plan.
+- Current scaffold defines experiment/block/trial phase triggers in `triggers.map`.
+- Replace with acquisition-specific trigger taxonomy and hardware timing constraints.
 
 ## 7. Architecture Decisions (Auditability)
 
-- Template placeholder. Replace with task-specific architecture decisions.
+- `main.py` provides one auditable run flow across human/qa/sim.
+- `run_trial.py` sets trial context before response capture for simulation auditability.
+- Replace template notes with task-specific design decisions and rationale.
 
 ## 8. Inference Log
 
-- Template placeholder. Replace with task-specific inference entries.
+- Populate this section with explicit assumptions made when source papers omit implementation details.
+- Include justification for parameter values, task phase structure, and stimulus choices.

@@ -1,16 +1,17 @@
-task_id: "{{cookiecutter.project_name}}"
+﻿task_id: "{{cookiecutter.project_name}}"
 generated_at: "2026-03-02T00:00:00Z"
 selection_policy: template_seed
 citation_threshold: 100
 papers:
   - id: template_paper_001
-    title: "Template Reference Paper"
+    title: "Template Methods Paper"
     year: 2020
     journal: "Template Journal"
-    doi_or_url: "https://example.org/template-paper"
+    doi_or_url: "https://example.org/template-methods"
     citation_count: 100
     open_access: true
     is_high_impact: false
     used_for:
       - task_workflow
       - timing_parameters
+      - response_rules
