@@ -15,7 +15,6 @@ from .trials import (
     reset_trial_counter,
     resolve_deadline,
     resolve_trial_id,
-    resolve_condition_weights,
 )
 from .voices import list_supported_voices
 
@@ -27,7 +26,6 @@ __all__ = [
     "next_trial_id",
     "reset_trial_counter",
     "resolve_deadline",
-    "resolve_condition_weights",
     "resolve_trial_id",
     "show_ports",
     "taps",

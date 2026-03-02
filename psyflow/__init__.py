@@ -53,7 +53,6 @@ _LAZY_ATTRS: dict[str, tuple[str, str]] = {
     "next_trial_id": ("psyflow.utils.trials", "next_trial_id"),
     "reset_trial_counter": ("psyflow.utils.trials", "reset_trial_counter"),
     "resolve_deadline": ("psyflow.utils.trials", "resolve_deadline"),
-    "resolve_condition_weights": ("psyflow.utils.trials", "resolve_condition_weights"),
     "resolve_trial_id": ("psyflow.utils.trials", "resolve_trial_id"),
 }
 
@@ -92,7 +91,6 @@ if TYPE_CHECKING:
         next_trial_id as next_trial_id,
         reset_trial_counter as reset_trial_counter,
         resolve_deadline as resolve_deadline,
-        resolve_condition_weights as resolve_condition_weights,
         resolve_trial_id as resolve_trial_id,
     )
 

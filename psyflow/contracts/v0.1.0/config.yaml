@@ -135,6 +135,7 @@ notes:
   - controller is optional.
   - if controller is configured, keep implementation under src/utils.py.
   - if task.condition_weights is defined, weighted condition generation must be explicit and aligned to task.conditions.
+  - task runtime should resolve/validate weights through TaskSettings.resolve_condition_weights().
   - if task.condition_weights is omitted (or null), default/even condition generation is assumed unless a custom generator is documented.
   - stimuli entries must include a valid type.
   - asset-backed stimuli (image/movie/sound) should load from assets/ paths.

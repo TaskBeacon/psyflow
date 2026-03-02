@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 from typing import List, Optional, Any, Dict
 from math import ceil
+import math
 import random
 import hashlib
 from datetime import datetime
@@ -40,6 +41,7 @@ class TaskSettings:
 
     # --- Trial logic ---
     conditions: List[str] = field(default_factory=list)
+    condition_weights: Any = None
     block_seed: Optional[List[int]] = None
 
     # --- Seeding strategy ---
@@ -80,6 +82,65 @@ class TaskSettings:
         if seed_base is not None:
             rng = random.Random(seed_base)
             self.block_seed = [rng.randint(0, 99999) for _ in range(self.total_blocks)]
+
+    def resolve_condition_weights(self) -> list[float] | None:
+        """Resolve and validate optional condition weights.
+
+        Returns
+        -------
+        list[float] | None
+            A weight vector aligned to ``self.conditions`` when
+            ``self.condition_weights`` is configured; otherwise ``None`` to
+            indicate even/default generation.
+        """
+        raw = getattr(self, "condition_weights", None)
+        if raw is None:
+            return None
+
+        if not isinstance(self.conditions, list):
+            raise TypeError("conditions must be a list when condition_weights is provided.")
+
+        labels = [str(c) for c in self.conditions]
+        if not labels:
+            raise ValueError("conditions must be non-empty when condition_weights is provided.")
+
+        values: list[Any]
+        if isinstance(raw, dict):
+            keyed = {str(k): v for k, v in raw.items()}
+            missing = [label for label in labels if label not in keyed]
+            extra = [key for key in keyed if key not in labels]
+            if missing:
+                raise ValueError(f"condition_weights missing entries for condition(s): {missing}")
+            if extra:
+                raise ValueError(f"condition_weights contains unknown condition key(s): {extra}")
+            values = [keyed[label] for label in labels]
+        elif isinstance(raw, (list, tuple)):
+            if len(raw) != len(labels):
+                raise ValueError(
+                    "condition_weights length mismatch: expected "
+                    f"{len(labels)} for conditions {labels}, got {len(raw)}"
+                )
+            values = list(raw)
+        else:
+            raise TypeError("condition_weights must be null, list/tuple, or mapping keyed by condition label.")
+
+        weights: list[float] = []
+        for i, value in enumerate(values):
+            try:
+                w = float(value)
+            except Exception as exc:
+                raise TypeError(
+                    f"condition_weights[{i}] could not be parsed as number: {value!r}"
+                ) from exc
+            if not math.isfinite(w):
+                raise ValueError(f"condition_weights[{i}] must be finite, got {w!r}")
+            if w <= 0:
+                raise ValueError(f"condition_weights[{i}] must be > 0, got {w!r}")
+            weights.append(w)
+
+        if sum(weights) <= 0:
+            raise ValueError(f"condition_weights sum must be > 0, got {weights}")
+        return weights
 
     def add_subinfo(self, subinfo: Dict[str, Any]):
         """

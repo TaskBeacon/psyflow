@@ -18,7 +18,6 @@ from psyflow import (
     initialize_triggers,
     load_config,
     parse_task_run_options,
-    resolve_condition_weights,
     runtime_context,
 )
 
@@ -92,10 +91,7 @@ def run(options: TaskRunOptions):
         instruction.wait_and_continue()
 
         all_data = []
-        condition_weights = resolve_condition_weights(
-            getattr(settings, "condition_weights", None),
-            list(getattr(settings, "conditions", [])),
-        )
+        condition_weights = settings.resolve_condition_weights()
         for block_i in range(settings.total_blocks):
             if options.mode not in ("qa", "sim"):
                 count_down(win, 3, color="black")

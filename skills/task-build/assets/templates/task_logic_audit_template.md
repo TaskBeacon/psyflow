@@ -22,6 +22,7 @@ Use this file as `references/task_logic_audit.md` before coding.
 - Randomization/counterbalancing:
 - Condition weight policy:
   - If weighted generation is used, where is `task.condition_weights` defined in config?
+  - Is runtime resolution delegated to `TaskSettings.resolve_condition_weights()`?
   - If omitted/null, confirm even/default generation (or document custom generator behavior).
 - Condition generation method:
   - Built-in `BlockUnit.generate_conditions(...)` or custom generator?

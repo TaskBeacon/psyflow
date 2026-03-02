@@ -1,5 +1,21 @@
 # psyflow change log
 
+## 0.1.20 (2026-03-02)
+
+### Summary
+- Moved condition-weight resolution into `TaskSettings`:
+  - added `TaskSettings.resolve_condition_weights()` in `psyflow/TaskSettings.py`.
+- Removed `psyflow.utils.trials.resolve_condition_weights` and all related exports.
+- Updated runtime/template standards to use `settings.resolve_condition_weights()`:
+  - cookiecutter `main.py` and config comments now point to the `TaskSettings` method.
+- Updated contracts and task-build skill assets/checklists to standardize this policy.
+- Updated condition-weight unit tests to exercise the `TaskSettings` method directly.
+
+### Validation
+- `python -m unittest tests.test_condition_weights` passed.
+- `python -m unittest tests.test_validate` passed.
+- `python -m psyflow.validate "psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}"` passed with `FAIL=0`.
+
 ## 0.1.19 (2026-03-02)
 
 ### Summary

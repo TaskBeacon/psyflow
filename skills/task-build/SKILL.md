@@ -123,6 +123,7 @@ PsyFlow-first implementation decision rules:
   - Prefer built-in `BlockUnit.generate_conditions(...)` using config-defined condition labels/weights/order.
   - If weighted generation is required, define `task.condition_weights` explicitly in `config/config.yaml` (and mirrored mode profiles as needed).
   - `task.condition_weights` can be a mapping by condition label or a list aligned to `task.conditions`.
+  - Runtime code should resolve weight policy through `TaskSettings.resolve_condition_weights()` instead of custom helper functions.
   - If `task.condition_weights` is omitted (or `null`), assume even/default generation unless a custom generator is documented.
   - Use a custom generation function only when simple condition labels cannot represent the required trial semantics.
   - If custom generation is used, document the reason and data shape in `references/task_logic_audit.md` before coding.
