@@ -1,4 +1,5 @@
 from typing import Any
+import math
 
 _SESSION_TRIAL_COUNTER = 0
 
@@ -46,3 +47,70 @@ def resolve_trial_id(value: Any) -> int | str | None:
             pass
             
     return str(value)
+
+
+def resolve_condition_weights(condition_weights: Any, conditions: Any) -> list[float] | None:
+    """Resolve condition weights aligned to a condition label list.
+
+    Parameters
+    ----------
+    condition_weights : Any
+        Either ``None`` (use even generation), a list/tuple aligned to
+        ``conditions`` order, or a mapping keyed by condition labels.
+    conditions : Any
+        Sequence of condition labels.
+
+    Returns
+    -------
+    list[float] | None
+        Normalized/validated weight vector aligned to ``conditions``, or
+        ``None`` when no weighted generation is requested.
+    """
+    if condition_weights is None:
+        return None
+
+    if not isinstance(conditions, (list, tuple)):
+        raise TypeError("conditions must be a list/tuple when condition_weights is provided.")
+
+    labels = [str(c) for c in list(conditions)]
+    if not labels:
+        raise ValueError("conditions must be non-empty when condition_weights is provided.")
+
+    values: list[Any]
+    if isinstance(condition_weights, dict):
+        keyed = {str(k): v for k, v in condition_weights.items()}
+        missing = [label for label in labels if label not in keyed]
+        extra = [key for key in keyed if key not in labels]
+        if missing:
+            raise ValueError(f"condition_weights missing entries for condition(s): {missing}")
+        if extra:
+            raise ValueError(f"condition_weights contains unknown condition key(s): {extra}")
+        values = [keyed[label] for label in labels]
+    elif isinstance(condition_weights, (list, tuple)):
+        if len(condition_weights) != len(labels):
+            raise ValueError(
+                "condition_weights length mismatch: expected "
+                f"{len(labels)} for conditions {labels}, got {len(condition_weights)}"
+            )
+        values = list(condition_weights)
+    else:
+        raise TypeError("condition_weights must be None, list/tuple, or mapping by condition label.")
+
+    weights: list[float] = []
+    for i, raw in enumerate(values):
+        try:
+            w = float(raw)
+        except Exception as exc:
+            raise TypeError(
+                f"condition_weights[{i}] could not be parsed as number: {raw!r}"
+            ) from exc
+        if not math.isfinite(w):
+            raise ValueError(f"condition_weights[{i}] must be finite, got {w!r}")
+        if w <= 0:
+            raise ValueError(f"condition_weights[{i}] must be > 0, got {w!r}")
+        weights.append(w)
+
+    if sum(weights) <= 0:
+        raise ValueError(f"condition_weights sum must be > 0, got {weights}")
+
+    return weights

@@ -30,16 +30,42 @@ class Controller:
         merged = {key: raw.get(key, default) for key, default in defaults.items()}
         return cls(**merged)
 
-    def prepare_block(self, *, block_idx: int, n_trials: int, conditions: list[str] | None) -> list[str]:
+    def prepare_block(
+        self,
+        *,
+        block_idx: int,
+        n_trials: int,
+        conditions: list[str] | None,
+        condition_weights: list[float] | None = None,
+    ) -> list[str]:
         labels = [str(c) for c in (conditions or []) if str(c).strip()]
         if not labels:
             labels = ["default"]
 
         trial_count = max(1, int(n_trials))
-        schedule = [labels[i % len(labels)] for i in range(trial_count)]
+        rng = random.Random(self.seed + int(block_idx) * 1009)
+
+        if condition_weights is None:
+            schedule = [labels[i % len(labels)] for i in range(trial_count)]
+        else:
+            if len(condition_weights) != len(labels):
+                raise ValueError(
+                    "condition_weights length mismatch for labels "
+                    f"{labels}: expected {len(labels)}, got {len(condition_weights)}"
+                )
+            total_w = sum(float(w) for w in condition_weights)
+            raw = [trial_count * float(w) / total_w for w in condition_weights]
+            counts = [int(x) for x in raw]
+            rem = trial_count - sum(counts)
+            if rem > 0:
+                extra = rng.choices(labels, weights=condition_weights, k=rem)
+                for lbl in extra:
+                    counts[labels.index(lbl)] += 1
+            schedule = []
+            for lbl, cnt in zip(labels, counts):
+                schedule.extend([lbl] * cnt)
 
         if self.shuffle and len(schedule) > 1:
-            rng = random.Random(self.seed + int(block_idx) * 1009)
             rng.shuffle(schedule)
 
         if self.enable_logging:

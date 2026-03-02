@@ -8,6 +8,7 @@ These contracts define practical standards for building auditable psyflow/TAPS t
 - Task metadata (`taskbeacon.yaml`)
 - Config structure and explicit value/type constraints
   - mandatory/optional/recommended keys and value specs
+  - optional `task.condition_weights` validation (mapping/list aligned to `task.conditions`)
   - stimulus type standards and asset-backed path conventions
   - smoke-profile rules for `config_qa.yaml` and sim configs (shorter than base but condition-covering)
 - Runtime entrypoint pattern (`main.py`)

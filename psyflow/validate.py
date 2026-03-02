@@ -590,6 +590,68 @@ def _check_stimulus_contract(task_dir: Path, data: Any, cfg: dict[str, Any]) -> 
     return fails, warns
 
 
+def _check_condition_weight_config(data: Any) -> tuple[list[str], list[str]]:
+    fails: list[str] = []
+    warns: list[str] = []
+
+    task_cfg = _nested_get(data, "task")
+    if not isinstance(task_cfg, dict):
+        return fails, warns
+
+    conditions = task_cfg.get("conditions")
+    if not isinstance(conditions, list):
+        return fails, warns
+    labels = [str(c) for c in conditions]
+    if not labels:
+        return fails, warns
+
+    if "condition_weights" not in task_cfg:
+        return fails, warns
+
+    raw = task_cfg.get("condition_weights")
+    if raw is None:
+        # Explicit null means "use even/default generation".
+        return fails, warns
+
+    values: list[Any]
+    if isinstance(raw, dict):
+        keyed = {str(k): v for k, v in raw.items()}
+        missing = [label for label in labels if label not in keyed]
+        extra = [key for key in keyed if key not in labels]
+        if missing:
+            fails.append(f"task.condition_weights missing condition key(s): {missing}")
+        if extra:
+            fails.append(f"task.condition_weights has unknown condition key(s): {extra}")
+        values = [keyed.get(label) for label in labels]
+    elif isinstance(raw, list):
+        if len(raw) != len(labels):
+            fails.append(
+                "task.condition_weights length mismatch: expected "
+                f"{len(labels)} values for conditions {labels}, got {len(raw)}"
+            )
+        values = list(raw)
+    else:
+        fails.append("task.condition_weights must be null, list, or mapping keyed by task.conditions.")
+        return fails, warns
+
+    numeric: list[float] = []
+    for i, value in enumerate(values):
+        if value is None:
+            continue
+        if not _is_number(value):
+            fails.append(f"task.condition_weights[{i}] must be numeric, got {type(value).__name__}")
+            continue
+        val = float(value)
+        if val <= 0:
+            fails.append(f"task.condition_weights[{i}] must be > 0, got {val}")
+        numeric.append(val)
+
+    if numeric and sum(numeric) <= 0:
+        fails.append("task.condition_weights sum must be > 0.")
+
+    return fails, warns
+
+
 def _check_responder_spec(task_dir: Path, data: Any, cfg: dict[str, Any]) -> tuple[list[str], list[str]]:
     fails: list[str] = []
     warns: list[str] = []
@@ -872,6 +934,10 @@ def _check_config_file(task_dir: Path, cfg: dict[str, Any]) -> ContractResult:
     warns.extend(opt_warns)
     fails.extend(rec_fails)
     warns.extend(rec_warns)
+
+    cw_fails, cw_warns = _check_condition_weight_config(data)
+    fails.extend(cw_fails)
+    warns.extend(cw_warns)
 
     profile_rules = cfg.get("profile_rules") if isinstance(cfg, dict) else None
     if isinstance(profile_rules, dict):

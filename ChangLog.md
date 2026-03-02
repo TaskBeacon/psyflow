@@ -1,5 +1,23 @@
 # psyflow change log
 
+## 0.1.19 (2026-03-02)
+
+### Summary
+- Added framework-level condition-weight resolver:
+  - `psyflow.utils.trials.resolve_condition_weights(...)`
+  - exported via `psyflow.resolve_condition_weights` and `psyflow.utils`.
+- Standardized config/contract semantics for weighted condition generation:
+  - `task.condition_weights` is optional and validated when provided.
+  - mapping/list formats must align with `task.conditions`; positive numeric weights required.
+  - omitted/null `task.condition_weights` means even/default generation unless task code documents custom generation.
+- Updated cookiecutter template to include optional `task.condition_weights` and pass resolved weights into default condition scheduler.
+- Updated task-build skill docs/checklists/templates to enforce explicit `task.condition_weights` when weighted generation is used.
+- Added unit coverage for weight resolver behavior in `tests/test_condition_weights.py`.
+
+### Validation
+- `python -m unittest tests.test_condition_weights` passed.
+- `python -m psyflow.validate "psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}"` passed with `FAIL=0`.
+
 ## 0.1.18 (2026-03-02)
 
 ### Summary

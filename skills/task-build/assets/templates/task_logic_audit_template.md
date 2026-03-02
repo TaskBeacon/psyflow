@@ -20,6 +20,9 @@ Use this file as `references/task_logic_audit.md` before coding.
 - Total blocks:
 - Trials per block:
 - Randomization/counterbalancing:
+- Condition weight policy:
+  - If weighted generation is used, where is `task.condition_weights` defined in config?
+  - If omitted/null, confirm even/default generation (or document custom generator behavior).
 - Condition generation method:
   - Built-in `BlockUnit.generate_conditions(...)` or custom generator?
   - If custom generator is used, why can simple condition labels not represent the task?

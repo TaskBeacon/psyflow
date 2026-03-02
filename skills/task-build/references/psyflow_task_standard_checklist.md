@@ -32,6 +32,8 @@ Use this checklist before running final gates.
 - Participant-facing labels/text/options are config-driven (`config/*.yaml` stimuli), not hardcoded in `src/run_trial.py`.
 - `src/run_trial.py` should not directly instantiate participant-facing text stimuli with literal text; use `stim_bank.get(...)` / `stim_bank.get_and_format(...)`.
 - If custom condition generation is used, `references/task_logic_audit.md` documents why built-in block condition generation is insufficient.
+- If weighted condition generation is used, `task.condition_weights` is explicitly defined in config and aligned with `task.conditions`.
+- If `task.condition_weights` is omitted (or `null`) and no custom generator is used, condition generation is treated as even/default by design.
 - If a task-specific controller exists, `references/task_logic_audit.md` documents why it is needed (for example adaptive timing or online control).
 - Response keys/mappings are config-driven unless the audit documents a justified runtime exception.
 - Legacy/backward-compatibility fallback branches are avoided unless the audit explicitly requires them.

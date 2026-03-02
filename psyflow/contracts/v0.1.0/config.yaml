@@ -16,6 +16,7 @@ forbidden_nested_keys:
   - sim
 optional_nested_keys:
   - controller
+  - task.condition_weights
 recommended_nested_keys:
   - task.trial_per_block
 mandatory_value_specs:
@@ -133,6 +134,8 @@ stim_asset_path_prefixes:
 notes:
   - controller is optional.
   - if controller is configured, keep implementation under src/utils.py.
+  - if task.condition_weights is defined, weighted condition generation must be explicit and aligned to task.conditions.
+  - if task.condition_weights is omitted (or null), default/even condition generation is assumed unless a custom generator is documented.
   - stimuli entries must include a valid type.
   - asset-backed stimuli (image/movie/sound) should load from assets/ paths.
   - if an asset-backed stimulus path is set dynamically in runtime code, keep a clear comment in run_trial.py.

@@ -40,6 +40,9 @@ task:
   total_trials: 24
   trial_per_block: 12
   conditions: [baseline, variant]
+  # Optional weighted condition generation; leave null for even generation.
+  # Use either a mapping by condition label or a list aligned to task.conditions.
+  condition_weights: null
   key_list: [space]
   correct_key: space
   seed_mode: same_across_sub
