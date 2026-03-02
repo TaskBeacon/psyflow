@@ -1,5 +1,20 @@
 # psyflow change log
 
+## 0.1.18 (2026-03-02)
+
+### Summary
+- Fixed CI contract validation failure on the cookiecutter template by adding required reference artifacts under:
+  - `psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}/references/`
+    - `references.yaml`
+    - `references.md`
+    - `parameter_mapping.md`
+    - `stimulus_mapping.md`
+    - `task_logic_audit.md`
+- All added template files follow the `reference_artifacts` contract headings/table-column requirements and avoid forbidden unresolved markers.
+
+### Validation
+- `python -m psyflow.validate 'psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}'` now passes with `FAIL=0`.
+
 ## 0.1.17 (2026-03-02)
 
 ### Summary
