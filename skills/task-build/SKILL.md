@@ -68,8 +68,29 @@ Language/font default policy:
    - `references/parameter_mapping.md`
    - `references/stimulus_mapping.md`
    - `references/task_logic_audit.md`
+   - Seed mapping files from templates when needed:
+     - `assets/templates/parameter_mapping_template.md`
+     - `assets/templates/stimulus_mapping_template.md`
 3. Mark unresolved protocol decisions as `inferred` and explain rationale.
 4. Do not continue to implementation unless `stimulus_mapping.md` is fully resolved.
+
+Reference artifact schema (mandatory):
+
+- `references/references.yaml`
+  - Must contain top-level keys: `task_id`, `generated_at`, `selection_policy`, `citation_threshold`, `papers`.
+  - Each paper entry must include: `id`, `title`, `year`, `journal`, `doi_or_url`, `citation_count`, `open_access`, `is_high_impact`, `used_for`.
+- `references/references.md`
+  - Must include `# References` and `## Selected Papers`.
+  - Must include a paper table with columns: `ID`, `Year`, `Citations`, `Journal`, `High Impact`, `Open Access`, `Title`.
+- `references/parameter_mapping.md`
+  - Must include `# Parameter Mapping` and `## Mapping Table`.
+  - Must include a mapping table with columns: `Parameter ID`, `Config Path`, `Implemented Value`, `Source Paper ID`, `Evidence (quote/figure/table)`, `Decision Type`, `Notes`.
+- `references/stimulus_mapping.md`
+  - Must include `# Stimulus Mapping` and `## Mapping Table`.
+  - Must include a mapping table with columns: `Condition`, `Stage/Phase`, `Stimulus IDs`, `Participant-Facing Content`, `Source Paper ID`, `Evidence (quote/figure/table)`, `Implementation Mode`, `Asset References`, `Notes`.
+  - Must not contain unresolved markers (`UNSET`, `TODO`, `required_review`).
+- `references/task_logic_audit.md`
+  - Must follow the section structure defined in `assets/templates/task_logic_audit_template.md` (sections `## 1` through `## 8`).
 
 ### Phase 3: Build or Refactor Task to PsyFlow/TAPS Standard
 
@@ -108,6 +129,8 @@ PsyFlow-first implementation decision rules:
 - Config-first runtime design:
   - Prefer config-defined participant-facing stimuli and task parameters when values are static or condition-indexable.
   - Prefer config-defined response keys/mappings unless the paradigm requires runtime adaptation.
+  - Participant-facing labels/text/options must be defined in `config/*.yaml` stimuli (or config templates consumed via `stim_bank.get_and_format(...)`), not hardcoded inside `src/run_trial.py`.
+  - `src/run_trial.py` should orchestrate trial flow and state updates; participant wording should remain in config for localization portability.
 - `main.py` style:
   - Prefer one simple, auditable mode-aware flow (`human|qa|sim`) with consistent setup order.
   - Avoid over-fragmenting `main.py` into many helpers unless complexity clearly justifies it.
@@ -130,6 +153,7 @@ Stimulus policy is strict:
 - Do not show internal condition labels or debugging cues to participants unless explicitly required by the reference protocol.
 - Do not display raw condition tokens as participant stimuli (for example `high_risk`, `deck_a`, `mixed_frame`) unless a cited protocol explicitly requires label exposure.
 - Placeholder/template participant text is forbidden (for example `CUE: ...`, `TARGET: ...`, `Respond as quickly and accurately as possible`, `Press SPACE to continue` as sole trial content).
+- Hardcoding participant-facing labels/instructions/options in `src/run_trial.py` is forbidden unless references explicitly require runtime-generated wording that cannot be represented through config templates.
 - Participant-facing text in YAML must be encoding-clean (no mojibake and no repeated `?` corruption such as `????`).
 - If key mapping is already clearly taught in instructions, do not redundantly repeat `F/J left/right` mapping text on every trial screen unless the reference protocol explicitly requires repeated reminders.
 - When multiple `text`/`textbox` stimuli are displayed in the same frame, layout must be explicitly separated (`pos`, `height`, `wrapWidth`) to prevent overlap across supported window sizes.
@@ -180,6 +204,7 @@ README contract requirements:
 - **Audit-to-Code Traceability:** Every phase in `src/run_trial.py` must correspond to a state defined in `references/task_logic_audit.md`.
 - **Anti-Poisoning:** Explicitly verify that the task logic matches the literature. For example, Cyberball must involve ball-tossing interactions, and choice-based games must involve explicit choice stages, not just "hit/miss" targets.
 - **PsyFlow-First Simplicity:** Prefer the simplest built-in PsyFlow path first (standard block condition generation, config-defined keys/stimuli, direct trial logic). Escalate abstraction only when the paradigm requires it.
+- **Localization Portability:** Keep participant-facing text in config stimuli/templates. Do not require code edits in `run_trial.py` for language localization.
 - Do not introduce protocol decisions without references or `inferred` labeling.
 - Do not implement paradigms by copying unrelated task templates (for example MID) without paradigm-specific logic refit.
 - Do not treat gate pass as paradigm validity; logic and stimulus fidelity must be manually audited against references.
@@ -243,3 +268,4 @@ python scripts/publish_task.py --task-path e:\Taskbeacon\T000006-mid
 - `references/high_impact_psyneuro_journals.yaml`
 - `references/stimulus_fidelity_policy.md`
 - `references/task_development_experience.md`
+- `references/reference_artifact_contract.md`

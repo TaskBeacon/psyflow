@@ -27,6 +27,14 @@ recommended_context_phase_tokens_any:
   - decision
   - feedback
   - iti
+forbidden_text_constructor_calls:
+  - TextStim
+  - TextBox2
+  - TextBox
+fail_on_literal_text_constructor: true
+fail_on_literal_settext: true
+fail_on_literal_text_attr_assign: true
 notes:
   - phase labels are task-specific; validator should not hard-fail on phase naming style.
   - run_trial should execute an auditable trial flow and return serializable trial_data.
+  - participant-facing text should be config-defined for localization portability.

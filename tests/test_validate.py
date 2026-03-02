@@ -16,6 +16,7 @@ class TestValidateCommand(unittest.TestCase):
         (root / "assets").mkdir(parents=True, exist_ok=True)
         (root / "src").mkdir(parents=True, exist_ok=True)
         (root / "config").mkdir(parents=True, exist_ok=True)
+        (root / "references").mkdir(parents=True, exist_ok=True)
 
         (root / "assets" / "README.md").write_text("# assets\n", encoding="utf-8")
         (root / ".gitignore").write_text("outputs/\n", encoding="utf-8")
@@ -103,6 +104,101 @@ class TestValidateCommand(unittest.TestCase):
                     "  release_tag: ''",
                     "contracts:",
                     f"  psyflow_taps: {contract_version}",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        (root / "references" / "references.yaml").write_text(
+            "\n".join(
+                [
+                    "task_id: T000000",
+                    "generated_at: 2026-03-02T00:00:00Z",
+                    "selection_policy: demo",
+                    "citation_threshold: 100",
+                    "papers:",
+                    "  - id: paper_001",
+                    "    title: Demo Paper",
+                    "    year: 2020",
+                    "    journal: Demo Journal",
+                    "    doi_or_url: https://example.org/paper",
+                    "    citation_count: 123",
+                    "    open_access: true",
+                    "    is_high_impact: true",
+                    "    used_for: [task_workflow]",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        (root / "references" / "references.md").write_text(
+            "\n".join(
+                [
+                    "# References",
+                    "",
+                    "## Selected Papers",
+                    "",
+                    "| ID | Year | Citations | Journal | High Impact | Open Access | Title |",
+                    "|---|---:|---:|---|---|---|---|",
+                    "| paper_001 | 2020 | 123 | Demo Journal | yes | yes | Demo Paper |",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        (root / "references" / "parameter_mapping.md").write_text(
+            "\n".join(
+                [
+                    "# Parameter Mapping",
+                    "",
+                    "## Mapping Table",
+                    "",
+                    "| Parameter ID | Config Path | Implemented Value | Source Paper ID | Evidence (quote/figure/table) | Decision Type | Notes |",
+                    "|---|---|---|---|---|---|---|",
+                    "| `cue_duration` | `timing.cue_duration` | `0.3` | `paper_001` | `Table 1` | `direct` | demo |",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        (root / "references" / "stimulus_mapping.md").write_text(
+            "\n".join(
+                [
+                    "# Stimulus Mapping",
+                    "",
+                    "## Mapping Table",
+                    "",
+                    "| Condition | Stage/Phase | Stimulus IDs | Participant-Facing Content | Source Paper ID | Evidence (quote/figure/table) | Implementation Mode | Asset References | Notes |",
+                    "|---|---|---|---|---|---|---|---|---|",
+                    "| `win` | `target` | `fixation` | `+` | `paper_001` | `Figure 1` | `psychopy_builtin` | `n/a` | demo |",
+                ]
+            ),
+            encoding="utf-8",
+        )
+        (root / "references" / "task_logic_audit.md").write_text(
+            "\n".join(
+                [
+                    "# Task Logic Audit",
+                    "",
+                    "## 1. Paradigm Intent",
+                    "demo",
+                    "",
+                    "## 2. Block/Trial Workflow",
+                    "demo",
+                    "",
+                    "## 3. Condition Semantics",
+                    "demo",
+                    "",
+                    "## 4. Response and Scoring Rules",
+                    "demo",
+                    "",
+                    "## 5. Stimulus Layout Plan",
+                    "demo",
+                    "",
+                    "## 6. Trigger Plan",
+                    "demo",
+                    "",
+                    "## 7. Architecture Decisions (Auditability)",
+                    "demo",
+                    "",
+                    "## 8. Inference Log",
+                    "demo",
                 ]
             ),
             encoding="utf-8",
@@ -415,6 +511,32 @@ class TestValidateCommand(unittest.TestCase):
             self.assertEqual(rp_rows[0]["status"], "FAIL")
             joined = "\n".join(rp_rows[0]["messages"])
             self.assertIn("missing required method: act()", joined)
+
+    def test_fails_when_run_trial_hardcodes_participant_text(self):
+        from psyflow.validate import run_validator
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            self._make_min_task(root, contract_version="v0.1.0")
+            (root / "src" / "run_trial.py").write_text(
+                "\n".join(
+                    [
+                        "from psychopy import visual",
+                        "from psyflow import set_trial_context",
+                        "def run_trial(win, kb, settings, condition):",
+                        "    stim = visual.TextStim(win, text='Press F for left')",
+                        "    set_trial_context(None, trial_id=1, phase='target', deadline_s=0.2, valid_keys=['space'])",
+                        "    capture_response = True",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            report = run_validator(root, contracts_version="v0.1.0")
+            rows = [r for r in report["results"] if r["name"] == "responder_context"]
+            self.assertEqual(len(rows), 1)
+            self.assertEqual(rows[0]["status"], "FAIL")
+            joined = "\n".join(rows[0]["messages"])
+            self.assertIn("hardcodes participant-facing text", joined)
 
     def test_gitignore_fails_without_outputs_or_data_rule(self):
         from psyflow.validate import run_validator

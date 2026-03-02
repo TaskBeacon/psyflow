@@ -21,6 +21,10 @@ def _flatten(prefix: str, value: Any, out: dict[str, Any]) -> None:
         out[prefix] = value
 
 
+def _md_cell(value: Any) -> str:
+    return str(value).replace("|", " ").replace("\n", " ").strip()
+
+
 def _conditions_from_config(path: Path) -> list[str]:
     if not path.exists():
         return []
@@ -119,18 +123,19 @@ def main() -> int:
         "",
         "## Selected Papers",
         "",
-        "| ID | Year | Citations | Journal | High Impact | Title |",
-        "|---|---:|---:|---|---|---|",
+        "| ID | Year | Citations | Journal | High Impact | Open Access | Title |",
+        "|---|---:|---:|---|---|---|---|",
     ]
     for p in papers_payload:
         references_md_lines.append(
-            "| {id} | {year} | {citation_count} | {journal} | {impact} | {title} |".format(
-                id=p.get("id", ""),
-                year=p.get("year", ""),
-                citation_count=p.get("citation_count", 0),
-                journal=str(p.get("journal", "")).replace("|", " "),
+            "| {id} | {year} | {citation_count} | {journal} | {impact} | {open_access} | {title} |".format(
+                id=_md_cell(p.get("id", "")),
+                year=_md_cell(p.get("year", "")),
+                citation_count=_md_cell(p.get("citation_count", 0)),
+                journal=_md_cell(p.get("journal", "")),
                 impact="yes" if p.get("is_high_impact") else "no",
-                title=str(p.get("title", "")).replace("|", " "),
+                open_access="yes" if p.get("open_access") else "no",
+                title=_md_cell(p.get("title", "")),
             )
         )
     references_md_lines.extend([
@@ -144,7 +149,7 @@ def main() -> int:
     references_md_path.write_text("\n".join(references_md_lines), encoding="utf-8")
 
     parameter_mapping_path = refs_dir / "parameter_mapping.md"
-    rows: list[tuple[str, Any, str, str, str]] = []
+    rows: list[tuple[str, str, Any, str, str, str, str]] = []
     cfg_path = task_path / "config" / "config.yaml"
     primary_source = papers_payload[0]["id"] if papers_payload else "inferred"
     if cfg_path.exists():
@@ -156,20 +161,44 @@ def main() -> int:
             if not key_str:
                 continue
             if key_str.startswith("task.") or key_str.startswith("timing.") or key_str.startswith("triggers.map."):
-                rows.append((key_str, value, primary_source, "inferred", "Mapped from selected protocol references"))
+                param_id = key_str.split(".")[-1]
+                rows.append(
+                    (
+                        param_id,
+                        key_str,
+                        value,
+                        str(primary_source),
+                        "Protocol-derived parameter; exact citation detail should be curated manually.",
+                        "inferred",
+                        "Auto-populated from config.yaml; verify against selected papers.",
+                    )
+                )
 
     header = [
         "# Parameter Mapping",
         "",
-        "| Parameter | Implemented Value | Source Paper ID | Confidence | Rationale |",
-        "|---|---|---|---|---|",
+        "## Mapping Table",
+        "",
+        "| Parameter ID | Config Path | Implemented Value | Source Paper ID | Evidence (quote/figure/table) | Decision Type | Notes |",
+        "|---|---|---|---|---|---|---|",
     ]
     if not rows:
-        header.append("| _none_detected_ | _n/a_ | _n/a_ | inferred | Add mappings manually after protocol extraction. |")
+        header.append(
+            "| _none_detected_ | _n/a_ | _n/a_ | _n/a_ | _n/a_ | inferred | Add mappings manually after protocol extraction. |"
+        )
     else:
-        for param, value, source, confidence, rationale in rows:
-            value_str = str(value).replace("|", " ")
-            header.append(f"| `{param}` | `{value_str}` | `{source}` | `{confidence}` | {rationale} |")
+        for param_id, config_path, value, source, evidence, decision_type, notes in rows:
+            header.append(
+                "| `{param_id}` | `{config_path}` | `{value}` | `{source}` | {evidence} | `{decision_type}` | {notes} |".format(
+                    param_id=_md_cell(param_id),
+                    config_path=_md_cell(config_path),
+                    value=_md_cell(value),
+                    source=_md_cell(source),
+                    evidence=_md_cell(evidence),
+                    decision_type=_md_cell(decision_type),
+                    notes=_md_cell(notes),
+                )
+            )
 
     parameter_mapping_path.write_text("\n".join(header) + "\n", encoding="utf-8")
 
@@ -182,16 +211,20 @@ def main() -> int:
             "Map each implemented condition/stimulus to the selected literature source.",
             "All `UNSET` values must be resolved before publish.",
             "",
-            "| Condition | Implemented Stimulus IDs | Source Paper ID | Evidence (quote/figure/table) | Implementation Mode | Notes |",
-            "|---|---|---|---|---|---|",
+            "## Mapping Table",
+            "",
+            "| Condition | Stage/Phase | Stimulus IDs | Participant-Facing Content | Source Paper ID | Evidence (quote/figure/table) | Implementation Mode | Asset References | Notes |",
+            "|---|---|---|---|---|---|---|---|---|",
         ]
         if conditions:
             for cond in conditions:
                 stim_lines.append(
-                    f"| `{cond}` | `{cond}_cue`, `{cond}_target` | `UNSET` | `UNSET` | `UNSET` | `UNSET` |"
+                    f"| `{cond}` | `UNSET` | `{cond}_cue`, `{cond}_target` | `UNSET` | `UNSET` | `UNSET` | `UNSET` | `UNSET` | `UNSET` |"
                 )
         else:
-            stim_lines.append("| `UNSET` | `UNSET` | `UNSET` | `UNSET` | `UNSET` | `UNSET` |")
+            stim_lines.append(
+                "| `UNSET` | `UNSET` | `UNSET` | `UNSET` | `UNSET` | `UNSET` | `UNSET` | `UNSET` | `UNSET` |"
+            )
         stim_lines.extend(
             [
                 "",
@@ -199,6 +232,9 @@ def main() -> int:
                 "- `psychopy_builtin`",
                 "- `generated_reference_asset`",
                 "- `licensed_external_asset`",
+                "",
+                "Decision rule:",
+                "- Participant-facing text should be configured in `config/*.yaml` stimuli and referenced via stimulus IDs.",
                 "",
             ]
         )

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import re
 import sys
@@ -275,6 +276,97 @@ def _as_lower_str_set(values: Any) -> set[str]:
         if s:
             out.add(s)
     return out
+
+
+def _normalize_md_col(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "", str(text or "").lower())
+
+
+def _extract_md_table_headers(text: str) -> list[list[str]]:
+    headers: list[list[str]] = []
+    lines = text.splitlines()
+    for i in range(len(lines) - 1):
+        head = lines[i].strip()
+        sep = lines[i + 1].strip()
+        if not (head.startswith("|") and sep.startswith("|")):
+            continue
+        if re.match(r"^\|\s*:?-{2,}", sep) is None:
+            continue
+        cols = [c.strip() for c in head.strip("|").split("|")]
+        if cols:
+            headers.append(cols)
+    return headers
+
+
+def _md_has_columns(text: str, required: list[str]) -> bool:
+    if not required:
+        return True
+    required_norm = {_normalize_md_col(c) for c in required if str(c or "").strip()}
+    if not required_norm:
+        return True
+    for header in _extract_md_table_headers(text):
+        header_norm = {_normalize_md_col(c) for c in header if str(c or "").strip()}
+        if required_norm.issubset(header_norm):
+            return True
+    return False
+
+
+def _ast_is_nonempty_string(node: ast.AST) -> bool:
+    return isinstance(node, ast.Constant) and isinstance(node.value, str) and bool(node.value.strip())
+
+
+def _check_run_trial_text_localization(text: str, cfg: dict[str, Any]) -> list[str]:
+    issues: list[str] = []
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        issues.append("src/run_trial.py could not be parsed for text-localization checks.")
+        return issues
+
+    forbidden_calls = {
+        str(x or "").strip()
+        for x in list(cfg.get("forbidden_text_constructor_calls") or [])
+        if str(x or "").strip()
+    }
+
+    fail_literal_ctor = bool(cfg.get("fail_on_literal_text_constructor", False))
+    fail_literal_settext = bool(cfg.get("fail_on_literal_settext", False))
+    fail_literal_attr = bool(cfg.get("fail_on_literal_text_attr_assign", False))
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call):
+            fn_name = ""
+            if isinstance(node.func, ast.Name):
+                fn_name = node.func.id
+            elif isinstance(node.func, ast.Attribute):
+                fn_name = node.func.attr
+
+            if fail_literal_ctor and fn_name in forbidden_calls:
+                for kw in node.keywords:
+                    if kw.arg == "text" and _ast_is_nonempty_string(kw.value):
+                        issues.append(
+                            "src/run_trial.py hardcodes participant-facing text via "
+                            f"{fn_name}(text='...'); move text to config stimuli."
+                        )
+                        break
+
+            if fail_literal_settext and isinstance(node.func, ast.Attribute) and node.func.attr == "setText":
+                if node.args and _ast_is_nonempty_string(node.args[0]):
+                    issues.append(
+                        "src/run_trial.py uses setText('...') with a literal string; "
+                        "move participant-facing text to config stimuli."
+                    )
+
+        if fail_literal_attr and isinstance(node, ast.Assign) and _ast_is_nonempty_string(node.value):
+            for target in node.targets:
+                if isinstance(target, ast.Attribute) and target.attr == "text":
+                    issues.append(
+                        "src/run_trial.py assigns literal participant-facing text to .text; "
+                        "move text to config stimuli."
+                    )
+                    break
+
+    return issues
 
 
 def _normalize_gitignore_entry(value: str) -> str:
@@ -860,6 +952,8 @@ def _check_responder_context(task_dir: Path, cfg: dict[str, Any]) -> ContractRes
         if str(s) not in text:
             fails.append(f"Missing required run_trial token: {s}")
 
+    fails.extend(_check_run_trial_text_localization(text, cfg))
+
     req_any = list(cfg.get("required_strings_any") or [])
     if req_any and not any(str(s) in text for s in req_any):
         fails.append(f"Missing required responder context helper usage (any): {req_any}")
@@ -1054,6 +1148,83 @@ def _check_changelog(task_dir: Path, cfg: dict[str, Any]) -> ContractResult:
     return _result(name, fails, warns, suggestions)
 
 
+def _check_reference_artifacts(task_dir: Path, cfg: dict[str, Any]) -> ContractResult:
+    name = str(cfg.get("name") or "reference_artifacts")
+    fails: list[str] = []
+    warns: list[str] = []
+    suggestions: list[str] = []
+
+    for rel in list(cfg.get("required_files") or []):
+        path = task_dir / str(rel)
+        if not path.exists():
+            fails.append(f"Missing required reference artifact: {rel}")
+
+    refs_yaml_cfg = cfg.get("references_yaml") if isinstance(cfg.get("references_yaml"), dict) else {}
+    refs_yaml_rel = str(refs_yaml_cfg.get("file") or "references/references.yaml")
+    refs_yaml_path = task_dir / refs_yaml_rel
+    refs_yaml: dict[str, Any] | None = None
+    if refs_yaml_path.exists():
+        try:
+            loaded = _load_yaml(refs_yaml_path) or {}
+            refs_yaml = loaded if isinstance(loaded, dict) else {}
+        except Exception as exc:
+            fails.append(f"Could not parse {refs_yaml_rel}: {exc}")
+
+    if isinstance(refs_yaml, dict):
+        for key in list(refs_yaml_cfg.get("required_top_level_keys") or []):
+            if key not in refs_yaml:
+                fails.append(f"{refs_yaml_rel} missing required key: {key}")
+
+        papers = refs_yaml.get("papers")
+        if not isinstance(papers, list):
+            fails.append(f"{refs_yaml_rel} key 'papers' must be a list")
+        else:
+            min_items = refs_yaml_cfg.get("papers_min_items")
+            try:
+                if min_items is not None and len(papers) < int(min_items):
+                    fails.append(f"{refs_yaml_rel} papers must contain at least {int(min_items)} item(s)")
+            except Exception:
+                pass
+
+            required_paper_keys = [str(x) for x in list(refs_yaml_cfg.get("required_paper_keys") or []) if str(x).strip()]
+            for idx, paper in enumerate(papers):
+                if not isinstance(paper, dict):
+                    fails.append(f"{refs_yaml_rel} papers[{idx}] must be a mapping")
+                    continue
+                for key in required_paper_keys:
+                    if key not in paper:
+                        fails.append(f"{refs_yaml_rel} papers[{idx}] missing required key: {key}")
+
+    for spec in list(cfg.get("markdown_specs") or []):
+        if not isinstance(spec, dict):
+            continue
+        rel = str(spec.get("file") or "").strip()
+        if not rel:
+            continue
+        path = task_dir / rel
+        if not path.exists():
+            continue
+
+        text = _read_text_with_fallback(path)
+        for heading in [str(x) for x in list(spec.get("required_headings") or []) if str(x).strip()]:
+            if heading not in text:
+                fails.append(f"{rel} missing required heading: {heading}")
+
+        required_cols = [str(x) for x in list(spec.get("required_table_columns") or []) if str(x).strip()]
+        if required_cols and not _md_has_columns(text, required_cols):
+            fails.append(f"{rel} missing required table columns: {required_cols}")
+
+        for marker in [str(x) for x in list(spec.get("forbidden_markers") or []) if str(x).strip()]:
+            if re.search(rf"\b{re.escape(marker)}\b", text):
+                fails.append(f"{rel} contains forbidden marker: {marker}")
+
+    if fails:
+        suggestions.append(
+            "Align references artifacts to the contract schema (required headings, table columns, and references.yaml keys)."
+        )
+    return _result(name, fails, warns, suggestions)
+
+
 def _check_artifacts(task_dir: Path, cfg: dict[str, Any]) -> ContractResult:
     name = str(cfg.get("name") or "artifacts")
     fails: list[str] = []
@@ -1132,6 +1303,7 @@ def _contract_files_for(name: str) -> str:
         "responder_context": "responder_context.yaml",
         "readme_meta": "readme_meta.yaml",
         "changelog": "changelog.yaml",
+        "reference_artifacts": "reference_artifacts.yaml",
         "artifacts": "artifacts.yaml",
     }
     if name not in mapping:
@@ -1170,6 +1342,8 @@ def _run_checks(task_dir: Path, contracts_root: Path) -> list[ContractResult]:
             results.append(_check_readme_meta(task_dir, contract_cfg))
         elif cid == "changelog":
             results.append(_check_changelog(task_dir, contract_cfg))
+        elif cid == "reference_artifacts":
+            results.append(_check_reference_artifacts(task_dir, contract_cfg))
         elif cid == "artifacts":
             results.append(_check_artifacts(task_dir, contract_cfg))
         else:  # pragma: no cover

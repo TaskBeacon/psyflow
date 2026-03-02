@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import json
 import re
 from pathlib import Path
@@ -32,7 +33,6 @@ REQUIRED_FILES = [
 ]
 
 FORBIDDEN_TOKENS = ("placeholder", "dummy", "todo")
-UNRESOLVED_STIM_MARKERS = ("UNSET", "TODO", "required_review")
 REQUIRED_README_HEADINGS = (
     "## 1. Task Overview",
     "## 2. Task Flow",
@@ -48,6 +48,64 @@ RECOMMENDED_README_SUBHEADINGS = (
     "### c. Stimuli",
     "### d. Timing",
 )
+REFERENCE_REQUIRED_HEADINGS: dict[str, tuple[str, ...]] = {
+    "references/references.md": (
+        "# References",
+        "## Selected Papers",
+    ),
+    "references/parameter_mapping.md": (
+        "# Parameter Mapping",
+        "## Mapping Table",
+    ),
+    "references/stimulus_mapping.md": (
+        "# Stimulus Mapping",
+        "## Mapping Table",
+    ),
+    "references/task_logic_audit.md": (
+        "## 1. Paradigm Intent",
+        "## 2. Block/Trial Workflow",
+        "## 3. Condition Semantics",
+        "## 4. Response and Scoring Rules",
+        "## 5. Stimulus Layout Plan",
+        "## 6. Trigger Plan",
+        "## 7. Architecture Decisions (Auditability)",
+        "## 8. Inference Log",
+    ),
+}
+REFERENCE_REQUIRED_TABLE_COLUMNS: dict[str, tuple[str, ...]] = {
+    "references/references.md": (
+        "ID",
+        "Year",
+        "Citations",
+        "Journal",
+        "High Impact",
+        "Open Access",
+        "Title",
+    ),
+    "references/parameter_mapping.md": (
+        "Parameter ID",
+        "Config Path",
+        "Implemented Value",
+        "Source Paper ID",
+        "Evidence (quote/figure/table)",
+        "Decision Type",
+        "Notes",
+    ),
+    "references/stimulus_mapping.md": (
+        "Condition",
+        "Stage/Phase",
+        "Stimulus IDs",
+        "Participant-Facing Content",
+        "Source Paper ID",
+        "Evidence (quote/figure/table)",
+        "Implementation Mode",
+        "Asset References",
+        "Notes",
+    ),
+}
+REFERENCE_FORBIDDEN_MARKERS: dict[str, tuple[str, ...]] = {
+    "references/stimulus_mapping.md": ("UNSET", "TODO", "required_review"),
+}
 TEMPLATE_TEXT_SNIPPETS = (
     "respond as quickly and accurately as possible",
     "press space to continue",
@@ -77,6 +135,84 @@ def _contains_forbidden_token(text: str) -> str | None:
 
 def _normalize_label(text: str) -> str:
     return re.sub(r"[\W_]+", " ", text.lower()).strip()
+
+
+def _normalize_md_col(text: str) -> str:
+    return re.sub(r"[^a-z0-9]+", "", str(text or "").lower())
+
+
+def _extract_md_table_headers(text: str) -> list[list[str]]:
+    headers: list[list[str]] = []
+    lines = text.splitlines()
+    for i in range(len(lines) - 1):
+        head = lines[i].strip()
+        sep = lines[i + 1].strip()
+        if not (head.startswith("|") and sep.startswith("|")):
+            continue
+        if not re.match(r"^\|\s*:?-{2,}", sep):
+            continue
+        cols = [c.strip() for c in head.strip("|").split("|")]
+        if cols:
+            headers.append(cols)
+    return headers
+
+
+def _md_has_columns(text: str, required: tuple[str, ...]) -> bool:
+    if not required:
+        return True
+    required_norm = {_normalize_md_col(c) for c in required}
+    for header in _extract_md_table_headers(text):
+        header_norm = {_normalize_md_col(c) for c in header}
+        if required_norm.issubset(header_norm):
+            return True
+    return False
+
+
+def _ast_is_nonempty_str(node: ast.AST) -> bool:
+    return isinstance(node, ast.Constant) and isinstance(node.value, str) and bool(node.value.strip())
+
+
+def _check_run_trial_localization(run_trial_path: Path, failures: list[str]) -> None:
+    text = run_trial_path.read_text(encoding="utf-8", errors="ignore")
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        failures.append("src/run_trial.py could not be parsed for localization checks")
+        return
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Call):
+            fn_name = ""
+            if isinstance(node.func, ast.Name):
+                fn_name = node.func.id
+            elif isinstance(node.func, ast.Attribute):
+                fn_name = node.func.attr
+
+            if fn_name in {"TextStim", "TextBox2", "TextBox"}:
+                for kw in node.keywords:
+                    if kw.arg == "text" and _ast_is_nonempty_str(kw.value):
+                        failures.append(
+                            "src/run_trial.py hardcodes participant text via TextStim/TextBox constructor; "
+                            "move text to config stimuli and load via StimBank"
+                        )
+                        break
+
+            if isinstance(node.func, ast.Attribute) and node.func.attr == "setText":
+                if node.args and _ast_is_nonempty_str(node.args[0]):
+                    failures.append(
+                        "src/run_trial.py uses setText(...) with a literal string; "
+                        "move participant text to config stimuli"
+                    )
+
+        if isinstance(node, ast.Assign):
+            if _ast_is_nonempty_str(node.value):
+                for target in node.targets:
+                    if isinstance(target, ast.Attribute) and target.attr == "text":
+                        failures.append(
+                            "src/run_trial.py assigns literal text to .text at runtime; "
+                            "move participant text to config stimuli"
+                        )
+                        break
 
 
 def _stim_asset_path(spec: dict[str, Any], stim_type: str) -> str | None:
@@ -204,6 +340,63 @@ def _check_text_encoding_quality(cfg: dict[str, Any], *, cfg_name: str, failures
             failures.append(f"{cfg_name}: stimulus '{stim_id}' text {reason}")
 
 
+def _check_reference_artifacts(task_path: Path, failures: list[str]) -> None:
+    refs_yaml_path = task_path / "references" / "references.yaml"
+    try:
+        refs_yaml = _load_yaml(refs_yaml_path)
+    except Exception as exc:
+        failures.append(f"references/references.yaml parse error: {exc}")
+        refs_yaml = {}
+
+    required_top = ("task_id", "generated_at", "selection_policy", "citation_threshold", "papers")
+    for key in required_top:
+        if key not in refs_yaml:
+            failures.append(f"references/references.yaml missing required key: {key}")
+
+    papers = refs_yaml.get("papers")
+    if not isinstance(papers, list) or not papers:
+        failures.append("references/references.yaml must include non-empty papers list")
+    else:
+        paper_required = (
+            "id",
+            "title",
+            "year",
+            "journal",
+            "doi_or_url",
+            "citation_count",
+            "open_access",
+            "is_high_impact",
+            "used_for",
+        )
+        for i, paper in enumerate(papers):
+            if not isinstance(paper, dict):
+                failures.append(f"references/references.yaml papers[{i}] must be a mapping")
+                continue
+            for key in paper_required:
+                if key not in paper:
+                    failures.append(f"references/references.yaml papers[{i}] missing key: {key}")
+
+    for rel, headings in REFERENCE_REQUIRED_HEADINGS.items():
+        path = task_path / rel
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for heading in headings:
+            if heading not in text:
+                failures.append(f"{rel} missing required heading: {heading}")
+
+    for rel, cols in REFERENCE_REQUIRED_TABLE_COLUMNS.items():
+        path = task_path / rel
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        if not _md_has_columns(text, cols):
+            failures.append(f"{rel} missing required table columns: {list(cols)}")
+
+    for rel, markers in REFERENCE_FORBIDDEN_MARKERS.items():
+        path = task_path / rel
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for marker in markers:
+            if re.search(rf"\b{re.escape(marker)}\b", text):
+                failures.append(f"{rel} contains unresolved marker '{marker}'")
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Validate task standard layout and patterns.")
     parser.add_argument("--task-path", required=True)
@@ -237,6 +430,7 @@ def main() -> int:
     run_trial_text = (task_path / "src" / "run_trial.py").read_text(encoding="utf-8", errors="ignore")
     if "set_trial_context" not in run_trial_text:
         failures.append("src/run_trial.py must include set_trial_context(...) usage")
+    _check_run_trial_localization(task_path / "src" / "run_trial.py", failures)
 
     cfg_paths = {
         "config/config.yaml": task_path / "config" / "config.yaml",
@@ -379,12 +573,10 @@ def main() -> int:
         if token:
             failures.append(f"assets/README.md contains forbidden token '{token}'")
 
+    _check_reference_artifacts(task_path, failures)
+
     stim_map = task_path / "references" / "stimulus_mapping.md"
     stim_text = stim_map.read_text(encoding="utf-8", errors="ignore")
-    for marker in UNRESOLVED_STIM_MARKERS:
-        pat = rf"^\|.*\b{re.escape(marker)}\b.*\|"
-        if re.search(pat, stim_text, flags=re.MULTILINE):
-            failures.append(f"references/stimulus_mapping.md contains unresolved marker '{marker}'")
 
     if isinstance(base_conditions, list):
         for cond in base_conditions:

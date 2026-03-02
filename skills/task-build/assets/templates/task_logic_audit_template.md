@@ -52,6 +52,7 @@ Also document where participant-facing condition text/stimuli are defined:
 
 - Participant-facing text source (config stimuli / code formatting / generated assets):
 - Why this source is appropriate for auditability:
+- Localization strategy (how language variants are swapped via config without code edits):
 
 ## 4. Response and Scoring Rules
 
@@ -95,3 +96,8 @@ List any inferred decisions not directly specified by references:
 - Decision:
 - Why inference was required:
 - Citation-supported rationale:
+
+## Contract Note
+
+- Participant-facing labels/instructions/options should be config-defined whenever possible.
+- `src/run_trial.py` should not hardcode participant-facing text that would require code edits for localization.

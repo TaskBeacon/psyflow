@@ -1,0 +1,81 @@
+name: reference_artifacts
+required_files:
+  - references/references.yaml
+  - references/references.md
+  - references/parameter_mapping.md
+  - references/stimulus_mapping.md
+  - references/task_logic_audit.md
+references_yaml:
+  file: references/references.yaml
+  required_top_level_keys:
+    - task_id
+    - generated_at
+    - selection_policy
+    - citation_threshold
+    - papers
+  papers_min_items: 1
+  required_paper_keys:
+    - id
+    - title
+    - year
+    - journal
+    - doi_or_url
+    - citation_count
+    - open_access
+    - is_high_impact
+    - used_for
+markdown_specs:
+  - file: references/references.md
+    required_headings:
+      - "# References"
+      - "## Selected Papers"
+    required_table_columns:
+      - ID
+      - Year
+      - Citations
+      - Journal
+      - High Impact
+      - Open Access
+      - Title
+  - file: references/parameter_mapping.md
+    required_headings:
+      - "# Parameter Mapping"
+      - "## Mapping Table"
+    required_table_columns:
+      - Parameter ID
+      - Config Path
+      - Implemented Value
+      - Source Paper ID
+      - Evidence (quote/figure/table)
+      - Decision Type
+      - Notes
+  - file: references/stimulus_mapping.md
+    required_headings:
+      - "# Stimulus Mapping"
+      - "## Mapping Table"
+    required_table_columns:
+      - Condition
+      - Stage/Phase
+      - Stimulus IDs
+      - Participant-Facing Content
+      - Source Paper ID
+      - Evidence (quote/figure/table)
+      - Implementation Mode
+      - Asset References
+      - Notes
+    forbidden_markers:
+      - UNSET
+      - TODO
+      - required_review
+  - file: references/task_logic_audit.md
+    required_headings:
+      - "## 1. Paradigm Intent"
+      - "## 2. Block/Trial Workflow"
+      - "## 3. Condition Semantics"
+      - "## 4. Response and Scoring Rules"
+      - "## 5. Stimulus Layout Plan"
+      - "## 6. Trigger Plan"
+      - "## 7. Architecture Decisions (Auditability)"
+      - "## 8. Inference Log"
+notes:
+  - Reference artifacts are required for auditability and citation traceability.

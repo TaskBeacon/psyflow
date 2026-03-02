@@ -42,3 +42,4 @@ Key requirements:
 - at least one response window uses `set_trial_context(...)` + `capture_response(...)`
 - context includes `trial_id`, `phase`, `deadline_s`, `valid_keys`
 - returns serializable trial-level data
+- participant-facing labels/text/options are sourced from config stimuli (via `StimBank`) rather than hardcoded in `run_trial.py`

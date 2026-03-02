@@ -29,6 +29,8 @@ Use this checklist before running final gates.
 - `run_trial.py` uses `set_trial_context(...)`
 - trigger schema is structured (`map/driver/policy/timing`)
 - Prefer a simple, auditable mode-aware runtime flow in `main.py` (avoid unnecessary abstraction layers).
+- Participant-facing labels/text/options are config-driven (`config/*.yaml` stimuli), not hardcoded in `src/run_trial.py`.
+- `src/run_trial.py` should not directly instantiate participant-facing text stimuli with literal text; use `stim_bank.get(...)` / `stim_bank.get_and_format(...)`.
 - If custom condition generation is used, `references/task_logic_audit.md` documents why built-in block condition generation is insufficient.
 - If a task-specific controller exists, `references/task_logic_audit.md` documents why it is needed (for example adaptive timing or online control).
 - Response keys/mappings are config-driven unless the audit documents a justified runtime exception.
@@ -74,6 +76,14 @@ Use this checklist before running final gates.
 - README task flow includes block-level, trial-level, controller logic, and other logic (if applicable).
 - README configuration summary includes subject info, window, stimuli, timing, triggers (if present), and adaptive controller (if present).
 - README/audit descriptions of condition generation and controller usage match the actual runtime implementation (no stale references to removed abstractions).
+
+## Reference Artifact Contract
+
+- `references/references.yaml` contains required top-level metadata and per-paper fields.
+- `references/references.md` includes required headings and a standardized selected-paper table.
+- `references/parameter_mapping.md` includes standardized headings and mapping columns.
+- `references/stimulus_mapping.md` includes standardized headings/columns and no unresolved markers.
+- `references/task_logic_audit.md` includes all required `## 1` to `## 8` sections from the audit template.
 
 ## Required Gates
 

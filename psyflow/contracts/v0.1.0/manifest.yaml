@@ -14,6 +14,7 @@ contracts:
   - responder_context
   - readme_meta
   - changelog
+  - reference_artifacts
   - artifacts
 docs:
   - README.md
