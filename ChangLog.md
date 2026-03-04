@@ -1,5 +1,15 @@
 # psyflow change log
 
+## 0.1.21 (2026-03-04)
+
+### Summary
+- Removed in-repo `skills/task-build` from `psyflow`.
+- Extracted `task-build` as a standalone canonical repository at `e:/Taskbeacon/skills/task-build`.
+- No backward-compatibility shim is kept in `psyflow`; skill ownership now lives outside the framework repo.
+
+### Validation
+- `git status` in `psyflow` confirms only `skills/task-build/*` removals plus this changelog update.
+
 ## 0.1.20 (2026-03-02)
 
 ### Summary
