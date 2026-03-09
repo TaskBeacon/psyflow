@@ -33,7 +33,7 @@
 ## 7. Architecture Decisions (Auditability)
 
 - `main.py` provides one auditable run flow across human/qa/sim.
-- `run_trial.py` sets trial context before response capture for simulation auditability.
+- `run_trial.py` sets trial context before every participant-visible phase for simulation and plotting auditability.
 - Replace template notes with task-specific design decisions and rationale.
 
 ## 8. Inference Log

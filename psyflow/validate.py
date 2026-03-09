@@ -369,6 +369,146 @@ def _check_run_trial_text_localization(text: str, cfg: dict[str, Any]) -> list[s
     return issues
 
 
+def _find_visible_show_without_context(text: str) -> list[str]:
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return []
+
+    run_trial_fn = None
+    for node in tree.body:
+        if isinstance(node, ast.FunctionDef) and node.name == "run_trial":
+            run_trial_fn = node
+            break
+    if run_trial_fn is None:
+        return []
+
+    context_units: set[str] = set()
+    unit_stims: dict[str, list[str]] = {}
+    unit_labels: dict[str, str] = {}
+    warnings: list[str] = []
+
+    def _stmt_call(stmt: ast.stmt) -> ast.Call | None:
+        if isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Call):
+            return stmt.value
+        if isinstance(stmt, ast.Assign) and isinstance(stmt.value, ast.Call):
+            return stmt.value
+        return None
+
+    def _kw_expr(call: ast.Call, key: str) -> str:
+        for kw in call.keywords:
+            if kw.arg == key:
+                try:
+                    return ast.unparse(kw.value)
+                except Exception:  # noqa: BLE001
+                    return ""
+        return ""
+
+    def _node_name(node: ast.AST) -> str:
+        return node.id if isinstance(node, ast.Name) else ""
+
+    def _add_stim_exprs(node: ast.AST) -> list[str]:
+        out: list[str] = []
+        current = node
+        while isinstance(current, ast.Call):
+            if isinstance(current.func, ast.Attribute) and current.func.attr == "add_stim" and current.args:
+                try:
+                    out.append(ast.unparse(current.args[0]))
+                except Exception:  # noqa: BLE001
+                    pass
+                current = current.func.value
+            elif isinstance(current.func, ast.Attribute):
+                current = current.func.value
+            else:
+                break
+        out.reverse()
+        return out
+
+    def _unit_label_expr(node: ast.AST) -> str:
+        current = node
+        while isinstance(current, ast.Call):
+            if isinstance(current.func, ast.Name) and current.func.id in {"StimUnit", "make_unit"}:
+                label = _kw_expr(current, "unit_label")
+                if label:
+                    return label
+                if current.args:
+                    try:
+                        return ast.unparse(current.args[0])
+                    except Exception:  # noqa: BLE001
+                        return ""
+                return ""
+            if isinstance(current.func, ast.Attribute):
+                current = current.func.value
+            else:
+                break
+        return ""
+
+    def _walk(stmts: list[ast.stmt]) -> None:
+        for stmt in stmts:
+            if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1 and isinstance(stmt.targets[0], ast.Name):
+                var = stmt.targets[0].id
+                label = _unit_label_expr(stmt.value)
+                if label:
+                    unit_labels[var] = label
+                stim_exprs = _add_stim_exprs(stmt.value)
+                if stim_exprs:
+                    unit_stims.setdefault(var, []).extend(stim_exprs)
+
+            if isinstance(stmt, ast.If):
+                _walk(stmt.body)
+                _walk(stmt.orelse)
+                continue
+            if isinstance(stmt, (ast.For, ast.AsyncFor, ast.While, ast.With, ast.AsyncWith)):
+                _walk(stmt.body)
+                _walk(getattr(stmt, "orelse", []))
+                continue
+            if isinstance(stmt, ast.Try):
+                _walk(stmt.body)
+                for handler in stmt.handlers:
+                    _walk(handler.body)
+                _walk(stmt.orelse)
+                _walk(stmt.finalbody)
+                continue
+
+            call = _stmt_call(stmt)
+            if call is None:
+                continue
+            if isinstance(call.func, ast.Name) and call.func.id == "set_trial_context" and call.args:
+                unit_var = _node_name(call.args[0])
+                if unit_var:
+                    context_units.add(unit_var)
+                continue
+            if not (isinstance(call.func, ast.Attribute) and call.func.attr == "show"):
+                continue
+
+            base = call.func.value
+            unit_var = _node_name(base)
+            stim_exprs = list(unit_stims.get(unit_var, [])) if unit_var else []
+            for expr in _add_stim_exprs(base):
+                if expr not in stim_exprs:
+                    stim_exprs.append(expr)
+            if not stim_exprs:
+                continue
+            if unit_var and unit_var in context_units:
+                continue
+
+            label = _unit_label_expr(base)
+            if not label and unit_var:
+                label = unit_labels.get(unit_var, "")
+            token = str(label or unit_var or "show() phase").strip().strip("'\"")
+            warnings.append(token)
+
+    _walk(run_trial_fn.body)
+    deduped: list[str] = []
+    seen: set[str] = set()
+    for item in warnings:
+        if not item or item in seen:
+            continue
+        seen.add(item)
+        deduped.append(item)
+    return deduped
+
+
 def _looks_like_mid_identity(value: Any) -> bool:
     low = str(value or "").strip().lower()
     if not low:
@@ -1128,6 +1268,12 @@ def _check_responder_context(task_dir: Path, cfg: dict[str, Any]) -> ContractRes
             fails.append(f"Missing required run_trial token: {s}")
 
     fails.extend(_check_run_trial_text_localization(text, cfg))
+    visible_without_context = _find_visible_show_without_context(text)
+    for token in visible_without_context:
+        warns.append(
+            "Participant-visible phase appears to call show() without preceding set_trial_context(...): "
+            f"{token}"
+        )
 
     req_any = list(cfg.get("required_strings_any") or [])
     if req_any and not any(str(s) in text for s in req_any):
@@ -1256,6 +1402,8 @@ def _check_responder_context(task_dir: Path, cfg: dict[str, Any]) -> ContractRes
 
     if fails:
         suggestions.append("Call set_trial_context(...) with required fields before response windows.")
+    if visible_without_context:
+        suggestions.append("Emit set_trial_context(...) for every participant-visible phase, not only response windows.")
     if warns:
         suggestions.append("Include condition/block/task_factors context for richer simulation and audits.")
     return _result(name, fails, warns, suggestions)

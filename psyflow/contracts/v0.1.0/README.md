@@ -14,6 +14,7 @@ These contracts define practical standards for building auditable psyflow/TAPS t
 - Runtime entrypoint pattern (`main.py`)
 - Trial runtime pattern (`src/run_trial.py`)
   - phase/stage labels are task-defined (generic), not MID-specific
+  - every participant-visible phase should emit `set_trial_context(...)` before `show(...)` or `capture_response(...)`
   - participant-facing text localization should be config-driven (avoid hardcoded runtime text)
 - Responder/sampler plugin standards (`config_scripted_sim.yaml`, `config_sampler_sim.yaml`, `responders/`)
 - README metadata rows
