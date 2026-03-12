@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
-const isPages = process.env.GITHUB_ACTIONS === "true";
-const basePath = isPages ? "/psyflow" : "";
+const basePath = "/psyflow";
 
 const nextConfig = {
   output: "export",
@@ -9,7 +8,7 @@ const nextConfig = {
     unoptimized: true
   },
   basePath,
-  assetPrefix: basePath ? `${basePath}/` : "",
+  assetPrefix: `${basePath}/`,
   env: {
     NEXT_PUBLIC_BASE_PATH: basePath
   }

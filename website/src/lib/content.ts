@@ -15,16 +15,16 @@ export const englishTutorials: TutorialEntry[] = [
   {
     slug: "getting-started",
     locale: "en",
-    title: "Getting started with a canonical local task",
-    summary: "Install PsyFlow, scaffold a task, and understand the current local runtime layout.",
-    eyebrow: "Getting Started",
+    title: "Getting started",
+    summary: "Install PsyFlow, scaffold a task, and run the first canonical local task cleanly.",
+    eyebrow: "Start",
     href: "/tutorials/getting-started/",
     sourceDocs: ["docs/tutorials/getting_started.md"]
   },
   {
     slug: "cli-and-runtime",
     locale: "en",
-    title: "CLI shortcuts and runtime modes",
+    title: "CLI and runtime modes",
     summary: "Use the maintained launcher commands instead of the removed root qa and sim subcommands.",
     eyebrow: "CLI",
     href: "/tutorials/cli-and-runtime/",
@@ -33,36 +33,27 @@ export const englishTutorials: TutorialEntry[] = [
   {
     slug: "task-settings",
     locale: "en",
-    title: "TaskSettings, seeds, and condition weights",
-    summary: "Flatten config, attach subject info, and resolve framework-level weights cleanly.",
-    eyebrow: "Task Settings",
+    title: "TaskSettings and condition weights",
+    summary: "Flatten config, attach subject info, and resolve framework-level weights in one place.",
+    eyebrow: "Settings",
     href: "/tutorials/task-settings/",
     sourceDocs: ["docs/tutorials/task_settings.md", "psyflow/TaskSettings.py"]
   },
   {
-    slug: "utilities",
-    locale: "en",
-    title: "Utilities for config, runtime, trial IDs, and voices",
-    summary: "Surface the helpers that reduce boilerplate in real tasks.",
-    eyebrow: "Utilities",
-    href: "/tutorials/utilities/",
-    sourceDocs: ["docs/tutorials/utilities.md", "psyflow/utils/__init__.py"]
-  },
-  {
     slug: "trigger-io",
     locale: "en",
-    title: "Trigger runtime and hardware I/O",
-    summary: "Keep tasks hardware-agnostic while drivers own delivery semantics and audit logging.",
-    eyebrow: "Trigger / I/O",
+    title: "Trigger tutorial",
+    summary: "Keep tasks hardware-agnostic while runtimes and drivers own delivery semantics.",
+    eyebrow: "Trigger",
     href: "/tutorials/trigger-io/",
     sourceDocs: ["docs/tutorials/send_trigger.md", "psyflow/io/__init__.py"]
   },
   {
     slug: "qa-and-validation",
     locale: "en",
-    title: "QA, validation, and simulation gates",
-    summary: "Understand the strict QA gate, contract validation, and responder-based simulation flow.",
-    eyebrow: "QA / Validate",
+    title: "QA tutorial",
+    summary: "Run QA, simulation, and validation as a release gate rather than an afterthought.",
+    eyebrow: "QA",
     href: "/tutorials/qa-and-validation/",
     sourceDocs: ["docs/tutorials/qa_runner.md", "psyflow/task_launcher.py", "psyflow/validate.py"]
   }
@@ -72,8 +63,8 @@ export const chineseTutorials: TutorialEntry[] = [
   {
     slug: "getting-started",
     locale: "zh",
-    title: "快速开始：创建本地 PsyFlow 任务",
-    summary: "从安装、脚手架到本地运行，建立一套可审查的任务目录。",
+    title: "快速开始",
+    summary: "从安装、脚手架到本地运行，先把一套可审查的任务包搭起来。",
     eyebrow: "中文",
     href: "/zh/tutorials/getting-started/",
     sourceDocs: ["docs/tutorials/getting_started_cn.md"]
@@ -81,8 +72,8 @@ export const chineseTutorials: TutorialEntry[] = [
   {
     slug: "cli-and-runtime",
     locale: "zh",
-    title: "命令行入口与运行模式",
-    summary: "使用当前的 psyflow-run、psyflow-qa、psyflow-sim、psyflow-validate。",
+    title: "命令行与运行模式",
+    summary: "用当前维护中的 psyflow-run、psyflow-qa、psyflow-sim、psyflow-validate。",
     eyebrow: "中文",
     href: "/zh/tutorials/cli-and-runtime/",
     sourceDocs: ["docs/tutorials/cli_usage_cn.md", "psyflow/task_launcher.py"]
@@ -90,8 +81,8 @@ export const chineseTutorials: TutorialEntry[] = [
   {
     slug: "task-settings",
     locale: "zh",
-    title: "TaskSettings、随机种子与条件权重",
-    summary: "理解配置展平、被试信息注入与 resolve_condition_weights() 的用法。",
+    title: "TaskSettings 与条件权重",
+    summary: "理解配置展平、被试信息注入，以及 resolve_condition_weights() 的当前用法。",
     eyebrow: "中文",
     href: "/zh/tutorials/task-settings/",
     sourceDocs: ["docs/tutorials/task_settings_cn.md", "psyflow/TaskSettings.py"]
@@ -99,8 +90,8 @@ export const chineseTutorials: TutorialEntry[] = [
   {
     slug: "participant-info",
     locale: "zh",
-    title: "采集被试信息并回写输出路径",
-    summary: "用 SubInfo 与 TaskSettings 串起表单、日志路径与可复现随机种子。",
+    title: "被试信息与输出路径",
+    summary: "把 SubInfo、TaskSettings、输出目录和随机种子串成一条更稳定的本地流程。",
     eyebrow: "中文",
     href: "/zh/tutorials/participant-info/",
     sourceDocs: ["docs/tutorials/get_subinfo_cn.md"]
@@ -108,11 +99,20 @@ export const chineseTutorials: TutorialEntry[] = [
   {
     slug: "trigger-io",
     locale: "zh",
-    title: "触发器与 I/O 运行时",
-    summary: "将语义事件、驱动器与日志拆开，让任务与硬件适配解耦。",
+    title: "Trigger 教程",
+    summary: "把语义事件、运行时和硬件驱动拆开，让任务逻辑保持硬件无关。",
     eyebrow: "中文",
     href: "/zh/tutorials/trigger-io/",
     sourceDocs: ["docs/tutorials/send_trigger_cn.md", "psyflow/io/__init__.py"]
+  },
+  {
+    slug: "qa-and-validation",
+    locale: "zh",
+    title: "QA 教程",
+    summary: "梳理 QA、simulation 和 validation 在当前主分支中的职责边界。",
+    eyebrow: "中文",
+    href: "/zh/tutorials/qa-and-validation/",
+    sourceDocs: ["docs/tutorials/qa_runner.md", "psyflow/validate.py"]
   }
 ];
 

@@ -4,16 +4,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { IconClose, IconGithub, IconMenu } from "@/components/icons";
 import { PsyFlowLogo } from "@/components/psyflow-logo";
+import { routes } from "@/lib/routes";
 
 const NAV_LINKS = [
-  { label: "Home", href: "/" },
-  { label: "Framework", href: "/framework/" },
-  { label: "Utilities", href: "/utilities/" },
-  { label: "QA & Sim", href: "/qa-sim/" },
-  { label: "Triggers", href: "/triggers/" },
-  { label: "Tutorials", href: "/tutorials/" },
-  { label: "API", href: "/api/" },
-  { label: "Changelog", href: "/changelog/" }
+  { label: "Home", href: routes.home },
+  { label: "Framework", href: routes.framework },
+  { label: "Tutorials", href: routes.tutorials },
+  { label: "Changelog", href: routes.changelog }
 ] as const;
 
 function NavLink({
@@ -50,8 +47,8 @@ export function SiteHeader() {
       <div className="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
         <div className="pf-frame bg-[#fffdf9] px-4 py-3">
           <div className="flex items-center justify-between gap-4">
-            <Link href="/" className="pf-focus-ring rounded-xl" onClick={() => setOpen(false)}>
-              <PsyFlowLogo markClassName="size-10 sm:size-11" textClassName="text-[1.9rem]" />
+            <Link href={routes.home} className="pf-focus-ring rounded-xl" onClick={() => setOpen(false)}>
+              <PsyFlowLogo markClassName="w-[108px] sm:w-[118px]" textClassName="text-[1.75rem]" />
             </Link>
 
             <nav className="hidden items-center gap-1 xl:flex">
@@ -66,7 +63,7 @@ export function SiteHeader() {
               >
                 GitHub
               </a>
-              <Link className="pf-focus-ring pf-button-primary px-5 py-3 text-sm" href="/tutorials/getting-started/">
+              <Link className="pf-focus-ring pf-button-primary px-5 py-3 text-sm" href={routes.gettingStarted}>
                 Get Started
               </Link>
             </nav>
@@ -101,7 +98,7 @@ export function SiteHeader() {
                 </a>
                 <Link
                   className="pf-focus-ring pf-button-primary w-full text-sm"
-                  href="/tutorials/getting-started/"
+                  href={routes.gettingStarted}
                   onClick={() => setOpen(false)}
                 >
                   Get Started
