@@ -1,0 +1,157 @@
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=DM+Sans:wght@400;500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --pf-ink: #25314d;
+  --pf-paper: #f4efe9;
+  --pf-paper-strong: #fffdf9;
+  --pf-sky: #b9dceb;
+  --pf-sky-soft: #d9edf6;
+  --pf-peach: #f5c1b5;
+  --pf-mint: #39d95d;
+  --pf-mint-dark: #29bb48;
+  --pf-lavender: #ddd7f4;
+  --pf-cream: #fff7ef;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply font-sans antialiased;
+  color: var(--pf-ink);
+  background: var(--pf-paper);
+}
+
+.pf-grid-bg {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(245, 193, 181, 0.26), transparent 18%),
+    radial-gradient(circle at 84% 14%, rgba(185, 220, 235, 0.28), transparent 18%),
+    radial-gradient(circle at 78% 82%, rgba(57, 217, 93, 0.12), transparent 20%),
+    linear-gradient(180deg, #f4efe9 0%, #f1ece6 100%);
+}
+
+.pf-focus-ring {
+  @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25314d] focus-visible:ring-offset-2 focus-visible:ring-offset-[#f4efe9];
+}
+
+.pf-prose {
+  @apply prose max-w-none prose-headings:font-heading prose-headings:text-[#25314d] prose-headings:tracking-tight;
+  @apply prose-p:text-slate-700 prose-li:text-slate-700 prose-strong:text-[#25314d];
+  @apply prose-a:text-[#25314d] prose-a:no-underline hover:prose-a:underline;
+  @apply prose-code:font-mono prose-pre:bg-slate-950 prose-pre:text-slate-50;
+  @apply prose-hr:border-slate-200 prose-img:rounded-[24px] prose-img:border-2 prose-img:border-[#25314d] prose-img:shadow-[0_5px_0_#25314d];
+  @apply prose-blockquote:border-[#39d95d] prose-blockquote:text-slate-700;
+}
+
+@layer components {
+  .pf-frame {
+    border: 2px solid var(--pf-ink);
+    border-radius: 28px;
+    background: var(--pf-paper-strong);
+    box-shadow: 0 6px 0 var(--pf-ink);
+  }
+
+  .pf-frame-soft {
+    border: 2px solid var(--pf-ink);
+    border-radius: 22px;
+    background: var(--pf-paper-strong);
+    box-shadow: 0 5px 0 var(--pf-ink);
+  }
+
+  .pf-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    border-radius: 999px;
+    background: #f8d8cf;
+    color: var(--pf-ink);
+    padding: 0.45rem 0.82rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: inset 0 0 0 1px rgba(37, 49, 77, 0.12);
+  }
+
+  .pf-badge::before {
+    content: "";
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: #8db6d1;
+  }
+
+  .pf-section-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: var(--pf-sky);
+    padding: 0.35rem 0.8rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--pf-ink);
+  }
+
+  .pf-button-primary,
+  .pf-button-secondary,
+  .pf-button-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 2px solid var(--pf-ink);
+    border-radius: 18px;
+    padding: 0.85rem 1.35rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1;
+    transition: transform 120ms ease;
+  }
+
+  .pf-button-primary:hover,
+  .pf-button-secondary:hover,
+  .pf-button-ghost:hover {
+    transform: translateY(-1px);
+  }
+
+  .pf-button-primary {
+    background: var(--pf-mint);
+    color: #fff;
+    box-shadow: 0 4px 0 var(--pf-ink);
+  }
+
+  .pf-button-secondary {
+    background: var(--pf-sky);
+    color: var(--pf-ink);
+    box-shadow: 0 4px 0 var(--pf-ink);
+  }
+
+  .pf-button-ghost {
+    background: var(--pf-paper-strong);
+    color: var(--pf-ink);
+    box-shadow: 0 4px 0 var(--pf-ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+.hljs{color:#e2e8f0;}
+.hljs-comment,.hljs-quote{color:#94a3b8;font-style:italic;}
+.hljs-keyword,.hljs-selector-tag,.hljs-subst{color:#7dd3fc;}
+.hljs-string,.hljs-title,.hljs-name,.hljs-type,.hljs-attribute,.hljs-symbol,.hljs-bullet,.hljs-addition{color:#86efac;}
+.hljs-number,.hljs-literal,.hljs-variable,.hljs-template-variable{color:#fcd34d;}
+.hljs-section,.hljs-selector-id,.hljs-selector-class{color:#a78bfa;}
+.hljs-strong{font-weight:700;}
+.hljs-emphasis{font-style:italic;}
+.hljs-deletion{color:#fca5a5;}

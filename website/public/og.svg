@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" rx="36" fill="#F4EFE9"/>
+  <rect x="68" y="68" width="1064" height="494" rx="34" fill="#FFFDF9" stroke="#25314D" stroke-width="4"/>
+  <rect x="112" y="156" width="180" height="180" rx="54" fill="#C6DEF2" stroke="#25314D" stroke-width="6"/>
+  <path d="M144 272C165 235 189 214 220 214C247 214 262 226 278 248" stroke="#EF8B67" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="150" cy="278" r="20" fill="#FFF7EF" stroke="#25314D" stroke-width="6"/>
+  <circle cx="219" cy="214" r="20" fill="#FFF7EF" stroke="#25314D" stroke-width="6"/>
+  <circle cx="279" cy="248" r="20" fill="#FFF7EF" stroke="#25314D" stroke-width="6"/>
+  <path d="M256 302H282" stroke="#39D95D" stroke-width="14" stroke-linecap="round"/>
+  <path d="M269 289V315" stroke="#39D95D" stroke-width="14" stroke-linecap="round"/>
+  <text x="340" y="245" fill="#25314D" font-family="'Baloo 2', sans-serif" font-size="102" font-weight="800">
+    PsyFlow
+  </text>
+  <text x="340" y="315" fill="#25314D" font-family="'DM Sans', sans-serif" font-size="34" font-weight="700">
+    Local framework for auditable PsychoPy task development
+  </text>
+  <rect x="340" y="374" width="286" height="74" rx="22" fill="#39D95D" stroke="#25314D" stroke-width="4"/>
+  <text x="402" y="422" fill="white" font-family="'DM Sans', sans-serif" font-size="32" font-weight="700">
+    taskbeacon.github.io
+  </text>
+  <text x="340" y="498" fill="#5C6780" font-family="'DM Sans', sans-serif" font-size="24" font-weight="500">
+    Framework · QA · Simulation · Validation · Trigger I/O
+  </text>
+</svg>

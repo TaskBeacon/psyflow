@@ -1,0 +1,26 @@
+{
+  "project": {
+    "name": "psyflow",
+    "version": "0.1.12",
+    "description": "A utility package for building modular PsychoPy experiments.",
+    "requires_python": ">=3.10",
+    "scripts": {
+      "psyflow": "psyflow.cli:main",
+      "psyflow-run": "psyflow.task_launcher:run_main",
+      "psyflow-qa": "psyflow.task_launcher:qa_main",
+      "psyflow-sim": "psyflow.task_launcher:sim_main",
+      "psyflow-validate": "psyflow.validate:main"
+    }
+  },
+  "latest_release": {
+    "version": "0.1.21",
+    "date": "2026-03-04",
+    "summary": [
+      "Removed in-repo `skills/task-build` from `psyflow`.",
+      "Extracted `task-build` as a standalone canonical repository at `e:/Taskbeacon/skills/task-build`.",
+      "No backward-compatibility shim is kept in `psyflow`; skill ownership now lives outside the framework repo."
+    ]
+  },
+  "release_count": 19,
+  "module_count": 5
+}

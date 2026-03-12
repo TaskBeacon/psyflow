@@ -1,0 +1,536 @@
+[
+  {
+    "module": "psyflow",
+    "summary": "psyflow: A utility package for modular PsychoPy experiment development.",
+    "exports": [
+      {
+        "name": "BlockUnit",
+        "source_module": "psyflow.BlockUnit",
+        "summary": "Block-level controller for trials.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/BlockUnit.py"
+      },
+      {
+        "name": "StimBank",
+        "source_module": "psyflow.StimBank",
+        "summary": "A hybrid stimulus management system for PsychoPy experiments.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/StimBank.py"
+      },
+      {
+        "name": "StimUnit",
+        "source_module": "psyflow.StimUnit",
+        "summary": "StimUnit(unit_label,win, kb,  trigger=None)",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/StimUnit.py"
+      },
+      {
+        "name": "SubInfo",
+        "source_module": "psyflow.SubInfo",
+        "summary": "GUI-based participant information collector using a YAML-style config.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/SubInfo.py"
+      },
+      {
+        "name": "TaskSettings",
+        "source_module": "psyflow.TaskSettings",
+        "summary": "Configuration container for PsychoPy-based tasks.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/TaskSettings.py"
+      },
+      {
+        "name": "TriggerRuntime",
+        "source_module": "psyflow.io.runtime",
+        "summary": "Owns timing semantics + audit logging; delegates I/O to a driver.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/runtime.py"
+      },
+      {
+        "name": "TriggerEvent",
+        "source_module": "psyflow.io.events",
+        "summary": "Structured trigger event (hardware-agnostic contract).",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/events.py"
+      },
+      {
+        "name": "MockDriver",
+        "source_module": "psyflow.io.drivers.mock",
+        "summary": "Mock trigger driver (no hardware).",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/drivers/mock.py"
+      },
+      {
+        "name": "SerialDriver",
+        "source_module": "psyflow.io.drivers.serial",
+        "summary": "pyserial-based trigger driver.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/drivers/serial.py"
+      },
+      {
+        "name": "FanoutDriver",
+        "source_module": "psyflow.io.drivers.fanout",
+        "summary": "Broadcast trigger sends to multiple drivers.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/drivers/fanout.py"
+      },
+      {
+        "name": "CallableDriver",
+        "source_module": "psyflow.io.drivers.callable",
+        "summary": "Driver that calls a user-provided function to send a trigger.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/drivers/callable.py"
+      },
+      {
+        "name": "cli_main",
+        "source_module": "psyflow.cli",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/cli.py"
+      },
+      {
+        "name": "show_ports",
+        "source_module": "psyflow.utils.ports",
+        "summary": "List all available serial ports.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/ports.py"
+      },
+      {
+        "name": "taps",
+        "source_module": "psyflow.utils.templates",
+        "summary": "Generate a task skeleton using the bundled template.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/templates.py"
+      },
+      {
+        "name": "count_down",
+        "source_module": "psyflow.utils.display",
+        "summary": "Display a frame-accurate countdown using TextStim.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/display.py"
+      },
+      {
+        "name": "load_config",
+        "source_module": "psyflow.utils.config",
+        "summary": "Load a config.yaml file and return a structured dictionary.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/config.py"
+      },
+      {
+        "name": "validate_config",
+        "source_module": "psyflow.utils.config",
+        "summary": "Lightweight validation for a psyflow-style YAML config dict.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/config.py"
+      },
+      {
+        "name": "initialize_triggers",
+        "source_module": "psyflow.io.trigger",
+        "summary": "Initialize and open a TriggerRuntime from loaded config.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/trigger.py"
+      },
+      {
+        "name": "initialize_exp",
+        "source_module": "psyflow.utils.experiment",
+        "summary": "Set up the PsychoPy window, keyboard and logging.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/experiment.py"
+      },
+      {
+        "name": "list_supported_voices",
+        "source_module": "psyflow.utils.voices",
+        "summary": "Query available edge-tts voices.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/voices.py"
+      },
+      {
+        "name": "TaskRunOptions",
+        "source_module": "psyflow.task_options",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/task_options.py"
+      },
+      {
+        "name": "build_task_arg_parser",
+        "source_module": "psyflow.task_options",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/task_options.py"
+      },
+      {
+        "name": "parse_task_run_options",
+        "source_module": "psyflow.task_options",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/task_options.py"
+      },
+      {
+        "name": "resolve_config_path",
+        "source_module": "psyflow.task_options",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/task_options.py"
+      },
+      {
+        "name": "resolve_mode",
+        "source_module": "psyflow.task_options",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/task_options.py"
+      },
+      {
+        "name": "RuntimeContext",
+        "source_module": "psyflow.sim.context",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context.py"
+      },
+      {
+        "name": "context_from_config",
+        "source_module": "psyflow.sim.context",
+        "summary": "Build runtime context from config with explicit mode selection.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context.py"
+      },
+      {
+        "name": "runtime_context",
+        "source_module": "psyflow.sim.context",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context.py"
+      },
+      {
+        "name": "set_trial_context",
+        "source_module": "psyflow.sim.context_helpers",
+        "summary": "Populate standard sim observation fields onto a StimUnit-like object.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context_helpers.py"
+      },
+      {
+        "name": "next_trial_id",
+        "source_module": "psyflow.utils.trials",
+        "summary": "Return an auto-incrementing global trial ID for the current session.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/trials.py"
+      },
+      {
+        "name": "reset_trial_counter",
+        "source_module": "psyflow.utils.trials",
+        "summary": "Reset the global trial counter.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/trials.py"
+      },
+      {
+        "name": "resolve_deadline",
+        "source_module": "psyflow.utils.trials",
+        "summary": "Resolve a potential duration sequence into a scalar deadline (max value).",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/trials.py"
+      },
+      {
+        "name": "resolve_trial_id",
+        "source_module": "psyflow.utils.trials",
+        "summary": "Resolve trial ID from a scalar, callable, or controller-like object.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/trials.py"
+      }
+    ]
+  },
+  {
+    "module": "psyflow.utils",
+    "summary": "Utility package for psyflow.",
+    "exports": [
+      {
+        "name": "count_down",
+        "source_module": "psyflow.utils.display",
+        "summary": "Display a frame-accurate countdown using TextStim.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/display.py"
+      },
+      {
+        "name": "initialize_exp",
+        "source_module": "psyflow.utils.experiment",
+        "summary": "Set up the PsychoPy window, keyboard and logging.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/experiment.py"
+      },
+      {
+        "name": "list_supported_voices",
+        "source_module": "psyflow.utils.voices",
+        "summary": "Query available edge-tts voices.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/voices.py"
+      },
+      {
+        "name": "load_config",
+        "source_module": "psyflow.utils.config",
+        "summary": "Load a config.yaml file and return a structured dictionary.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/config.py"
+      },
+      {
+        "name": "next_trial_id",
+        "source_module": "psyflow.utils.trials",
+        "summary": "Return an auto-incrementing global trial ID for the current session.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/trials.py"
+      },
+      {
+        "name": "reset_trial_counter",
+        "source_module": "psyflow.utils.trials",
+        "summary": "Reset the global trial counter.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/trials.py"
+      },
+      {
+        "name": "resolve_deadline",
+        "source_module": "psyflow.utils.trials",
+        "summary": "Resolve a potential duration sequence into a scalar deadline (max value).",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/trials.py"
+      },
+      {
+        "name": "resolve_trial_id",
+        "source_module": "psyflow.utils.trials",
+        "summary": "Resolve trial ID from a scalar, callable, or controller-like object.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/trials.py"
+      },
+      {
+        "name": "show_ports",
+        "source_module": "psyflow.utils.ports",
+        "summary": "List all available serial ports.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/ports.py"
+      },
+      {
+        "name": "taps",
+        "source_module": "psyflow.utils.templates",
+        "summary": "Generate a task skeleton using the bundled template.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/templates.py"
+      },
+      {
+        "name": "validate_config",
+        "source_module": "psyflow.utils.config",
+        "summary": "Lightweight validation for a psyflow-style YAML config dict.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/utils/config.py"
+      }
+    ]
+  },
+  {
+    "module": "psyflow.io",
+    "summary": "I/O runtimes and drivers (triggers, later inputs).",
+    "exports": [
+      {
+        "name": "CallableDriver",
+        "source_module": "psyflow.io.drivers.callable",
+        "summary": "Driver that calls a user-provided function to send a trigger.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/drivers/callable.py"
+      },
+      {
+        "name": "FanoutDriver",
+        "source_module": "psyflow.io.drivers.fanout",
+        "summary": "Broadcast trigger sends to multiple drivers.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/drivers/fanout.py"
+      },
+      {
+        "name": "MockDriver",
+        "source_module": "psyflow.io.drivers.mock",
+        "summary": "Mock trigger driver (no hardware).",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/drivers/mock.py"
+      },
+      {
+        "name": "SerialDriver",
+        "source_module": "psyflow.io.drivers.serial",
+        "summary": "pyserial-based trigger driver.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/drivers/serial.py"
+      },
+      {
+        "name": "TriggerDriver",
+        "source_module": "psyflow.io.drivers.base",
+        "summary": "Device/protocol-level trigger driver (I/O only).",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/drivers/base.py"
+      },
+      {
+        "name": "TriggerEvent",
+        "source_module": "psyflow.io.events",
+        "summary": "Structured trigger event (hardware-agnostic contract).",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/events.py"
+      },
+      {
+        "name": "TriggerRuntime",
+        "source_module": "psyflow.io.runtime",
+        "summary": "Owns timing semantics + audit logging; delegates I/O to a driver.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/runtime.py"
+      },
+      {
+        "name": "initialize_triggers",
+        "source_module": "psyflow.io.trigger",
+        "summary": "Initialize and open a TriggerRuntime from loaded config.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/trigger.py"
+      },
+      {
+        "name": "make_jsonl_logger",
+        "source_module": "psyflow.io.runtime",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/io/runtime.py"
+      }
+    ]
+  },
+  {
+    "module": "psyflow.qa",
+    "summary": "QA utilities for psyflow tasks.",
+    "exports": [
+      {
+        "name": "FailureCode",
+        "source_module": "psyflow.qa.report",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/qa/report.py"
+      },
+      {
+        "name": "QAReport",
+        "source_module": "psyflow.qa.report",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/qa/report.py"
+      },
+      {
+        "name": "contract_lint",
+        "source_module": "psyflow.qa.static",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/qa/static.py"
+      },
+      {
+        "name": "load_yaml",
+        "source_module": "psyflow.qa.static",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/qa/static.py"
+      },
+      {
+        "name": "qa_artifact_paths",
+        "source_module": "psyflow.qa.artifacts",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/qa/artifacts.py"
+      },
+      {
+        "name": "static_qa",
+        "source_module": "psyflow.qa.static",
+        "summary": "Run lightweight static checks for a task directory.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/qa/static.py"
+      },
+      {
+        "name": "validate_events",
+        "source_module": "psyflow.qa.trace",
+        "summary": "Validate trigger planned vs executed counts when events exist.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/qa/trace.py"
+      },
+      {
+        "name": "validate_trace_csv",
+        "source_module": "psyflow.qa.trace",
+        "summary": "Validate a QA trace CSV using minimal, generic invariants.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/qa/trace.py"
+      }
+    ]
+  },
+  {
+    "module": "psyflow.sim",
+    "summary": "Simulation responder plugin system for psyflow.",
+    "exports": [
+      {
+        "name": "Action",
+        "source_module": "psyflow.sim.contracts",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/contracts.py"
+      },
+      {
+        "name": "Feedback",
+        "source_module": "psyflow.sim.contracts",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/contracts.py"
+      },
+      {
+        "name": "HandledResponse",
+        "source_module": "psyflow.sim.adapter",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/adapter.py"
+      },
+      {
+        "name": "NullResponder",
+        "source_module": "psyflow.sim.contracts",
+        "summary": "Responder that never responds (always timeout).",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/contracts.py"
+      },
+      {
+        "name": "Observation",
+        "source_module": "psyflow.sim.contracts",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/contracts.py"
+      },
+      {
+        "name": "ResponderActionError",
+        "source_module": "psyflow.sim.adapter",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/adapter.py"
+      },
+      {
+        "name": "ResponderAdapter",
+        "source_module": "psyflow.sim.adapter",
+        "summary": "Central validation and policy layer for injected responses.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/adapter.py"
+      },
+      {
+        "name": "ResponderProtocol",
+        "source_module": "psyflow.sim.contracts",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/contracts.py"
+      },
+      {
+        "name": "RuntimeConfig",
+        "source_module": "psyflow.sim.context",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context.py"
+      },
+      {
+        "name": "RuntimeContext",
+        "source_module": "psyflow.sim.context",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context.py"
+      },
+      {
+        "name": "ScriptedResponder",
+        "source_module": "psyflow.sim.contracts",
+        "summary": "Simple deterministic responder for QA/smoke simulation.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/contracts.py"
+      },
+      {
+        "name": "SessionInfo",
+        "source_module": "psyflow.sim.contracts",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/contracts.py"
+      },
+      {
+        "name": "context_from_config",
+        "source_module": "psyflow.sim.context",
+        "summary": "Build runtime context from config with explicit mode selection.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context.py"
+      },
+      {
+        "name": "get_context",
+        "source_module": "psyflow.sim.context",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context.py"
+      },
+      {
+        "name": "log_event",
+        "source_module": "psyflow.sim.context",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context.py"
+      },
+      {
+        "name": "log_sim_event",
+        "source_module": "psyflow.sim.context",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context.py"
+      },
+      {
+        "name": "load_responder",
+        "source_module": "psyflow.sim.loader",
+        "summary": "Load and initialize a responder plugin.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/loader.py"
+      },
+      {
+        "name": "iter_sim_events",
+        "source_module": "psyflow.sim.logging",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/logging.py"
+      },
+      {
+        "name": "make_rng",
+        "source_module": "psyflow.sim.rng",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/rng.py"
+      },
+      {
+        "name": "make_sim_jsonl_logger",
+        "source_module": "psyflow.sim.logging",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/logging.py"
+      },
+      {
+        "name": "make_trial_seed",
+        "source_module": "psyflow.sim.rng",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/rng.py"
+      },
+      {
+        "name": "runtime_context",
+        "source_module": "psyflow.sim.context",
+        "summary": "",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context.py"
+      },
+      {
+        "name": "set_trial_context",
+        "source_module": "psyflow.sim.context_helpers",
+        "summary": "Populate standard sim observation fields onto a StimUnit-like object.",
+        "source_url": "https://github.com/TaskBeacon/psyflow/blob/main/psyflow/sim/context_helpers.py"
+      }
+    ]
+  }
+]

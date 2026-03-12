@@ -1,0 +1,250 @@
+[
+  {
+    "version": "0.1.21",
+    "date": "2026-03-04",
+    "summary": [
+      "Removed in-repo `skills/task-build` from `psyflow`.",
+      "Extracted `task-build` as a standalone canonical repository at `e:/Taskbeacon/skills/task-build`.",
+      "No backward-compatibility shim is kept in `psyflow`; skill ownership now lives outside the framework repo."
+    ]
+  },
+  {
+    "version": "0.1.20",
+    "date": "2026-03-02",
+    "summary": [
+      "Moved condition-weight resolution into `TaskSettings`:",
+      "added `TaskSettings.resolve_condition_weights()` in `psyflow/TaskSettings.py`.",
+      "Removed `psyflow.utils.trials.resolve_condition_weights` and all related exports.",
+      "Updated runtime/template standards to use `settings.resolve_condition_weights()`:",
+      "cookiecutter `main.py` and config comments now point to the `TaskSettings` method.",
+      "Updated contracts and task-build skill assets/checklists to standardize this policy.",
+      "Updated condition-weight unit tests to exercise the `TaskSettings` method directly."
+    ]
+  },
+  {
+    "version": "0.1.19",
+    "date": "2026-03-02",
+    "summary": [
+      "Added framework-level condition-weight resolver:",
+      "`psyflow.utils.trials.resolve_condition_weights(...)`",
+      "exported via `psyflow.resolve_condition_weights` and `psyflow.utils`.",
+      "Standardized config/contract semantics for weighted condition generation:",
+      "`task.condition_weights` is optional and validated when provided.",
+      "mapping/list formats must align with `task.conditions`; positive numeric weights required.",
+      "omitted/null `task.condition_weights` means even/default generation unless task code documents custom generation.",
+      "Updated cookiecutter template to include optional `task.condition_weights` and pass resolved weights into default condition scheduler."
+    ]
+  },
+  {
+    "version": "0.1.18",
+    "date": "2026-03-02",
+    "summary": [
+      "Fixed CI contract validation failure on the cookiecutter template by adding required reference artifacts under:",
+      "`psyflow/templates/cookiecutter-psyflow/{{cookiecutter.project_name}}/references/`",
+      "`references.yaml`",
+      "`references.md`",
+      "`parameter_mapping.md`",
+      "`stimulus_mapping.md`",
+      "`task_logic_audit.md`",
+      "All added template files follow the `reference_artifacts` contract headings/table-column requirements and avoid forbidden unresolved markers."
+    ]
+  },
+  {
+    "version": "0.1.17",
+    "date": "2026-03-02",
+    "summary": [
+      "Added enforceable localization-safe runtime policy so participant-facing text is config-driven, not hardcoded in `src/run_trial.py`.",
+      "Extended responder-context contract with hardcoded-text guards (`TextStim/TextBox` literal text, `.setText('...')`, and `.text='...'` assignment checks).",
+      "Implemented AST-based checks in `psyflow/validate.py`.",
+      "Added a new reference-artifact contract:",
+      "`psyflow/contracts/v0.1.0/reference_artifacts.yaml`",
+      "wired into contract `manifest.yaml`",
+      "validator now checks required reference files, required headings/table columns, and `references.yaml` required keys/paper fields.",
+      "Updated contract docs/patterns to reflect localization + reference-artifact standards:"
+    ]
+  },
+  {
+    "version": "0.1.16",
+    "date": "2026-02-24",
+    "summary": [
+      "Improved `skills/task-build` guidance with generic anti-overdesign and PsyFlow-first decision rules (docs/templates only; no new checker enforcement).",
+      "Updated `skills/task-build/SKILL.md` to clarify:",
+      "start from the simplest PsyFlow-native path;",
+      "prefer built-in block condition generation before custom generators;",
+      "treat `utils.py` as optional and scoped to real framework gaps;",
+      "prefer config-driven participant-facing text and response mappings when appropriate;",
+      "prefer auditable `main.py`/`run_trial.py` patterns with minimal fallback logic.",
+      "Expanded `skills/task-build/assets/templates/task_logic_audit_template.md` with architecture-decision fields for:"
+    ]
+  },
+  {
+    "version": "0.1.15",
+    "date": "2026-02-23",
+    "summary": [
+      "Decoupled `psyflow.sim.context_helpers.set_trial_context` from task-specific controller logic.",
+      "Automatically resolves sequence durations via `max()` internally, eliminating the need for boilerplate `_deadline_s` functions in task code.",
+      "Removed controller dependency for `trial_id` resolution from `context_helpers`.",
+      "Added generic trial increment tracking natively to `psyflow` via `next_trial_id()` to standardize sequential trial IDs across tasks."
+    ]
+  },
+  {
+    "version": "0.1.14",
+    "date": "2026-02-18",
+    "summary": [
+      "Hardened `skills/task-build` to enforce logic-first development and non-placeholder stimulus implementation.",
+      "Updated `skills/task-build/SKILL.md` workflow:",
+      "added mandatory **Phase 0: Paradigm Logic Audit** before coding;",
+      "now requires `references/task_logic_audit.md` (seeded from template);",
+      "clarified hard bans on placeholder/template participant text and raw condition-token displays;",
+      "added explicit multi-option/multi-stimulus layout requirements and QA readability checks.",
+      "Added reusable audit scaffold:",
+      "`skills/task-build/assets/templates/task_logic_audit_template.md`."
+    ]
+  },
+  {
+    "version": "0.1.13",
+    "date": "2026-02-18",
+    "summary": [
+      "Updated responder context contract/validator to support truly generic, task-specific phase labels via phase-token checks instead of fixed phase values.",
+      "Extended template compliance so CI validation passes on the cookiecutter task scaffold:",
+      "README now includes required section heading `## 4. Methods (for academic publication)` and `Language` metadata row.",
+      "Template `.gitignore` now includes recommended housekeeping ignores (`.pytest_cache`, `.mypy_cache`, virtualenv dirs).",
+      "Template `CHANGELOG.md` now includes recommended `Changed` and `Fixed` sections.",
+      "Template run-trial phase labels updated to generic task-ready names (`pre_response_fixation`, `response_window`).",
+      "Added template `outputs/.gitkeep` to satisfy recommended path checks."
+    ]
+  },
+  {
+    "version": "0.1.12",
+    "date": "2026-02-18",
+    "summary": [
+      "Generalized task contracts to remove MID-specific phase coupling in responder checks.",
+      "`responder_context` now validates task-agnostic response phases via `required_context_phase_values_any`.",
+      "Removed fixed `cue -> anticipation -> target -> feedback` stage-order requirement from contract docs.",
+      "Enhanced validator logic in `psyflow/validate.py`:",
+      "added support for `required_context_phase_values_any`, `forbidden_context_phase_values`,",
+      "improved README contract validation with required section-heading checks and subsection recommendations.",
+      "Updated contract documentation and patterns to clarify that phase/stage labels are task-defined, not MID-only.",
+      "Improved `StimBank.get_and_format(...)` reliability:"
+    ]
+  },
+  {
+    "version": "0.1.11",
+    "date": "2026-02-17",
+    "summary": [
+      "Added a new build-automation skill package at `skills/task-build` for end-to-end PsyFlow/TAPS task construction from literature evidence.",
+      "Implemented a decision-complete workflow in `skills/task-build/SKILL.md` covering:",
+      "literature discovery and filtering,",
+      "reference bundle generation,",
+      "task standard alignment,",
+      "placeholder asset generation,",
+      "validate/qa/sim gate execution with retry loop,",
+      "git commit/push publishing."
+    ]
+  },
+  {
+    "version": "0.1.10",
+    "date": "2026-02-16",
+    "summary": [
+      "Split simulation config standards into two explicit profiles:",
+      "`config/config_scripted_sim.yaml` for built-in scripted responder runs",
+      "`config/config_sampler_sim.yaml` for task-specific sampler responders",
+      "Updated validator contract manifest and checks to validate both sim profiles independently.",
+      "Strengthened config contract rules:",
+      "base `config.yaml` now forbids embedded `qa` / `sim` sections",
+      "`config_qa.yaml` now requires full base task sections and forbids `sim`",
+      "added smoke-profile checks (shorter-than-base, condition coverage, basic trial/block consistency)"
+    ]
+  },
+  {
+    "version": "0.1.9",
+    "date": "2026-02-16",
+    "summary": [
+      "Added versioned task contracts at `psyflow/contracts/v0.1.0` for standardized psyflow/TAPS task development and audit.",
+      "Added new validator CLI: `psyflow-validate <task_path>` with per-contract PASS/WARN/FAIL feedback and actionable suggestions.",
+      "Added contract adoption tracking in task metadata via `taskbeacon.yaml -> contracts.psyflow_taps`.",
+      "Updated cookiecutter template to include `taskbeacon.yaml`, `CHANGELOG.md`, and `assets/README.md` so new tasks match required structure by default.",
+      "Expanded contract coverage with explicit checks for:",
+      "`.gitignore` task artifact rules (`outputs/*` / `data/*` migration-safe),",
+      "stimulus schema and asset-backed path conventions (`image`/`movie`/`sound` from `assets/`),",
+      "responder/sampler plugin standards (`sim.responder.type`, local `responders/` class checks)."
+    ]
+  },
+  {
+    "version": "0.1.8",
+    "date": "2026-02-16",
+    "summary": [
+      "Standardized responder configuration on `responder.type` (built-ins or import path); removed `responder.kind`/`responder.class` behavior.",
+      "Strengthened `psyflow-qa` into a strict gate:",
+      "`qa.acceptance_criteria` is now required in `config/config_qa.yaml`.",
+      "static + runtime + trace/events validation remains bundled in one command.",
+      "Added automatic post-QA metadata refresh on pass:",
+      "promotes `taskbeacon.yaml` `maturity` (no downgrade),",
+      "updates README maturity badge to a cleaner flat-square style.",
+      "Hardened README badge update for non-UTF8 files via encoding fallback."
+    ]
+  },
+  {
+    "version": "0.1.7",
+    "date": "2026-02-15",
+    "summary": [
+      "Removed `qa` and `sim` subcommands from root CLI (`psyflow` now exposes `init` only).",
+      "Standardized task execution on explicit task entrypoint arguments (`python main.py [human|qa|sim] --config ...`).",
+      "Removed framework emphasis on env-driven QA/sim wrappers from docs; documentation now points to task-level mode/config flow."
+    ]
+  },
+  {
+    "version": "0.1.6",
+    "date": "2026-02-15",
+    "summary": [
+      "Added a sampler-ready simulation architecture with a stable responder plugin contract (`SessionInfo`, `Observation`, `Action`, `Feedback`, lifecycle hooks).",
+      "Added a centralized responder adapter and policy layer (`strict|warn|coerce`) used by `StimUnit.capture_response()` and `StimUnit.wait_and_continue()` so injected responses flow through one validation seam.",
+      "Added deterministic simulation plumbing (seed/session/rng), structured JSONL simulation audit logs, and replay helpers.",
+      "Added plugin loader/config support (built-ins + external import-path responders) and a demo external responder.",
+      "Moved runtime context/session plumbing under `psyflow.sim.context` so responder/runtime logic stays in `sim`.",
+      "Updated template MID task and T000006 MID task to standardize trial context fields (`trial_id`, `phase`, `deadline_s`, `valid_keys`, `condition_id`, `task_factors`) for simulation readiness.",
+      "Added contract and determinism tests for responder plugins and sim runs.",
+      "CLI redesign: moved to one root command `psyflow` with subcommands `init`, `qa`, `sim` for compact, terminal-friendly usage."
+    ]
+  },
+  {
+    "version": "0.1.5",
+    "date": "2026-02-12",
+    "summary": [
+      "`StimUnit.add_stim(...)` now recognizes PsychoPy runtime audio backends (via `_SoundBase` and resolved backend classes), fixing false rejections of valid sound stimuli.",
+      "Unsupported stimulus objects in `StimUnit.add_stim(...)` now emit a warning and raise a clearer `TypeError` that lists supported classes.",
+      "`TaskSettings.from_dict(...)` was hardened:",
+      "validates that input config is a dict,",
+      "passes only `init=True` dataclass fields into constructor,",
+      "validates `trial_per_block` / `trials_per_block` aliases for consistency,",
+      "enforces declared trials-per-block matches `ceil(total_trials / total_blocks)` when provided.",
+      "`initialize_exp(...)` now defaults to `settings.screen` when `screen_id` is not explicitly passed."
+    ]
+  },
+  {
+    "version": "0.1.4",
+    "date": "2026-02-12",
+    "summary": [
+      "Breaking cleanup: removed `TriggerSender` compatibility layer; trigger flow is now `TriggerRuntime` only.",
+      "Added `initialize_triggers(...)` bootstrap under `psyflow.io`, returning an opened `TriggerRuntime`.",
+      "Added `TriggerRuntime.send(code, wait=True)` for simple code-based trigger sends.",
+      "`StimUnit` now consumes `runtime=` directly and no longer supports legacy `triggersender=` fallback.",
+      "Utility cleanup: trigger bootstrap moved out of `utils`; display helper module renamed to `utils/display.py`; serial-port alias cleanup.",
+      "Cookiecutter template updated to the runtime-first trigger pattern (including QA mock setup)."
+    ]
+  },
+  {
+    "version": "0.1.3",
+    "date": "2026-02-11",
+    "summary": [
+      "Timing/response-stage fixes in `StimUnit` (flip-synced stamps, RT consistency, close semantics, flip-locked offsets).",
+      "Trigger sending made safer for flip callbacks (`TriggerSender.send(..., wait=False)` path).",
+      "New trigger architecture (EEG/fMRI-ready): `TriggerRuntime` + pluggable drivers (`MockDriver`, `SerialDriver`, `FanoutDriver`), with `TriggerSender` kept as a thin compatibility wrapper.",
+      "Added QA tooling: `psyflow-qa` CLI + `psyflow.qa` helpers for static contract checks and runtime trace/event validation with standardized artifacts under `outputs/qa/`.",
+      "Added QA-mode scripted response injection in `StimUnit.capture_response()` and `StimUnit.wait_and_continue()` (no PsychoPy `Keyboard` emulation), plus optional QA timing scaling and trigger planned/executed event logging.",
+      "Correctness fixes: `BlockUnit.summarize()` no longer crashes; `taps()` locates templates correctly.",
+      "Packaging/import cleanup: Python >= 3.10 declared; LLM utilities removed (deps/docs/exports cleaned); `import psyflow` is now lazy.",
+      "Docs hygiene: docs deployment now does a clean build; trigger/CLI tutorials updated to be copy-paste safe."
+    ]
+  }
+]
