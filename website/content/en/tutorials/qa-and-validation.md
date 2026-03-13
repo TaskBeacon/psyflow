@@ -11,7 +11,7 @@ PsyFlow now expects more than “it runs once on my machine.” The maintained w
 Run QA mode with:
 
 ```bash
-psyflow-qa path/to/task --config config/config_qa.yaml
+psyflow-qa task-path --config config/config_qa.yaml
 ```
 
 On a passing run, PsyFlow can promote maturity in `taskbeacon.yaml` and refresh the README maturity badge.
@@ -33,7 +33,7 @@ Treat those as review artifacts, not incidental debug files.
 Use static validation even when you do not want to launch the task:
 
 ```bash
-psyflow-validate path/to/task
+psyflow-validate task-path
 ```
 
 The validator now covers much more than directory shape:
@@ -51,13 +51,13 @@ That last point matters. The framework now actively guards against hardcoded par
 Use simulation when you want deterministic or plugin-based responses without a real participant:
 
 ```bash
-psyflow-sim path/to/task --config config/config_scripted_sim.yaml
+psyflow-sim task-path --config config/config_scripted_sim.yaml
 ```
 
 If you need a task-specific sampler responder:
 
 ```bash
-psyflow-sim path/to/task --config config/config_sampler_sim.yaml
+psyflow-sim task-path --config config/config_sampler_sim.yaml
 ```
 
 ## Responder protocol

@@ -44,11 +44,11 @@ export function SiteHeader() {
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50">
-      <div className="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-6 lg:px-8">
-        <div className="pf-frame bg-[#fffdf9] px-4 py-3">
-          <div className="flex items-center justify-between gap-4">
+      <div className="mx-auto w-full max-w-7xl px-3 pt-3 sm:px-6 sm:pt-4 lg:px-8">
+        <div className="pf-frame bg-[#fffdf9] px-3 py-3 sm:px-4">
+          <div className="flex items-center justify-between gap-3">
             <Link href={routes.home} className="pf-focus-ring rounded-xl" onClick={() => setOpen(false)}>
-              <PsyFlowLogo markClassName="w-[108px] sm:w-[118px]" textClassName="text-[1.75rem]" />
+              <PsyFlowLogo imageClassName="w-[126px] sm:w-[162px]" />
             </Link>
 
             <nav className="hidden items-center gap-1 xl:flex">
@@ -70,7 +70,7 @@ export function SiteHeader() {
 
             <button
               type="button"
-              className="pf-focus-ring pf-frame-soft p-2 xl:hidden"
+              className="pf-focus-ring pf-frame-soft shrink-0 p-2 xl:hidden"
               aria-expanded={open}
               aria-label={open ? "Close navigation menu" : "Open navigation menu"}
               onClick={() => setOpen((value) => !value)}

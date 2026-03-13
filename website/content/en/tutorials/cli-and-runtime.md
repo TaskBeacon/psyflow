@@ -35,7 +35,7 @@ psyflow init
 ## Run a task in human mode
 
 ```bash
-psyflow-run path/to/task
+psyflow-run task-path
 ```
 
 This resolves the task entry and forwards into the task-local `main.py`.
@@ -51,7 +51,7 @@ but the shortcut is better for consistent task-path handling.
 ## Run QA mode
 
 ```bash
-psyflow-qa path/to/task --config config/config_qa.yaml
+psyflow-qa task-path --config config/config_qa.yaml
 ```
 
 What QA mode does now:
@@ -64,7 +64,7 @@ What QA mode does now:
 Use `--set-maturity` if you want promotion behavior:
 
 ```bash
-psyflow-qa path/to/task --config config/config_qa.yaml --set-maturity smoke_tested
+psyflow-qa task-path --config config/config_qa.yaml --set-maturity smoke_tested
 ```
 
 Typical QA artifacts live under `outputs/qa/`:
@@ -78,13 +78,13 @@ Typical QA artifacts live under `outputs/qa/`:
 ## Run simulation mode
 
 ```bash
-psyflow-sim path/to/task --config config/config_scripted_sim.yaml
+psyflow-sim task-path --config config/config_scripted_sim.yaml
 ```
 
 For task-specific responders, switch to the sampler profile:
 
 ```bash
-psyflow-sim path/to/task --config config/config_sampler_sim.yaml
+psyflow-sim task-path --config config/config_sampler_sim.yaml
 ```
 
 The older docs used `config/config_sim.yaml`. That is no longer the current standard.
@@ -92,7 +92,7 @@ The older docs used `config/config_sim.yaml`. That is no longer the current stan
 ## Validate the task package
 
 ```bash
-psyflow-validate path/to/task
+psyflow-validate task-path
 ```
 
 Validation now covers more than folder existence. The current validator also checks:

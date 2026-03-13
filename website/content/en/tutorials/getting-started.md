@@ -66,10 +66,10 @@ PsyFlow still assumes a task-local `main.py`, but the runtime modes are now expl
 The framework ships shortcut commands so you do not have to remember mode-specific `python main.py ...` invocations:
 
 ```bash
-psyflow-run path/to/task
-psyflow-qa path/to/task
-psyflow-sim path/to/task --config config/config_scripted_sim.yaml
-psyflow-validate path/to/task
+psyflow-run task-path
+psyflow-qa task-path
+psyflow-sim task-path --config config/config_scripted_sim.yaml
+psyflow-validate task-path
 ```
 
 ## Load config the current way

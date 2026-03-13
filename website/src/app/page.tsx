@@ -9,7 +9,7 @@ import { routes } from "@/lib/routes";
 
 function TapsDiagram() {
   return (
-    <div className="pf-frame bg-[#fffdf9] p-5">
+    <div className="pf-frame bg-[#fffdf9] p-4 sm:p-5">
       <div className="grid gap-3">
         <div className="grid gap-3 sm:grid-cols-[1.05fr_0.95fr]">
           <div className="rounded-[22px] border-2 border-[#25314d] bg-[#eef8ff] p-4 shadow-[0_4px_0_#25314d]">
@@ -74,60 +74,40 @@ export default function HomePage() {
   ].filter((entry): entry is TutorialEntry => Boolean(entry));
 
   return (
-    <div className="space-y-20 pb-8">
-      <section className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_560px] lg:items-center xl:gap-16">
-        <div>
-          <div className="pf-badge mx-auto w-fit">PsyFlow</div>
-          <h1 className="mt-6 max-w-3xl font-heading text-5xl font-bold leading-[0.92] text-[#25314d] sm:text-6xl">
-            Build Local Tasks,
-            <br />
-            <span className="text-[#39d95d]">Validate Before Release.</span>
+    <div className="space-y-16 pb-8 sm:space-y-20">
+      <section className="space-y-6">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="pf-badge mx-auto">Quick Start</div>
+          <h1 className="mt-5 font-heading text-4xl font-bold leading-[0.95] text-[#25314d] sm:text-5xl lg:text-6xl">
+            Start with the maintained PsyFlow workflow.
           </h1>
-          <p className="mt-6 max-w-2xl text-base leading-8 text-slate-700 sm:text-lg">
-            PsyFlow is the local framework behind canonical PsychoPy task packages. It keeps the runtime,
-            trigger model, QA flow, and validation path auditable.
+          <p className="mt-4 text-base leading-8 text-slate-700 sm:text-lg">
+            Install the framework, scaffold a local task package, then run QA and validation before
+            release.
           </p>
-
-          <div className="mt-8 flex flex-wrap gap-4">
-            <Link className="pf-focus-ring pf-button-primary" href={routes.gettingStarted}>
-              Get Started
-            </Link>
-            <a
-              className="pf-focus-ring pf-button-secondary"
-              href="https://github.com/TaskBeacon/psyflow"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open GitHub
-            </a>
-          </div>
-
-          <div className="mt-8 flex flex-wrap gap-6 text-sm text-slate-700">
-            <div>5 CLI entrypoints</div>
-            <div>{siteData.release_count} tracked releases</div>
-            <div>Docs follow current main branch</div>
-          </div>
         </div>
 
-        <div className="pf-frame bg-[#fffdf9] p-6">
-          <div className="flex h-full flex-col gap-4">
-            <div className="flex items-center justify-between gap-3">
-              <div className="rounded-full bg-[#f5c1b5] px-3 py-1 text-xs font-bold text-[#25314d]">
-                Quick Start
-              </div>
+        <div className="pf-frame bg-[#fffdf9] p-5 sm:p-6">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+              <p className="max-w-3xl text-sm leading-7 text-slate-700">
+                These are the commands that matter most on the current main branch. The site now stays
+                aligned with the maintained local runtime instead of the older Sphinx-era flow.
+              </p>
               {latest ? (
-                <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
-                  latest {latest.version}
+                <div className="pf-section-chip self-start bg-[#f5c1b5] md:self-auto">
+                  Latest {latest.version}
                 </div>
               ) : null}
             </div>
-            <CommandCard
-              title="Install"
-              command="pip install psyflow"
-              description="Install the framework first."
-              tone="mint"
-            />
-            <div className="grid gap-4 sm:grid-cols-2">
+
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <CommandCard
+                title="Install"
+                command="pip install psyflow"
+                description="Install the framework first."
+                tone="mint"
+              />
               <CommandCard
                 title="Scaffold"
                 command="psyflow init my-task"
@@ -136,20 +116,29 @@ export default function HomePage() {
               />
               <CommandCard
                 title="Run"
-                command="psyflow-run path/to/task"
+                command="psyflow-run task-path"
                 description="Launch the task in human mode."
                 tone="peach"
               />
               <CommandCard
-                title="QA"
-                command="psyflow-qa path/to/task"
-                description="Smoke-test and validate QA outputs."
+                title="Validate"
+                command="psyflow-validate task-path"
+                description="Lint contracts, configs, and references."
                 tone="lavender"
               />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
               <CommandCard
-                title="Validate"
-                command="psyflow-validate path/to/task"
-                description="Lint contracts, configs, and references."
+                title="QA"
+                command="psyflow-qa task-path --config config/config_qa.yaml"
+                description="Smoke-test and validate QA outputs."
+                tone="mint"
+              />
+              <CommandCard
+                title="Sim"
+                command="psyflow-sim task-path --config config/config_scripted_sim.yaml"
+                description="Run a scripted or task-specific simulation profile."
                 tone="sky"
               />
             </div>
@@ -157,15 +146,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="taps" className="grid gap-10 lg:grid-cols-[0.86fr_1.14fr] lg:items-center">
+      <section id="taps" className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
         <div>
           <div className="pf-section-chip">TAPS</div>
-          <h2 className="mt-5 font-heading text-4xl font-bold text-[#25314d]">
-            A task package structure, not just another documentation label.
+          <h2 className="mt-5 font-heading text-3xl font-bold text-[#25314d] sm:text-4xl">
+            A task package structure, not just another label.
           </h2>
           <p className="mt-4 text-base leading-8 text-slate-700">
-            TAPS keeps the local runtime, config, metadata, references, and outputs inside one
-            package that stays easier to review across development, QA, and release.
+            TAPS keeps the local runtime, config, metadata, references, and outputs inside one package
+            that stays easier to review across development, QA, and release.
           </p>
           <div className="mt-5 space-y-3 text-sm leading-6 text-slate-700">
             <div className="rounded-[18px] border-2 border-[#25314d] bg-white px-4 py-3 shadow-[0_4px_0_#25314d]">
@@ -183,7 +172,7 @@ export default function HomePage() {
         <TapsDiagram />
       </section>
 
-      <section id="framework" className="grid gap-10 lg:grid-cols-[560px_minmax(0,1fr)] lg:items-center">
+      <section id="framework" className="grid gap-8 lg:grid-cols-[minmax(0,520px)_minmax(0,1fr)] lg:items-center">
         <div className="pf-frame bg-[#fffdf9] p-4">
           <Image
             src={withBasePath("/images/framework/flowchart.png")}
@@ -196,7 +185,7 @@ export default function HomePage() {
 
         <div>
           <div className="pf-section-chip bg-[#f5c1b5]">Framework</div>
-          <h2 className="mt-5 font-heading text-4xl font-bold text-[#25314d]">
+          <h2 className="mt-5 font-heading text-3xl font-bold text-[#25314d] sm:text-4xl">
             Keep the framework opinionated where reviewability matters.
           </h2>
           <p className="mt-4 text-base leading-8 text-slate-700">
@@ -224,25 +213,31 @@ export default function HomePage() {
       <section id="triggers" className="space-y-8">
         <div className="text-center">
           <div className="pf-section-chip bg-[#ddd7f4]">Trigger</div>
-          <h2 className="mt-5 font-heading text-4xl font-bold text-[#25314d]">
+          <h2 className="mt-5 font-heading text-3xl font-bold text-[#25314d] sm:text-4xl">
             The task emits semantic events. The runtime and drivers own delivery.
           </h2>
         </div>
         <div className="grid gap-5 md:grid-cols-3">
           <div className="pf-frame-soft bg-[#fffdf9] p-5">
-            <div className="font-heading text-[1.8rem] font-bold text-[#25314d]">Semantic events</div>
+            <div className="font-heading text-[1.6rem] font-bold text-[#25314d] sm:text-[1.8rem]">
+              Semantic events
+            </div>
             <p className="mt-3 text-sm leading-7 text-slate-700">
               Trial code should name cue, target, feedback, or custom events instead of embedding serial logic.
             </p>
           </div>
           <div className="pf-frame-soft bg-[#fffdf9] p-5">
-            <div className="font-heading text-[1.8rem] font-bold text-[#25314d]">TriggerRuntime</div>
+            <div className="font-heading text-[1.6rem] font-bold text-[#25314d] sm:text-[1.8rem]">
+              TriggerRuntime
+            </div>
             <p className="mt-3 text-sm leading-7 text-slate-700">
-              The runtime decides `now` versus `flip`, capability checks, and planned/executed logging.
+              The runtime decides `now` versus `flip`, capability checks, and planned or executed logging.
             </p>
           </div>
           <div className="pf-frame-soft bg-[#fffdf9] p-5">
-            <div className="font-heading text-[1.8rem] font-bold text-[#25314d]">Drivers</div>
+            <div className="font-heading text-[1.6rem] font-bold text-[#25314d] sm:text-[1.8rem]">
+              Drivers
+            </div>
             <p className="mt-3 text-sm leading-7 text-slate-700">
               Mock, callable, serial, and fanout drivers stay outside task logic so hardware can change cleanly.
             </p>
@@ -253,26 +248,26 @@ export default function HomePage() {
       <section id="qa-sim" className="space-y-8">
         <div className="text-center">
           <div className="pf-section-chip bg-[#b9dceb]">QA &amp; Sim</div>
-          <h2 className="mt-5 font-heading text-4xl font-bold text-[#25314d]">
+          <h2 className="mt-5 font-heading text-3xl font-bold text-[#25314d] sm:text-4xl">
             Keep QA simple: run, inspect artifacts, validate, then release.
           </h2>
         </div>
-        <div className="grid gap-5 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-3">
           <CommandCard
             title="QA"
-            command="psyflow-qa path/to/task"
+            command="psyflow-qa task-path --config config/config_qa.yaml"
             description="Run smoke QA and inspect qa_report.json, trace, and events."
             tone="mint"
           />
           <CommandCard
             title="Sim"
-            command="psyflow-sim path/to/task --config config/config_scripted_sim.yaml"
+            command="psyflow-sim task-path --config config/config_scripted_sim.yaml"
             description="Use scripted or task-specific responders without coupling simulation to PsychoPy."
             tone="lavender"
           />
           <CommandCard
             title="Validate"
-            command="psyflow-validate path/to/task"
+            command="psyflow-validate task-path"
             description="Check contracts, configs, reference artifacts, and runtime text policy."
             tone="sky"
           />
@@ -283,14 +278,14 @@ export default function HomePage() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <div className="pf-section-chip">Tutorials</div>
-            <h2 className="mt-5 font-heading text-4xl font-bold text-[#25314d]">
+            <h2 className="mt-5 font-heading text-3xl font-bold text-[#25314d] sm:text-4xl">
               Start with the few tutorials that matter most.
             </h2>
             <p className="mt-3 max-w-3xl text-base leading-8 text-slate-700">
               Get started first, then go straight to Trigger and QA if you are building or reviewing a real task.
             </p>
           </div>
-          <Link className="pf-focus-ring pf-button-secondary" href={routes.tutorials}>
+          <Link className="pf-focus-ring pf-button-secondary sm:w-auto" href={routes.tutorials}>
             Open tutorials
           </Link>
         </div>

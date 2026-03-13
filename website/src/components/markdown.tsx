@@ -35,7 +35,7 @@ export function Markdown({ markdown }: { markdown: string }) {
           return <img src={targetSrc} alt={alt ?? ""} loading="lazy" {...props} />;
         },
         pre: ({ children }) => (
-          <pre className="not-prose overflow-x-auto rounded-xl border border-slate-200 bg-slate-950 p-4 text-slate-50">
+          <pre className="not-prose overflow-x-hidden whitespace-pre-wrap break-words rounded-xl border border-slate-200 bg-slate-950 p-4 text-slate-50">
             {children}
           </pre>
         ),

@@ -26,6 +26,7 @@ body {
   @apply font-sans antialiased;
   color: var(--pf-ink);
   background: var(--pf-paper);
+  overflow-x: hidden;
 }
 
 .pf-grid-bg {
@@ -137,6 +138,23 @@ body {
     background: var(--pf-paper-strong);
     color: var(--pf-ink);
     box-shadow: 0 4px 0 var(--pf-ink);
+  }
+}
+
+@media (max-width: 640px) {
+  .pf-frame {
+    border-radius: 24px;
+  }
+
+  .pf-frame-soft {
+    border-radius: 18px;
+  }
+
+  .pf-button-primary,
+  .pf-button-secondary,
+  .pf-button-ghost {
+    width: 100%;
+    padding: 0.85rem 1.05rem;
   }
 }
 

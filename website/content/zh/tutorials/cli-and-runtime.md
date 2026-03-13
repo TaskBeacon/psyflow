@@ -29,7 +29,7 @@ psyflow init
 ## human 模式
 
 ```bash
-psyflow-run path/to/task
+psyflow-run task-path
 ```
 
 这会自动解析任务目录或 `main.py`，然后用 human 模式调用任务入口。
@@ -37,7 +37,7 @@ psyflow-run path/to/task
 ## QA 模式
 
 ```bash
-psyflow-qa path/to/task --config config/config_qa.yaml
+psyflow-qa task-path --config config/config_qa.yaml
 ```
 
 QA 模式现在不只是“跑一下看看”。
@@ -73,7 +73,7 @@ psyflow-sim . --config config/config_sampler_sim.yaml
 ## validate
 
 ```bash
-psyflow-validate path/to/task
+psyflow-validate task-path
 ```
 
 这个命令现在会检查：

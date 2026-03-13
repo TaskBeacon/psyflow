@@ -22,7 +22,7 @@ export function ResourceCard({
         <span className="inline-flex rounded-full bg-[#e2f3fb] px-3 py-1 text-xs font-bold text-[#25314d]">
           {eyebrow}
         </span>
-        <div className="mt-4 font-heading text-[1.55rem] font-bold leading-tight text-[#25314d]">
+        <div className="mt-4 font-heading text-[1.35rem] font-bold leading-tight text-[#25314d] sm:text-[1.55rem]">
           {title}
         </div>
         <div className="mt-3 max-w-[38ch] text-sm leading-7 text-slate-700">{description}</div>
@@ -34,7 +34,7 @@ export function ResourceCard({
     </div>
   );
 
-  const className = "pf-frame-soft h-full min-h-[180px] p-5";
+  const className = "pf-frame-soft h-full min-h-[164px] cursor-pointer p-4 sm:min-h-[180px] sm:p-5";
 
   if (external) {
     return (
