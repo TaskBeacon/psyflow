@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { CommandCard } from "@/components/command-card";
 import { ResourceCard } from "@/components/resource-card";
-import { changelog, siteData } from "@/lib/generated";
+import { changelog } from "@/lib/generated";
 import { withBasePath } from "@/lib/base-path";
 import { chineseTutorials, englishTutorials, type TutorialEntry } from "@/lib/content";
 import { routes } from "@/lib/routes";
@@ -10,52 +10,44 @@ import { routes } from "@/lib/routes";
 function TapsDiagram() {
   return (
     <div className="pf-frame bg-[#fffdf9] p-4 sm:p-5">
-      <div className="grid gap-3">
-        <div className="grid gap-3 sm:grid-cols-[1.05fr_0.95fr]">
-          <div className="rounded-[22px] border-2 border-[#25314d] bg-[#eef8ff] p-4 shadow-[0_4px_0_#25314d]">
-            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
-              Entry layer
-            </div>
-            <div className="mt-2 font-heading text-2xl font-bold text-[#25314d]">
-              README + taskbeacon.yaml
-            </div>
+      <div className="rounded-[26px] border-2 border-dashed border-[#5cabc0] bg-[#f8fcfe] p-4 sm:p-6">
+        <div className="grid gap-3 lg:grid-cols-4">
+          <div className="rounded-[20px] border-2 border-[#25314d] bg-[#eef8ff] p-4 shadow-[0_4px_0_#25314d]">
+            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Docs</div>
+            <div className="mt-2 font-heading text-xl font-bold text-[#25314d]">README</div>
             <div className="mt-2 text-sm leading-6 text-slate-700">
-              Public description plus machine-readable metadata.
+              Human-readable task purpose, setup, and review context.
             </div>
           </div>
-          <div className="rounded-[22px] border-2 border-[#25314d] bg-[#fff3ed] p-4 shadow-[0_4px_0_#25314d]">
-            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
-              Runtime layer
-            </div>
-            <div className="mt-2 font-heading text-2xl font-bold text-[#25314d]">
-              config + src + assets
-            </div>
+          <div className="rounded-[20px] border-2 border-[#25314d] bg-[#fff3ed] p-4 shadow-[0_4px_0_#25314d]">
+            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Metadata</div>
+            <div className="mt-2 font-heading text-xl font-bold text-[#25314d]">taskbeacon.yaml</div>
             <div className="mt-2 text-sm leading-6 text-slate-700">
-              Keep config, task code, and participant-facing assets separate.
+              Machine-readable IDs, maturity, preview links, and release state.
+            </div>
+          </div>
+          <div className="rounded-[20px] border-2 border-[#25314d] bg-[#efffe9] p-4 shadow-[0_4px_0_#25314d]">
+            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Runtime</div>
+            <div className="mt-2 font-heading text-xl font-bold text-[#25314d]">config + src + assets</div>
+            <div className="mt-2 text-sm leading-6 text-slate-700">
+              Separate task code, participant-facing assets, and local runtime settings.
+            </div>
+          </div>
+          <div className="rounded-[20px] border-2 border-[#25314d] bg-[#f4f0ff] p-4 shadow-[0_4px_0_#25314d]">
+            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">Review</div>
+            <div className="mt-2 font-heading text-xl font-bold text-[#25314d]">references + outputs</div>
+            <div className="mt-2 text-sm leading-6 text-slate-700">
+              Keep QA artifacts, reference files, and release evidence attached to the task.
             </div>
           </div>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-[0.92fr_1.08fr]">
-          <div className="rounded-[22px] border-2 border-[#25314d] bg-[#efffe9] p-4 shadow-[0_4px_0_#25314d]">
-            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
-              Review layer
-            </div>
-            <div className="mt-2 font-heading text-2xl font-bold text-[#25314d]">
-              references + outputs
-            </div>
-            <div className="mt-2 text-sm leading-6 text-slate-700">
-              QA artifacts, references, and logs remain attached to the same package.
-            </div>
+        <div className="mt-4 flex items-center justify-center">
+          <div className="h-0.5 w-full max-w-[110px] bg-[#5cabc0]" />
+          <div className="mx-3 rounded-full border-2 border-[#25314d] bg-white px-4 py-2 text-xs font-bold uppercase tracking-[0.16em] text-[#25314d] shadow-[0_4px_0_#25314d]">
+            One Auditable Task Package
           </div>
-          <div className="rounded-[22px] border-2 border-[#25314d] bg-white p-4 shadow-[0_4px_0_#25314d]">
-            <div className="text-[11px] font-bold uppercase tracking-[0.16em] text-slate-500">
-              TAPS result
-            </div>
-            <div className="mt-2 font-heading text-2xl font-bold text-[#25314d]">
-              One task package that stays readable across runtime, docs, and QA.
-            </div>
-          </div>
+          <div className="h-0.5 w-full max-w-[110px] bg-[#5cabc0]" />
         </div>
       </div>
     </div>
@@ -63,7 +55,7 @@ function TapsDiagram() {
 }
 
 export default function HomePage() {
-  const latest = changelog[0] ?? siteData.latest_release;
+  const latest = changelog[0] ?? null;
   const tutorialCards = [
     englishTutorials.find((entry) => entry.slug === "getting-started"),
     englishTutorials.find((entry) => entry.slug === "trigger-io"),
@@ -146,64 +138,89 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="taps" className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <div>
+      <section id="taps" className="space-y-8">
+        <div className="mx-auto max-w-4xl text-center">
           <div className="pf-section-chip">TAPS</div>
           <h2 className="mt-5 font-heading text-3xl font-bold text-[#25314d] sm:text-4xl">
-            A task package structure, not just another label.
+            TAPS keeps the full task structure readable.
           </h2>
           <p className="mt-4 text-base leading-8 text-slate-700">
-            TAPS keeps the local runtime, config, metadata, references, and outputs inside one package
-            that stays easier to review across development, QA, and release.
+            Instead of scattering docs, config, runtime code, and QA artifacts across unrelated places,
+            TAPS keeps them attached to the same task package.
           </p>
-          <div className="mt-5 space-y-3 text-sm leading-6 text-slate-700">
-            <div className="rounded-[18px] border-2 border-[#25314d] bg-white px-4 py-3 shadow-[0_4px_0_#25314d]">
-              PsyFlow handles the local runtime inside the package.
-            </div>
-            <div className="rounded-[18px] border-2 border-[#25314d] bg-white px-4 py-3 shadow-[0_4px_0_#25314d]">
-              taskbeacon metadata and README describe the task from outside the code.
-            </div>
-            <div className="rounded-[18px] border-2 border-[#25314d] bg-white px-4 py-3 shadow-[0_4px_0_#25314d]">
-              QA outputs and references stay attached to the same source of truth.
-            </div>
-          </div>
         </div>
 
         <TapsDiagram />
+
+        <div className="grid gap-4 md:grid-cols-3">
+          <div className="pf-frame-soft bg-white p-5">
+            <div className="font-heading text-[1.5rem] font-bold text-[#25314d]">Readable by humans</div>
+            <p className="mt-3 text-sm leading-7 text-slate-700">
+              README carries the task story, setup notes, and review context without forcing readers into the code.
+            </p>
+          </div>
+          <div className="pf-frame-soft bg-white p-5">
+            <div className="font-heading text-[1.5rem] font-bold text-[#25314d]">Readable by tooling</div>
+            <p className="mt-3 text-sm leading-7 text-slate-700">
+              Metadata and config stay structured, so QA, previews, and downstream tooling can reason over the task.
+            </p>
+          </div>
+          <div className="pf-frame-soft bg-white p-5">
+            <div className="font-heading text-[1.5rem] font-bold text-[#25314d]">Readable over time</div>
+            <p className="mt-3 text-sm leading-7 text-slate-700">
+              Outputs, references, and release evidence remain beside the source package instead of drifting away.
+            </p>
+          </div>
+        </div>
       </section>
 
-      <section id="framework" className="grid gap-8 lg:grid-cols-[minmax(0,520px)_minmax(0,1fr)] lg:items-center">
-        <div className="pf-frame bg-[#fffdf9] p-4">
-          <Image
-            src={withBasePath("/images/framework/flowchart.png")}
-            alt="PsyFlow framework flowchart"
-            width={1600}
-            height={1200}
-            className="w-full rounded-[24px] border-2 border-[#25314d] bg-white shadow-[0_5px_0_#25314d]"
-          />
+      <section id="framework" className="space-y-8">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] xl:items-end">
+          <div>
+            <div className="pf-section-chip bg-[#f5c1b5]">Framework</div>
+            <h2 className="mt-5 font-heading text-3xl font-bold text-[#25314d] sm:text-4xl">
+              Keep the framework opinionated where reviewability matters.
+            </h2>
+            <p className="mt-4 text-base leading-8 text-slate-700">
+              PsyFlow is designed around a few stable primitives: `BlockUnit`, `StimBank`, `StimUnit`,
+              `SubInfo`, and `TaskSettings`. The goal is not abstraction for its own sake, but a task
+              runtime that stays readable when the paradigm grows.
+            </p>
+          </div>
+
+          <div className="pf-frame-soft bg-[#eef8ff] p-5">
+            <div className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+              Framework idea
+            </div>
+            <p className="mt-3 text-sm leading-7 text-slate-700">
+              Keep generic runtime work inside the framework, but keep paradigm logic close to the task.
+              That split is what makes larger tasks easier to test, localize, and review.
+            </p>
+          </div>
         </div>
 
-        <div>
-          <div className="pf-section-chip bg-[#f5c1b5]">Framework</div>
-          <h2 className="mt-5 font-heading text-3xl font-bold text-[#25314d] sm:text-4xl">
-            Keep the framework opinionated where reviewability matters.
-          </h2>
-          <p className="mt-4 text-base leading-8 text-slate-700">
-            PsyFlow is designed around a few stable primitives: `BlockUnit`, `StimBank`, `StimUnit`,
-            `SubInfo`, and `TaskSettings`. The goal is not abstraction for its own sake, but a task
-            runtime that stays readable when the paradigm grows.
-          </p>
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-[18px] border-2 border-[#25314d] bg-[#eef8ff] px-4 py-4 text-sm leading-6 text-slate-700 shadow-[0_4px_0_#25314d]">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] xl:items-stretch">
+          <div className="pf-frame bg-[#fffdf9] p-4">
+            <Image
+              src={withBasePath("/images/framework/flowchart.png")}
+              alt="PsyFlow framework flowchart"
+              width={1600}
+              height={1200}
+              className="w-full rounded-[24px] border-2 border-[#25314d] bg-white shadow-[0_5px_0_#25314d]"
+            />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-2">
+            <div className="rounded-[18px] border-2 border-[#25314d] bg-[#eef8ff] px-4 py-4 text-sm leading-7 text-slate-700 shadow-[0_4px_0_#25314d]">
               Use config and settings for reusable runtime state.
             </div>
-            <div className="rounded-[18px] border-2 border-[#25314d] bg-[#fff3ed] px-4 py-4 text-sm leading-6 text-slate-700 shadow-[0_4px_0_#25314d]">
+            <div className="rounded-[18px] border-2 border-[#25314d] bg-[#fff3ed] px-4 py-4 text-sm leading-7 text-slate-700 shadow-[0_4px_0_#25314d]">
               Keep `main.py` orchestration separate from `run_trial.py`.
             </div>
-            <div className="rounded-[18px] border-2 border-[#25314d] bg-[#efffe9] px-4 py-4 text-sm leading-6 text-slate-700 shadow-[0_4px_0_#25314d]">
+            <div className="rounded-[18px] border-2 border-[#25314d] bg-[#efffe9] px-4 py-4 text-sm leading-7 text-slate-700 shadow-[0_4px_0_#25314d]">
               Let framework helpers absorb generic boilerplate, not paradigm logic.
             </div>
-            <div className="rounded-[18px] border-2 border-[#25314d] bg-[#f4f0ff] px-4 py-4 text-sm leading-6 text-slate-700 shadow-[0_4px_0_#25314d]">
+            <div className="rounded-[18px] border-2 border-[#25314d] bg-[#f4f0ff] px-4 py-4 text-sm leading-7 text-slate-700 shadow-[0_4px_0_#25314d]">
               Keep outputs and validation artifacts tied to the same local package.
             </div>
           </div>

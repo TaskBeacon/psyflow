@@ -48,7 +48,7 @@ export function SiteHeader() {
         <div className="pf-frame bg-[#fffdf9] px-3 py-3 sm:px-4">
           <div className="flex items-center justify-between gap-3">
             <Link href={routes.home} className="pf-focus-ring rounded-xl" onClick={() => setOpen(false)}>
-              <PsyFlowLogo imageClassName="w-[126px] sm:w-[162px]" />
+              <PsyFlowLogo markClassName="w-[74px] sm:w-[82px]" wordmarkClassName="text-[1.65rem] sm:text-[1.85rem]" />
             </Link>
 
             <nav className="hidden items-center gap-1 xl:flex">

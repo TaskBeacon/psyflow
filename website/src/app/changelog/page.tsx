@@ -8,9 +8,17 @@ const releaseBackgrounds = [
   "bg-[#f4f0ff]"
 ] as const;
 
+const releaseChipBackgrounds = [
+  "bg-[#d9edf6]",
+  "bg-[#f8d8cf]",
+  "bg-[#dff2d7]",
+  "bg-[#ddd7f4]",
+  "bg-[#f3e2d5]"
+] as const;
+
 export default function ChangelogPage() {
   return (
-    <div className="space-y-8 pb-8">
+    <div className="space-y-8 pb-8 pt-2 sm:space-y-10 sm:pt-4">
       <section>
         <h1 className="font-heading text-4xl font-bold leading-[0.95] text-[#25314d] sm:text-5xl lg:text-6xl">
           Changes
@@ -23,9 +31,16 @@ export default function ChangelogPage() {
             key={release.version}
             className={`pf-frame p-5 sm:p-6 ${releaseBackgrounds[index % releaseBackgrounds.length]}`}
           >
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
-              <div className="text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
-                Version {release.version}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap items-center gap-3">
+                <span
+                  className={`inline-flex rounded-full border-2 border-[#25314d] px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-[#25314d] shadow-[0_3px_0_#25314d] ${releaseChipBackgrounds[index % releaseChipBackgrounds.length]}`}
+                >
+                  Version {release.version}
+                </span>
+                <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                  Release Notes
+                </span>
               </div>
               <div className="text-sm font-medium text-slate-600">{release.date}</div>
             </div>
