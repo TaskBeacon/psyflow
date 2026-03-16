@@ -1,3 +1,10 @@
+"""Experiment configuration container.
+
+Holds window display, block/trial structure, seeding strategy, and per-subject
+output paths.  Instantiate directly or via :meth:`TaskSettings.from_dict` with
+a YAML-loaded dictionary.
+"""
+
 from dataclasses import dataclass, field
 from typing import List, Optional, Any, Dict
 from math import ceil
@@ -70,7 +77,7 @@ class TaskSettings:
         if self.seed_mode == 'same_across_sub' and all(seed is None for seed in self.block_seed):
             self.set_block_seed(self.overall_seed)
 
-    def set_block_seed(self, seed_base: Optional[int]):
+    def set_block_seed(self, seed_base: Optional[int]) -> None:
         """
         Generate a list of per-block seeds from a base seed.
 
@@ -142,7 +149,7 @@ class TaskSettings:
             raise ValueError(f"condition_weights sum must be > 0, got {weights}")
         return weights
 
-    def add_subinfo(self, subinfo: Dict[str, Any]):
+    def add_subinfo(self, subinfo: Dict[str, Any]) -> None:
         """
         Add subject-specific information and set seed/file names accordingly.
 
@@ -187,14 +194,14 @@ class TaskSettings:
         self.res_file = os.path.join(self.save_path, f"{basename}.csv")
         self.json_file = os.path.join(self.save_path, f"{basename}.json")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a clean string representation of the current TaskSettings.
         """
         base = {k: v for k, v in self.__dict__.items() if not k.startswith('_')}
         return f"{self.__class__.__name__}({base})"
     
-    def save_to_json(self):
+    def save_to_json(self) -> None:
         """
         Save the current TaskSettings instance to a JSON file.
         """
@@ -218,7 +225,7 @@ class TaskSettings:
 
 
     @classmethod
-    def from_dict(cls, config: dict):
+    def from_dict(cls, config: dict) -> "TaskSettings":
         """
         Create a TaskSettings instance from a flat dictionary.
 

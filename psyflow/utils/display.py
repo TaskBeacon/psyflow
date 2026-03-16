@@ -3,7 +3,7 @@
 from psychopy import core, visual
 
 
-def count_down(win, seconds=3, **stim_kwargs):
+def count_down(win: "visual.Window", seconds: int = 3, **stim_kwargs) -> None:
     """Display a frame-accurate countdown using TextStim."""
     cd_clock = core.Clock()
     for i in reversed(range(1, seconds + 1)):

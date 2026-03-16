@@ -4,7 +4,7 @@ from cookiecutter.main import cookiecutter
 import importlib.resources as pkg_res
 
 
-def taps(task_name: str, template: str = "cookiecutter-psyflow"):
+def taps(task_name: str, template: str = "cookiecutter-psyflow") -> str:
     """Generate a task skeleton using the bundled template."""
     tmpl_dir = pkg_res.files("psyflow.templates") / template
     cookiecutter(

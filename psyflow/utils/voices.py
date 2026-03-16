@@ -17,7 +17,7 @@ async def _list_supported_voices_async(filter_lang: Optional[str] = None):
 def list_supported_voices(
     filter_lang: Optional[str] = None,
     human_readable: bool = False,
-):
+) -> list[dict] | None:
     """Query available edge-tts voices."""
     voices = asyncio.run(_list_supported_voices_async(filter_lang))
     if not human_readable:

@@ -1,3 +1,10 @@
+"""Trial-level stimulus executor.
+
+Encapsulates stimulus presentation, response capture, event triggers,
+timing control, and lifecycle hooks.  Adapts automatically to simulation
+mode via :class:`~psyflow.sim.adapter.ResponderAdapter`.
+"""
+
 from psychopy import core, visual, logging, sound
 from psychopy.hardware.keyboard import Keyboard
 from typing import Callable, Optional, List, Dict, Any, Sequence, TypeAlias, Union

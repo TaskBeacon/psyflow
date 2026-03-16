@@ -1,7 +1,7 @@
 """Serial port helper utilities."""
 
 
-def show_ports():
+def show_ports() -> None:
     """List all available serial ports."""
     import serial.tools.list_ports
 

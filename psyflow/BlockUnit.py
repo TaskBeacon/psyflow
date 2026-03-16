@@ -1,3 +1,9 @@
+"""Block-level trial controller.
+
+Manages condition generation (weighted, balanced, or custom), trial execution
+with lifecycle hooks, and per-block result aggregation.
+"""
+
 import numpy as np
 from typing import Callable, Any, List, Dict, Optional
 from psychopy import core, logging
@@ -198,7 +204,7 @@ class BlockUnit:
         self.conditions = condition_list
         return self
 
-    def on_start(self, func: Optional[Callable[['BlockUnit'], None]] = None):
+    def on_start(self, func: Optional[Callable[['BlockUnit'], None]] = None) -> "BlockUnit":
         """
         Register a function to run at the start of the block.
 
@@ -215,7 +221,7 @@ class BlockUnit:
         self._on_start.append(func)
         return self
 
-    def on_end(self, func: Optional[Callable[['BlockUnit'], None]] = None):
+    def on_end(self, func: Optional[Callable[['BlockUnit'], None]] = None) -> "BlockUnit":
         """
         Register a function to run at the end of the block.
 
@@ -232,7 +238,7 @@ class BlockUnit:
         self._on_end.append(func)
         return self
 
-    def run_trial(self, func: Callable, **kwargs):
+    def run_trial(self, func: Callable, **kwargs) -> "BlockUnit":
         """
         Run all trials using a specified trial function.
 
@@ -377,7 +383,7 @@ class BlockUnit:
             if negate ^ match(str(trial.get(key, '')))
         ]
 
-    def logging_block_info(self):
+    def logging_block_info(self) -> None:
         """
         Log block metadata including ID, index, seed, trial count, and condition distribution.
         """
