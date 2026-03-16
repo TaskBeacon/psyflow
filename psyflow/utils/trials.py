@@ -1,3 +1,5 @@
+"""Trial ID generation and deadline resolution utilities."""
+
 from typing import Any
 
 _SESSION_TRIAL_COUNTER = 0
@@ -8,7 +10,7 @@ def next_trial_id() -> int:
     _SESSION_TRIAL_COUNTER += 1
     return _SESSION_TRIAL_COUNTER
 
-def reset_trial_counter(start_at: int = 0):
+def reset_trial_counter(start_at: int = 0) -> None:
     """Reset the global trial counter."""
     global _SESSION_TRIAL_COUNTER
     _SESSION_TRIAL_COUNTER = start_at
