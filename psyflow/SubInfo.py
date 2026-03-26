@@ -1,3 +1,10 @@
+"""Participant information dialog.
+
+Presents a configurable PsychoPy GUI dialog to collect and validate
+participant metadata (subject ID, demographics, etc.) with optional
+localization support.
+"""
+
 from psychopy import gui
 
 class SubInfo:

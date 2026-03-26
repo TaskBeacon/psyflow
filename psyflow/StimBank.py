@@ -1,3 +1,9 @@
+"""Stimulus registry with lazy instantiation.
+
+Supports decorator-based and YAML/dict-based stimulus definitions, batch
+preview, text formatting, and text-to-speech conversion via edge-tts.
+"""
+
 from psychopy.visual import TextStim, Circle, Rect, Polygon, ImageStim, ShapeStim, TextBox2, MovieStim
 from psychopy import event, core
 
@@ -72,7 +78,7 @@ class StimBank:
             return func
         return decorator
 
-    def preload_all(self):
+    def preload_all(self) -> "StimBank":
         """Instantiate all registered stimuli.
 
         Returns
@@ -214,7 +220,7 @@ class StimBank:
         """
         return {k: self.get(k) for k in keys}
 
-    def preview_all(self, wait_keys: bool = True):
+    def preview_all(self, wait_keys: bool = True) -> None:
         """
         Preview all registered stimuli one by one.
 
@@ -227,7 +233,7 @@ class StimBank:
         for i, name in enumerate(keys):
             self._preview(name, wait_keys=wait_keys)
 
-    def preview_group(self, prefix: str, wait_keys: bool = True):
+    def preview_group(self, prefix: str, wait_keys: bool = True) -> None:
         """
         Preview all stimuli that match a name prefix.
 
@@ -244,7 +250,7 @@ class StimBank:
         for i, name in enumerate(matches):
             self._preview(name, wait_keys=(i == len(matches) - 1))
 
-    def preview_selected(self, keys: list[str], wait_keys: bool = True):
+    def preview_selected(self, keys: list[str], wait_keys: bool = True) -> None:
         """
         Preview selected stimuli by name.
 
@@ -258,29 +264,7 @@ class StimBank:
         for i, name in enumerate(keys):
             self._preview(name, wait_keys=(i == len(keys) - 1))
 
-    # def _preview(self, name: str, wait_keys: bool = True):
-    #     """
-    #     Internal utility to preview a single stimulus.
-
-    #     Parameters
-    #     ----------
-    #     name : str
-    #         Stimulus name.
-    #     wait_keys : bool
-    #         Wait for key press after preview.
-    #     """
-    #     try:
-    #         stim = self.get(name)
-    #         self.win.flip(clearBuffer=True)
-    #         stim.draw()
-    #         self.win.flip()
-    #         print(f"Preview: '{name}'")
-    #         if wait_keys:
-    #             event.waitKeys()
-    #     except Exception as e:
-    #         print(f"[Preview Error] Could not preview '{name}': {e}")
-
-    def _preview(self, name: str, wait_keys: bool = True):
+    def _preview(self, name: str, wait_keys: bool = True) -> None:
         """
         Internal utility to preview a single stimulus (image or sound).
 
@@ -337,7 +321,7 @@ class StimBank:
         """
         return name in self._registry
 
-    def describe(self, name: str):
+    def describe(self, name: str) -> None:
         """
         Print accepted arguments for a registered stimulus.
 
@@ -370,7 +354,7 @@ class StimBank:
             default = "required" if v.default is inspect.Parameter.empty else f"default={v.default!r}"
             print(f"  - {k}: {default}")
 
-    def export_to_yaml(self, path: str):
+    def export_to_yaml(self, path: str) -> None:
         """
         Export YAML-defined stimuli (but not decorator-defined) to file.
 
@@ -382,6 +366,8 @@ class StimBank:
         yaml_defs = {}
         for name, factory in self._registry.items():
             try:
+                # Factories created by add_from_dict() capture their source
+                # dict in a closure. Inspect it to recover the original spec.
                 source = factory.__closure__[0].cell_contents
                 if not isinstance(source, dict):
                     continue
@@ -393,7 +379,7 @@ class StimBank:
             yaml.dump(yaml_defs, f)
         print(f"[OK] Exported {len(yaml_defs)} YAML stimuli to {path}")
 
-    def make_factory(self, cls, base_kwargs: dict, name: str):
+    def make_factory(self, cls: type, base_kwargs: dict, name: str) -> Callable:
         """
         Create a factory function for a given stimulus class.
 
@@ -426,7 +412,7 @@ class StimBank:
                 raise ValueError(f"[StimBank] Failed to build '{name}': {e}")
         return _factory
 
-    def add_from_dict(self, named_specs: Optional[dict] = None, **kwargs):
+    def add_from_dict(self, named_specs: Optional[dict] = None, **kwargs) -> "StimBank":
         """
         Add stimuli from a dictionary or keyword-based specifications.
 
@@ -452,7 +438,7 @@ class StimBank:
             self._registry[name] = self.make_factory(stim_class, kwargs, name)
         return self
 
-    def validate_dict(self, config: dict, strict: bool = False):
+    def validate_dict(self, config: dict, strict: bool = False) -> None:
         """
         Validate a dictionary of stimulus definitions.
 
@@ -506,7 +492,7 @@ class StimBank:
     def convert_to_voice(self,
                          keys: list[str] | str,
                          overwrite: bool = False,
-                         voice: str = "zh-CN-YunyangNeural"):
+                         voice: str = "zh-CN-YunyangNeural") -> "StimBank":
         """
         Convert specified TextStim/TextBox2 stimuli to speech (MP3) and register them
         as new Sound stimuli in this StimBank.
@@ -578,7 +564,7 @@ class StimBank:
                   stim_label: str,
                   text: str,
                   overwrite: bool = False,
-                  voice: str = "zh-CN-XiaoxiaoNeural"):
+                  voice: str = "zh-CN-XiaoxiaoNeural") -> "StimBank":
         """
         Convert arbitrary text to speech (MP3) and register it as a new Sound stimulus.
 
