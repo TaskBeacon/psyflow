@@ -5,8 +5,6 @@ import unittest
 from unittest.mock import MagicMock
 from types import SimpleNamespace
 
-import numpy as np
-
 # Stub out PsychoPy before importing BlockUnit
 _psychopy_stub = MagicMock()
 _psychopy_stub.core.getAbsTime.return_value = 0.0
@@ -62,7 +60,7 @@ class TestRunTrialGuards(unittest.TestCase):
         self.assertIn("conditions", str(ctx.exception).lower())
 
     def test_func_returning_none_raises_type_error(self):
-        block = _make_block(conditions=np.array(["A"]))
+        block = _make_block(conditions=["A"])
 
         def bad_trial_func(win, kb, settings, cond):
             return None
