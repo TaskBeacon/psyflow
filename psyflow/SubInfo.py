@@ -167,7 +167,7 @@ class SubInfo:
                         raise ValueError
                     if digits is not None and len(str(val)) != digits:
                         raise ValueError
-                except:
+                except Exception:
                     infoDlg = gui.Dlg()
                     infoDlg.addText(
                         self._local("invalid_input").format(field=self._local(field['name']))
