@@ -5,7 +5,7 @@ with lifecycle hooks, and per-block result aggregation.
 """
 
 import numpy as np
-from typing import Callable, Any, List, Dict, Optional
+from typing import Callable, Any, List, Dict, Optional, overload
 from psychopy import core, logging
 from typing import Union, List, Dict, Literal
 import re
@@ -204,7 +204,15 @@ class BlockUnit:
         self.conditions = condition_list
         return self
 
-    def on_start(self, func: Optional[Callable[['BlockUnit'], None]] = None) -> "BlockUnit":
+    @overload
+    def on_start(self, func: None = None) -> Callable[[Callable[['BlockUnit'], None]], 'BlockUnit']:
+        ...
+
+    @overload
+    def on_start(self, func: Callable[['BlockUnit'], None]) -> 'BlockUnit':
+        ...
+
+    def on_start(self, func: Optional[Callable[['BlockUnit'], None]] = None) -> Union['BlockUnit', Callable[[Callable[['BlockUnit'], None]], 'BlockUnit']]:
         """
         Register a function to run at the start of the block.
 
@@ -221,7 +229,15 @@ class BlockUnit:
         self._on_start.append(func)
         return self
 
-    def on_end(self, func: Optional[Callable[['BlockUnit'], None]] = None) -> "BlockUnit":
+    @overload
+    def on_end(self, func: None = None) -> Callable[[Callable[['BlockUnit'], None]], 'BlockUnit']:
+        ...
+
+    @overload
+    def on_end(self, func: Callable[['BlockUnit'], None]) -> 'BlockUnit':
+        ...
+
+    def on_end(self, func: Optional[Callable[['BlockUnit'], None]] = None) -> Union['BlockUnit', Callable[[Callable[['BlockUnit'], None]], 'BlockUnit']]:
         """
         Register a function to run at the end of the block.
 
