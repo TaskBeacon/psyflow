@@ -1,21 +1,18 @@
 """Tests for psyflow.SubInfo."""
 
-import sys
 import unittest
 from unittest.mock import MagicMock
 
-# Stub out PsychoPy before importing SubInfo.
-# test_BlockUnit may have already registered a different stub, so we use
-# setdefault and then grab whatever SubInfo actually sees.
-_psychopy_stub = MagicMock()
-sys.modules.setdefault("psychopy", _psychopy_stub)
-sys.modules.setdefault("psychopy.gui", _psychopy_stub.gui)
+try:
+    from psychopy import gui  # noqa: F401
+    _HAS_PSYCHOPY = True
+except ImportError:
+    _HAS_PSYCHOPY = False
 
-import psyflow.SubInfo as _subinfo_mod  # noqa: E402
-from psyflow.SubInfo import SubInfo  # noqa: E402
-
-# The gui object SubInfo actually captured at import time
-_gui = _subinfo_mod.gui
+if _HAS_PSYCHOPY:
+    import psyflow.SubInfo as _subinfo_mod
+    from psyflow.SubInfo import SubInfo
+    _gui = _subinfo_mod.gui
 
 
 def _make_subinfo(**field_map_overrides):
@@ -35,6 +32,7 @@ def _make_subinfo(**field_map_overrides):
     return info
 
 
+@unittest.skipUnless(_HAS_PSYCHOPY, "requires psychopy")
 class TestCollect(unittest.TestCase):
     """SubInfo.collect() control-flow edge cases."""
 
@@ -49,6 +47,7 @@ class TestCollect(unittest.TestCase):
         self.assertIsNone(result)
 
 
+@unittest.skipUnless(_HAS_PSYCHOPY, "requires psychopy")
 class TestValidate(unittest.TestCase):
     """SubInfo.validate() error handling."""
 
