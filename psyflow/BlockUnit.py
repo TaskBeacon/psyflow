@@ -265,6 +265,12 @@ class BlockUnit:
         **kwargs : dict
             Additional keyword arguments forwarded to ``func``.
         """
+        if self.conditions is None:
+            raise RuntimeError(
+                f"BlockUnit '{self.block_id}' has no conditions. "
+                "Call generate_conditions() before run_trial()."
+            )
+
         self.meta['block_start_time'] = core.getAbsTime()
         self.logging_block_info()
 
@@ -273,6 +279,16 @@ class BlockUnit:
 
         for i, cond in enumerate(self.conditions):
             result = func(self.win, self.kb, self.settings, cond, **kwargs)
+            if not isinstance(result, dict):
+                func_name = getattr(func, "__name__", None)
+                if func_name is None and hasattr(func, "func"):
+                    func_name = getattr(func.func, "__name__", None)
+                if func_name is None:
+                    func_name = type(func).__name__
+                raise TypeError(
+                    f"Trial function {func_name!r} must return a dict, "
+                    f"got {type(result).__name__!r}"
+                )
             result.update({
                 "trial_index": i,
                 "block_id": self.block_id,
@@ -403,10 +419,14 @@ class BlockUnit:
         """
         Log block metadata including ID, index, seed, trial count, and condition distribution.
         """
-        dist = {c: self.conditions.count(c) for c in set(self.conditions)} if self.conditions else {}
+        if self.conditions is not None and len(self.conditions) > 0:
+            conds = np.asarray(self.conditions, dtype=object)
+            dist = {c: int(np.sum(conds == c)) for c in set(self.conditions)}
+        else:
+            dist = {}
         logging.data(f"[BlockUnit] Blockid: {self.block_id}")
         logging.data(f"[BlockUnit] Blockidx: {self.block_idx}")
         logging.data(f"[BlockUnit] Blockseed: {self.seed}")
-        logging.data(f"[BlockUnit] Blocktrial-N: {len(self.conditions)}")
+        logging.data(f"[BlockUnit] Blocktrial-N: {len(self.conditions) if self.conditions is not None else 0}")
         logging.data(f"[BlockUnit] Blockdist: {dist}")
         logging.data(f"[BlockUnit] Blockconditions: {self.conditions}")
