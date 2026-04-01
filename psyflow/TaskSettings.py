@@ -177,11 +177,12 @@ class TaskSettings:
             self.set_block_seed(self.overall_seed)
 
         # Ensure save path exists
-        if self.save_path and not os.path.exists(self.save_path):
-            os.makedirs(self.save_path)
-            print(f"[INFO] Created output directory: {self.save_path}")
-        else:
-            print(f"[INFO] Output directory already exists: {self.save_path}")
+        if self.save_path:
+            if not os.path.exists(self.save_path):
+                os.makedirs(self.save_path)
+                print(f"[INFO] Created output directory: {self.save_path}")
+            else:
+                print(f"[INFO] Output directory already exists: {self.save_path}")
 
         # Construct log/result filenames
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -190,9 +191,10 @@ class TaskSettings:
         else:
             basename = f"sub-{subject_id}_{timestamp}"
 
-        self.log_file = os.path.join(self.save_path, f"{basename}.log")
-        self.res_file = os.path.join(self.save_path, f"{basename}.csv")
-        self.json_file = os.path.join(self.save_path, f"{basename}.json")
+        if self.save_path:
+            self.log_file = os.path.join(self.save_path, f"{basename}.log")
+            self.res_file = os.path.join(self.save_path, f"{basename}.csv")
+            self.json_file = os.path.join(self.save_path, f"{basename}.json")
 
     def __repr__(self) -> str:
         """
