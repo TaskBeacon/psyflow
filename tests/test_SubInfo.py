@@ -1,7 +1,7 @@
 """Tests for psyflow.SubInfo."""
 
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 try:
     from psychopy import gui  # noqa: F401
@@ -41,9 +41,8 @@ class TestCollect(unittest.TestCase):
 
         mock_dlg = MagicMock()
         mock_dlg.show.return_value = None
-        _gui.Dlg.return_value = mock_dlg
-
-        result = info.collect(exit_on_cancel=False)
+        with patch.object(_gui, "Dlg", return_value=mock_dlg):
+            result = info.collect(exit_on_cancel=False)
         self.assertIsNone(result)
 
 

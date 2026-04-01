@@ -280,8 +280,13 @@ class BlockUnit:
         for i, cond in enumerate(self.conditions):
             result = func(self.win, self.kb, self.settings, cond, **kwargs)
             if not isinstance(result, dict):
+                func_name = getattr(func, "__name__", None)
+                if func_name is None and hasattr(func, "func"):
+                    func_name = getattr(func.func, "__name__", None)
+                if func_name is None:
+                    func_name = type(func).__name__
                 raise TypeError(
-                    f"Trial function {func.__name__!r} must return a dict, "
+                    f"Trial function {func_name!r} must return a dict, "
                     f"got {type(result).__name__!r}"
                 )
             result.update({
@@ -415,8 +420,8 @@ class BlockUnit:
         Log block metadata including ID, index, seed, trial count, and condition distribution.
         """
         if self.conditions is not None and len(self.conditions) > 0:
-            conds = self.conditions
-            dist = {c: int(np.sum(conds == c)) for c in set(conds)}
+            conds = np.asarray(self.conditions, dtype=object)
+            dist = {c: int(np.sum(conds == c)) for c in set(self.conditions)}
         else:
             dist = {}
         logging.data(f"[BlockUnit] Blockid: {self.block_id}")

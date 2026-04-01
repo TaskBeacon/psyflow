@@ -1,8 +1,8 @@
 """Tests for psyflow.BlockUnit."""
 
-import sys
+from functools import partial
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from types import SimpleNamespace
 
 try:
@@ -71,6 +71,36 @@ class TestRunTrialGuards(unittest.TestCase):
             block.run_trial(bad_trial_func)
 
         self.assertIn("dict", str(ctx.exception).lower())
+
+    def test_partial_trial_func_raises_type_error(self):
+        block = _make_block(conditions=["A"])
+
+        def bad_trial_func(win, kb, settings, cond):
+            return None
+
+        with self.assertRaises(TypeError) as ctx:
+            block.run_trial(partial(bad_trial_func))
+
+        self.assertIn("bad_trial_func", str(ctx.exception))
+
+
+class TestLoggingBlockInfo(unittest.TestCase):
+    """logging_block_info() should handle list-backed conditions."""
+
+    def test_counts_python_list_conditions(self):
+        block = _make_block(conditions=["A", "B", "A"])
+
+        with patch("psyflow.BlockUnit.logging.data") as mock_log:
+            block.logging_block_info()
+
+        messages = [call.args[0] for call in mock_log.call_args_list]
+        self.assertTrue(
+            any(
+                "Blockdist:" in msg and "'A': 2" in msg and "'B': 1" in msg
+                for msg in messages
+            ),
+            msg=f"Unexpected log messages: {messages!r}",
+        )
 
 
 if __name__ == "__main__":
