@@ -84,6 +84,7 @@ class TestRunTrialGuards(unittest.TestCase):
         self.assertIn("bad_trial_func", str(ctx.exception))
 
 
+@unittest.skipUnless(_HAS_DEPS, "requires numpy and psychopy")
 class TestLoggingBlockInfo(unittest.TestCase):
     """logging_block_info() should handle list-backed conditions."""
 
