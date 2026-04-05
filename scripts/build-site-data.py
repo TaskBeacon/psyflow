@@ -132,22 +132,47 @@ def source_url(module_name: str) -> str:
 
 
 def resolve_symbol_source(module_name: str, symbol: str) -> str:
-    try:
-        import_map = parse_import_map(module_name)
-    except FileNotFoundError:
-        return module_name
-    return import_map.get(symbol, module_name)
+    current_module = module_name
+    current_symbol = symbol
+    seen: set[tuple[str, str]] = set()
+
+    while (current_module, current_symbol) not in seen:
+        seen.add((current_module, current_symbol))
+
+        source_module = None
+        try:
+            import_map = parse_import_map(current_module)
+        except FileNotFoundError:
+            import_map = {}
+        source_module = import_map.get(current_symbol)
+
+        if source_module is None:
+            try:
+                lazy_map = {
+                    item.name: item.source_module
+                    for item in parse_lazy_attrs(current_module)
+                }
+            except FileNotFoundError:
+                lazy_map = {}
+            source_module = lazy_map.get(current_symbol)
+
+        if source_module is None or source_module == current_module:
+            return current_module
+
+        current_module = source_module
+
+    return current_module
 
 
-def parse_root_lazy_attrs() -> list[ExportSpec]:
-    text = read_text(ROOT / "psyflow" / "__init__.py")
+def parse_lazy_attrs(module_name: str) -> list[ExportSpec]:
+    text = read_text(module_file(module_name))
     pattern = re.compile(r'"([^"]+)":\s*\("([^"]+)",\s*"([^"]+)"\)')
     items: list[ExportSpec] = []
     for name, source_module, _attr_name in pattern.findall(text):
         items.append(
             ExportSpec(
                 name=name,
-                module="psyflow",
+                module=module_name,
                 source_module=source_module,
             )
         )
@@ -157,7 +182,7 @@ def parse_root_lazy_attrs() -> list[ExportSpec]:
 def build_inventory() -> list[dict[str, Any]]:
     groups: list[dict[str, Any]] = []
 
-    root_exports = parse_root_lazy_attrs()
+    root_exports = parse_lazy_attrs("psyflow")
     groups.append(
         {
             "module": "psyflow",
@@ -175,19 +200,31 @@ def build_inventory() -> list[dict[str, Any]]:
     )
 
     for module_name in ["psyflow.utils", "psyflow.io", "psyflow.qa", "psyflow.sim"]:
-        export_names = parse_dunder_all(module_name)
-        import_map = parse_import_map(module_name)
-        exports = []
-        for name in export_names:
-            source_module = import_map.get(name, module_name)
-            exports.append(
+        lazy_exports = parse_lazy_attrs(module_name)
+        if lazy_exports:
+            exports = [
                 {
-                    "name": name,
-                    "source_module": source_module,
-                    "summary": doc_summary(source_module, name),
-                    "source_url": source_url(source_module),
+                    "name": item.name,
+                    "source_module": item.source_module,
+                    "summary": doc_summary(item.source_module, item.name),
+                    "source_url": source_url(item.source_module),
                 }
-            )
+                for item in lazy_exports
+            ]
+        else:
+            export_names = parse_dunder_all(module_name)
+            import_map = parse_import_map(module_name)
+            exports = []
+            for name in export_names:
+                source_module = import_map.get(name, module_name)
+                exports.append(
+                    {
+                        "name": name,
+                        "source_module": source_module,
+                        "summary": doc_summary(source_module, name),
+                        "source_url": source_url(source_module),
+                    }
+                )
         groups.append(
             {
                 "module": module_name,
