@@ -3,15 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 
-def _resolve_deadline(value: Any) -> float | None:
-    if isinstance(value, (int, float)):
-        return float(value)
-    if isinstance(value, (list, tuple)) and value:
-        try:
-            return float(max(value))
-        except (ValueError, TypeError):
-            return None
-    return None
+from ..utils.trials import resolve_deadline
 
 
 def set_trial_context(
@@ -35,7 +27,7 @@ def set_trial_context(
     return unit.set_state(
         trial_id=trial_id,
         phase=phase,
-        deadline_s=_resolve_deadline(deadline_s),
+        deadline_s=resolve_deadline(deadline_s),
         valid_keys=list(valid_keys or []),
         block_id=block_id,
         condition_id=condition_id,

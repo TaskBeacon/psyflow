@@ -1,5 +1,17 @@
 # psyflow change log
 
+## 0.1.22 (2026-04-05)
+
+### Summary
+- Made `psyflow.utils` lazy-load PsychoPy-dependent helpers so importing `psyflow.utils` no longer eagerly imports `display` or `experiment`.
+- Removed the duplicate sim-side deadline helper and reused `psyflow.utils.trials.resolve_deadline()` from `psyflow.sim.context_helpers`.
+- Added smoke coverage for the import boundary and sim deadline resolution.
+- Addresses issue #21: `utils/__init__.py eager psychopy imports block cross-module reuse`.
+
+### Validation
+- `python -m unittest discover -s tests -p "test_smoke.py" -v` passed.
+- `python -m unittest discover -s tests -p "test_sim_golden.py" -v` passed.
+
 ## 0.1.21 (2026-03-04)
 
 ### Summary
