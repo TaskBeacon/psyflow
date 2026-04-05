@@ -13,15 +13,13 @@
     }
   },
   "latest_release": {
-    "version": "0.1.22",
+    "version": "0.1.23",
     "date": "2026-04-05",
     "summary": [
-      "Made `psyflow.utils` lazy-load PsychoPy-dependent helpers so importing `psyflow.utils` no longer eagerly imports `display` or `experiment`.",
-      "Removed the duplicate sim-side deadline helper and reused `psyflow.utils.trials.resolve_deadline()` from `psyflow.sim.context_helpers`.",
-      "Added smoke coverage for the import boundary and sim deadline resolution.",
-      "Addresses issue #21: `utils/__init__.py eager psychopy imports block cross-module reuse`."
+      "Restored `TaskSettings.add_subinfo()` to fall back to `./outputs/human` when `save_path` is unset or empty, while still creating explicit nested output directories.",
+      "Added pure-Python regression tests for `psyflow.sim.loader`, `psyflow.sim.logging`, `psyflow.utils.trials`, and `TaskSettings.add_subinfo()`."
     ]
   },
-  "release_count": 20,
+  "release_count": 21,
   "module_count": 5
 }

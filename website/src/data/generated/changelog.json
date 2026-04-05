@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.1.23",
+    "date": "2026-04-05",
+    "summary": [
+      "Restored `TaskSettings.add_subinfo()` to fall back to `./outputs/human` when `save_path` is unset or empty, while still creating explicit nested output directories.",
+      "Added pure-Python regression tests for `psyflow.sim.loader`, `psyflow.sim.logging`, `psyflow.utils.trials`, and `TaskSettings.add_subinfo()`."
+    ]
+  },
+  {
     "version": "0.1.22",
     "date": "2026-04-05",
     "summary": [

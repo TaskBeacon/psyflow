@@ -14,6 +14,8 @@ import hashlib
 from datetime import datetime
 import os
 
+DEFAULT_SAVE_PATH = "./outputs/human"
+
 @dataclass
 class TaskSettings:
     """
@@ -62,7 +64,7 @@ class TaskSettings:
     json_file: Optional[str] = None
 
     # --- File path info ---
-    save_path: Optional[str] = './outputs/human'
+    save_path: Optional[str] = field(default_factory=lambda: DEFAULT_SAVE_PATH)
     task_name: Optional[str] = None
 
     def __post_init__(self):
@@ -176,8 +178,12 @@ class TaskSettings:
             self.overall_seed = int(hashlib.sha256(str(subject_id).encode()).hexdigest(), 16) % (10**8)
             self.set_block_seed(self.overall_seed)
 
-        # Ensure save path exists
-        if self.save_path and not os.path.exists(self.save_path):
+        # Normalize missing output root to the package default.
+        if not self.save_path:
+            self.save_path = DEFAULT_SAVE_PATH
+
+        # Ensure save path exists.
+        if not os.path.exists(self.save_path):
             os.makedirs(self.save_path)
             print(f"[INFO] Created output directory: {self.save_path}")
         else:
