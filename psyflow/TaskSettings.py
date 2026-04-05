@@ -14,6 +14,8 @@ import hashlib
 from datetime import datetime
 import os
 
+DEFAULT_SAVE_PATH = "./outputs/human"
+
 @dataclass
 class TaskSettings:
     """
@@ -62,7 +64,7 @@ class TaskSettings:
     json_file: Optional[str] = None
 
     # --- File path info ---
-    save_path: Optional[str] = './outputs/human'
+    save_path: Optional[str] = field(default_factory=lambda: DEFAULT_SAVE_PATH)
     task_name: Optional[str] = None
 
     def __post_init__(self):
@@ -176,13 +178,16 @@ class TaskSettings:
             self.overall_seed = int(hashlib.sha256(str(subject_id).encode()).hexdigest(), 16) % (10**8)
             self.set_block_seed(self.overall_seed)
 
-        # Ensure save path exists
-        if self.save_path:
-            if not os.path.exists(self.save_path):
-                os.makedirs(self.save_path)
-                print(f"[INFO] Created output directory: {self.save_path}")
-            else:
-                print(f"[INFO] Output directory already exists: {self.save_path}")
+        # Normalize missing output root to the package default.
+        if not self.save_path:
+            self.save_path = DEFAULT_SAVE_PATH
+
+        # Ensure save path exists.
+        if not os.path.exists(self.save_path):
+            os.makedirs(self.save_path)
+            print(f"[INFO] Created output directory: {self.save_path}")
+        else:
+            print(f"[INFO] Output directory already exists: {self.save_path}")
 
         # Construct log/result filenames
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -191,10 +196,9 @@ class TaskSettings:
         else:
             basename = f"sub-{subject_id}_{timestamp}"
 
-        if self.save_path:
-            self.log_file = os.path.join(self.save_path, f"{basename}.log")
-            self.res_file = os.path.join(self.save_path, f"{basename}.csv")
-            self.json_file = os.path.join(self.save_path, f"{basename}.json")
+        self.log_file = os.path.join(self.save_path, f"{basename}.log")
+        self.res_file = os.path.join(self.save_path, f"{basename}.csv")
+        self.json_file = os.path.join(self.save_path, f"{basename}.json")
 
     def __repr__(self) -> str:
         """
