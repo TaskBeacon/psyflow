@@ -8,7 +8,7 @@ All notable development changes for `{{cookiecutter.project_name}}` are document
 - Initial task scaffold generated from `psyflow` template.
 - Human/QA/sim mode entrypoint in `main.py`.
 - Base configs under `config/` and trial logic under `src/`.
-- Contract adoption metadata in `taskbeacon.yaml` (`contracts.psyflow_taps: v0.1.0`).
+- Contract adoption metadata in `taskbeacon.yaml` (`contracts.taps: v0.1.0`).
 
 ### Changed
 - None yet.
