@@ -5,7 +5,7 @@ timing control, and lifecycle hooks.  Adapts automatically to simulation
 mode via :class:`~psyflow.sim.adapter.ResponderAdapter`.
 """
 
-from psychopy import core, visual, logging, sound
+from psychopy import core, event, visual, logging, sound
 from psychopy.hardware.keyboard import Keyboard
 from typing import Callable, Optional, List, Dict, Any, Sequence, TypeAlias, Union
 import importlib
@@ -1005,6 +1005,233 @@ class StimUnit:
 
         self.log_unit()
         return self
+
+    def capture_pointer_sequence(
+        self,
+        targets: dict[str, visual.BaseVisualStim],
+        max_selections: int,
+        duration: float,
+        onset_trigger: int = None,
+        selection_trigger: int | dict[str, int] = None,
+        complete_trigger: int = None,
+        timeout_trigger: int = None,
+        highlight_targets: dict[str, visual.BaseVisualStim] | None = None,
+        highlight_duration: float = 0.10,
+    ) -> "StimUnit":
+        """Collect an ordered pointer/touch sequence from named visual targets.
+
+        Target hit-testing, timing, trigger emission, simulation injection, and
+        stage data remain framework-owned. Tasks supply only named targets and
+        the required sequence length.
+        """
+        if not isinstance(targets, dict) or not targets:
+            raise ValueError("targets must be a non-empty mapping of names to visual stimuli")
+        if any(not isinstance(stim, visual.BaseVisualStim) for stim in targets.values()):
+            raise TypeError("all pointer targets must be PsychoPy visual stimuli")
+
+        required = int(max_selections)
+        if required <= 0:
+            raise ValueError("max_selections must be a positive integer")
+
+        nominal = float(duration)
+        if nominal <= 0:
+            raise ValueError("duration must be positive")
+        used, n_frames, scaled = self._qa_scale_duration(nominal)
+        if scaled:
+            self.set_state(duration_nominal=nominal, duration_scaled=used)
+        self.set_state(duration=used, target_names=list(targets), max_selections=required)
+
+        visual_stims = [stim for stim in self.stimuli if hasattr(stim, "draw") and callable(stim.draw)]
+        for stim in visual_stims:
+            stim.draw()
+        self.win.callOnFlip(self.clock.reset)
+        self.win.callOnFlip(self._stamp_onset, onset_trigger)
+        self._emit_trigger(
+            onset_trigger,
+            when="flip",
+            wait=False,
+            name=f"{self.label}_onset",
+            meta={"kind": "onset"},
+        )
+        if n_frames == 1:
+            self.win.callOnFlip(self._stamp_close)
+        flip_time = self.win.flip()
+        self.set_state(flip_time=flip_time)
+
+        ctx = get_context()
+        responder = None
+        if ctx is not None and ctx.mode in ("qa", "sim") and getattr(ctx, "responder", None) is not None:
+            responder = ctx.responder
+
+        simulated_actions: list[tuple[str, float]] = []
+        if responder is not None:
+            adapter = ResponderAdapter(
+                policy=str(getattr(getattr(ctx, "config", None), "sim_policy", "warn") or "warn"),
+                default_rt_s=float(getattr(getattr(ctx, "config", None), "default_rt_s", 0.2) or 0.2),
+                clamp_rt=bool(getattr(getattr(ctx, "config", None), "clamp_rt", False)),
+                logger=getattr(ctx, "sim_logger", None),
+                session=getattr(ctx, "session", None),
+            )
+            base_factors = dict(self.get_state("task_factors", None) or {})
+            previous_rt = 0.0
+            for selection_index in range(required):
+                obs = Observation(
+                    mode=getattr(ctx, "mode", "qa"),
+                    trial_id=self.get_state("trial_id", self.get_state("trial_index", None)),
+                    block_id=self.get_state("block_id", None),
+                    phase=self.label,
+                    deadline_s=used,
+                    response_window_open=True,
+                    response_window_s=used,
+                    valid_keys=list(targets),
+                    t_phase_onset=self.get_state("onset_time", None),
+                    t_phase_onset_global=self.get_state("onset_time_global", None),
+                    stim_id=self.get_state("stim_id", None),
+                    stim_features=self.get_state("stim_features", None),
+                    condition_id=self.get_state("condition_id", None),
+                    task_factors={**base_factors, "selection_index": selection_index},
+                )
+                handled = adapter.handle_response(obs, responder)
+                action = handled.used_action
+                if action.key is None or action.rt_s is None:
+                    break
+                action_rt = max(float(action.rt_s), previous_rt + (0.05 if simulated_actions else 0.0))
+                if action_rt > used:
+                    break
+                simulated_actions.append((str(action.key), action_rt))
+                previous_rt = action_rt
+
+        original_mouse_visible = bool(getattr(self.win, "mouseVisible", False))
+        mouse = None
+        previous_pressed = False
+        if responder is None:
+            self.win.mouseVisible = True
+            mouse = event.Mouse(win=self.win, visible=True)
+            mouse.clickReset()
+
+        selections: list[str] = []
+        selection_times: list[float] = []
+        selection_positions: list[list[float] | None] = []
+        selection_triggers: list[int | None] = []
+        next_simulated = 0
+        last_highlight: str | None = None
+        highlight_until = 0.0
+
+        def accept_selection(name: str, rt: float, position: list[float] | None) -> None:
+            nonlocal last_highlight, highlight_until
+            selections.append(name)
+            selection_times.append(float(rt))
+            selection_positions.append(position)
+            code = selection_trigger.get(name) if isinstance(selection_trigger, dict) else selection_trigger
+            selection_triggers.append(code)
+            self._emit_trigger(
+                code,
+                when="now",
+                wait=True,
+                name=f"{self.label}_selection",
+                meta={"kind": "pointer_selection", "target": name, "index": len(selections) - 1},
+            )
+            last_highlight = name
+            highlight_until = float(rt) + max(0.0, float(highlight_duration))
+
+        try:
+            for frame_i in range(max(0, n_frames - 1)):
+                elapsed = float(self.clock.getTime())
+                for stim in visual_stims:
+                    stim.draw()
+                if (
+                    last_highlight is not None
+                    and elapsed <= highlight_until
+                    and highlight_targets is not None
+                    and last_highlight in highlight_targets
+                ):
+                    highlight_targets[last_highlight].draw()
+
+                if frame_i == n_frames - 2:
+                    self.win.callOnFlip(self._stamp_close)
+                self.win.flip()
+                elapsed = float(self.clock.getTime())
+
+                if responder is not None:
+                    while next_simulated < len(simulated_actions) and elapsed >= simulated_actions[next_simulated][1]:
+                        target_name, action_rt = simulated_actions[next_simulated]
+                        accept_selection(target_name, action_rt, None)
+                        next_simulated += 1
+                        if len(selections) >= required:
+                            break
+                else:
+                    pressed = bool(mouse.getPressed()[0]) if mouse is not None else False
+                    if pressed and not previous_pressed and mouse is not None:
+                        position = [float(value) for value in mouse.getPos()]
+                        for target_name, target_stim in targets.items():
+                            if target_stim.contains(position):
+                                accept_selection(target_name, elapsed, position)
+                                break
+                    previous_pressed = pressed
+
+                if len(selections) >= required:
+                    self._emit_trigger(
+                        complete_trigger,
+                        when="now",
+                        wait=True,
+                        name=f"{self.label}_complete",
+                        meta={"kind": "pointer_sequence_complete", "count": len(selections)},
+                    )
+                    self.set_state(complete_trigger=complete_trigger)
+                    break
+        finally:
+            if responder is None:
+                self.win.mouseVisible = original_mouse_visible
+
+        completed = len(selections) >= required
+        if not completed:
+            self._emit_trigger(
+                timeout_trigger,
+                when="now",
+                wait=True,
+                name=f"{self.label}_timeout",
+                meta={"kind": "timeout", "count": len(selections)},
+            )
+
+        last_rt = selection_times[-1] if selection_times else None
+        first_rt = selection_times[0] if selection_times else None
+        onset_time_global = self.get_state("onset_time_global", None)
+        self.set_state(
+            response=list(selections) if selections else None,
+            responses=list(selections),
+            response_count=len(selections),
+            response_times=list(selection_times),
+            response_positions=list(selection_positions),
+            selection_triggers=list(selection_triggers),
+            key_press=bool(selections),
+            completed=completed,
+            timed_out=not completed,
+            first_rt=first_rt,
+            rt=last_rt,
+            response_time=last_rt,
+            response_time_global=(onset_time_global + last_rt) if onset_time_global is not None and last_rt is not None else None,
+            timeout_trigger=timeout_trigger if not completed else None,
+        )
+        if self.get_state("close_time", None) is None:
+            self._stamp_close()
+
+        if responder is not None and hasattr(responder, "on_feedback"):
+            try:
+                responder.on_feedback(
+                    Feedback(
+                        trial_id=self.get_state("trial_id", self.get_state("trial_index", "unknown")),
+                        phase=self.label,
+                        outcome="complete" if completed else "timeout",
+                        reward=None,
+                        meta={"responses": list(selections), "response_times": list(selection_times)},
+                    )
+                )
+            except Exception:
+                pass
+
+        self.log_unit()
+        return self
+
     def wait_and_continue(
         self,
         keys: list[str] = ["space"],
