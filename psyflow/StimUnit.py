@@ -14,6 +14,7 @@ from .sim.context import get_context
 from .io.events import TriggerEvent
 from .sim.adapter import ResponderAdapter, ResponderActionError
 from .sim.contracts import Feedback, Observation
+from .pointer_trace import advance_ordered_progress, build_simulated_trace, evaluate_trace, nearest_path_position, normalize_path, transform_point
 from psychopy.sound._base import _SoundBase
 
 
@@ -728,6 +729,7 @@ class StimUnit:
         response_trigger: int | dict[str, int] = None,
         timeout_trigger: int = None,
         terminate_on_response: bool = True,
+        count_responses: bool = False,
         correct_keys: list[str] | None = None, 
         highlight_stim: visual.BaseVisualStim | dict[str, visual.BaseVisualStim] = None,  
         dynamic_highlight: bool = False,                                                  
@@ -755,6 +757,10 @@ class StimUnit:
             If a dict: maps key names -> highlight stimuli.
         dynamic_highlight : bool
             If True, allow multiple key presses and update the highlight each time.
+        count_responses : bool
+            If True, retain every valid key and timestamp in ``responses`` and
+            ``response_times`` while the response window remains open. Use with
+            ``terminate_on_response=False`` for continuous-report paradigms.
         """
         # decide total duration
         local_rng = random.Random()
@@ -811,6 +817,8 @@ class StimUnit:
             correct_keys = [correct_keys]
         responded = False
         chosen_key = None  # track which key to highlight
+        responses: list[str] = []
+        response_times: list[float] = []
 
         # QA-mode responder injection (psyflow-level seam)
         ctx = get_context()
@@ -876,7 +884,7 @@ class StimUnit:
             self.win.flip()
 
             # only listen for keys if we haven't responded or if dynamic_highlight=True
-            if not responded or dynamic_highlight:
+            if not responded or dynamic_highlight or count_responses:
                 if responder is None:
                     keypress = self.kb.getKeys(keyList=keys, waitRelease=False)
                     if keypress:
@@ -884,21 +892,25 @@ class StimUnit:
                         k = kp.name
                         chosen_key = k
                         rt = kp.rt
+                        if count_responses:
+                            responses.append(k)
+                            response_times.append(float(rt))
                         onset_time_global = self.get_state("onset_time_global", None)
                         response_time_global = (
                             onset_time_global + rt
                             if onset_time_global is not None
                             else core.getAbsTime()
                         )
-                        self.set_state(
-                            hit=k in correct_keys,
-                            correct_keys=correct_keys,
-                            response=k,
-                            key_press=True,
-                            rt=rt,
-                            response_time=rt,
-                            response_time_global=response_time_global,
-                        )
+                        if not count_responses or not responded:
+                            self.set_state(
+                                hit=k in correct_keys,
+                                correct_keys=correct_keys,
+                                response=k,
+                                key_press=True,
+                                rt=rt,
+                                response_time=rt,
+                                response_time_global=response_time_global,
+                            )
                         code = (response_trigger.get(k, None)
                             if isinstance(response_trigger, dict)
                             else response_trigger)
@@ -923,6 +935,9 @@ class StimUnit:
                         k = sim_key
                         chosen_key = k
                         rt = sim_rt
+                        if count_responses:
+                            responses.append(k)
+                            response_times.append(float(rt))
                         onset_time_global = self.get_state("onset_time_global", None)
                         response_time_global = (
                             onset_time_global + rt
@@ -950,11 +965,21 @@ class StimUnit:
                         )
                         self.set_state(response_trigger=code)
                         responded = True
+                        sim_key = None
+                        sim_rt = None
 
                         if terminate_on_response and not dynamic_highlight:
                             self.set_state(close_time=rt, close_time_global=response_time_global)
                             break
 
+
+        if count_responses:
+            self.set_state(
+                responses=list(responses),
+                response_times=list(response_times),
+                response_count=len(responses),
+                first_rt=response_times[0] if response_times else None,
+            )
 
         if not responded: 
             self.set_state(
@@ -1224,6 +1249,294 @@ class StimUnit:
                         outcome="complete" if completed else "timeout",
                         reward=None,
                         meta={"responses": list(selections), "response_times": list(selection_times)},
+                    )
+                )
+            except Exception:
+                pass
+
+        self.log_unit()
+        return self
+
+    def capture_pointer_trace(
+        self,
+        path_points: Sequence[Sequence[float]],
+        corridor_width: float,
+        duration: float,
+        cursor: visual.BaseVisualStim,
+        transform: str = "identity",
+        finish_radius: float = 0.4,
+        completion_progress: float = 0.95,
+        onset_trigger: int = None,
+        start_trigger: int = None,
+        error_trigger: int = None,
+        complete_trigger: int = None,
+        timeout_trigger: int = None,
+        error_cursor: visual.BaseVisualStim | None = None,
+        trail_color: Any = "#f6c453",
+        trail_line_width: float = 2.0,
+    ) -> "StimUnit":
+        """Capture a continuous press-and-drag trace along an ordered path.
+
+        PsyFlow owns pointer sampling, display-coordinate transformation, path
+        geometry, trace metrics, triggers, and responder injection. Tasks supply
+        only their path, corridor, cursor stimuli, timing, and trigger codes.
+        """
+        path = normalize_path(path_points)
+        width = float(corridor_width)
+        if width <= 0.0:
+            raise ValueError("corridor_width must be positive")
+        if not isinstance(cursor, visual.BaseVisualStim):
+            raise TypeError("cursor must be a PsychoPy visual stimulus")
+        if error_cursor is not None and not isinstance(error_cursor, visual.BaseVisualStim):
+            raise TypeError("error_cursor must be a PsychoPy visual stimulus")
+        transform_point((0.0, 0.0), transform)
+
+        nominal = float(duration)
+        if nominal <= 0.0:
+            raise ValueError("duration must be positive")
+        used, n_frames, scaled = self._qa_scale_duration(nominal)
+        if scaled:
+            self.set_state(duration_nominal=nominal, duration_scaled=used)
+        self.set_state(
+            duration=used,
+            path_points=[list(point) for point in path],
+            corridor_width=width,
+            pointer_transform=transform,
+            completion_progress=float(completion_progress),
+            finish_radius=float(finish_radius),
+        )
+
+        visual_stims = [stim for stim in self.stimuli if hasattr(stim, "draw") and callable(stim.draw)]
+        for stim in visual_stims:
+            stim.draw()
+        self.win.callOnFlip(self.clock.reset)
+        self.win.callOnFlip(self._stamp_onset, onset_trigger)
+        self._emit_trigger(
+            onset_trigger,
+            when="flip",
+            wait=False,
+            name=f"{self.label}_onset",
+            meta={"kind": "onset"},
+        )
+        flip_time = self.win.flip()
+        self.set_state(flip_time=flip_time)
+
+        ctx = get_context()
+        responder = None
+        if ctx is not None and ctx.mode in ("qa", "sim") and getattr(ctx, "responder", None) is not None:
+            responder = ctx.responder
+
+        original_mouse_visible = bool(getattr(self.win, "mouseVisible", False))
+        mouse = None
+        samples: list[dict[str, object]] = []
+        physical_positions: list[list[float]] = []
+        display_positions: list[list[float]] = []
+        drawing_started = False
+        start_time: float | None = None
+        previous_pressed = False
+        previous_inside = True
+        pointer_lifts = 0
+        max_progress = 0.0
+        completed = False
+
+        if responder is not None:
+            adapter = ResponderAdapter(
+                policy=str(getattr(getattr(ctx, "config", None), "sim_policy", "warn") or "warn"),
+                default_rt_s=float(getattr(getattr(ctx, "config", None), "default_rt_s", 0.2) or 0.2),
+                clamp_rt=bool(getattr(getattr(ctx, "config", None), "clamp_rt", False)),
+                logger=getattr(ctx, "sim_logger", None),
+                session=getattr(ctx, "session", None),
+            )
+            observation = Observation(
+                mode=getattr(ctx, "mode", "qa"),
+                trial_id=self.get_state("trial_id", self.get_state("trial_index", None)),
+                block_id=self.get_state("block_id", None),
+                phase=self.label,
+                deadline_s=used,
+                response_window_open=True,
+                response_window_s=used,
+                valid_keys=["trace"],
+                t_phase_onset=self.get_state("onset_time", None),
+                t_phase_onset_global=self.get_state("onset_time_global", None),
+                stim_id=self.get_state("stim_id", None),
+                stim_features=self.get_state("stim_features", None),
+                condition_id=self.get_state("condition_id", None),
+                task_factors=dict(self.get_state("task_factors", None) or {}),
+            )
+            handled = adapter.handle_response(observation, responder)
+            action = handled.used_action
+            if action.key == "trace":
+                profile = str((action.meta or {}).get("trace_profile", "accurate"))
+                sim_duration = min(used, max(0.01, float(action.rt_s or used * 0.8)))
+                samples = build_simulated_trace(
+                    path,
+                    profile=profile,
+                    duration_s=sim_duration,
+                    corridor_width=width,
+                )
+                drawing_started = bool(samples)
+                start_time = 0.0 if samples else None
+                for sample in samples:
+                    shown = sample["display"]
+                    display_positions.append([float(shown[0]), float(shown[1])])
+                    physical = transform_point(shown, transform)
+                    physical_positions.append([physical[0], physical[1]])
+                if drawing_started:
+                    self._emit_trigger(
+                        start_trigger,
+                        when="now",
+                        wait=True,
+                        name=f"{self.label}_start",
+                        meta={"kind": "pointer_trace_start"},
+                    )
+        else:
+            self.win.mouseVisible = False
+            mouse = event.Mouse(win=self.win, visible=False)
+            mouse.clickReset()
+
+        try:
+            if responder is None:
+                for frame_i in range(max(0, n_frames - 1)):
+                    elapsed = float(self.clock.getTime())
+                    physical = [float(value) for value in mouse.getPos()]
+                    shown = transform_point(physical, transform)
+                    distance, progress = nearest_path_position(shown, path)
+                    inside = distance <= width / 2.0
+                    pressed = bool(mouse.getPressed()[0])
+
+                    if pressed and not previous_pressed and not drawing_started:
+                        start_distance = ((shown[0] - path[0][0]) ** 2 + (shown[1] - path[0][1]) ** 2) ** 0.5
+                        if start_distance <= float(finish_radius):
+                            drawing_started = True
+                            start_time = elapsed
+                            self._emit_trigger(
+                                start_trigger,
+                                when="now",
+                                wait=True,
+                                name=f"{self.label}_start",
+                                meta={"kind": "pointer_trace_start"},
+                            )
+
+                    if drawing_started and pressed:
+                        trace_t = max(0.0, elapsed - float(start_time if start_time is not None else elapsed))
+                        samples.append({"t": trace_t, "display": [shown[0], shown[1]]})
+                        physical_positions.append(list(physical))
+                        display_positions.append([shown[0], shown[1]])
+                        max_progress = advance_ordered_progress(max_progress, progress)
+                        if not inside and previous_inside:
+                            self._emit_trigger(
+                                error_trigger,
+                                when="now",
+                                wait=True,
+                                name=f"{self.label}_error",
+                                meta={"kind": "pointer_trace_excursion", "progress": progress},
+                            )
+                        previous_inside = inside
+                        finish_distance = ((shown[0] - path[0][0]) ** 2 + (shown[1] - path[0][1]) ** 2) ** 0.5
+                        if max_progress >= float(completion_progress) and finish_distance <= float(finish_radius):
+                            completed = True
+
+                    if drawing_started and previous_pressed and not pressed:
+                        pointer_lifts += 1
+                    previous_pressed = pressed
+
+                    for stim in visual_stims:
+                        stim.draw()
+                    if len(display_positions) >= 2:
+                        trail = visual.ShapeStim(
+                            self.win,
+                            vertices=display_positions,
+                            closeShape=False,
+                            lineColor=trail_color,
+                            lineWidth=float(trail_line_width),
+                            fillColor=None,
+                            units=getattr(self.win, "units", None),
+                        )
+                        trail.draw()
+                    cursor.pos = shown
+                    active_cursor = error_cursor if drawing_started and not inside and error_cursor is not None else cursor
+                    active_cursor.pos = shown
+                    active_cursor.draw()
+                    if frame_i == n_frames - 2:
+                        self.win.callOnFlip(self._stamp_close)
+                    self.win.flip()
+                    if completed:
+                        break
+        finally:
+            if responder is None:
+                self.win.mouseVisible = original_mouse_visible
+
+        metrics = evaluate_trace(
+            samples,
+            path,
+            corridor_width=width,
+            completion_progress=float(completion_progress),
+            finish_radius=float(finish_radius),
+        )
+        completed = bool(metrics["completed"])
+        if responder is not None:
+            for _ in range(int(metrics["error_excursions"])):
+                self._emit_trigger(
+                    error_trigger,
+                    when="now",
+                    wait=True,
+                    name=f"{self.label}_error",
+                    meta={"kind": "pointer_trace_excursion", "simulated": True},
+                )
+        if completed:
+            self._emit_trigger(
+                complete_trigger,
+                when="now",
+                wait=True,
+                name=f"{self.label}_complete",
+                meta={"kind": "pointer_trace_complete"},
+            )
+        else:
+            self._emit_trigger(
+                timeout_trigger,
+                when="now",
+                wait=True,
+                name=f"{self.label}_timeout",
+                meta={"kind": "timeout"},
+            )
+
+        movement_time = metrics["movement_time"]
+        onset_time_global = self.get_state("onset_time_global", None)
+        self.set_state(
+            response="complete" if completed else None,
+            key_press=drawing_started,
+            drawing_started=drawing_started,
+            completed=completed,
+            timed_out=not completed,
+            rt=movement_time,
+            response_time=movement_time,
+            response_time_global=(onset_time_global + movement_time)
+            if onset_time_global is not None and movement_time is not None
+            else None,
+            pointer_lifts=pointer_lifts,
+            trajectory_physical=physical_positions,
+            trajectory_display=display_positions,
+            error_excursions=metrics["error_excursions"],
+            off_path_duration=metrics["off_path_duration"],
+            off_path_proportion=metrics["off_path_proportion"],
+            rms_path_error=metrics["rms_path_error"],
+            max_progress=metrics["max_progress"],
+            sample_count=metrics["sample_count"],
+            complete_trigger=complete_trigger if completed else None,
+            timeout_trigger=timeout_trigger if not completed else None,
+        )
+        if self.get_state("close_time", None) is None:
+            self._stamp_close()
+
+        if responder is not None and hasattr(responder, "on_feedback"):
+            try:
+                responder.on_feedback(
+                    Feedback(
+                        trial_id=self.get_state("trial_id", self.get_state("trial_index", "unknown")),
+                        phase=self.label,
+                        outcome="complete" if completed else "timeout",
+                        reward=None,
+                        meta={key: metrics[key] for key in metrics},
                     )
                 )
             except Exception:
