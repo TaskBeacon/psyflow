@@ -10,11 +10,13 @@ from psychopy.hardware.keyboard import Keyboard
 from typing import Callable, Optional, List, Dict, Any, Sequence, TypeAlias, Union
 import importlib
 import random
+from math import hypot
 from .sim.context import get_context
 from .io.events import TriggerEvent
 from .sim.adapter import ResponderAdapter, ResponderActionError
 from .sim.contracts import Feedback, Observation
 from .pointer_trace import advance_ordered_progress, build_simulated_trace, evaluate_trace, nearest_path_position, normalize_path, transform_point
+from .pointer_reach import build_simulated_reach, evaluate_reach, transform_reach_point
 from psychopy.sound._base import _SoundBase
 
 
@@ -1542,6 +1544,281 @@ class StimUnit:
             except Exception:
                 pass
 
+        self.log_unit()
+        return self
+
+    def capture_pointer_reach(
+        self,
+        *,
+        start: visual.BaseVisualStim,
+        target: visual.BaseVisualStim,
+        cursor: visual.BaseVisualStim,
+        target_position: Sequence[float],
+        target_distance: float,
+        start_radius: float,
+        target_radius: float,
+        search_visibility_radius: float,
+        start_hold_duration: float,
+        movement_deadline: float,
+        reaction_threshold: float,
+        feedback_mode: str = "veridical",
+        rotation_deg: float = 0.0,
+        endpoint_freeze_duration: float = 0.05,
+        onset_trigger: int = None,
+        hold_trigger: int = None,
+        target_trigger: int = None,
+        movement_trigger: int = None,
+        complete_trigger: int = None,
+        hit_trigger: int = None,
+        timeout_trigger: int = None,
+    ) -> "StimUnit":
+        """Capture a click-free centre-out reach with transformed cursor feedback.
+
+        PsyFlow owns pointer homing, hold timing, continuous sampling, visual
+        transformation, reach timing, endpoint geometry, triggers, and responder
+        injection. Tasks supply only protocol geometry, timing, and stimuli.
+        """
+        for name, stim in (("start", start), ("target", target), ("cursor", cursor)):
+            if not isinstance(stim, visual.BaseVisualStim):
+                raise TypeError(f"{name} must be a PsychoPy visual stimulus")
+        target_pos = [float(target_position[0]), float(target_position[1])]
+        distance = float(target_distance)
+        start_r = float(start_radius)
+        target_r = float(target_radius)
+        search_r = float(search_visibility_radius)
+        hold_s = float(start_hold_duration)
+        deadline_s = float(movement_deadline)
+        reaction_r = float(reaction_threshold)
+        freeze_s = max(0.0, float(endpoint_freeze_duration))
+        if min(distance, start_r, target_r, search_r, hold_s, deadline_s, reaction_r) <= 0.0:
+            raise ValueError("pointer reach geometry and timing values must be positive")
+        if reaction_r >= distance:
+            raise ValueError("reaction_threshold must be smaller than target_distance")
+        transform_reach_point((0.0, 0.0), feedback_mode, rotation_deg)
+        target.pos = target_pos
+        self.set_state(
+            target_position=target_pos,
+            target_distance=distance,
+            start_radius=start_r,
+            target_radius=target_r,
+            search_visibility_radius=search_r,
+            start_hold_duration=hold_s,
+            movement_deadline=deadline_s,
+            reaction_threshold=reaction_r,
+            feedback_mode=str(feedback_mode),
+            rotation_deg=float(rotation_deg),
+            endpoint_freeze_duration=freeze_s,
+        )
+
+        ctx = get_context()
+        responder = None
+        if ctx is not None and ctx.mode in ("qa", "sim") and getattr(ctx, "responder", None) is not None:
+            responder = ctx.responder
+
+        original_mouse_visible = bool(getattr(self.win, "mouseVisible", False))
+        mouse = None
+        samples: list[dict[str, object]] = []
+        search_time = 0.0
+        movement_started = False
+
+        def draw_scene(physical: Sequence[float], *, show_target: bool, moving: bool) -> list[float]:
+            for stim in self.stimuli:
+                if hasattr(stim, "draw") and callable(stim.draw):
+                    stim.draw()
+            start.draw()
+            if show_target:
+                target.draw()
+            physical_xy = [float(physical[0]), float(physical[1])]
+            shown = list(transform_reach_point(physical_xy, feedback_mode, rotation_deg)) if moving else physical_xy
+            visible = hypot(*physical_xy) <= search_r if not show_target else (not moving or feedback_mode != "none")
+            if visible:
+                cursor.pos = shown
+                cursor.draw()
+            return shown
+
+        draw_scene((0.0, 0.0), show_target=False, moving=False)
+        self.win.callOnFlip(self.clock.reset)
+        self.win.callOnFlip(self._stamp_onset, onset_trigger)
+        self._emit_trigger(onset_trigger, when="flip", wait=False, name=f"{self.label}_homing", meta={"kind": "onset"})
+        flip_time = self.win.flip()
+        self.set_state(flip_time=flip_time)
+
+        if responder is not None:
+            adapter = ResponderAdapter(
+                policy=str(getattr(getattr(ctx, "config", None), "sim_policy", "warn") or "warn"),
+                default_rt_s=float(getattr(getattr(ctx, "config", None), "default_rt_s", 0.2) or 0.2),
+                clamp_rt=bool(getattr(getattr(ctx, "config", None), "clamp_rt", False)),
+                logger=getattr(ctx, "sim_logger", None),
+                session=getattr(ctx, "session", None),
+            )
+            observation = Observation(
+                mode=getattr(ctx, "mode", "qa"),
+                trial_id=self.get_state("trial_id", self.get_state("trial_index", None)),
+                block_id=self.get_state("block_id", None),
+                phase=self.label,
+                deadline_s=deadline_s,
+                response_window_open=True,
+                response_window_s=deadline_s,
+                valid_keys=["pointer_reach"],
+                t_phase_onset=self.get_state("onset_time", None),
+                t_phase_onset_global=self.get_state("onset_time_global", None),
+                stim_id=self.get_state("stim_id", None),
+                stim_features=self.get_state("stim_features", None),
+                condition_id=self.get_state("condition_id", None),
+                task_factors=dict(self.get_state("task_factors", None) or {}),
+            )
+            action = adapter.handle_response(observation, responder).used_action
+            meta = dict(action.meta or {})
+            search_time = max(0.0, float(meta.get("search_time_s", 0.2)))
+            self._emit_trigger(hold_trigger, when="now", wait=True, name=f"{self.label}_hold", meta={"kind": "pointer_hold", "simulated": True})
+            self._emit_trigger(target_trigger, when="now", wait=True, name=f"{self.label}_target", meta={"kind": "target_onset", "simulated": True})
+            if action.key == "pointer_reach" and not bool(meta.get("timeout", False)):
+                reaction_time = max(0.0, float(meta.get("reaction_time_s", action.rt_s or 0.25)))
+                movement_time = max(0.0, float(meta.get("movement_time_s", min(0.15, deadline_s * 0.5))))
+                hand_angle = float(
+                    meta.get(
+                        "hand_angle_deg",
+                        dict(observation.task_factors or {}).get("target_angle_deg", 0.0),
+                    )
+                )
+                samples = build_simulated_reach(
+                    target_distance=distance,
+                    hand_angle_deg=hand_angle,
+                    reaction_time_s=reaction_time,
+                    movement_time_s=movement_time,
+                    feedback_mode=feedback_mode,
+                    rotation_deg=rotation_deg,
+                )
+                movement_started = True
+                self._emit_trigger(movement_trigger, when="now", wait=True, name=f"{self.label}_movement", meta={"kind": "movement_onset", "simulated": True})
+            metrics = evaluate_reach(
+                samples,
+                target_position=target_pos,
+                target_distance=distance,
+                target_radius=target_r,
+                reaction_threshold=reaction_r,
+                movement_deadline=deadline_s,
+            )
+        else:
+            self.win.mouseVisible = False
+            mouse = event.Mouse(win=self.win, visible=False)
+            hold_started: float | None = None
+            target_onset: float | None = None
+            movement_onset: float | None = None
+            try:
+                while target_onset is None:
+                    physical = [float(value) for value in mouse.getPos()]
+                    elapsed = float(self.clock.getTime())
+                    inside = hypot(*physical) <= start_r
+                    if inside and hold_started is None:
+                        hold_started = elapsed
+                        search_time = elapsed
+                        self._emit_trigger(hold_trigger, when="now", wait=True, name=f"{self.label}_hold", meta={"kind": "pointer_hold"})
+                    elif not inside:
+                        hold_started = None
+                    draw_scene(physical, show_target=False, moving=False)
+                    self.win.flip()
+                    if hold_started is not None and elapsed - hold_started >= hold_s:
+                        physical = [float(value) for value in mouse.getPos()]
+                        draw_scene(physical, show_target=True, moving=False)
+                        self._emit_trigger(target_trigger, when="flip", wait=False, name=f"{self.label}_target", meta={"kind": "target_onset"})
+                        self.win.flip()
+                        target_onset = float(self.clock.getTime())
+
+                completed_live = False
+                timed_out_live = False
+                endpoint_physical = [float(value) for value in mouse.getPos()]
+                while not completed_live and not timed_out_live:
+                    elapsed = float(self.clock.getTime())
+                    physical = [float(value) for value in mouse.getPos()]
+                    radius = hypot(*physical)
+                    if not movement_started and radius > start_r:
+                        movement_started = True
+                        movement_onset = elapsed
+                        self._emit_trigger(movement_trigger, when="now", wait=True, name=f"{self.label}_movement", meta={"kind": "movement_onset"})
+                    shown = draw_scene(physical, show_target=True, moving=movement_started)
+                    self.win.flip()
+                    if movement_started:
+                        samples.append(
+                            {
+                                "t": elapsed - float(target_onset),
+                                "physical": list(physical),
+                                "display": list(shown),
+                                "visible": feedback_mode != "none",
+                            }
+                        )
+                        endpoint_physical = list(physical)
+                        completed_live = radius >= distance
+                        timed_out_live = elapsed - float(movement_onset) > deadline_s
+
+                metrics = evaluate_reach(
+                    samples,
+                    target_position=target_pos,
+                    target_distance=distance,
+                    target_radius=target_r,
+                    reaction_threshold=reaction_r,
+                    movement_deadline=deadline_s,
+                )
+                if bool(metrics["completed"]) and freeze_s > 0.0:
+                    freeze_frames = max(1, int(round(freeze_s / self.frame_time)))
+                    for _ in range(freeze_frames):
+                        draw_scene(endpoint_physical, show_target=True, moving=True)
+                        self.win.flip()
+            finally:
+                self.win.mouseVisible = original_mouse_visible
+
+        completed = bool(metrics["completed"])
+        if completed:
+            self._emit_trigger(complete_trigger, when="now", wait=True, name=f"{self.label}_complete", meta={"kind": "pointer_reach_complete"})
+            if bool(metrics["cursor_hit"]):
+                self._emit_trigger(hit_trigger, when="now", wait=True, name=f"{self.label}_hit", meta={"kind": "pointer_reach_hit"})
+        else:
+            self._emit_trigger(timeout_trigger, when="now", wait=True, name=f"{self.label}_timeout", meta={"kind": "timeout"})
+
+        physical_positions = [list(sample["physical"]) for sample in samples]
+        display_positions = [list(sample["display"]) for sample in samples]
+        reaction_time = metrics["reaction_time"]
+        onset_time_global = self.get_state("onset_time_global", None)
+        self.set_state(
+            response="complete" if completed else None,
+            key_press=movement_started,
+            completed=completed,
+            timed_out=not completed,
+            rt=reaction_time,
+            response_time=reaction_time,
+            response_time_global=(onset_time_global + reaction_time)
+            if onset_time_global is not None and reaction_time is not None
+            else None,
+            search_time=search_time,
+            reaction_time=reaction_time,
+            movement_time=metrics["movement_time"],
+            physical_endpoint=metrics["physical_endpoint"],
+            display_endpoint=metrics["display_endpoint"],
+            hand_angle_deg=metrics["hand_angle_deg"],
+            cursor_angle_deg=metrics["cursor_angle_deg"],
+            cursor_error_deg=metrics["cursor_error_deg"],
+            cursor_hit=metrics["cursor_hit"],
+            trajectory_physical=physical_positions,
+            trajectory_display=display_positions,
+            sample_count=metrics["sample_count"],
+            complete_trigger=complete_trigger if completed else None,
+            hit_trigger=hit_trigger if completed and bool(metrics["cursor_hit"]) else None,
+            timeout_trigger=timeout_trigger if not completed else None,
+        )
+        self._stamp_close()
+        if responder is not None and hasattr(responder, "on_feedback"):
+            try:
+                responder.on_feedback(
+                    Feedback(
+                        trial_id=self.get_state("trial_id", self.get_state("trial_index", "unknown")),
+                        phase=self.label,
+                        outcome="complete" if completed else "timeout",
+                        reward=None,
+                        meta={key: metrics[key] for key in metrics},
+                    )
+                )
+            except Exception:
+                pass
         self.log_unit()
         return self
 
