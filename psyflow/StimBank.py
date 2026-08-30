@@ -5,6 +5,7 @@ preview, text formatting, and text-to-speech conversion via edge-tts.
 """
 
 from psychopy.visual import TextStim, Circle, Rect, Polygon, ImageStim, ShapeStim, TextBox2, MovieStim
+from .textbox import TextBox2 as UnicodeTextBox2
 from psychopy import event, core
 
 # set this if sounddevice is not working
@@ -21,7 +22,7 @@ import os
 # Mapping string names in YAML to actual PsychoPy classes
 STIM_CLASSES: Dict[str, Type] = {
     "text": TextStim,
-    "textbox": TextBox2,
+    "textbox": UnicodeTextBox2,
     "circle": Circle,
     "rect": Rect,
     "polygon": Polygon,
