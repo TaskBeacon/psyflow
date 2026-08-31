@@ -598,7 +598,8 @@ class StimUnit:
         self,
         duration: float | list | tuple | None = None,
         onset_trigger: int = None,
-        offset_trigger: int = None
+        offset_trigger: int = None,
+        phase_drift_hz: float | None = None,
     ) -> "StimUnit":
         """
         Display the stimulus for a specified duration, using frame-based timing
@@ -661,6 +662,22 @@ class StimUnit:
             self.set_state(duration_nominal=nominal, duration_scaled=used)
         self.set_state(duration=used)
 
+        # Opt-in grating drift; ordinary visual/audio show behavior is unchanged.
+        gratings = []
+        initial_phases = []
+        drift_times = [0.0]
+        drift_shifts = [0.0]
+        drift_flips = []
+        if phase_drift_hz is not None:
+            from math import isfinite
+            if isinstance(phase_drift_hz, bool) or not isinstance(phase_drift_hz, (int, float)) or not isfinite(phase_drift_hz):
+                raise ValueError('phase_drift_hz must be a finite number')
+            gratings = [s for s in self.stimuli if isinstance(s, visual.GratingStim)]
+            if not gratings or any(callable(getattr(s, 'play', None)) for s in self.stimuli):
+                raise ValueError('phase_drift_hz requires GratingStim and no concurrent audio/video')
+            initial_phases = [s.phase.copy() for s in gratings]
+            self.set_state(drift_late_close=False)
+
         # --- Initial Flip (trigger locked to onset) ---
         sound_stims = []
         for stim in self.stimuli:
@@ -697,11 +714,46 @@ class StimUnit:
 
         flip_time = self.win.flip()
         self.set_state(flip_time=flip_time)
+        if gratings:
+            drift_flips.append(float(flip_time))
 
         # --- Frame-based visual presentation ---
         visual_stims = [s for s in self.stimuli if hasattr(s, "draw") and callable(s.draw)]
-        offset_flip_time = flip_time if n_frames == 1 else None
-        if n_frames > 1:
+        offset_flip_time = flip_time if n_frames == 1 or gratings else None
+        if gratings and n_frames > 1:
+            # Drift has an elapsed-time deadline so delayed refreshes cannot
+            # silently lengthen adaptation by retaining a fixed frame budget.
+            # The final drift frame targets duration minus one refresh period;
+            # the next stage can hold its actual phase on the following flip.
+            while True:
+                t = max(drift_times[-1], float(self.win.getFutureFlipTime(clock=self.clock)))
+                if t >= used:
+                    # A delayed callback can miss the final candidate refresh.
+                    # Keep the last submitted phase and close without drawing
+                    # a new drifting frame beyond the requested deadline.
+                    # This exceptional offset is a software decision timestamp.
+                    self._stamp_close(offset_trigger)
+                    self._emit_trigger(offset_trigger, when="now", wait=False,
+                                       name=f"{self.label}_offset", meta={"kind": "late_drift_close"})
+                    self.set_state(drift_late_close=True)
+                    break
+                shift = float(phase_drift_hz) * t
+                for stim, base in zip(gratings, initial_phases):
+                    stim.phase = (float(base[0]) + shift, float(base[1]))
+                drift_times.append(t)
+                drift_shifts.append(shift)
+                for stim in visual_stims:
+                    stim.draw()
+                is_final = t >= used - self.frame_time - 1e-9
+                if is_final:
+                    self.win.callOnFlip(self._stamp_close, offset_trigger)
+                    self._emit_trigger(offset_trigger, when="flip", wait=False,
+                                       name=f"{self.label}_offset", meta={"kind": "offset"})
+                offset_flip_time = self.win.flip()
+                drift_flips.append(float(offset_flip_time))
+                if is_final:
+                    break
+        elif n_frames > 1:
             for frame_i in range(n_frames - 1):
                 for stim in visual_stims:
                     stim.draw()
@@ -719,6 +771,18 @@ class StimUnit:
 
         if offset_flip_time is not None:
             self.set_state(offset_flip_time=offset_flip_time)
+
+        if gratings:
+            intervals = [b-a for a,b in zip(drift_flips, drift_flips[1:])]
+            self.set_state(drift_frequency_hz=float(phase_drift_hz),
+                           drift_initial_phases=[p.tolist() for p in initial_phases],
+                           drift_final_phases=[s.phase.tolist() for s in gratings],
+                           drift_sample_times_s=drift_times, drift_phase_shifts_cycles=drift_shifts,
+                           drift_flip_times_s=[t-drift_flips[0] for t in drift_flips],
+                           drift_frame_count=len(drift_flips),
+                           drift_max_frame_interval_s=max(intervals or [0]),
+                           drift_deadline_s=used,
+                           drift_clock='PsychoPy anticipated flip from unit clock; actual flip intervals retained')
 
         self.log_unit()
         return self

@@ -4,7 +4,7 @@ Supports decorator-based and YAML/dict-based stimulus definitions, batch
 preview, text formatting, and text-to-speech conversion via edge-tts.
 """
 
-from psychopy.visual import TextStim, Circle, Rect, Polygon, ImageStim, ShapeStim, TextBox2, MovieStim
+from psychopy.visual import TextStim, Circle, Rect, Polygon, ImageStim, ShapeStim, TextBox2, MovieStim, GratingStim
 from .textbox import TextBox2 as UnicodeTextBox2
 from psychopy import event, core
 
@@ -29,6 +29,7 @@ STIM_CLASSES: Dict[str, Type] = {
     "image": ImageStim,
     "shape": ShapeStim,
     "movie": MovieStim, 
+    "grating": GratingStim,
     "sound": Sound,
 }
 
