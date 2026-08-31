@@ -619,6 +619,17 @@ class StimUnit:
             Trigger code to send at stimulus onset.
         offset_trigger : int
             Trigger code to send at stimulus offset.
+        phase_drift_hz : float | None
+            Optional horizontal phase rate (cycles/second) for GratingStim
+            objects; requires no concurrent audio/video. Preserves vertical
+            and initial phases. Only this opt-in path uses an elapsed deadline
+            and anticipated flip times instead of a fixed frame budget. Records
+            phase samples, actual flip intervals, final phases and late-close
+            evidence; the caller must evaluate presentation quality. A missed
+            final refresh closes at a software decision time without submitting
+            another drifting frame. The actual last phase remains available for
+            a following static stage. These are software timing records, not a
+            physical onset, luminance or human-perception guarantee.
 
         Returns
         -------
