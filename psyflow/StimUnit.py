@@ -1259,6 +1259,16 @@ class StimUnit:
         self.log_unit()
         return self
 
+    def capture_pointer_pursuit(self, **options) -> "StimUnit":
+        """Capture an opt-in circular moving target in software pixel units.
+
+        The framework owns elapsed-time drawing, pointer polling, missing-data
+        handling, duration-weighted scoring and synthetic QA responder injection.
+        See :mod:`psyflow.pointer_pursuit` for the explicit sampling contract.
+        """
+        from .pointer_pursuit import capture_pursuit
+        return capture_pursuit(self, **options)
+
     def capture_pointer_trace(
         self,
         path_points: Sequence[Sequence[float]],
