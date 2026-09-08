@@ -1,36 +1,39 @@
 import sys
+import subprocess
+from pathlib import Path
+import textwrap
 import unittest
 
 
 class TestImport(unittest.TestCase):
-    def _clear_psyflow_and_psychopy_modules(self) -> None:
-        for name in [
-            module_name
-            for module_name in list(sys.modules)
-            if module_name == "psyflow"
-            or module_name.startswith("psyflow.")
-            or module_name == "psychopy"
-            or module_name.startswith("psychopy.")
-        ]:
-            sys.modules.pop(name, None)
+    def _assert_clean_import(self, code: str) -> None:
+        # Do not evict modules used by other tests in the shared pytest process.
+        result = subprocess.run(
+            [sys.executable, "-c", textwrap.dedent(code)],
+            cwd=Path(__file__).resolve().parents[1],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_import_psyflow_does_not_import_psychopy(self):
         # The package should be importable without pulling in PsychoPy by default.
-        self._clear_psyflow_and_psychopy_modules()
-
-        import psyflow  # noqa: F401
-
-        self.assertNotIn("psychopy", sys.modules)
+        self._assert_clean_import("""
+            import sys
+            import psyflow
+            assert "psychopy" not in sys.modules
+        """)
 
     def test_import_psyflow_utils_does_not_import_psychopy(self):
-        self._clear_psyflow_and_psychopy_modules()
-
-        from psyflow.utils import resolve_deadline
-
-        self.assertEqual(resolve_deadline([0.25, 0.5]), 0.5)
-        self.assertNotIn("psychopy", sys.modules)
-        self.assertNotIn("psyflow.utils.display", sys.modules)
-        self.assertNotIn("psyflow.utils.experiment", sys.modules)
+        self._assert_clean_import("""
+            import sys
+            from psyflow.utils import resolve_deadline
+            assert resolve_deadline([0.25, 0.5]) == 0.5
+            assert "psychopy" not in sys.modules
+            assert "psyflow.utils.display" not in sys.modules
+            assert "psyflow.utils.experiment" not in sys.modules
+        """)
 
 
 class TestSimContextHelpers(unittest.TestCase):

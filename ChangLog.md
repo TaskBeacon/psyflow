@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Split CI into lightweight Linux import checks and the complete pytest suite on Windows with PsychoPy dependencies installed. Both pytest functions and unittest classes are now executed.
+- Run import smoke checks in subprocesses so they do not invalidate module references held by other tests.
 - Read `psyflow.__version__` from installed distribution metadata. Uninstalled source checkouts fall back to UTF-8 `pyproject.toml`; missing version information returns `0+unknown` instead of preventing import.
 - Added regression coverage for installed metadata, source checkouts, and absent or unreadable version files.
 

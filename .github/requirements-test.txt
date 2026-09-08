@@ -1,0 +1,3 @@
+pytest>=8,<10
+# Tested PsychoPy baseline for Python 3.10; does not pin runtime consumers.
+psychopy==2025.2.4
