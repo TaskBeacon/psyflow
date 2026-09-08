@@ -1,5 +1,10 @@
 # psyflow change log
 
+## Unreleased
+
+- Read `psyflow.__version__` from installed distribution metadata. Uninstalled source checkouts fall back to UTF-8 `pyproject.toml`; missing version information returns `0+unknown` instead of preventing import.
+- Added regression coverage for installed metadata, source checkouts, and absent or unreadable version files.
+
 ## 0.1.23 (2026-04-05)
 
 ### Summary
